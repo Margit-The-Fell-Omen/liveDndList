@@ -1,4 +1,4 @@
-package dev.ushki.live_dnd_list.security;
+package dev.ushki.live_dnd_list.security.jwt;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +9,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
-import javax.naming.AuthenticationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;

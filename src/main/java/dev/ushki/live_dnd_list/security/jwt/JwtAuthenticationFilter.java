@@ -1,4 +1,4 @@
-package dev.ushki.live_dnd_list.security;
+package dev.ushki.live_dnd_list.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

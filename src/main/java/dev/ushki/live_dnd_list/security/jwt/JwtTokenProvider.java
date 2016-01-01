@@ -1,4 +1,4 @@
-package dev.ushki.live_dnd_list.security;
+package dev.ushki.live_dnd_list.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -32,13 +32,13 @@ public class JwtTokenProvider {
 
     public String generateAccessToken(UserDetails userDetails) {
         return generateToken(userDetails.getUsername(),
-                extractRoles(userDetails),
+                getRoles(userDetails),
                 jwtExpirationMs);
     }
 
     public String generateRefreshToken(UserDetails userDetails) {
         return generateToken(userDetails.getUsername(),
-                extractRoles(userDetails),
+                getRoles(userDetails),
                 refreshExpirationMs);
     }
 
@@ -124,7 +124,7 @@ public class JwtTokenProvider {
                 .getPayload();
     }
 
-    private String extractRoles(UserDetails userDetails) {
+    private String getRoles(UserDetails userDetails) {
         return userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));

@@ -131,6 +131,7 @@ public class CharacterMapper {
         return character;
     }
 
+    //FIXME: REFACTOR THIS SH^&%*$
     public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {
         if (request.getName() != null) character.setName(request.getName());
         if (request.getRace() != null) character.setRace(request.getRace());

@@ -1,7 +1,7 @@
 package dev.ushki.live_dnd_list.config;
 
-import dev.ushki.live_dnd_list.security.JwtAuthenticationEntryPoint;
-import dev.ushki.live_dnd_list.security.JwtAuthenticationFilter;
+import dev.ushki.live_dnd_list.security.jwt.JwtAuthenticationEntryPoint;
+import dev.ushki.live_dnd_list.security.jwt.JwtAuthenticationFilter;
 import dev.ushki.live_dnd_list.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
