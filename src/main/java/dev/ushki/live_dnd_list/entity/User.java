@@ -1,11 +1,11 @@
 package dev.ushki.live_dnd_list.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import dev.ushki.live_dnd_list.enums.Role;
+import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class User {
@@ -17,8 +17,14 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private boolean enabled = true;
 
-    public User() {}
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
+
+    public User() {
+    }
 
     User(String username, String email, String password) {
         this.username = username;
@@ -42,6 +48,14 @@ public class User {
         return this.password;
     }
 
+    public boolean getEnabled() {
+        return this.enabled;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -56,6 +70,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     @Override

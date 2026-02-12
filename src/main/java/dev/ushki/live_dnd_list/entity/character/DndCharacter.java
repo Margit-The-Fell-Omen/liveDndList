@@ -1,4 +1,4 @@
-package dev.ushki.live_dnd_list.entity;
+package dev.ushki.live_dnd_list.entity.character;
 
 import dev.ushki.live_dnd_list.enums.AbilityType;
 import dev.ushki.live_dnd_list.enums.CharacterAlignment;
@@ -11,6 +11,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Entity
 public class DndCharacter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,7 @@ public class DndCharacter {
 
     private String portraitUrl;
 
+    @OneToMany
     private List<CharacterClass> classes = new ArrayList<>();
 
     @Embedded
@@ -52,6 +54,7 @@ public class DndCharacter {
     private Integer deathSaveSuccesses = 0;
     private Integer deathSaveFailures = 0;
 
+    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Skill> skills = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -65,7 +68,8 @@ public class DndCharacter {
 
     private Set<Spell> spells = new HashSet<>();
 
-    private Map<Integer, Integer> spellSlots = new HashMap<>();
+    // FIXME: why the hell does this emit an error?
+    //private Map<Integer, Integer> spellSlots = new HashMap<>();
 
     @Enumerated(EnumType.STRING)
     private AbilityType spellcastingAbility;
@@ -87,4 +91,7 @@ public class DndCharacter {
     private LocalDateTime updatedAt;
 
     private boolean isPublic = false;
+
+
+    //TODO: getters, setters, etc.
 }
