@@ -2,17 +2,36 @@ package dev.ushki.live_dnd_list.entity.character;
 
 import dev.ushki.live_dnd_list.enums.AbilityType;
 import jakarta.persistence.Embeddable;
+import lombok.*;
 
 @Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
 public class AbilityScores {
-    private Integer strength;
-    private Integer dexterity;
-    private Integer constitution;
-    private Integer intelligence;
-    private Integer wisdom;
-    private Integer charisma;
 
-    public int GetModifier(AbilityType type) {
+    @Builder.Default
+    private Integer strength = 10;
+
+    @Builder.Default
+    private Integer dexterity = 10;
+
+    @Builder.Default
+    private Integer constitution = 10;
+
+    @Builder.Default
+    private Integer intelligence = 10;
+
+    @Builder.Default
+    private Integer wisdom = 10;
+
+    @Builder.Default
+    private Integer charisma = 10;
+
+    public int getModifier(AbilityType type) {
         int score = switch (type) {
             case STRENGTH -> strength;
             case DEXTERITY -> dexterity;

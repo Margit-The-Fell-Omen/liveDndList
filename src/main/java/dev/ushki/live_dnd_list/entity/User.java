@@ -1,103 +1,88 @@
 package dev.ushki.live_dnd_list.entity;
 
+import dev.ushki.live_dnd_list.entity.character.DndCharacter;
 import dev.ushki.live_dnd_list.enums.Role;
 import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
-public class User {
+@Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = {"password", "characters"})  // Don't include sensitive data
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Builder.Default  // Default value when using builder
     private boolean enabled = true;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
-    public User() {
-    }
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<DndCharacter> characters = new ArrayList<>();
 
-    User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public Long getId() {
-        return this.id;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public boolean getEnabled() {
-        return this.enabled;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    // UserDetails methods (still need to implement manually)
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.name()))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof User user))
-            return false;
-        return Objects.equals(this.id, user.id) && Objects.equals(this.username, user.username)
-                && Objects.equals(this.email, user.email) && Objects.equals(this.password, user.password);
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(this.id, this.username, this.email, this.password);
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
     @Override
-    public String toString() {
-        return "Employee{" + "id=" + this.id + ", username='" + this.username + '\'' + ", email='" + this.email
-                + '\'' + ", password='" + this.password + '\'' + '}';
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    //TODO: carefully adjust database annotations
 }

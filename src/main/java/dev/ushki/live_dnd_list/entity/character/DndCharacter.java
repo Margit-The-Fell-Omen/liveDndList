@@ -4,6 +4,7 @@ import dev.ushki.live_dnd_list.enums.AbilityType;
 import dev.ushki.live_dnd_list.enums.CharacterAlignment;
 import dev.ushki.live_dnd_list.enums.CharacterRace;
 import jakarta.persistence.*;
+import lombok.*;
 import org.apache.catalina.User;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -12,14 +13,25 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
+@Table(name = "characters")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString(exclude = "owner")  // Avoid circular reference
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)  // Only use id for equals
 public class DndCharacter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User owner;
 
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
@@ -34,6 +46,9 @@ public class DndCharacter {
 
     private String portraitUrl;
 
+    @Builder.Default
+    private Integer level = 1;
+
     @OneToMany
     private List<CharacterClass> classes = new ArrayList<>();
 
@@ -41,12 +56,19 @@ public class DndCharacter {
     private AbilityScores abilityScores;
 
     // Combat stats
-    private Integer maxHitPoints;
-    private Integer currentHitPoints;
+    @Builder.Default
+    private Integer maxHitPoints = 10;
+    @Builder.Default
+    private Integer currentHitPoints = 10;
+
     private Integer temporaryHitPoints = 0;
+
     private Integer armorClass;
+
     private Integer initiative;
+
     private Integer speed;
+
     private Integer proficiencyBonus;
 
     private String hitDice;
@@ -54,7 +76,9 @@ public class DndCharacter {
     private Integer deathSaveSuccesses = 0;
     private Integer deathSaveFailures = 0;
 
-    @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "character_id")
+    @Builder.Default
     private List<Skill> skills = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -62,6 +86,9 @@ public class DndCharacter {
 
     private Set<String> otherProficiencies = new HashSet<>(); // languages, tools, etc.
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "character_id")
+    @Builder.Default
     private List<Equipment> equipment = new ArrayList<>();
 
     private DndCurrency currency;
@@ -76,11 +103,18 @@ public class DndCharacter {
 
     // feats, traits & notes
     private String featuresAndTraits;
+
+    @Column(columnDefinition = "TEXT")
     private String backstory;
+
     private String personalityTraits;
+
     private String ideals;
+
     private String bonds;
+
     private String flaws;
+
     private String notes;
 
     // Metadata
@@ -93,5 +127,5 @@ public class DndCharacter {
     private boolean isPublic = false;
 
 
-    //TODO: getters, setters, etc.
+    //TODO: carefully adjust database annotations
 }
