@@ -42,4 +42,15 @@ public class AbilityScores {
         };
         return (score - 10) / 2;
     }
+
+    public int getScore(AbilityType type) {
+        return switch (type) {
+            case STRENGTH -> strength;
+            case DEXTERITY -> dexterity;
+            case CONSTITUTION -> constitution;
+            case INTELLIGENCE -> intelligence;
+            case WISDOM -> wisdom;
+            case CHARISMA -> charisma;
+        };
+    }
 }

@@ -39,7 +39,9 @@ public class User implements UserDetails {
     private boolean enabled = true;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
+    @Column(name = "role")
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
 
@@ -47,10 +49,12 @@ public class User implements UserDetails {
     @Builder.Default
     private List<DndCharacter> characters = new ArrayList<>();
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // UserDetails methods (still need to implement manually)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -73,6 +77,11 @@ public class User implements UserDetails {
         return true;
     }
 
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -84,5 +93,4 @@ public class User implements UserDetails {
         updatedAt = LocalDateTime.now();
     }
 
-    //TODO: carefully adjust database annotations
 }

@@ -1,6 +1,7 @@
 package dev.ushki.live_dnd_list.security;
 
 import dev.ushki.live_dnd_list.entity.User;
+import dev.ushki.live_dnd_list.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
