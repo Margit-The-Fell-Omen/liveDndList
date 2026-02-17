@@ -1,4 +1,4 @@
-package dev.ushki.live_dnd_list.dto;
+package dev.ushki.live_dnd_list.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -30,4 +30,8 @@ public class Skill {
     private boolean expertise = false;
 
     private Integer bonus = 0;
+
+    public boolean isProficient() {
+        return proficiency;
+    }
 }
