@@ -1,6 +1,9 @@
 package dev.ushki.live_dnd_list.controller;
 
+import dev.ushki.live_dnd_list.dto.request.RegisterRequest;
 import dev.ushki.live_dnd_list.dto.response.ApiResponse;
+import dev.ushki.live_dnd_list.dto.response.UserResponse;
+import dev.ushki.live_dnd_list.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
