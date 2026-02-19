@@ -10,9 +10,7 @@ import dev.ushki.live_dnd_list.exceptions.DuplicateResourceException;
 import dev.ushki.live_dnd_list.mapper.UserMapper;
 import dev.ushki.live_dnd_list.repository.UserRepository;
 import dev.ushki.live_dnd_list.security.jwt.JwtTokenProvider;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,48 +21,43 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
-@Transactional
 public class AuthService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserMapper userMapper;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private UserMapper userMapper;
 
     public JwtResponse login(LoginRequest request) {
-        log.info("Login attempt for user {}", request.getUsername());
-
-        // FIXME: why does this emit an error?
-        Authentication authentication = new authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
-        String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+        String token = jwtTokenProvider.generateToken(userDetails);
 
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
 
-        log.info("Login successful for users: {}", request.getUsername());
-
         return JwtResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                .accessToken(token)
+                .refreshToken(token)
                 .tokenType("Bearer")
-                .expiresIn(jwtTokenProvider.getJwtExpirationMs())
+                .expiresIn(jwtTokenProvider.getExpirationMs())
                 .user(userMapper.toResponse(user))
-                .build()
+                .build();
     }
 
     public UserResponse register(RegisterRequest request) {
-        log.info("Registration attempt for user: {}", request.getUsername());
-
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new DuplicateResourceException("Username already exists");
         }
@@ -82,9 +75,6 @@ public class AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
-        log.info("User registered successfully: {}", request.getUsername());
-
         return userMapper.toResponse(savedUser);
     }
-
 }
