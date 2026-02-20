@@ -122,7 +122,6 @@ public class DndCharacter {
     private Set<Spell> spells = new HashSet<>();
 
     // NOTE: implement in future versions
-    // FIXME: why the hell does this emit an error?
     //private Map<Integer, Integer> spellSlots = new HashMap<>();
 
     @Enumerated(EnumType.STRING)
@@ -159,9 +158,7 @@ public class DndCharacter {
 
     private boolean isPublic = false;
 
-    // FIXME: this error with @Pre..
-
-    @PreUpdate
+    @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();

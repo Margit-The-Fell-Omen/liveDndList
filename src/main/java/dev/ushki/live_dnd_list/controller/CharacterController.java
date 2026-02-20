@@ -7,9 +7,6 @@ import dev.ushki.live_dnd_list.dto.response.ApiResponse;
 import dev.ushki.live_dnd_list.dto.response.CharacterResponse;
 import dev.ushki.live_dnd_list.dto.response.CharacterSummaryResponse;
 import dev.ushki.live_dnd_list.service.CharacterService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,21 +19,17 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/characters")
 @RequiredArgsConstructor
-@Tag(name = "Characters", description = "D&D Character Sheet Management API")
-@SecurityRequirement(name = "Bearer Authentication")
 public class CharacterController {
 
     private final CharacterService characterService;
 
     // CRUD operations
     @GetMapping
-    @Operation(summary = "Get all users characters")
     public ApiResponse<List<CharacterSummaryResponse>> getAllMyCharacters(@AuthenticationPrincipal UserDetails userDetails) {
         return ApiResponse.success(characterService.getAllByUsername(userDetails.getUsername()));
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get character by ID")
     public ApiResponse<CharacterResponse> getCharacter(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -45,7 +38,6 @@ public class CharacterController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create new character")
     public ApiResponse<CharacterResponse> createCharacter(
             @Valid @RequestBody CharacterCreateRequest request,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -54,7 +46,6 @@ public class CharacterController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update character")
     public ApiResponse<CharacterResponse> updateCharacter(
             @PathVariable Long id,
             @Valid @RequestBody CharacterUpdateRequest request,
@@ -65,7 +56,6 @@ public class CharacterController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete character")
     public void deleteCharacter(
             @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -74,7 +64,6 @@ public class CharacterController {
 
     // Equipment operations
     @PostMapping("/{id}/equipment")
-    @Operation(summary = "Add equipment to character")
     public ApiResponse<CharacterResponse> addEquipment(
             @PathVariable Long id,
             @Valid @RequestBody EquipmentRequest request,
@@ -84,7 +73,6 @@ public class CharacterController {
     }
 
     @DeleteMapping("/{id}/equipment/{equipmentId}")
-    @Operation(summary = "Remove equipment from character")
     public ApiResponse<CharacterResponse> removeEquipment(
             @PathVariable Long id,
             @PathVariable Long equipmentId,
@@ -96,7 +84,6 @@ public class CharacterController {
     // Spell operations
 
     @PostMapping("/{id}/spells/{spellId}")
-    @Operation(summary = "Add spell to character")
     public ApiResponse<CharacterResponse> addSpell(
             @PathVariable Long id,
             @PathVariable Long spellId,
@@ -106,7 +93,6 @@ public class CharacterController {
     }
 
     @DeleteMapping("/{id}/spells/{spellId}")
-    @Operation(summary = "Remove spell from character")
     public ApiResponse<CharacterResponse> removeSpell(
             @PathVariable Long id,
             @PathVariable Long spellId,
