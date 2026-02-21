@@ -47,15 +47,6 @@ class UserControllerTest {
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
 
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    @MockitoBean
-    private UserDetailsService userDetailsService;
-
     private UserResponse testUserResponse;
 
     @BeforeEach

@@ -61,16 +61,19 @@ public class DataInitializer implements CommandLineRunner {
         return userRepository.save(user);
     }
 
+    String durationInstant = "Instantaneous";
+    String castingTime1Action = "1 action";
+
     private void createSpells() {
         List<Spell> spells = List.of(
                 Spell.builder()
                         .name("Fire Bolt")
                         .level(0)
                         .school(SpellSchool.EVOCATION)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("120 feet")
                         .components("V, S")
-                        .duration("Instantaneous")
+                        .duration(durationInstant)
                         .description("You hurl a mote of fire at a creature or object within range.")
                         .build(),
 
@@ -78,7 +81,7 @@ public class DataInitializer implements CommandLineRunner {
                         .name("Mage Hand")
                         .level(0)
                         .school(SpellSchool.CONJURATION)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("30 feet")
                         .components("V, S")
                         .duration("1 minute")
@@ -89,7 +92,7 @@ public class DataInitializer implements CommandLineRunner {
                         .name("Prestidigitation")
                         .level(0)
                         .school(SpellSchool.TRANSMUTATION)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("10 feet")
                         .components("V, S")
                         .duration("Up to 1 hour")
@@ -100,10 +103,10 @@ public class DataInitializer implements CommandLineRunner {
                         .name("Magic Missile")
                         .level(1)
                         .school(SpellSchool.EVOCATION)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("120 feet")
                         .components("V, S")
-                        .duration("Instantaneous")
+                        .duration(durationInstant)
                         .description("You create three glowing darts of magical force. Each dart hits a creature.")
                         .higherLevels("The spell creates one more dart for each slot level above 1st.")
                         .build(),
@@ -123,10 +126,10 @@ public class DataInitializer implements CommandLineRunner {
                         .name("Cure Wounds")
                         .level(1)
                         .school(SpellSchool.EVOCATION)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("Touch")
                         .components("V, S")
-                        .duration("Instantaneous")
+                        .duration(durationInstant)
                         .description("A creature you touch regains a number of hit points equal to 1d8 + your " +
                                 "spellcasting modifier.")
                         .higherLevels("The healing increases by 1d8 for each slot level above 1st.")
@@ -139,7 +142,7 @@ public class DataInitializer implements CommandLineRunner {
                         .castingTime("1 bonus action")
                         .range("Self")
                         .components("V")
-                        .duration("Instantaneous")
+                        .duration(durationInstant)
                         .description("Briefly surrounded by silvery mist, you teleport up to 30 feet.")
                         .build(),
 
@@ -147,7 +150,7 @@ public class DataInitializer implements CommandLineRunner {
                         .name("Hold Person")
                         .level(2)
                         .school(SpellSchool.ENCHANTMENT)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("60 feet")
                         .components("V, S, M (a small piece of iron)")
                         .duration("Concentration, up to 1 minute")
@@ -160,10 +163,10 @@ public class DataInitializer implements CommandLineRunner {
                         .name("Fireball")
                         .level(3)
                         .school(SpellSchool.EVOCATION)
-                        .castingTime("1 action")
+                        .castingTime(castingTime1Action)
                         .range("150 feet")
                         .components("V, S, M (a tiny ball of bat guano and sulfur)")
-                        .duration("Instantaneous")
+                        .duration(durationInstant)
                         .description("A bright streak flashes from your pointing finger to a point you choose within " +
                                 "range and then blossoms with a low roar into an explosion of flame.")
                         .higherLevels("The damage increases by 1d6 for each slot level above 3rd.")
@@ -176,7 +179,7 @@ public class DataInitializer implements CommandLineRunner {
                         .castingTime("1 reaction")
                         .range("60 feet")
                         .components("S")
-                        .duration("Instantaneous")
+                        .duration(durationInstant)
                         .description("You attempt to interrupt a creature in the process of casting a spell.")
                         .build()
         );

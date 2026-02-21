@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ushki.live_dnd_list.dto.request.SpellRequest;
 import dev.ushki.live_dnd_list.dto.response.SpellResponse;
 import dev.ushki.live_dnd_list.enums.SpellSchool;
+import dev.ushki.live_dnd_list.security.jwt.JwtTokenProvider;
 import dev.ushki.live_dnd_list.service.SpellService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,8 +12,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,11 +23,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SpellController.class)
+@AutoConfigureMockMvc(addFilters = false)  // Disable security filters for public endpoints
 class SpellControllerTest {
 
     @Autowired
@@ -37,6 +38,9 @@ class SpellControllerTest {
 
     @MockitoBean
     private SpellService spellService;
+
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
 
     private SpellResponse testSpellResponse;
 
@@ -129,7 +133,7 @@ class SpellControllerTest {
         void shouldSearchSpellsByName() throws Exception {
             when(spellService.searchByName("fire")).thenReturn(List.of(testSpellResponse));
 
-            mockMvc.perform(get("/api/v1/spells/search?name=fire"))
+            mockMvc.perform(get("/api/v1/spells/search").param("name", "fire"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data[0].name").value("Fireball"));
@@ -141,7 +145,6 @@ class SpellControllerTest {
     class CreateSpellTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should create spell successfully")
         void shouldCreateSpellSuccessfully() throws Exception {
             SpellRequest request = SpellRequest.builder()
@@ -165,7 +168,6 @@ class SpellControllerTest {
             when(spellService.create(any(SpellRequest.class))).thenReturn(createdResponse);
 
             mockMvc.perform(post("/api/v1/spells")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -174,7 +176,6 @@ class SpellControllerTest {
         }
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should return 400 when name is blank")
         void shouldReturn400WhenNameBlank() throws Exception {
             SpellRequest request = SpellRequest.builder()
@@ -184,7 +185,6 @@ class SpellControllerTest {
                     .build();
 
             mockMvc.perform(post("/api/v1/spells")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -196,7 +196,6 @@ class SpellControllerTest {
     class UpdateSpellTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should update spell successfully")
         void shouldUpdateSpellSuccessfully() throws Exception {
             SpellRequest request = SpellRequest.builder()
@@ -209,7 +208,6 @@ class SpellControllerTest {
             when(spellService.update(anyLong(), any(SpellRequest.class))).thenReturn(testSpellResponse);
 
             mockMvc.perform(put("/api/v1/spells/1")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -222,13 +220,11 @@ class SpellControllerTest {
     class DeleteSpellTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should delete spell successfully")
         void shouldDeleteSpellSuccessfully() throws Exception {
             doNothing().when(spellService).delete(1L);
 
-            mockMvc.perform(delete("/api/v1/spells/1")
-                            .with(csrf()))
+            mockMvc.perform(delete("/api/v1/spells/1"))
                     .andExpect(status().isNoContent());
         }
     }

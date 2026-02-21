@@ -6,7 +6,6 @@ import dev.ushki.live_dnd_list.dto.request.RegisterRequest;
 import dev.ushki.live_dnd_list.dto.response.JwtResponse;
 import dev.ushki.live_dnd_list.dto.response.UserResponse;
 import dev.ushki.live_dnd_list.enums.Role;
-import dev.ushki.live_dnd_list.security.jwt.JwtAuthenticationEntryPoint;
 import dev.ushki.live_dnd_list.security.jwt.JwtAuthenticationFilter;
 import dev.ushki.live_dnd_list.security.jwt.JwtTokenProvider;
 import dev.ushki.live_dnd_list.service.AuthService;
@@ -16,9 +15,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,12 +26,21 @@ import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthController.class)
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+@WebMvcTest(
+        controllers = AuthController.class,
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = JwtAuthenticationFilter.class  // Exclude the filter entirely
+        )
+)
+@AutoConfigureMockMvc(addFilters = false)
 class AuthControllerTest {
 
     @Autowired
@@ -44,14 +52,9 @@ class AuthControllerTest {
     @MockitoBean
     private AuthService authService;
 
+    // Mock the JWT components so context can load
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @MockitoBean
-    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     private UserResponse testUserResponse;
     private JwtResponse testJwtResponse;
@@ -92,9 +95,9 @@ class AuthControllerTest {
             when(authService.register(any(RegisterRequest.class))).thenReturn(testUserResponse);
 
             mockMvc.perform(post("/api/v1/auth/register")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data.username").value("testuser"));
@@ -110,7 +113,6 @@ class AuthControllerTest {
                     .build();
 
             mockMvc.perform(post("/api/v1/auth/register")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -126,7 +128,6 @@ class AuthControllerTest {
                     .build();
 
             mockMvc.perform(post("/api/v1/auth/register")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -142,7 +143,6 @@ class AuthControllerTest {
                     .build();
 
             mockMvc.perform(post("/api/v1/auth/register")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -164,9 +164,9 @@ class AuthControllerTest {
             when(authService.login(any(LoginRequest.class))).thenReturn(testJwtResponse);
 
             mockMvc.perform(post("/api/v1/auth/login")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data.accessToken").value("test-access-token"))
@@ -182,9 +182,10 @@ class AuthControllerTest {
                     .build();
 
             mockMvc.perform(post("/api/v1/auth/login")
-                            .with(csrf())
+
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
                     .andExpect(status().isBadRequest());
         }
     }

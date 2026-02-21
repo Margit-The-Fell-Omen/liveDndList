@@ -20,6 +20,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -36,7 +38,13 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CharacterController.class)
+@WebMvcTest(
+        controllers = CharacterController.class,
+        excludeFilters = @ComponentScan.Filter(
+                type = FilterType.ASSIGNABLE_TYPE,
+                classes = JwtAuthenticationFilter.class
+        )
+)
 class CharacterControllerTest {
 
     @Autowired
@@ -50,9 +58,6 @@ class CharacterControllerTest {
 
     @MockitoBean
     private JwtTokenProvider jwtTokenProvider;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @MockitoBean
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;

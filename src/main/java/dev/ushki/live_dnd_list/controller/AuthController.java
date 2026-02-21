@@ -7,16 +7,16 @@ import dev.ushki.live_dnd_list.dto.response.JwtResponse;
 import dev.ushki.live_dnd_list.dto.response.UserResponse;
 import dev.ushki.live_dnd_list.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ApiResponse<JwtResponse> login(@Valid @RequestBody LoginRequest request) {

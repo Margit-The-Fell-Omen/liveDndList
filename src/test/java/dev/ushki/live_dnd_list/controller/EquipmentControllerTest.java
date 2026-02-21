@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ushki.live_dnd_list.dto.request.EquipmentRequest;
 import dev.ushki.live_dnd_list.dto.response.EquipmentResponse;
 import dev.ushki.live_dnd_list.enums.EquipmentType;
+import dev.ushki.live_dnd_list.security.jwt.JwtTokenProvider;
 import dev.ushki.live_dnd_list.service.EquipmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,11 +22,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
 @WebMvcTest(EquipmentController.class)
+@AutoConfigureMockMvc(addFilters = false)  // Disable security filters
 class EquipmentControllerTest {
 
     @Autowired
@@ -37,6 +39,9 @@ class EquipmentControllerTest {
 
     @MockitoBean
     private EquipmentService equipmentService;
+
+    @MockitoBean
+    private JwtTokenProvider jwtTokenProvider;
 
     private EquipmentResponse testEquipmentResponse;
 
@@ -111,7 +116,7 @@ class EquipmentControllerTest {
         void shouldSearchEquipmentByName() throws Exception {
             when(equipmentService.searchByName("sword")).thenReturn(List.of(testEquipmentResponse));
 
-            mockMvc.perform(get("/api/v1/equipment/search?name=sword"))
+            mockMvc.perform(get("/api/v1/equipment/search").param("name", "sword"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.success").value(true))
                     .andExpect(jsonPath("$.data[0].name").value("Longsword"));
@@ -123,7 +128,6 @@ class EquipmentControllerTest {
     class CreateEquipmentTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should create equipment successfully")
         void shouldCreateEquipmentSuccessfully() throws Exception {
             EquipmentRequest request = EquipmentRequest.builder()
@@ -142,7 +146,6 @@ class EquipmentControllerTest {
             when(equipmentService.create(any(EquipmentRequest.class))).thenReturn(createdResponse);
 
             mockMvc.perform(post("/api/v1/equipment")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -156,7 +159,6 @@ class EquipmentControllerTest {
     class UpdateEquipmentTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should update equipment successfully")
         void shouldUpdateEquipmentSuccessfully() throws Exception {
             EquipmentRequest request = EquipmentRequest.builder()
@@ -169,7 +171,6 @@ class EquipmentControllerTest {
                     .thenReturn(testEquipmentResponse);
 
             mockMvc.perform(put("/api/v1/equipment/1")
-                            .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
@@ -182,13 +183,11 @@ class EquipmentControllerTest {
     class DeleteEquipmentTests {
 
         @Test
-        @WithMockUser(roles = "ADMIN")
         @DisplayName("Should delete equipment successfully")
         void shouldDeleteEquipmentSuccessfully() throws Exception {
             doNothing().when(equipmentService).delete(1L);
 
-            mockMvc.perform(delete("/api/v1/equipment/1")
-                            .with(csrf()))
+            mockMvc.perform(delete("/api/v1/equipment/1"))
                     .andExpect(status().isNoContent());
         }
     }
