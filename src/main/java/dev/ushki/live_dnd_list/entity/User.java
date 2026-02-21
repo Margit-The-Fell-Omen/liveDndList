@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = {"password", "characters"})  // Don't include sensitive data
+@ToString(exclude = {"password", "characters"})
 public class User implements UserDetails {
 
     @Id
@@ -35,7 +34,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Builder.Default  // Default value when using builder
+    @Builder.Default
     private boolean enabled = true;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -47,7 +46,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<DndCharacter> characters = new ArrayList<>();
+    private transient List<DndCharacter> characters = new ArrayList<>();  // ← Added transient
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -59,7 +58,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.name()))
-                .collect(Collectors.toList());
+                .toList();  // ← Changed from collect(Collectors.toList())
     }
 
     @Override
@@ -92,5 +91,4 @@ public class User implements UserDetails {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 }

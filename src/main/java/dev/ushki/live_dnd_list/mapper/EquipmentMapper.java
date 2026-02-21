@@ -6,7 +6,6 @@ import dev.ushki.live_dnd_list.entity.character.Equipment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class EquipmentMapper {
@@ -32,7 +31,7 @@ public class EquipmentMapper {
     public List<EquipmentResponse> toResponseList(List<Equipment> equipmentList) {
         return equipmentList.stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 

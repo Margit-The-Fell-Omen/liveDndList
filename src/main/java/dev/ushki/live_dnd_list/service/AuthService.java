@@ -10,7 +10,7 @@ import dev.ushki.live_dnd_list.exceptions.DuplicateResourceException;
 import dev.ushki.live_dnd_list.mapper.UserMapper;
 import dev.ushki.live_dnd_list.repository.UserRepository;
 import dev.ushki.live_dnd_list.security.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,22 +21,18 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     public JwtResponse login(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(

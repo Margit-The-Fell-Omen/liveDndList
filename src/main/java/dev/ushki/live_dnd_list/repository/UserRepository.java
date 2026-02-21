@@ -2,8 +2,6 @@ package dev.ushki.live_dnd_list.repository;
 
 import dev.ushki.live_dnd_list.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;

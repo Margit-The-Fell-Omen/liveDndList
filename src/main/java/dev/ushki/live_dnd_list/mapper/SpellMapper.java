@@ -34,7 +34,7 @@ public class SpellMapper {
     public List<SpellResponse> toResponseList(List<Spell> spells) {
         return spells.stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Set<SpellResponse> toResponseSet(Set<Spell> spells) {

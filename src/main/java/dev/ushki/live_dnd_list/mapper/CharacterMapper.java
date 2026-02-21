@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Component
@@ -91,7 +93,7 @@ public class CharacterMapper {
     public List<CharacterSummaryResponse> toSummaryResponseList(List<DndCharacter> characters) {
         return characters.stream()
                 .map(this::toSummaryResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public DndCharacter toEntity(CharacterCreateRequest request) {
@@ -131,29 +133,32 @@ public class CharacterMapper {
         return character;
     }
 
-    //FIXME: REFACTOR THIS SH^&%*$
     public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {
-        if (request.getName() != null) character.setName(request.getName());
-        if (request.getRace() != null) character.setRace(request.getRace());
-        if (request.getSubrace() != null) character.setSubrace(request.getSubrace());
-        if (request.getAlignment() != null) character.setAlignment(request.getAlignment());
-        if (request.getBackground() != null) character.setBackground(request.getBackground());
-        if (request.getMaxHitPoints() != null) character.setMaxHitPoints(request.getMaxHitPoints());
-        if (request.getCurrentHitPoints() != null) character.setCurrentHitPoints(request.getCurrentHitPoints());
-        if (request.getTemporaryHitPoints() != null) character.setTemporaryHitPoints(request.getTemporaryHitPoints());
-        if (request.getArmorClass() != null) character.setArmorClass(request.getArmorClass());
-        if (request.getSpeed() != null) character.setSpeed(request.getSpeed());
-        if (request.getPortraitUrl() != null) character.setPortraitUrl(request.getPortraitUrl());
-        if (request.getBackstory() != null) character.setBackstory(request.getBackstory());
-        if (request.getPersonalityTraits() != null) character.setPersonalityTraits(request.getPersonalityTraits());
-        if (request.getIdeals() != null) character.setIdeals(request.getIdeals());
-        if (request.getBonds() != null) character.setBonds(request.getBonds());
-        if (request.getFlaws() != null) character.setFlaws(request.getFlaws());
-        if (request.getNotes() != null) character.setNotes(request.getNotes());
+        updateIfPresent(request.getName(), character::setName);
+        updateIfPresent(request.getRace(), character::setRace);
+        updateIfPresent(request.getSubrace(), character::setSubrace);
+        updateIfPresent(request.getAlignment(), character::setAlignment);
+        updateIfPresent(request.getBackground(), character::setBackground);
+        updateIfPresent(request.getMaxHitPoints(), character::setMaxHitPoints);
+        updateIfPresent(request.getCurrentHitPoints(), character::setCurrentHitPoints);
+        updateIfPresent(request.getTemporaryHitPoints(), character::setTemporaryHitPoints);
+        updateIfPresent(request.getArmorClass(), character::setArmorClass);
+        updateIfPresent(request.getSpeed(), character::setSpeed);
+        updateIfPresent(request.getPortraitUrl(), character::setPortraitUrl);
+        updateIfPresent(request.getBackstory(), character::setBackstory);
+        updateIfPresent(request.getPersonalityTraits(), character::setPersonalityTraits);
+        updateIfPresent(request.getIdeals(), character::setIdeals);
+        updateIfPresent(request.getBonds(), character::setBonds);
+        updateIfPresent(request.getFlaws(), character::setFlaws);
+        updateIfPresent(request.getNotes(), character::setNotes);
 
-        if (request.getAbilityScores() != null) {
-            character.setAbilityScores(mapAbilityScoresRequest(request.getAbilityScores()));
-        }
+        // Special case: requires transformation
+        updateIfPresent(request.getAbilityScores(),
+                scores -> character.setAbilityScores(mapAbilityScoresRequest(scores)));
+    }
+
+    private <T> void updateIfPresent(T value, Consumer<T> setter) {
+        Optional.ofNullable(value).ifPresent(setter);
     }
 
     // Helper methods
@@ -165,7 +170,7 @@ public class CharacterMapper {
                         .subclass(c.getSubClass())
                         .level(c.getLevel())
                         .build())
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private AbilityScoresResponse mapAbilityScores(AbilityScores scores) {
@@ -219,7 +224,7 @@ public class CharacterMapper {
                             .totalBonus(totalBonus)
                             .build();
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private CharacterResponse.DndCurrencyResponse mapCurrency(DndCurrency currency) {
