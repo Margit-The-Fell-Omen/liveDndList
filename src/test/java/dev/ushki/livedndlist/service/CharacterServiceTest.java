@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,6 +30,7 @@ import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +42,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
 class CharacterServiceTest {
@@ -65,8 +68,10 @@ class CharacterServiceTest {
   private User testUser;
   private User otherUser;
   private DndCharacter testCharacter;
+  private DndCharacter elfCharacter;
   private CharacterResponse testCharacterResponse;
   private CharacterSummaryResponse testCharacterSummary;
+  private CharacterSummaryResponse elfCharacterSummary;
 
   @BeforeEach
   void setUp() {
@@ -98,6 +103,20 @@ class CharacterServiceTest {
         .classes(new ArrayList<>())
         .skills(new ArrayList<>())
         .equipment(new ArrayList<>())
+        .spells(new HashSet<>())
+        .build();
+
+    elfCharacter = DndCharacter.builder()
+        .id(2L)
+        .owner(testUser)
+        .name("Legolas")
+        .race(CharacterRace.ELF)
+        .maxHitPoints(30)
+        .currentHitPoints(30)
+        .classes(new ArrayList<>())
+        .skills(new ArrayList<>())
+        .equipment(new ArrayList<>())
+        .spells(new HashSet<>())
         .build();
 
     testCharacterResponse = CharacterResponse.builder()
@@ -112,7 +131,14 @@ class CharacterServiceTest {
         .id(1L)
         .name("Gandalf")
         .race(CharacterRace.HUMAN)
-        .totalLevel(1)
+        .totalLevel(5)
+        .build();
+
+    elfCharacterSummary = CharacterSummaryResponse.builder()
+        .id(2L)
+        .name("Legolas")
+        .race(CharacterRace.ELF)
+        .totalLevel(3)
         .build();
   }
 
@@ -121,19 +147,150 @@ class CharacterServiceTest {
   class GetOperations {
 
     @Test
-    @DisplayName("Should get all characters by username")
+    @DisplayName("Should get all characters by username with default sorting")
     void shouldGetAllCharactersByUsername() {
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findAllByOwnerOrderByUpdatedAtDesc(testUser))
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter));
+      when(characterMapper.toSummaryResponse(testCharacter))
+          .thenReturn(testCharacterSummary);
+
+      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, null, null, "updatedAt", "desc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getName()).isEqualTo("Gandalf");
+      verify(characterRepository).findAllByOwner(eq(testUser), any(Sort.class));
+    }
+
+    @Test
+    @DisplayName("Should filter characters by race")
+    void shouldFilterCharactersByRace() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter, elfCharacter));
+      when(characterMapper.toSummaryResponse(elfCharacter))
+          .thenReturn(elfCharacterSummary);
+
+      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", CharacterRace.ELF, null, null, "updatedAt", "desc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getRace()).isEqualTo(CharacterRace.ELF);
+    }
+
+    @Test
+    @DisplayName("Should filter characters by minimum level")
+    void shouldFilterCharactersByMinLevel() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter, elfCharacter));
+      when(characterMapper.toSummaryResponse(testCharacter))
+          .thenReturn(testCharacterSummary);
+
+      // testCharacter has level 5, elfCharacter has level 3
+      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, 4, null, "updatedAt", "desc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getTotalLevel()).isGreaterThanOrEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("Should filter characters by maximum level")
+    void shouldFilterCharactersByMaxLevel() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter, elfCharacter));
+      when(characterMapper.toSummaryResponse(elfCharacter))
+          .thenReturn(elfCharacterSummary);
+
+      // testCharacter has level 5, elfCharacter has level 3
+      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, null, 4, "updatedAt", "desc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getTotalLevel()).isLessThanOrEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("Should filter characters by level range")
+    void shouldFilterCharactersByLevelRange() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter, elfCharacter));
+      when(characterMapper.toSummaryResponse(elfCharacter))
+          .thenReturn(elfCharacterSummary);
+
+      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, 2, 4, "updatedAt", "desc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getTotalLevel()).isBetween(2, 4);
+    }
+
+    @Test
+    @DisplayName("Should apply all filters together")
+    void shouldApplyAllFiltersTogether() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter, elfCharacter));
+      when(characterMapper.toSummaryResponse(elfCharacter))
+          .thenReturn(elfCharacterSummary);
+
+      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", CharacterRace.ELF, 2, 5, "updatedAt", "desc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getRace()).isEqualTo(CharacterRace.ELF);
+      assertThat(result.get(0).getTotalLevel()).isBetween(2, 5);
+    }
+
+    @Test
+    @DisplayName("Should sort ascending when specified")
+    void shouldSortAscending() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
+          .thenReturn(List.of(testCharacter));
+      when(characterMapper.toSummaryResponse(testCharacter))
+          .thenReturn(testCharacterSummary);
+
+      characterService.getAllByUsername(
+          "testuser", null, null, null, "name", "asc");
+
+      verify(characterRepository).findAllByOwner(
+          eq(testUser), eq(Sort.by("name").ascending()));
+    }
+
+    @Test
+    @DisplayName("Should search characters by name")
+    void shouldSearchCharactersByName() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findByOwnerAndNameContainingIgnoreCase(testUser, "Gandalf"))
           .thenReturn(List.of(testCharacter));
       when(characterMapper.toSummaryResponseList(anyList()))
           .thenReturn(List.of(testCharacterSummary));
 
-      List<CharacterSummaryResponse> result = characterService.getAllByUsername("testuser");
+      List<CharacterSummaryResponse> result = characterService.searchByName("testuser", "Gandalf");
 
       assertThat(result).hasSize(1);
       assertThat(result.get(0).getName()).isEqualTo("Gandalf");
-      verify(characterRepository).findAllByOwnerOrderByUpdatedAtDesc(testUser);
+      verify(characterRepository).findByOwnerAndNameContainingIgnoreCase(testUser, "Gandalf");
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no matches found")
+    void shouldReturnEmptyListWhenNoMatches() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findByOwnerAndNameContainingIgnoreCase(testUser, "NonExistent"))
+          .thenReturn(List.of());
+      when(characterMapper.toSummaryResponseList(anyList()))
+          .thenReturn(List.of());
+
+      List<CharacterSummaryResponse> result = characterService.searchByName(
+          "testuser", "NonExistent");
+
+      assertThat(result).isEmpty();
     }
 
     @Test
@@ -182,7 +339,8 @@ class CharacterServiceTest {
     void shouldThrowExceptionWhenUserNotFound() {
       when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
 
-      assertThatThrownBy(() -> characterService.getAllByUsername("nonexistent"))
+      assertThatThrownBy(() -> characterService.getAllByUsername(
+          "nonexistent", null, null, null, "updatedAt", "desc"))
           .isInstanceOf(ResourceNotFoundException.class)
           .hasMessageContaining("User")
           .hasMessageContaining("nonexistent");

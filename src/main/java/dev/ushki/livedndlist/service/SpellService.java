@@ -9,25 +9,16 @@ import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.SpellMapper;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for managing spells. Handles CRUD operations and search functionality for the spell
  * library.
- *
- * <p>The spell library is a shared resource containing all available
- * spells from D&D 5th Edition. Spells can be filtered by:
- * <ul>
- *   <li>Level (0-9, where 0 is cantrips)</li>
- *   <li>School of magic (Evocation, Abjuration, etc.)</li>
- *   <li>Name (partial matching)</li>
- * </ul>
- *
- * <p>Spell names must be unique to prevent duplicates in the library.
- * All write operations are transactional and logged for audit purposes.
  */
 @Service
 @RequiredArgsConstructor
@@ -39,13 +30,60 @@ public class SpellService {
   private final SpellMapper spellMapper;
 
   /**
-   * Retrieves all spells from the library.
+   * Retrieves spells with optional filtering and sorting.
    *
-   * @return list of all spells
+   * @param school        optional filter by spell school
+   * @param level         optional filter by exact level
+   * @param minLevel      optional minimum level filter
+   * @param maxLevel      optional maximum level filter
+   * @param ritual        optional filter for ritual spells
+   * @param concentration optional filter for concentration spells
+   * @param sortBy        field to sort by
+   * @param sortDir       sort direction (asc/desc)
+   * @return list of spells matching the criteria
    */
   @Transactional(readOnly = true)
-  public List<SpellResponse> getAllSpells() {
-    return spellMapper.toResponseList(spellRepository.findAll());
+  public List<SpellResponse> getAllSpells(
+      SpellSchool school,
+      Integer level,
+      Integer minLevel,
+      Integer maxLevel,
+      Boolean ritual,
+      Boolean concentration,
+      String sortBy,
+      String sortDir) {
+
+    Sort sort = sortDir.equalsIgnoreCase("asc")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+
+    List<Spell> spells = spellRepository.findAll(sort);
+
+    // Apply filters using streams
+    Stream<Spell> stream = spells.stream();
+
+    if (school != null) {
+      stream = stream.filter(s -> s.getSchool() == school);
+    }
+    if (level != null) {
+      stream = stream.filter(s -> s.getLevel().equals(level));
+    }
+    if (minLevel != null) {
+      stream = stream.filter(s -> s.getLevel() >= minLevel);
+    }
+    if (maxLevel != null) {
+      stream = stream.filter(s -> s.getLevel() <= maxLevel);
+    }
+    if (ritual != null) {
+      stream = stream.filter(s -> s.isRitual() == ritual);
+    }
+    if (concentration != null) {
+      stream = stream.filter(s -> s.isConcentration() == concentration);
+    }
+
+    return stream
+        .map(spellMapper::toResponse)
+        .toList();
   }
 
   /**
@@ -53,7 +91,6 @@ public class SpellService {
    *
    * @param id the spell ID
    * @return the spell details
-   * @throws ResourceNotFoundException if the spell is not found
    */
   @Transactional(readOnly = true)
   public SpellResponse getById(Long id) {
@@ -63,68 +100,36 @@ public class SpellService {
   }
 
   /**
-   * Retrieves all spells of a specific level.
+   * Searches for spells by name with optional additional filters.
    *
-   * <p>Examples:
-   * <ul>
-   *   <li>Cantrips: {@code getByLevel(0)}</li>
-   *   <li>1st-level spells: {@code getByLevel(1)}</li>
-   *   <li>9th-level spells: {@code getByLevel(9)}</li>
-   * </ul>
-   *
-   * @param level the spell level (0-9)
-   * @return list of spells at the specified level
+   * @param name     the name to search for
+   * @param school   optional filter by spell school
+   * @param maxLevel optional maximum spell level filter
+   * @return list of matching spells
    */
   @Transactional(readOnly = true)
-  public List<SpellResponse> getByLevel(Integer level) {
-    return spellMapper.toResponseList(spellRepository.findByLevel(level));
+  public List<SpellResponse> searchByName(String name, SpellSchool school, Integer maxLevel) {
+    List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name);
+
+    Stream<Spell> stream = spells.stream();
+
+    if (school != null) {
+      stream = stream.filter(s -> s.getSchool() == school);
+    }
+    if (maxLevel != null) {
+      stream = stream.filter(s -> s.getLevel() <= maxLevel);
+    }
+
+    return stream
+        .map(spellMapper::toResponse)
+        .toList();
   }
 
   /**
-   * Retrieves all spells from a specific school of magic.
-   *
-   * <p>Examples:
-   * <ul>
-   *   <li>Evocation spells (damage): {@code getBySchool(SpellSchool.EVOCATION)}</li>
-   *   <li>Abjuration spells (protection): {@code getBySchool(SpellSchool.ABJURATION)}</li>
-   *   <li>Necromancy spells (death/undeath): {@code getBySchool(SpellSchool.NECROMANCY)}</li>
-   * </ul>
-   *
-   * @param school the school of magic
-   * @return list of spells from the specified school
-   */
-  @Transactional(readOnly = true)
-  public List<SpellResponse> getBySchool(SpellSchool school) {
-    return spellMapper.toResponseList(spellRepository.findBySchool(school));
-  }
-
-  /**
-   * Searches for spells by name using case-insensitive partial matching.
-   *
-   * <p>Example:
-   * <pre>{@code
-   * // Finds "Fire Bolt", "Fireball", "Wall of Fire", etc.
-   * searchByName("fire");
-   * }</pre>
-   *
-   * @param name the search term (case-insensitive, partial match)
-   * @return list of spells with names containing the search term
-   */
-  @Transactional(readOnly = true)
-  public List<SpellResponse> searchByName(String name) {
-    return spellMapper.toResponseList(spellRepository.findByNameContainingIgnoreCase(name));
-  }
-
-  /**
-   * Creates a new spell in the library. Typically used by administrators to populate the spell
-   * database.
-   *
-   * <p>Spell names must be unique. If a spell with the same name already exists,
-   * a {@link DuplicateResourceException} is thrown.
+   * Creates a new spell in the library.
    *
    * @param request the spell creation request
    * @return the created spell details
-   * @throws DuplicateResourceException if a spell with this name already exists
    */
   public SpellResponse create(SpellRequest request) {
     if (spellRepository.existsByName(request.getName())) {
@@ -139,16 +144,11 @@ public class SpellService {
   }
 
   /**
-   * Updates an existing spell in the library. Only provided fields are updated (partial update
-   * support).
-   *
-   * <p>Note: This updates the spell template in the library.
-   * Characters who have learned this spell will see the updated information.
+   * Updates an existing spell.
    *
    * @param id      the spell ID
-   * @param request the update request with fields to change
+   * @param request the update request
    * @return the updated spell details
-   * @throws ResourceNotFoundException if the spell is not found
    */
   public SpellResponse update(Long id, SpellRequest request) {
     Spell spell = spellRepository.findById(id)
@@ -164,12 +164,7 @@ public class SpellService {
   /**
    * Deletes a spell from the library.
    *
-   * <p>Warning: This removes the spell from the library.
-   * Characters who have this spell in their known spells list will still have a reference to it
-   * (via many-to-many relationship).
-   *
    * @param id the spell ID to delete
-   * @throws ResourceNotFoundException if the spell is not found
    */
   public void delete(Long id) {
     if (!spellRepository.existsById(id)) {

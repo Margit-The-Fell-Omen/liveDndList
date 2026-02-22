@@ -9,6 +9,7 @@ import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.Equipment;
 import dev.ushki.livedndlist.entity.character.Spell;
+import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
@@ -17,8 +18,10 @@ import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,17 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * <p>All operations include ownership verification to ensure users can only
  * access and modify their own characters.
- *
- * <p>Key features:
- * <ul>
- *   <li>Character creation with initial class and ability scores</li>
- *   <li>Character updates with partial field updates</li>
- *   <li>Equipment management (add/remove items)</li>
- *   <li>Spell management (add/remove known spells)</li>
- *   <li>Ownership-based access control</li>
- * </ul>
- *
- * <p>All write operations are transactional and logged for audit purposes.
  */
 @Service
 @RequiredArgsConstructor
@@ -53,17 +45,63 @@ public class CharacterService {
   private final EquipmentMapper equipmentMapper;
 
   /**
-   * Retrieves all characters owned by a specific user. Characters are ordered by most recently
-   * updated first.
+   * Retrieves all characters owned by a specific user with optional filtering and sorting.
    *
    * @param username the username of the character owner
-   * @return list of character summaries for the user
-   * @throws ResourceNotFoundException if the user is not found
+   * @param race     optional filter by character race
+   * @param minLevel optional minimum level filter
+   * @param maxLevel optional maximum level filter
+   * @param sortBy   field to sort by
+   * @param sortDir  sort direction (asc/desc)
+   * @return list of character summaries matching the criteria
    */
   @Transactional(readOnly = true)
-  public List<CharacterSummaryResponse> getAllByUsername(String username) {
+  public List<CharacterSummaryResponse> getAllByUsername(
+      String username,
+      CharacterRace race,
+      Integer minLevel,
+      Integer maxLevel,
+      String sortBy,
+      String sortDir) {
+
     User user = findUserByUsername(username);
-    List<DndCharacter> characters = characterRepository.findAllByOwnerOrderByUpdatedAtDesc(user);
+
+    Sort sort = sortDir.equalsIgnoreCase("asc")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+
+    List<DndCharacter> characters = characterRepository.findAllByOwner(user, sort);
+
+    // Apply filters using streams
+    Stream<DndCharacter> stream = characters.stream();
+
+    if (race != null) {
+      stream = stream.filter(c -> c.getRace() == race);
+    }
+    if (minLevel != null) {
+      stream = stream.filter(c -> c.getTotalLevel() >= minLevel);
+    }
+    if (maxLevel != null) {
+      stream = stream.filter(c -> c.getTotalLevel() <= maxLevel);
+    }
+
+    return stream
+        .map(characterMapper::toSummaryResponse)
+        .toList();
+  }
+
+  /**
+   * Searches characters by name for a specific user.
+   *
+   * @param username the username of the character owner
+   * @param name     the name to search for (case-insensitive, partial match)
+   * @return list of matching character summaries
+   */
+  @Transactional(readOnly = true)
+  public List<CharacterSummaryResponse> searchByName(String username, String name) {
+    User user = findUserByUsername(username);
+    List<DndCharacter> characters =
+        characterRepository.findByOwnerAndNameContainingIgnoreCase(user, name);
     return characterMapper.toSummaryResponseList(characters);
   }
 
@@ -73,8 +111,6 @@ public class CharacterService {
    * @param id       the character ID
    * @param username the username of the requesting user
    * @return the character's full details
-   * @throws ResourceNotFoundException if the character is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   @Transactional(readOnly = true)
   public CharacterResponse getById(Long id, String username) {
@@ -85,18 +121,9 @@ public class CharacterService {
   /**
    * Creates a new character for a user.
    *
-   * <p>The character is initialized with:
-   * <ul>
-   *   <li>Starting class at level 1</li>
-   *   <li>Ability scores (default or provided)</li>
-   *   <li>All 18 skills with no proficiencies</li>
-   *   <li>Default currency (0 in all denominations)</li>
-   * </ul>
-   *
    * @param request  the character creation request
    * @param username the username of the owner
    * @return the created character's details
-   * @throws ResourceNotFoundException if the user is not found
    */
   public CharacterResponse create(CharacterCreateRequest request, String username) {
     User user = findUserByUsername(username);
@@ -111,14 +138,12 @@ public class CharacterService {
   }
 
   /**
-   * Updates an existing character. Only provided fields are updated (partial update support).
+   * Updates an existing character.
    *
    * @param id       the character ID
    * @param request  the update request with fields to change
    * @param username the username of the owner
    * @return the updated character's details
-   * @throws ResourceNotFoundException if the character is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   public CharacterResponse update(Long id, CharacterUpdateRequest request, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
@@ -136,8 +161,6 @@ public class CharacterService {
    *
    * @param id       the character ID
    * @param username the username of the owner
-   * @throws ResourceNotFoundException if the character is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   public void delete(Long id, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
@@ -146,14 +169,12 @@ public class CharacterService {
   }
 
   /**
-   * Adds equipment to a character's inventory. Equipment is created and added as a new item.
+   * Adds equipment to a character's inventory.
    *
    * @param characterId the character ID
    * @param request     the equipment details
    * @param username    the username of the owner
    * @return the updated character with the new equipment
-   * @throws ResourceNotFoundException if the character is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   public CharacterResponse addEquipment(Long characterId, EquipmentRequest request,
       String username) {
@@ -175,8 +196,6 @@ public class CharacterService {
    * @param equipmentId the equipment ID to remove
    * @param username    the username of the owner
    * @return the updated character without the equipment
-   * @throws ResourceNotFoundException if the character or equipment is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   public CharacterResponse removeEquipment(Long characterId, Long equipmentId, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
@@ -195,14 +214,12 @@ public class CharacterService {
   }
 
   /**
-   * Adds a spell to a character's known spells. The spell must already exist in the spell library.
+   * Adds a spell to a character's known spells.
    *
    * @param characterId the character ID
    * @param spellId     the spell ID to add
    * @param username    the username of the owner
    * @return the updated character with the new spell
-   * @throws ResourceNotFoundException if the character or spell is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   public CharacterResponse addSpell(Long characterId, Long spellId, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
@@ -225,8 +242,6 @@ public class CharacterService {
    * @param spellId     the spell ID to remove
    * @param username    the username of the owner
    * @return the updated character without the spell
-   * @throws ResourceNotFoundException if the character or spell is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
    */
   public CharacterResponse removeSpell(Long characterId, Long spellId, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
@@ -242,28 +257,11 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  /**
-   * Finds a user by username.
-   *
-   * @param username the username to search for
-   * @return the user entity
-   * @throws ResourceNotFoundException if the user is not found
-   */
   private User findUserByUsername(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
   }
 
-  /**
-   * Finds a character by ID and verifies ownership. Ensures users can only access their own
-   * characters.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return the character entity
-   * @throws ResourceNotFoundException if the character is not found
-   * @throws UnauthorizedException     if the user doesn't own the character
-   */
   private DndCharacter findCharacterWithOwnershipCheck(Long id, String username) {
     DndCharacter character = characterRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Character", "id", id));

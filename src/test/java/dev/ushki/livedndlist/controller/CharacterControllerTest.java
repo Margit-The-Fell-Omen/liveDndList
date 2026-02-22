@@ -2,6 +2,7 @@ package dev.ushki.livedndlist.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -103,9 +104,10 @@ class CharacterControllerTest {
 
     @Test
     @WithMockUser(username = "testuser")
-    @DisplayName("Should return all user's characters")
+    @DisplayName("Should return all user's characters with default parameters")
     void shouldReturnAllCharacters() throws Exception {
-      when(characterService.getAllByUsername("testuser"))
+      when(characterService.getAllByUsername(
+          eq("testuser"), isNull(), isNull(), isNull(), eq("updatedAt"), eq("desc")))
           .thenReturn(List.of(testCharacterSummary));
 
       mockMvc.perform(get("/api/v1/characters"))
@@ -116,9 +118,127 @@ class CharacterControllerTest {
     }
 
     @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return characters filtered by race")
+    void shouldReturnCharactersFilteredByRace() throws Exception {
+      when(characterService.getAllByUsername(
+          eq("testuser"), eq(CharacterRace.ELF), isNull(), isNull(), eq("updatedAt"), eq("desc")))
+          .thenReturn(List.of(testCharacterSummary));
+
+      mockMvc.perform(get("/api/v1/characters")
+              .param("race", "ELF"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return characters filtered by level range")
+    void shouldReturnCharactersFilteredByLevelRange() throws Exception {
+      when(characterService.getAllByUsername(
+          eq("testuser"), isNull(), eq(1), eq(10), eq("updatedAt"), eq("desc")))
+          .thenReturn(List.of(testCharacterSummary));
+
+      mockMvc.perform(get("/api/v1/characters")
+              .param("minLevel", "1")
+              .param("maxLevel", "10"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return characters with custom sorting")
+    void shouldReturnCharactersWithCustomSorting() throws Exception {
+      when(characterService.getAllByUsername(
+          eq("testuser"), isNull(), isNull(), isNull(), eq("name"), eq("asc")))
+          .thenReturn(List.of(testCharacterSummary));
+
+      mockMvc.perform(get("/api/v1/characters")
+              .param("sortBy", "name")
+              .param("sortDir", "asc"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return characters with all filters applied")
+    void shouldReturnCharactersWithAllFilters() throws Exception {
+      when(characterService.getAllByUsername(
+          eq("testuser"), eq(CharacterRace.HUMAN), eq(3), eq(15), eq("totalLevel"), eq("desc")))
+          .thenReturn(List.of(testCharacterSummary));
+
+      mockMvc.perform(get("/api/v1/characters")
+              .param("race", "HUMAN")
+              .param("minLevel", "3")
+              .param("maxLevel", "15")
+              .param("sortBy", "totalLevel")
+              .param("sortDir", "desc"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].name").value("Gandalf"));
+    }
+
+    @Test
     @DisplayName("Should return 401 when not authenticated")
     void shouldReturn401WhenNotAuthenticated() throws Exception {
       mockMvc.perform(get("/api/v1/characters"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/search")
+  class SearchCharactersTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should search characters by name")
+    void shouldSearchCharactersByName() throws Exception {
+      when(characterService.searchByName("testuser", "Gandalf"))
+          .thenReturn(List.of(testCharacterSummary));
+
+      mockMvc.perform(get("/api/v1/characters/search")
+              .param("name", "Gandalf"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].name").value("Gandalf"));
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return empty list when no matches found")
+    void shouldReturnEmptyListWhenNoMatches() throws Exception {
+      when(characterService.searchByName("testuser", "NonExistent"))
+          .thenReturn(List.of());
+
+      mockMvc.perform(get("/api/v1/characters/search")
+              .param("name", "NonExistent"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should search with partial name match")
+    void shouldSearchWithPartialNameMatch() throws Exception {
+      when(characterService.searchByName("testuser", "Gan"))
+          .thenReturn(List.of(testCharacterSummary));
+
+      mockMvc.perform(get("/api/v1/characters/search")
+              .param("name", "Gan"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/search")
+              .param("name", "Gandalf"))
           .andExpect(status().isUnauthorized());
     }
   }
@@ -185,6 +305,7 @@ class CharacterControllerTest {
               .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isCreated())
           .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Character created successfully"))
           .andExpect(jsonPath("$.data.name").value("Legolas"))
           .andExpect(jsonPath("$.data.race").value("ELF"));
     }
@@ -254,6 +375,8 @@ class CharacterControllerTest {
               .contentType(MediaType.APPLICATION_JSON)
               .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Character updated successfully"))
           .andExpect(jsonPath("$.data.name").value("Gandalf the White"))
           .andExpect(jsonPath("$.data.maxHitPoints").value(50));
     }
@@ -299,7 +422,8 @@ class CharacterControllerTest {
               .contentType(MediaType.APPLICATION_JSON)
               .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true));
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Equipment added"));
     }
   }
 
@@ -317,7 +441,8 @@ class CharacterControllerTest {
       mockMvc.perform(delete("/api/v1/characters/1/equipment/1")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true));
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Equipment removed"));
     }
   }
 
@@ -335,7 +460,8 @@ class CharacterControllerTest {
       mockMvc.perform(post("/api/v1/characters/1/spells/1")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true));
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Spell added"));
     }
   }
 
@@ -353,7 +479,8 @@ class CharacterControllerTest {
       mockMvc.perform(delete("/api/v1/characters/1/spells/1")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true));
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Spell removed"));
     }
   }
 }

@@ -6,6 +6,7 @@ import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
+import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.service.CharacterService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -39,15 +41,42 @@ public class CharacterController {
   private final CharacterService characterService;
 
   /**
-   * Retrieves all characters belonging to the authenticated user.
+   * Retrieves all characters belonging to the authenticated user. Supports filtering by race, level
+   * range, and sorting.
    *
    * @param userDetails the authenticated user's details
+   * @param race        optional filter by character race
+   * @param minLevel    optional minimum total level filter
+   * @param maxLevel    optional maximum total level filter
+   * @param sortBy      field to sort by (default: updatedAt)
+   * @param sortDir     sort direction: asc or desc (default: desc)
    * @return API response containing a list of character summaries
    */
   @GetMapping
   public ApiResponse<List<CharacterSummaryResponse>> getAllMyCharacters(
-      @AuthenticationPrincipal UserDetails userDetails) {
-    return ApiResponse.success(characterService.getAllByUsername(userDetails.getUsername()));
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestParam(required = false) CharacterRace race,
+      @RequestParam(required = false) Integer minLevel,
+      @RequestParam(required = false) Integer maxLevel,
+      @RequestParam(defaultValue = "updatedAt") String sortBy,
+      @RequestParam(defaultValue = "desc") String sortDir) {
+    return ApiResponse.success(characterService.getAllByUsername(
+        userDetails.getUsername(), race, minLevel, maxLevel, sortBy, sortDir));
+  }
+
+  /**
+   * Searches characters by name.
+   *
+   * @param userDetails the authenticated user's details
+   * @param name        the name to search for (case-insensitive, partial match)
+   * @return API response containing matching characters
+   */
+  @GetMapping("/search")
+  public ApiResponse<List<CharacterSummaryResponse>> searchCharacters(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestParam String name) {
+    return ApiResponse.success(
+        characterService.searchByName(userDetails.getUsername(), name));
   }
 
   /**

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,9 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
  * and account operations.
  *
  * <p>Base path: {@code /api/v1/users}
- *
- * <p>Most endpoints require authentication. The {@code /me} endpoint allows
- * users to access their own profile information.
  */
 @RestController
 @RequestMapping("/api/v1/users")
@@ -36,15 +34,28 @@ public class UserController {
   private final UserService userService;
 
   /**
-   * Retrieves all users.
+   * Retrieves all users with optional filtering. Typically restricted to administrators.
    *
-   * <p>Note: This endpoint should typically be restricted to administrators.
-   *
-   * @return API response containing a list of all users
+   * @param enabled optional filter by account enabled status
+   * @param role    optional filter by role name (e.g., "ROLE_ADMIN")
+   * @return API response containing list of users
    */
   @GetMapping
-  public ApiResponse<List<UserResponse>> getAllUsers() {
-    return ApiResponse.success(userService.getAllUsers());
+  public ApiResponse<List<UserResponse>> getAllUsers(
+      @RequestParam(required = false) Boolean enabled,
+      @RequestParam(required = false) String role) {
+    return ApiResponse.success(userService.getAllUsers(enabled, role));
+  }
+
+  /**
+   * Searches for users by username or email.
+   *
+   * @param query the search term (matches username or email)
+   * @return API response containing matching users
+   */
+  @GetMapping("/search")
+  public ApiResponse<List<UserResponse>> searchUsers(@RequestParam String query) {
+    return ApiResponse.success(userService.searchUsers(query));
   }
 
   /**
@@ -86,9 +97,6 @@ public class UserController {
 
   /**
    * Deletes a user account.
-   *
-   * <p>Note: This operation is irreversible and should typically
-   * be restricted to administrators or the account owner.
    *
    * @param id the user ID to delete
    */

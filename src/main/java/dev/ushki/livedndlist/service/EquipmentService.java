@@ -8,27 +8,16 @@ import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
 import dev.ushki.livedndlist.repository.EquipmentRepository;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service class for managing equipment items. Handles CRUD operations and search functionality for
  * the equipment library.
- *
- * <p>The equipment library is a shared resource containing all available
- * equipment items that characters can use. This includes:
- * <ul>
- *   <li>Weapons (swords, bows, etc.)</li>
- *   <li>Armor (leather, chain mail, plate, etc.)</li>
- *   <li>Shields</li>
- *   <li>Adventuring gear (rope, torches, etc.)</li>
- *   <li>Magic items</li>
- * </ul>
- *
- * <p>Equipment can be searched by type or name for easy discovery.
- * All write operations are transactional and logged for audit purposes.
  */
 @Service
 @RequiredArgsConstructor
@@ -40,13 +29,45 @@ public class EquipmentService {
   private final EquipmentMapper equipmentMapper;
 
   /**
-   * Retrieves all equipment items from the library.
+   * Retrieves equipment with optional filtering and sorting.
    *
-   * @return list of all equipment items
+   * @param type      optional filter by equipment type
+   * @param minWeight optional minimum weight filter
+   * @param maxWeight optional maximum weight filter
+   * @param sortBy    field to sort by
+   * @param sortDir   sort direction (asc/desc)
+   * @return list of equipment matching the criteria
    */
   @Transactional(readOnly = true)
-  public List<EquipmentResponse> getAll() {
-    return equipmentMapper.toResponseList(equipmentRepository.findAll());
+  public List<EquipmentResponse> getAll(
+      EquipmentType type,
+      Double minWeight,
+      Double maxWeight,
+      String sortBy,
+      String sortDir) {
+
+    Sort sort = sortDir.equalsIgnoreCase("asc")
+        ? Sort.by(sortBy).ascending()
+        : Sort.by(sortBy).descending();
+
+    List<Equipment> equipment = equipmentRepository.findAll(sort);
+
+    // Apply filters using streams
+    Stream<Equipment> stream = equipment.stream();
+
+    if (type != null) {
+      stream = stream.filter(e -> e.getType() == type);
+    }
+    if (minWeight != null) {
+      stream = stream.filter(e -> e.getWeight() != null && e.getWeight() >= minWeight);
+    }
+    if (maxWeight != null) {
+      stream = stream.filter(e -> e.getWeight() != null && e.getWeight() <= maxWeight);
+    }
+
+    return stream
+        .map(equipmentMapper::toResponse)
+        .toList();
   }
 
   /**
@@ -54,7 +75,6 @@ public class EquipmentService {
    *
    * @param id the equipment ID
    * @return the equipment details
-   * @throws ResourceNotFoundException if the equipment is not found
    */
   @Transactional(readOnly = true)
   public EquipmentResponse getById(Long id) {
@@ -64,44 +84,29 @@ public class EquipmentService {
   }
 
   /**
-   * Retrieves all equipment items of a specific type. Useful for filtering equipment by category.
+   * Searches for equipment by name with optional type filter.
    *
-   * <p>Examples:
-   * <ul>
-   *   <li>Get all weapons: {@code getByType(EquipmentType.WEAPON)}</li>
-   *   <li>Get all armor: {@code getByType(EquipmentType.ARMOR)}</li>
-   *   <li>Get all magic items: {@code getByType(EquipmentType.MAGIC_ITEM)}</li>
-   * </ul>
-   *
-   * @param type the equipment type to filter by
-   * @return list of equipment items of the specified type
+   * @param name the name to search for
+   * @param type optional filter by equipment type
+   * @return list of matching equipment
    */
   @Transactional(readOnly = true)
-  public List<EquipmentResponse> getByType(EquipmentType type) {
-    return equipmentMapper.toResponseList(equipmentRepository.findByType(type));
+  public List<EquipmentResponse> searchByName(String name, EquipmentType type) {
+    List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase(name);
+
+    Stream<Equipment> stream = equipment.stream();
+
+    if (type != null) {
+      stream = stream.filter(e -> e.getType() == type);
+    }
+
+    return stream
+        .map(equipmentMapper::toResponse)
+        .toList();
   }
 
   /**
-   * Searches for equipment by name using case-insensitive partial matching.
-   *
-   * <p>Example:
-   * <pre>{@code
-   * // Finds "Longsword", "Shortsword", "Greatsword", etc.
-   * searchByName("sword");
-   * }</pre>
-   *
-   * @param name the search term (case-insensitive, partial match)
-   * @return list of equipment items with names containing the search term
-   */
-  @Transactional(readOnly = true)
-  public List<EquipmentResponse> searchByName(String name) {
-    return equipmentMapper.toResponseList(
-        equipmentRepository.findByNameContainingIgnoreCase(name));
-  }
-
-  /**
-   * Creates a new equipment item in the library. Typically used by administrators to populate the
-   * equipment database.
+   * Creates a new equipment item in the library.
    *
    * @param request the equipment creation request
    * @return the created equipment details
@@ -115,15 +120,11 @@ public class EquipmentService {
   }
 
   /**
-   * Updates an existing equipment item. Only provided fields are updated (partial update support).
-   *
-   * <p>Note: This updates the equipment template in the library.
-   * It does not affect equipment already added to characters' inventories.
+   * Updates an existing equipment item.
    *
    * @param id      the equipment ID
-   * @param request the update request with fields to change
+   * @param request the update request
    * @return the updated equipment details
-   * @throws ResourceNotFoundException if the equipment is not found
    */
   public EquipmentResponse update(Long id, EquipmentRequest request) {
     Equipment equipment = equipmentRepository.findById(id)
@@ -139,11 +140,7 @@ public class EquipmentService {
   /**
    * Deletes an equipment item from the library.
    *
-   * <p>Warning: This removes the equipment template from the library.
-   * Equipment already in character inventories may still reference this item.
-   *
    * @param id the equipment ID to delete
-   * @throws ResourceNotFoundException if the equipment is not found
    */
   public void delete(Long id) {
     if (!equipmentRepository.existsById(id)) {

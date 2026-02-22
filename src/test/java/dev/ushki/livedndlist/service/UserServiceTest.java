@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,7 +41,11 @@ class UserServiceTest {
   private UserService userService;
 
   private User testUser;
+  private User adminUser;
+  private User disabledUser;
   private UserResponse testUserResponse;
+  private UserResponse adminUserResponse;
+  private UserResponse disabledUserResponse;
 
   @BeforeEach
   void setUp() {
@@ -53,6 +58,24 @@ class UserServiceTest {
         .enabled(true)
         .build();
 
+    adminUser = User.builder()
+        .id(2L)
+        .username("adminuser")
+        .email("admin@test.com")
+        .password("encoded_password")
+        .roles(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN))
+        .enabled(true)
+        .build();
+
+    disabledUser = User.builder()
+        .id(3L)
+        .username("disableduser")
+        .email("disabled@test.com")
+        .password("encoded_password")
+        .roles(Set.of(Role.ROLE_USER))
+        .enabled(false)
+        .build();
+
     testUserResponse = UserResponse.builder()
         .id(1L)
         .username("testuser")
@@ -61,179 +84,440 @@ class UserServiceTest {
         .enabled(true)
         .createdAt(LocalDateTime.now())
         .build();
-  }
 
-  @Test
-  @DisplayName("Should get all users")
-  void shouldGetAllUsers() {
-    when(userRepository.findAll()).thenReturn(List.of(testUser));
-    when(userMapper.toResponse(any(User.class))).thenReturn(testUserResponse);
-
-    List<UserResponse> result = userService.getAllUsers();
-
-    assertThat(result).hasSize(1);
-    assertThat(result.get(0).getUsername()).isEqualTo("testuser");
-    verify(userRepository).findAll();
-  }
-
-  @Test
-  @DisplayName("Should get user by ID")
-  void shouldGetUserById() {
-    when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-    when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
-
-    UserResponse result = userService.getUserById(1L);
-
-    assertThat(result).isNotNull();
-    assertThat(result.getUsername()).isEqualTo("testuser");
-    verify(userRepository).findById(1L);
-  }
-
-  @Test
-  @DisplayName("Should throw exception when user not found by ID")
-  void shouldThrowExceptionWhenUserNotFoundById() {
-    when(userRepository.findById(999L)).thenReturn(Optional.empty());
-
-    assertThatThrownBy(() -> userService.getUserById(999L))
-        .isInstanceOf(ResourceNotFoundException.class)
-        .hasMessageContaining("User")
-        .hasMessageContaining("999");
-  }
-
-  @Test
-  @DisplayName("Should get user by username")
-  void shouldGetUserByUsername() {
-    when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-    when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
-
-    UserResponse result = userService.getUserByUsername("testuser");
-
-    assertThat(result).isNotNull();
-    assertThat(result.getUsername()).isEqualTo("testuser");
-    verify(userRepository).findByUsername("testuser");
-  }
-
-  @Test
-  @DisplayName("Should throw exception when user not found by username")
-  void shouldThrowExceptionWhenUserNotFoundByUsername() {
-    when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
-
-    assertThatThrownBy(() -> userService.getUserByUsername("nonexistent"))
-        .isInstanceOf(ResourceNotFoundException.class)
-        .hasMessageContaining("User")
-        .hasMessageContaining("nonexistent");
-  }
-
-  @Test
-  @DisplayName("Should update user successfully")
-  void shouldUpdateUserSuccessfully() {
-    UserUpdateRequest request = UserUpdateRequest.builder()
-        .username("updateduser")
-        .email("updated@test.com")
-        .build();
-
-    User updatedUser = User.builder()
-        .id(1L)
-        .username("updateduser")
-        .email("updated@test.com")
-        .password("encoded_password")
-        .roles(Set.of(Role.ROLE_USER))
+    adminUserResponse = UserResponse.builder()
+        .id(2L)
+        .username("adminuser")
+        .email("admin@test.com")
+        .roles(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN))
         .enabled(true)
+        .createdAt(LocalDateTime.now())
         .build();
 
-    UserResponse updatedResponse = UserResponse.builder()
-        .id(1L)
-        .username("updateduser")
-        .email("updated@test.com")
+    disabledUserResponse = UserResponse.builder()
+        .id(3L)
+        .username("disableduser")
+        .email("disabled@test.com")
         .roles(Set.of(Role.ROLE_USER))
-        .enabled(true)
+        .enabled(false)
+        .createdAt(LocalDateTime.now())
         .build();
-
-    when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-    when(userRepository.existsByUsername("updateduser")).thenReturn(false);
-    when(userRepository.existsByEmail("updated@test.com")).thenReturn(false);
-    when(userRepository.save(any(User.class))).thenReturn(updatedUser);
-    when(userMapper.toResponse(any(User.class))).thenReturn(updatedResponse);
-
-    UserResponse result = userService.updateUser(1L, request);
-
-    assertThat(result).isNotNull();
-    assertThat(result.getUsername()).isEqualTo("updateduser");
-    assertThat(result.getEmail()).isEqualTo("updated@test.com");
-    verify(userRepository).save(any(User.class));
   }
 
-  @Test
-  @DisplayName("Should throw exception when updating with existing username")
-  void shouldThrowExceptionWhenUpdatingWithExistingUsername() {
-    UserUpdateRequest request = UserUpdateRequest.builder()
-        .username("existinguser")
-        .build();
+  @Nested
+  @DisplayName("Get All Users")
+  class GetAllUsersTests {
 
-    when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-    when(userRepository.existsByUsername("existinguser")).thenReturn(true);
+    @Test
+    @DisplayName("Should get all users without filters")
+    void shouldGetAllUsers() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+      when(userMapper.toResponse(disabledUser)).thenReturn(disabledUserResponse);
 
-    assertThatThrownBy(() -> userService.updateUser(1L, request))
-        .isInstanceOf(DuplicateResourceException.class)
-        .hasMessageContaining("Username already exists");
+      List<UserResponse> result = userService.getAllUsers(null, null);
 
-    verify(userRepository, never()).save(any());
+      assertThat(result).hasSize(3);
+      verify(userRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("Should filter users by enabled status true")
+    void shouldFilterUsersByEnabledTrue() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+
+      List<UserResponse> result = userService.getAllUsers(true, null);
+
+      assertThat(result).hasSize(2);
+      assertThat(result).allMatch(UserResponse::isEnabled);
+    }
+
+    @Test
+    @DisplayName("Should filter users by enabled status false")
+    void shouldFilterUsersByEnabledFalse() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(disabledUser)).thenReturn(disabledUserResponse);
+
+      List<UserResponse> result = userService.getAllUsers(false, null);
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).isEnabled()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should filter users by role USER")
+    void shouldFilterUsersByRoleUser() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+      when(userMapper.toResponse(disabledUser)).thenReturn(disabledUserResponse);
+
+      List<UserResponse> result = userService.getAllUsers(null, "ROLE_USER");
+
+      assertThat(result).hasSize(3);
+      assertThat(result).allMatch(u -> u.getRoles().contains(Role.ROLE_USER));
+    }
+
+    @Test
+    @DisplayName("Should filter users by role ADMIN")
+    void shouldFilterUsersByRoleAdmin() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+
+      List<UserResponse> result = userService.getAllUsers(null, "ROLE_ADMIN");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getRoles()).contains(Role.ROLE_ADMIN);
+    }
+
+    @Test
+    @DisplayName("Should apply both enabled and role filters")
+    void shouldApplyBothFilters() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+
+      List<UserResponse> result = userService.getAllUsers(true, "ROLE_ADMIN");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).isEnabled()).isTrue();
+      assertThat(result.get(0).getRoles()).contains(Role.ROLE_ADMIN);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no users match filters")
+    void shouldReturnEmptyListWhenNoMatch() {
+      when(userRepository.findAll()).thenReturn(List.of(testUser));
+
+      List<UserResponse> result = userService.getAllUsers(null, "ROLE_ADMIN");
+
+      assertThat(result).isEmpty();
+    }
   }
 
-  @Test
-  @DisplayName("Should throw exception when updating with existing email")
-  void shouldThrowExceptionWhenUpdatingWithExistingEmail() {
-    UserUpdateRequest request = UserUpdateRequest.builder()
-        .email("existing@test.com")
-        .build();
+  @Nested
+  @DisplayName("Search Users")
+  class SearchUsersTests {
 
-    when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-    when(userRepository.existsByEmail("existing@test.com")).thenReturn(true);
+    @Test
+    @DisplayName("Should search users by username")
+    void shouldSearchUsersByUsername() {
+      when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+          "test", "test")).thenReturn(List.of(testUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
 
-    assertThatThrownBy(() -> userService.updateUser(1L, request))
-        .isInstanceOf(DuplicateResourceException.class)
-        .hasMessageContaining("Email already exists");
+      List<UserResponse> result = userService.searchUsers("test");
 
-    verify(userRepository, never()).save(any());
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getUsername()).contains("test");
+      verify(userRepository).findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+          "test", "test");
+    }
+
+    @Test
+    @DisplayName("Should search users by email")
+    void shouldSearchUsersByEmail() {
+      when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+          "admin@test.com", "admin@test.com")).thenReturn(List.of(adminUser));
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+
+      List<UserResponse> result = userService.searchUsers("admin@test.com");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getEmail()).contains("admin@test.com");
+    }
+
+    @Test
+    @DisplayName("Should search users by partial match")
+    void shouldSearchUsersByPartialMatch() {
+      when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+          "user", "user")).thenReturn(List.of(testUser, adminUser, disabledUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
+      when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
+      when(userMapper.toResponse(disabledUser)).thenReturn(disabledUserResponse);
+
+      List<UserResponse> result = userService.searchUsers("user");
+
+      assertThat(result).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no users match search")
+    void shouldReturnEmptyListWhenNoMatch() {
+      when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+          "nonexistent", "nonexistent")).thenReturn(List.of());
+
+      List<UserResponse> result = userService.searchUsers("nonexistent");
+
+      assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should search users case-insensitively")
+    void shouldSearchCaseInsensitively() {
+      when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+          "TEST", "TEST")).thenReturn(List.of(testUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
+
+      List<UserResponse> result = userService.searchUsers("TEST");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.get(0).getUsername()).isEqualToIgnoringCase("testuser");
+    }
   }
 
-  @Test
-  @DisplayName("Should allow updating with same username")
-  void shouldAllowUpdatingWithSameUsername() {
-    UserUpdateRequest request = UserUpdateRequest.builder()
-        .username("testuser")  // Same as current
-        .build();
+  @Nested
+  @DisplayName("Get User By ID")
+  class GetUserByIdTests {
 
-    when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-    when(userRepository.save(any(User.class))).thenReturn(testUser);
-    when(userMapper.toResponse(any(User.class))).thenReturn(testUserResponse);
+    @Test
+    @DisplayName("Should get user by ID")
+    void shouldGetUserById() {
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
 
-    UserResponse result = userService.updateUser(1L, request);
+      UserResponse result = userService.getUserById(1L);
 
-    assertThat(result).isNotNull();
-    verify(userRepository).save(any(User.class));
+      assertThat(result).isNotNull();
+      assertThat(result.getUsername()).isEqualTo("testuser");
+      verify(userRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when user not found by ID")
+    void shouldThrowExceptionWhenUserNotFoundById() {
+      when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> userService.getUserById(999L))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("User")
+          .hasMessageContaining("999");
+    }
   }
 
-  @Test
-  @DisplayName("Should delete user successfully")
-  void shouldDeleteUserSuccessfully() {
-    when(userRepository.existsById(1L)).thenReturn(true);
+  @Nested
+  @DisplayName("Get User By Username")
+  class GetUserByUsernameTests {
 
-    userService.deleteUser(1L);
+    @Test
+    @DisplayName("Should get user by username")
+    void shouldGetUserByUsername() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
 
-    verify(userRepository).deleteById(1L);
+      UserResponse result = userService.getUserByUsername("testuser");
+
+      assertThat(result).isNotNull();
+      assertThat(result.getUsername()).isEqualTo("testuser");
+      verify(userRepository).findByUsername("testuser");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when user not found by username")
+    void shouldThrowExceptionWhenUserNotFoundByUsername() {
+      when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> userService.getUserByUsername("nonexistent"))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("User")
+          .hasMessageContaining("nonexistent");
+    }
   }
 
-  @Test
-  @DisplayName("Should throw exception when deleting non-existent user")
-  void shouldThrowExceptionWhenDeletingNonExistentUser() {
-    when(userRepository.existsById(999L)).thenReturn(false);
+  @Nested
+  @DisplayName("Update User")
+  class UpdateUserTests {
 
-    assertThatThrownBy(() -> userService.deleteUser(999L))
-        .isInstanceOf(ResourceNotFoundException.class)
-        .hasMessageContaining("User")
-        .hasMessageContaining("999");
+    @Test
+    @DisplayName("Should update user successfully")
+    void shouldUpdateUserSuccessfully() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .username("updateduser")
+          .email("updated@test.com")
+          .build();
 
-    verify(userRepository, never()).deleteById(any());
+      User updatedUser = User.builder()
+          .id(1L)
+          .username("updateduser")
+          .email("updated@test.com")
+          .password("encoded_password")
+          .roles(Set.of(Role.ROLE_USER))
+          .enabled(true)
+          .build();
+
+      UserResponse updatedResponse = UserResponse.builder()
+          .id(1L)
+          .username("updateduser")
+          .email("updated@test.com")
+          .roles(Set.of(Role.ROLE_USER))
+          .enabled(true)
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.existsByUsername("updateduser")).thenReturn(false);
+      when(userRepository.existsByEmail("updated@test.com")).thenReturn(false);
+      when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+      when(userMapper.toResponse(any(User.class))).thenReturn(updatedResponse);
+
+      UserResponse result = userService.updateUser(1L, request);
+
+      assertThat(result).isNotNull();
+      assertThat(result.getUsername()).isEqualTo("updateduser");
+      assertThat(result.getEmail()).isEqualTo("updated@test.com");
+      verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should update only username")
+    void shouldUpdateOnlyUsername() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .username("newusername")
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.existsByUsername("newusername")).thenReturn(false);
+      when(userRepository.save(any(User.class))).thenReturn(testUser);
+      when(userMapper.toResponse(any(User.class))).thenReturn(testUserResponse);
+
+      UserResponse result = userService.updateUser(1L, request);
+
+      assertThat(result).isNotNull();
+      verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should update only email")
+    void shouldUpdateOnlyEmail() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .email("newemail@test.com")
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.existsByEmail("newemail@test.com")).thenReturn(false);
+      when(userRepository.save(any(User.class))).thenReturn(testUser);
+      when(userMapper.toResponse(any(User.class))).thenReturn(testUserResponse);
+
+      UserResponse result = userService.updateUser(1L, request);
+
+      assertThat(result).isNotNull();
+      verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating with existing username")
+    void shouldThrowExceptionWhenUpdatingWithExistingUsername() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .username("existinguser")
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.existsByUsername("existinguser")).thenReturn(true);
+
+      assertThatThrownBy(() -> userService.updateUser(1L, request))
+          .isInstanceOf(DuplicateResourceException.class)
+          .hasMessageContaining("Username already exists");
+
+      verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating with existing email")
+    void shouldThrowExceptionWhenUpdatingWithExistingEmail() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .email("existing@test.com")
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.existsByEmail("existing@test.com")).thenReturn(true);
+
+      assertThatThrownBy(() -> userService.updateUser(1L, request))
+          .isInstanceOf(DuplicateResourceException.class)
+          .hasMessageContaining("Email already exists");
+
+      verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should allow updating with same username")
+    void shouldAllowUpdatingWithSameUsername() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .username("testuser")  // Same as current
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.save(any(User.class))).thenReturn(testUser);
+      when(userMapper.toResponse(any(User.class))).thenReturn(testUserResponse);
+
+      UserResponse result = userService.updateUser(1L, request);
+
+      assertThat(result).isNotNull();
+      verify(userRepository).save(any(User.class));
+      verify(userRepository, never()).existsByUsername(any());
+    }
+
+    @Test
+    @DisplayName("Should allow updating with same email")
+    void shouldAllowUpdatingWithSameEmail() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .email("test@test.com")  // Same as current
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.save(any(User.class))).thenReturn(testUser);
+      when(userMapper.toResponse(any(User.class))).thenReturn(testUserResponse);
+
+      UserResponse result = userService.updateUser(1L, request);
+
+      assertThat(result).isNotNull();
+      verify(userRepository).save(any(User.class));
+      verify(userRepository, never()).existsByEmail(any());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating non-existent user")
+    void shouldThrowExceptionWhenUpdatingNonExistentUser() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .username("newusername")
+          .build();
+
+      when(userRepository.findById(999L)).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> userService.updateUser(999L, request))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("User")
+          .hasMessageContaining("999");
+
+      verify(userRepository, never()).save(any());
+    }
+  }
+
+  @Nested
+  @DisplayName("Delete User")
+  class DeleteUserTests {
+
+    @Test
+    @DisplayName("Should delete user successfully")
+    void shouldDeleteUserSuccessfully() {
+      when(userRepository.existsById(1L)).thenReturn(true);
+
+      userService.deleteUser(1L);
+
+      verify(userRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when deleting non-existent user")
+    void shouldThrowExceptionWhenDeletingNonExistentUser() {
+      when(userRepository.existsById(999L)).thenReturn(false);
+
+      assertThatThrownBy(() -> userService.deleteUser(999L))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("User")
+          .hasMessageContaining("999");
+
+      verify(userRepository, never()).deleteById(any());
+    }
   }
 }

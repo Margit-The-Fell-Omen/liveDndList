@@ -22,12 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * REST controller for managing equipment items. Provides endpoints for CRUD operations and
- * equipment search functionality.
+ * equipment filtering.
  *
  * <p>Base path: {@code /api/v1/equipment}
- *
- * <p>Equipment includes weapons, armor, shields, and other items
- * that characters can use in the game.
  */
 @RestController
 @RequestMapping("/api/v1/equipment")
@@ -37,13 +34,24 @@ public class EquipmentController {
   private final EquipmentService equipmentService;
 
   /**
-   * Retrieves all equipment items.
+   * Retrieves equipment with optional filtering.
    *
-   * @return API response containing a list of all equipment
+   * @param type      optional filter by equipment type
+   * @param minWeight optional minimum weight filter
+   * @param maxWeight optional maximum weight filter
+   * @param sortBy    field to sort by (default: name)
+   * @param sortDir   sort direction: asc or desc (default: asc)
+   * @return API response containing list of matching equipment
    */
   @GetMapping
-  public ApiResponse<List<EquipmentResponse>> getAll() {
-    return ApiResponse.success(equipmentService.getAll());
+  public ApiResponse<List<EquipmentResponse>> getAll(
+      @RequestParam(required = false) EquipmentType type,
+      @RequestParam(required = false) Double minWeight,
+      @RequestParam(required = false) Double maxWeight,
+      @RequestParam(defaultValue = "name") String sortBy,
+      @RequestParam(defaultValue = "asc") String sortDir) {
+    return ApiResponse.success(equipmentService.getAll(
+        type, minWeight, maxWeight, sortBy, sortDir));
   }
 
   /**
@@ -58,25 +66,17 @@ public class EquipmentController {
   }
 
   /**
-   * Retrieves all equipment items of a specific type.
+   * Searches for equipment by name with optional type filter.
    *
-   * @param type the equipment type (e.g., WEAPON, ARMOR, SHIELD)
-   * @return API response containing a list of equipment matching the type
-   */
-  @GetMapping("/type/{type}")
-  public ApiResponse<List<EquipmentResponse>> getByType(@PathVariable EquipmentType type) {
-    return ApiResponse.success(equipmentService.getByType(type));
-  }
-
-  /**
-   * Searches for equipment by name.
-   *
-   * @param name the search query (case-insensitive, partial match)
-   * @return API response containing a list of matching equipment
+   * @param name the name to search for (case-insensitive, partial match)
+   * @param type optional filter by equipment type
+   * @return API response containing matching equipment
    */
   @GetMapping("/search")
-  public ApiResponse<List<EquipmentResponse>> search(@RequestParam String name) {
-    return ApiResponse.success(equipmentService.searchByName(name));
+  public ApiResponse<List<EquipmentResponse>> search(
+      @RequestParam String name,
+      @RequestParam(required = false) EquipmentType type) {
+    return ApiResponse.success(equipmentService.searchByName(name, type));
   }
 
   /**

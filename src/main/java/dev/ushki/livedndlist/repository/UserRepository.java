@@ -2,6 +2,7 @@ package dev.ushki.livedndlist.repository;
 
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.enums.Role;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,14 +93,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Page<User> findByEnabledAndRolesContaining(Boolean enabled, Role role, Pageable pageable);
 
   /**
-   * Searches for users by username or email using case-insensitive partial matching. Used for admin
-   * user search functionality.
-   *
-   * @param username the username search term
-   * @param email    the email search term (typically same as username)
-   * @param pageable pagination information
-   * @return page of users matching either username or email search
+   * Searches for users by username or email using case-insensitive partial matching.
    */
-  Page<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-      String username, String email, Pageable pageable);
+  List<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+      String username, String email);
 }

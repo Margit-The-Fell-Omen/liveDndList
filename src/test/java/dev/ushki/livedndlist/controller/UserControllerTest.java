@@ -2,6 +2,8 @@ package dev.ushki.livedndlist.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -31,6 +33,9 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+/**
+ * Unit tests for UserController.
+ */
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
@@ -47,6 +52,7 @@ class UserControllerTest {
   private JwtTokenProvider jwtTokenProvider;
 
   private UserResponse testUserResponse;
+  private UserResponse adminUserResponse;
 
   @BeforeEach
   void setUp() {
@@ -58,6 +64,15 @@ class UserControllerTest {
         .enabled(true)
         .createdAt(LocalDateTime.now())
         .build();
+
+    adminUserResponse = UserResponse.builder()
+        .id(2L)
+        .username("admin")
+        .email("admin@test.com")
+        .roles(Set.of(Role.ROLE_ADMIN))
+        .enabled(true)
+        .createdAt(LocalDateTime.now())
+        .build();
   }
 
   @Nested
@@ -66,11 +81,56 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    @DisplayName("Should return all users")
-    void shouldReturnAllUsers() throws Exception {
-      when(userService.getAllUsers()).thenReturn(List.of(testUserResponse));
+    @DisplayName("Should return all users without filters")
+    void shouldReturnAllUsersWithoutFilters() throws Exception {
+      when(userService.getAllUsers(isNull(), isNull()))
+          .thenReturn(List.of(testUserResponse, adminUserResponse));
 
       mockMvc.perform(get("/api/v1/users"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.length()").value(2))
+          .andExpect(jsonPath("$.data[0].username").value("testuser"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should return users filtered by enabled status")
+    void shouldReturnUsersFilteredByEnabled() throws Exception {
+      when(userService.getAllUsers(eq(true), isNull()))
+          .thenReturn(List.of(testUserResponse));
+
+      mockMvc.perform(get("/api/v1/users")
+              .param("enabled", "true"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].enabled").value(true));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should return users filtered by role")
+    void shouldReturnUsersFilteredByRole() throws Exception {
+      when(userService.getAllUsers(isNull(), eq("ROLE_ADMIN")))
+          .thenReturn(List.of(adminUserResponse));
+
+      mockMvc.perform(get("/api/v1/users")
+              .param("role", "ROLE_ADMIN"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].username").value("admin"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should return users filtered by enabled and role")
+    void shouldReturnUsersFilteredByEnabledAndRole() throws Exception {
+      when(userService.getAllUsers(eq(true), eq("ROLE_USER")))
+          .thenReturn(List.of(testUserResponse));
+
+      mockMvc.perform(get("/api/v1/users")
+              .param("enabled", "true")
+              .param("role", "ROLE_USER"))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data[0].username").value("testuser"));
@@ -81,6 +141,53 @@ class UserControllerTest {
     void shouldReturn401WhenNotAuthenticated() throws Exception {
       mockMvc.perform(get("/api/v1/users"))
           .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/users/search")
+  class SearchUsersTests {
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should search users by query")
+    void shouldSearchUsersByQuery() throws Exception {
+      when(userService.searchUsers("test"))
+          .thenReturn(List.of(testUserResponse));
+
+      mockMvc.perform(get("/api/v1/users/search")
+              .param("query", "test"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].username").value("testuser"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should return empty list when no users match query")
+    void shouldReturnEmptyListWhenNoMatch() throws Exception {
+      when(userService.searchUsers("nonexistent"))
+          .thenReturn(List.of());
+
+      mockMvc.perform(get("/api/v1/users/search")
+              .param("query", "nonexistent"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.length()").value(0));
+    }
+
+    @Test
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @DisplayName("Should search users by email")
+    void shouldSearchUsersByEmail() throws Exception {
+      when(userService.searchUsers("@test.com"))
+          .thenReturn(List.of(testUserResponse, adminUserResponse));
+
+      mockMvc.perform(get("/api/v1/users/search")
+              .param("query", "@test.com"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.length()").value(2));
     }
   }
 
@@ -98,6 +205,13 @@ class UserControllerTest {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data.username").value("testuser"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/users/me"))
+          .andExpect(status().isUnauthorized());
     }
   }
 
