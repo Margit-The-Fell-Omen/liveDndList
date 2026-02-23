@@ -9,7 +9,7 @@
         <relativePath/>
     </parent>
     <groupId>dev.ushki</groupId>
-    <artifactId>live-dnd-list</artifactId>
+    <artifactId>livedndlist</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>live-dnd-list</name>
     <description>Live D&amp;D character list</description>
