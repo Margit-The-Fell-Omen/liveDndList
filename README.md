@@ -1,7 +1,7 @@
 # Live D&D List
 ## Overview
 This is a Spring Boot application for creating and managing D&D character lists, built with REST architecture. This app will provide user-friendly interface for creating D&D characters, managing and sharing them.
-## Developmrnt state
+## Development state
 Currently in active development. Not yet released.
 ## Tech stack
 - Java 21
