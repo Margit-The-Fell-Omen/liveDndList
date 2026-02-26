@@ -28,9 +28,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-
 /**
- * Initializes H2 database with hardcoded values to eliminate manual input.
+ * A class for database initialization
  */
 @Component
 @RequiredArgsConstructor
@@ -46,7 +45,13 @@ public class DataInitializer implements CommandLineRunner {
 
   @Override
   public void run(String... args) {
-    log.info("Initializing test data... ");
+    // Проверяем, инициализированы ли данные
+    if (isDataAlreadyInitialized()) {
+      log.info("Test data already exists, skipping initialization");
+      return;
+    }
+
+    log.info("Initializing test data...");
 
     createSpells();
 
@@ -61,26 +66,44 @@ public class DataInitializer implements CommandLineRunner {
     log.info("Test data initialized successfully");
 
     log.info("Test Users:");
-    log.info(" Admin: username = admin, password = admin123");
-    log.info(" User: username = player1, password = player123");
+    log.info("  Admin: username = admin, password = admin123");
+    log.info("  User: username = player1, password = player123");
+  }
+
+  /**
+   * Проверяет, были ли данные уже инициализированы.
+   */
+  private boolean isDataAlreadyInitialized() {
+    return userRepository.count() > 0
+        || spellRepository.count() > 0
+        || characterRepository.count() > 0;
   }
 
   private User createUser(String username, String email, String password, Set<Role> roles) {
-    User user = User.builder()
-        .username(username)
-        .email(email)
-        .password(passwordEncoder.encode(password))
-        .roles(roles)
-        .enabled(true)
-        .build();
-
-    return userRepository.save(user);
+    // Дополнительная проверка на случай частичной инициализации
+    return userRepository.findByUsername(username)
+        .orElseGet(() -> {
+          User user = User.builder()
+              .username(username)
+              .email(email)
+              .password(passwordEncoder.encode(password))
+              .roles(roles)
+              .enabled(true)
+              .build();
+          return userRepository.save(user);
+        });
   }
 
   String durationInstant = "Instantaneous";
   String castingTime1Action = "1 action";
 
   private void createSpells() {
+    // Проверка перед созданием спеллов
+    if (spellRepository.count() > 0) {
+      log.info("Spells already exist, skipping spell creation");
+      return;
+    }
+
     List<Spell> spells = List.of(
         Spell.builder()
             .name("Fire Bolt")
@@ -212,6 +235,13 @@ public class DataInitializer implements CommandLineRunner {
   @SuppressWarnings("checkstyle:Indentation")
   private void createCharacterForUser(User owner, String name, CharacterRace race, String className,
       int level) {
+
+    // Проверка, существует ли уже персонаж с таким именем у этого владельца
+    if (characterRepository.existsByNameAndOwner(name, owner)) {
+      log.info("Character '{}' already exists for user '{}', skipping", name, owner.getUsername());
+      return;
+    }
+
     List<Spell> allSpells = spellRepository.findAll();
     Set<Spell> characterSpells = new HashSet<>();
 
@@ -303,7 +333,7 @@ public class DataInitializer implements CommandLineRunner {
         .armorClass(16)
         .speed(30)
         .proficiencyBonus(2 + (level - 1) / 4)
-        .hitDice(level + "d10") // NOTE: check PNB on this
+        .hitDice(level + "d10")
         .currency(currency)
         .spells(characterSpells)
         .backstory("Essay, that players wrote and forgot about the same day")
@@ -319,7 +349,6 @@ public class DataInitializer implements CommandLineRunner {
     character.getSavingThrowProficiencies().add(AbilityType.STRENGTH);
     character.getSavingThrowProficiencies().add(AbilityType.CONSTITUTION);
 
-    // Not so good implementation
     if (className.equals("Wizard")) {
       character.setSpellcastingAbility(AbilityType.INTELLIGENCE);
     } else if (className.equals("Ranger")) {
