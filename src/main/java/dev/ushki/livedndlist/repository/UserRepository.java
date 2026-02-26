@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -24,7 +25,8 @@ import org.springframework.stereotype.Repository;
  *   <li>Searching users by username or email (for admin search)</li>
  * </ul>
  *
- * <p>All custom query methods are automatically implemented by Spring Data JPA.
+ * <p>Methods that return User entities use EntityGraph to ensure roles
+ * are loaded efficiently, avoiding N+1 queries.
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -35,6 +37,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @param username the username to search for
    * @return Optional containing the user if found
    */
+  @EntityGraph(attributePaths = {"roles"})
   Optional<User> findByUsername(String username);
 
   /**
@@ -43,6 +46,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @param email the email address to search for
    * @return Optional containing the user if found
    */
+  @EntityGraph(attributePaths = {"roles"})
   Optional<User> findByEmail(String email);
 
   /**
@@ -70,6 +74,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @param pageable pagination information
    * @return page of users matching the enabled status
    */
+  @EntityGraph(attributePaths = {"roles"})
   Page<User> findByEnabled(Boolean enabled, Pageable pageable);
 
   /**
@@ -80,6 +85,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @param pageable pagination information
    * @return page of users with the specified role
    */
+  @EntityGraph(attributePaths = {"roles"})
   Page<User> findByRolesContaining(Role role, Pageable pageable);
 
   /**
@@ -90,11 +96,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @param pageable pagination information
    * @return page of users matching both criteria
    */
+  @EntityGraph(attributePaths = {"roles"})
   Page<User> findByEnabledAndRolesContaining(Boolean enabled, Role role, Pageable pageable);
 
   /**
    * Searches for users by username or email using case-insensitive partial matching.
+   *
+   * @param username the username search term (partial match)
+   * @param email    the email search term (partial match)
+   * @return list of users matching either criterion
    */
+  @EntityGraph(attributePaths = {"roles"})
   List<User> findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
       String username, String email);
 }

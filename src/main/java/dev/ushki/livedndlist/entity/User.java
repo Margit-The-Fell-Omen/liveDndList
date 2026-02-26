@@ -74,7 +74,7 @@ public class User implements UserDetails {
   @Builder.Default
   private boolean enabled = true;
 
-  @ElementCollection(fetch = FetchType.EAGER)
+  @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
   @Enumerated(EnumType.STRING)
   @Column(name = "role")

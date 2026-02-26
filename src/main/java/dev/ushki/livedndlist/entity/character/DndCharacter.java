@@ -20,6 +20,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -56,6 +59,24 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "characters")
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "Character.summary",
+        attributeNodes = {
+            @NamedAttributeNode("owner"),
+            @NamedAttributeNode("classes")
+        }
+    ),
+    @NamedEntityGraph(
+        name = "Character.full",
+        attributeNodes = {
+            @NamedAttributeNode("owner"),
+            @NamedAttributeNode("classes"),
+            @NamedAttributeNode("skills"),
+            @NamedAttributeNode("savingThrowProficiencies")
+        }
+    )
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -63,34 +84,16 @@ import lombok.Setter;
 @Builder
 public class DndCharacter {
 
-  /**
-   * Default starting level for new characters.
-   */
   private static final int DEFAULT_LEVEL = 1;
 
-  /**
-   * Default starting experience points.
-   */
   private static final int DEFAULT_XP = 0;
 
-  /**
-   * Default hit points for level 1 characters.
-   */
   private static final int DEFAULT_HP = 10;
 
-  /**
-   * Default armor class (unarmored).
-   */
   private static final int DEFAULT_AC = 10;
 
-  /**
-   * Default walking speed in feet per round.
-   */
   private static final int DEFAULT_SPEED = 30;
 
-  /**
-   * Starting proficiency bonus at level 1.
-   */
   private static final int DEFAULT_PROF_BONUS = 2;
 
   // ==================== Identity ====================
