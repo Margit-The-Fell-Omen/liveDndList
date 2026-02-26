@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.dto.request;
 
+import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import jakarta.validation.Valid;
@@ -100,4 +101,7 @@ public class CharacterCreateRequest {
    * URL to the character's portrait image. Optional - used for visual representation.
    */
   private String portraitUrl;
+
+  private AbilityType spellcastingAbility;
+
 }
