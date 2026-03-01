@@ -12,6 +12,7 @@ import dev.ushki.livedndlist.entity.character.Spell;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
+import dev.ushki.livedndlist.exceptions.ResourceSaveFailureException;
 import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
@@ -44,6 +45,8 @@ public class CharacterService {
   private final SpellRepository spellRepository;
   private final CharacterMapper characterMapper;
   private final EquipmentMapper equipmentMapper;
+
+  private static final String CHARACTER_RESOURCE = "Character";
 
   /**
    * Retrieves all characters owned by a specific user with optional filtering and sorting.
@@ -265,13 +268,187 @@ public class CharacterService {
 
   private DndCharacter findCharacterWithOwnershipCheck(Long id, String username) {
     DndCharacter character = characterRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Character", "id", id));
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
 
     if (!character.getOwner().getUsername().equals(username)) {
       throw new UnauthorizedException("You don't have access to this character");
     }
 
     return character;
+  }
+
+  /**
+   * Retrieves all characters owned by a user, ordered by most recently updated. Useful for
+   * dashboard views showing recent activity.
+   *
+   * @param username the username of the character owner
+   * @return list of character summaries ordered by updated date (newest first)
+   */
+  @Transactional(readOnly = true)
+  public List<CharacterSummaryResponse> getRecentCharacters(String username) {
+    User user = findUserByUsername(username);
+    List<DndCharacter> characters = characterRepository.findAllByOwnerOrderByUpdatedAtDesc(user);
+    log.info("Retrieved {} recent characters for user '{}'", characters.size(), username);
+    return characterMapper.toSummaryResponseList(characters);
+  }
+
+  /**
+   * Retrieves character with owner and class information loaded. Optimized for character
+   * preview/summary displays.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response with owner and class data
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterSummary(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdWithOwnerAndClasses(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character summary for '{}'", character.getName());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character with skills loaded. Optimized for skill management and character sheet
+   * skill display.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response with skills data
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterWithSkills(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdWithSkills(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character '{}' with skills", character.getName());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character with spells loaded. Optimized for spellcasting management and spell
+   * selection.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response with spells data
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterWithSpells(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdWithSpells(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character '{}' with {} spells",
+        character.getName(), character.getSpells().size());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character with equipment loaded. Optimized for inventory management.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response with equipment data
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterWithEquipment(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdWithEquipment(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character '{}' with {} equipment items",
+        character.getName(), character.getEquipment().size());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character with saving throw proficiencies loaded. Optimized for saving throw displays
+   * and combat.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response with saving throw data
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterWithSavingThrows(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdWithSavingThrows(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character '{}' with saving throws", character.getName());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character optimized for character sheet display. Loads owner, classes, and skills in
+   * a single query.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response optimized for character sheet
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterSheet(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdForCharacterSheet(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character sheet for '{}'", character.getName());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character optimized for combat display. Loads equipment, saving throws, and class
+   * information.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response optimized for combat
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterForCombat(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdForCombat(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character '{}' for combat", character.getName());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Retrieves character optimized for spellcasting display. Loads spells and class information for
+   * spell slot calculation.
+   *
+   * @param id       the character ID
+   * @param username the username of the requesting user
+   * @return character response optimized for spellcasting
+   */
+  @Transactional(readOnly = true)
+  public CharacterResponse getCharacterForSpellcasting(Long id, String username) {
+    DndCharacter character = characterRepository.findByIdForSpellcasting(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    verifyOwnership(character, username);
+    log.info("Retrieved character '{}' for spellcasting with {} spells",
+        character.getName(), character.getSpells().size());
+    return characterMapper.toResponse(character);
+  }
+
+  /**
+   * Helper method to verify character ownership. Extracted for reuse across methods.
+   *
+   * @param character the character to verify
+   * @param username  the expected owner's username
+   * @throws UnauthorizedException if the user doesn't own the character
+   */
+  private void verifyOwnership(DndCharacter character, String username) {
+    if (!character.getOwner().getUsername().equals(username)) {
+      throw new UnauthorizedException("You don't have access to this character");
+    }
   }
 
   /**
@@ -306,8 +483,8 @@ public class CharacterService {
     character.setOwner(user);
 
     log.info("Step 2: Adding starter equipment");
-    addStarterWeapon(character, request);
-    addStarterArmor(character, request);
+    addStarterWeapon(character);
+    addStarterArmor(character);
     addStarterPack(character);
     setStarterGold(character);
 
@@ -319,7 +496,7 @@ public class CharacterService {
     // Simulate failure for testing transaction rollback
     if (request.getName().contains("FAIL")) {
       log.error("Step 4: FAILURE! But nothing saved yet - transaction will rollback");
-      throw new RuntimeException("Simulated failure during starter pack creation");
+      throw new ResourceSaveFailureException("Simulated failure during starter pack creation");
     }
 
     log.info("Step 5: Saving character to database");
@@ -330,7 +507,7 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  private void addStarterWeapon(DndCharacter character, CharacterCreateRequest request) {
+  private void addStarterWeapon(DndCharacter character) {
     Equipment weapon = Equipment.builder()
         .name("Longsword")
         .type(EquipmentType.WEAPON)
@@ -343,7 +520,7 @@ public class CharacterService {
     character.addEquipment(weapon);
   }
 
-  private void addStarterArmor(DndCharacter character, CharacterCreateRequest request) {
+  private void addStarterArmor(DndCharacter character) {
     Equipment armor = Equipment.builder()
         .name("Leather Armor")
         .type(EquipmentType.ARMOR)

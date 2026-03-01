@@ -36,7 +36,6 @@ public class SpellController {
    * Retrieves spells with optional filtering.
    *
    * @param school        optional filter by spell school
-   * @param level         optional filter by exact spell level
    * @param minLevel      optional minimum spell level filter
    * @param maxLevel      optional maximum spell level filter
    * @param ritual        optional filter for ritual spells
@@ -48,7 +47,6 @@ public class SpellController {
   @GetMapping
   public ApiResponse<List<SpellResponse>> getAllSpells(
       @RequestParam(required = false) SpellSchool school,
-      @RequestParam(required = false) Integer level,
       @RequestParam(required = false) Integer minLevel,
       @RequestParam(required = false) Integer maxLevel,
       @RequestParam(required = false) Boolean ritual,
@@ -56,7 +54,7 @@ public class SpellController {
       @RequestParam(defaultValue = "name") String sortBy,
       @RequestParam(defaultValue = "asc") String sortDir) {
     return ApiResponse.success(spellService.getAllSpells(
-        school, level, minLevel, maxLevel, ritual, concentration, sortBy, sortDir));
+        school, minLevel, maxLevel, ritual, concentration, sortBy, sortDir));
   }
 
   /**

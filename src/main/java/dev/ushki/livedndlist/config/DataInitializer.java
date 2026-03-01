@@ -16,7 +16,6 @@ import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.enums.SkillType;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.repository.CharacterRepository;
-import dev.ushki.livedndlist.repository.EquipmentRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.HashSet;
@@ -29,7 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
- * A class for database initialization
+ * A class for database initialization.
  */
 @Component
 @RequiredArgsConstructor
@@ -37,7 +36,6 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
   private final UserRepository userRepository;
-  private final EquipmentRepository equipmentRepository;
   private final SpellRepository spellRepository;
   private final CharacterRepository characterRepository;
 

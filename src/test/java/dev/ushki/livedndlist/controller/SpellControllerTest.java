@@ -105,7 +105,7 @@ class SpellControllerTest {
     @DisplayName("Should return all spells without filters")
     void shouldReturnAllSpellsWithoutFilters() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), isNull(), isNull(), isNull(), isNull(), isNull(),
+          isNull(), isNull(), isNull(), isNull(), isNull(),
           eq("name"), eq("asc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse, shieldResponse));
 
@@ -120,7 +120,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells filtered by school")
     void shouldReturnSpellsFilteredBySchool() throws Exception {
       when(spellService.getAllSpells(
-          eq(SpellSchool.EVOCATION), isNull(), isNull(), isNull(), isNull(), isNull(),
+          eq(SpellSchool.EVOCATION), isNull(), isNull(), isNull(), isNull(),
           eq("name"), eq("asc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse));
 
@@ -136,7 +136,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells filtered by exact level")
     void shouldReturnSpellsFilteredByLevel() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), eq(3), isNull(), isNull(), isNull(), isNull(),
+          isNull(), isNull(), isNull(), isNull(), isNull(),
           eq("name"), eq("asc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse));
 
@@ -151,7 +151,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells filtered by level range")
     void shouldReturnSpellsFilteredByLevelRange() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), isNull(), eq(1), eq(3), isNull(), isNull(),
+          isNull(), eq(1), eq(3), isNull(), isNull(),
           eq("name"), eq("asc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse, shieldResponse));
 
@@ -167,7 +167,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells filtered by concentration")
     void shouldReturnSpellsFilteredByConcentration() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), isNull(), isNull(), isNull(), isNull(), eq(true),
+          isNull(), isNull(), isNull(), isNull(), eq(true),
           eq("name"), eq("asc")))
           .thenReturn(List.of());
 
@@ -182,7 +182,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells filtered by ritual")
     void shouldReturnSpellsFilteredByRitual() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), isNull(), isNull(), isNull(), eq(true), isNull(),
+          isNull(), isNull(), isNull(), eq(true), isNull(),
           eq("name"), eq("asc")))
           .thenReturn(List.of());
 
@@ -196,7 +196,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells with custom sorting")
     void shouldReturnSpellsWithCustomSorting() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), isNull(), isNull(), isNull(), isNull(), isNull(),
+          isNull(), isNull(), isNull(), isNull(), isNull(),
           eq("level"), eq("desc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse, shieldResponse));
 
@@ -211,7 +211,7 @@ class SpellControllerTest {
     @DisplayName("Should return spells with multiple filters")
     void shouldReturnSpellsWithMultipleFilters() throws Exception {
       when(spellService.getAllSpells(
-          eq(SpellSchool.EVOCATION), isNull(), eq(1), eq(5), isNull(), eq(false),
+          eq(SpellSchool.EVOCATION), eq(1), eq(5), isNull(), eq(false),
           eq("name"), eq("asc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse));
 

@@ -1,11 +1,8 @@
 package dev.ushki.livedndlist.repository;
 
 import dev.ushki.livedndlist.entity.User;
-import dev.ushki.livedndlist.enums.Role;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -66,38 +63,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
    * @return true if a user with this email exists
    */
   boolean existsByEmail(String email);
-
-  /**
-   * Finds users by enabled status with pagination. Used for filtering active/inactive accounts.
-   *
-   * @param enabled  the enabled status to filter by
-   * @param pageable pagination information
-   * @return page of users matching the enabled status
-   */
-  @EntityGraph(attributePaths = {"roles"})
-  Page<User> findByEnabled(Boolean enabled, Pageable pageable);
-
-  /**
-   * Finds users who have a specific role with pagination. Used for listing admins or other
-   * role-based queries.
-   *
-   * @param role     the role to filter by
-   * @param pageable pagination information
-   * @return page of users with the specified role
-   */
-  @EntityGraph(attributePaths = {"roles"})
-  Page<User> findByRolesContaining(Role role, Pageable pageable);
-
-  /**
-   * Finds users by enabled status and role with pagination. Combines filtering by both criteria.
-   *
-   * @param enabled  the enabled status to filter by
-   * @param role     the role to filter by
-   * @param pageable pagination information
-   * @return page of users matching both criteria
-   */
-  @EntityGraph(attributePaths = {"roles"})
-  Page<User> findByEnabledAndRolesContaining(Boolean enabled, Role role, Pageable pageable);
 
   /**
    * Searches for users by username or email using case-insensitive partial matching.

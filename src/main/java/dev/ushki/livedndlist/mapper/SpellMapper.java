@@ -3,7 +3,6 @@ package dev.ushki.livedndlist.mapper;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.entity.character.Spell;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -50,18 +49,6 @@ public class SpellMapper {
         .description(spell.getDescription())
         .higherLevels(spell.getHigherLevels())
         .build();
-  }
-
-  /**
-   * Converts a list of Spell entities to SpellResponse DTOs.
-   *
-   * @param spells the list of spell entities
-   * @return list of spell response DTOs
-   */
-  public List<SpellResponse> toResponseList(List<Spell> spells) {
-    return spells.stream()
-        .map(this::toResponse)
-        .toList();
   }
 
   /**

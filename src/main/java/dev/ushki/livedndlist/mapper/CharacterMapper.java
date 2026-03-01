@@ -309,8 +309,7 @@ public class CharacterMapper {
     return skills.stream()
         .map(skill -> {
           AbilityType baseAbility = skill.getSkillType().getBaseAbility();
-          int abilityMod = abilityScores.getModifier(baseAbility);
-          int totalBonus = abilityMod;
+          int totalBonus = abilityScores.getModifier(baseAbility);
 
           if (skill.isExpertise()) {
             totalBonus += proficiencyBonus * 2;

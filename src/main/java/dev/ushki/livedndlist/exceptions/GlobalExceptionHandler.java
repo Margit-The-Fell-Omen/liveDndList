@@ -73,12 +73,11 @@ public class GlobalExceptionHandler {
    * Handles BadCredentialsException from Spring Security. Returns HTTP 401 when login credentials
    * are invalid.
    *
-   * @param ex the exception from failed authentication
    * @return error response with 401 status and generic message
    */
   @ExceptionHandler(BadCredentialsException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ApiResponse<Void> handleBadCredentials(BadCredentialsException ex) {
+  public ApiResponse<Void> handleBadCredentials() {
     return ApiResponse.error("Invalid username or password");
   }
 
@@ -103,9 +102,9 @@ public class GlobalExceptionHandler {
       MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
     ex.getBindingResult().getAllErrors().forEach(error -> {
-      String fieldname = ((FieldError) error).getField();
+      String fieldName = ((FieldError) error).getField();
       String errorMessage = error.getDefaultMessage();
-      errors.put(fieldname, errorMessage);
+      errors.put(fieldName, errorMessage);
     });
 
     return ApiResponse.error("Validation failed", errors);

@@ -1,12 +1,12 @@
 package dev.ushki.livedndlist.service;
 
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
-import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.Equipment;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
+import dev.ushki.livedndlist.exceptions.ResourceSaveFailureException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
 import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
@@ -47,9 +47,8 @@ public class NonTransactionalCharacterService {
    *
    * @param request  the character creation request
    * @param username the username of the owner
-   * @return the created character (if no errors occur)
    */
-  public CharacterResponse createWithStarterPackNoTransaction(
+  public void createWithStarterPackNoTransaction(
       CharacterCreateRequest request,
       String username) {
 
@@ -79,7 +78,8 @@ public class NonTransactionalCharacterService {
     // Step 3: Simulate failure AFTER some data is saved
     if (request.getName().contains("FAIL")) {
       log.error("Step 3: FAILURE! Character and weapon already in DB!");
-      throw new RuntimeException("Simulated failure - partial data remains in database!");
+      throw new ResourceSaveFailureException("Simulated failure - "
+          + "partial data remains in database!");
     }
 
     // Step 4: Add armor (never reached if FAIL)
@@ -93,6 +93,6 @@ public class NonTransactionalCharacterService {
     characterRepository.save(savedCharacter);
     log.info("Step 4: Armor saved");
 
-    return characterMapper.toResponse(savedCharacter);
+    characterMapper.toResponse(savedCharacter);
   }
 }

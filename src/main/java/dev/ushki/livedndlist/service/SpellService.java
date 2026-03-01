@@ -33,7 +33,6 @@ public class SpellService {
    * Retrieves spells with optional filtering and sorting.
    *
    * @param school        optional filter by spell school
-   * @param level         optional filter by exact level
    * @param minLevel      optional minimum level filter
    * @param maxLevel      optional maximum level filter
    * @param ritual        optional filter for ritual spells
@@ -45,7 +44,6 @@ public class SpellService {
   @Transactional(readOnly = true)
   public List<SpellResponse> getAllSpells(
       SpellSchool school,
-      Integer level,
       Integer minLevel,
       Integer maxLevel,
       Boolean ritual,
@@ -64,9 +62,6 @@ public class SpellService {
 
     if (school != null) {
       stream = stream.filter(s -> s.getSchool() == school);
-    }
-    if (level != null) {
-      stream = stream.filter(s -> s.getLevel().equals(level));
     }
     if (minLevel != null) {
       stream = stream.filter(s -> s.getLevel() >= minLevel);

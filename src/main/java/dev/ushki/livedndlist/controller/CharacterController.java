@@ -212,4 +212,143 @@ public class CharacterController {
         characterService.removeSpell(id, spellId, userDetails.getUsername());
     return ApiResponse.success("Spell removed", response);
   }
+
+  /**
+   * Retrieves recently updated characters for the authenticated user. Ordered by most recently
+   * updated first.
+   *
+   * @param userDetails the authenticated user's details
+   * @return API response containing recent characters
+   */
+  @GetMapping("/recent")
+  public ApiResponse<List<CharacterSummaryResponse>> getRecentCharacters(
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getRecentCharacters(userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character optimized for character sheet display. Includes owner, classes, and skills
+   * in a single optimized query.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing character sheet data
+   */
+  @GetMapping("/{id}/sheet")
+  public ApiResponse<CharacterResponse> getCharacterSheet(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterSheet(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character optimized for combat view. Includes equipment, saving throws, and class
+   * information.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing combat-related data
+   */
+  @GetMapping("/{id}/combat")
+  public ApiResponse<CharacterResponse> getCharacterForCombat(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterForCombat(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character optimized for spellcasting view. Includes spells and class information for
+   * spell slot calculation.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing spellcasting data
+   */
+  @GetMapping("/{id}/spellcasting")
+  public ApiResponse<CharacterResponse> getCharacterForSpellcasting(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterForSpellcasting(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character with skills loaded. Optimized endpoint for skill management.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing character with skills
+   */
+  @GetMapping("/{id}/skills")
+  public ApiResponse<CharacterResponse> getCharacterWithSkills(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterWithSkills(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character with equipment loaded. Optimized endpoint for inventory management.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing character with equipment
+   */
+  @GetMapping("/{id}/inventory")
+  public ApiResponse<CharacterResponse> getCharacterWithEquipment(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterWithEquipment(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character with saving throw proficiencies. Optimized endpoint for saving throw
+   * displays.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing character with saving throws
+   */
+  @GetMapping("/{id}/saving-throws")
+  public ApiResponse<CharacterResponse> getCharacterWithSavingThrows(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterWithSavingThrows(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character summary with owner and class information. Optimized endpoint for character
+   * preview/summary displays.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing character summary with classes
+   */
+  @GetMapping("/{id}/summary")
+  public ApiResponse<CharacterResponse> getCharacterSummary(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterSummary(id, userDetails.getUsername()));
+  }
+
+  /**
+   * Retrieves character with spells loaded. Optimized endpoint for spell management and selection.
+   *
+   * @param id          the character ID
+   * @param userDetails the authenticated user's details
+   * @return API response containing character with spells
+   */
+  @GetMapping("/{id}/spells")
+  public ApiResponse<CharacterResponse> getCharacterWithSpells(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(
+        characterService.getCharacterWithSpells(id, userDetails.getUsername()));
+  }
 }

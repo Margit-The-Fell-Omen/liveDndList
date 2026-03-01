@@ -72,21 +72,4 @@ public class AbilityScores {
     };
     return (score - 10) / 2;
   }
-
-  /**
-   * Gets the raw score for a given ability type.
-   *
-   * @param type the ability type to get the score for
-   * @return the ability score value
-   */
-  public int getScore(AbilityType type) {
-    return switch (type) {
-      case STRENGTH -> strength;
-      case DEXTERITY -> dexterity;
-      case CONSTITUTION -> constitution;
-      case INTELLIGENCE -> intelligence;
-      case WISDOM -> wisdom;
-      case CHARISMA -> charisma;
-    };
-  }
 }

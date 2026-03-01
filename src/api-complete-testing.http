@@ -1,0 +1,112 @@
+### ============================================
+### ENVIRONMENT VARIABLES
+### ============================================
+
+@baseUrl = http://localhost:8080/api/v1
+@authToken =
+@userId =
+@characterId =
+@spellId =
+@equipmentId =
+
+### Register User 2 (for testing search)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "gandalf",
+  "email": "gandalf@middleearth.com",
+  "password": "YouShallNotPass123!"
+}
+
+###
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "Password123!"
+}
+
+> {%
+  client.test("Login successful", function () {
+    client.assert(response.status === 200, "Status should be 200");
+    client.assert(response.body.success === true, "Success should be true");
+    client.assert(response.body.data.token !== null, "Token should not be null");
+  });
+  client.global.set("authToken", response.body.data.token);
+  client.log("✓ Logged in successfully");
+  client.log("Token: " + response.body.data.token);
+%}
+
+###
+
+### Login with invalid credentials (error test)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "wrongpassword"
+}
+
+> {%
+  client.test("Should fail with wrong password", function () {
+    client.assert(response.status === 401 || response.status === 403, "Should be unauthorized");
+  });
+%}
+
+### Get users by enabled status
+GET {{baseUrl}}/users?enabled=true
+Authorization: Bearer {{authToken}}
+
+###
+
+### Get users by role
+GET {{baseUrl}}/users?role=ROLE_USER
+Authorization: Bearer {{authToken}}
+
+
+### ============================================
+### CLEANUP (Run these last if needed)
+### ============================================
+
+### Delete test equipment
+DELETE {{baseUrl}}/equipment/{{equipmentId}}
+Authorization: Bearer {{authToken}}
+
+> {%
+  client.log("✓ Equipment deleted");
+%}
+
+###
+
+### Delete test spell
+DELETE {{baseUrl}}/spells/{{spellId}}
+Authorization: Bearer {{authToken}}
+
+> {%
+  client.log("✓ Spell deleted");
+%}
+
+###
+
+### Delete test character
+DELETE {{baseUrl}}/characters/{{characterId}}
+Authorization: Bearer {{authToken}}
+
+> {%
+  client.log("✓ Character deleted");
+%}
+
+###
+
+### Delete test user
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{authToken}}
+
+> {%
+  client.log("✓ User deleted");
+%}

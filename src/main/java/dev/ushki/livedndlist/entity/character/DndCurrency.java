@@ -45,14 +45,4 @@ public class DndCurrency {
 
   @Builder.Default
   private Integer platinum = 0;
-
-  /**
-   * Calculates the total value of all currency in copper pieces. Useful for comparing wealth or
-   * calculating carrying weight.
-   *
-   * @return total value in copper pieces
-   */
-  public int getTotalInCopper() {
-    return copper + (silver * 10) + (electrum * 50) + (gold * 100) + (platinum * 1000);
-  }
 }

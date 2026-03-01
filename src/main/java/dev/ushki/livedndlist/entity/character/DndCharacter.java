@@ -22,7 +22,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
-import jakarta.persistence.NamedEntityGraphs;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -59,24 +58,22 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "characters")
-@NamedEntityGraphs({
-    @NamedEntityGraph(
-        name = "Character.summary",
-        attributeNodes = {
-            @NamedAttributeNode("owner"),
-            @NamedAttributeNode("classes")
-        }
-    ),
-    @NamedEntityGraph(
-        name = "Character.full",
-        attributeNodes = {
-            @NamedAttributeNode("owner"),
-            @NamedAttributeNode("classes"),
-            @NamedAttributeNode("skills"),
-            @NamedAttributeNode("savingThrowProficiencies")
-        }
-    )
-})
+@NamedEntityGraph(
+    name = "Character.summary",
+    attributeNodes = {
+        @NamedAttributeNode("owner"),
+        @NamedAttributeNode("classes")
+    }
+)
+@NamedEntityGraph(
+    name = "Character.full",
+    attributeNodes = {
+        @NamedAttributeNode("owner"),
+        @NamedAttributeNode("classes"),
+        @NamedAttributeNode("skills"),
+        @NamedAttributeNode("savingThrowProficiencies")
+    }
+)
 @Getter
 @Setter
 @NoArgsConstructor
