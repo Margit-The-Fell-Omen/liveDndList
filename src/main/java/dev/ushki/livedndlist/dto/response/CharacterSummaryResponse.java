@@ -7,19 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Response DTO containing a summary of character information. Used for listing characters without
- * loading full character details.
- *
- * <p>This lightweight representation is ideal for:
- * <ul>
- *   <li>Character selection screens</li>
- *   <li>Character list views</li>
- *   <li>Dashboard displays</li>
- * </ul>
- *
- * <p>For complete character details, use {@link CharacterResponse}.
- */
 @Data
 @Builder
 @NoArgsConstructor

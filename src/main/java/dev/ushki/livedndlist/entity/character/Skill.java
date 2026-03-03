@@ -17,21 +17,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Entity representing a character's skill proficiency. D&D 5th Edition has 18 skills, each tied to
- * one of the six ability scores.
- *
- * <p>Skill check bonus calculation:
- * <ul>
- *   <li>Base: ability modifier</li>
- *   <li>Proficient: + proficiency bonus</li>
- *   <li>Expertise: + proficiency bonus × 2 (replaces single proficiency)</li>
- *   <li>Additional bonus: any magic items, class features, etc.</li>
- * </ul>
- *
- * <p>Expertise requires proficiency first and is typically available
- * only to Rogues and Bards (or via certain feats).
- */
 @Entity
 @Table(name = "skills")
 @Getter
@@ -60,12 +45,6 @@ public class Skill {
 
   private Integer bonus = 0;
 
-  /**
-   * Checks if the character is proficient in this skill. Convenience method matching JavaBean
-   * naming convention.
-   *
-   * @return true if proficient, false otherwise
-   */
   public boolean isProficient() {
     return proficiency;
   }

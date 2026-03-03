@@ -38,24 +38,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Entity representing a D&D 5th Edition character. Contains all character information including
- * stats, skills, equipment, and spells.
- *
- * <p>This is the core entity for the character management system,
- * supporting features such as:
- * <ul>
- *   <li>Multiclassing (multiple character classes)</li>
- *   <li>Equipment and currency management</li>
- *   <li>Spell tracking for casters</li>
- *   <li>Skills and proficiencies</li>
- *   <li>Combat statistics (HP, AC, initiative)</li>
- *   <li>Roleplay elements (backstory, personality traits)</li>
- * </ul>
- *
- * <p>Characters are owned by a user and can optionally be made public
- * for sharing with others.
- */
 @Entity
 @Table(name = "characters")
 @NamedEntityGraph(
@@ -243,18 +225,12 @@ public class DndCharacter {
 
   private boolean isPublic = false;
 
-  /**
-   * Sets creation and update timestamps when entity is first persisted.
-   */
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();
     updatedAt = LocalDateTime.now();
   }
 
-  /**
-   * Updates the modification timestamp whenever the entity is updated.
-   */
   @PreUpdate
   protected void onUpdate() {
     updatedAt = LocalDateTime.now();
@@ -262,49 +238,24 @@ public class DndCharacter {
 
   // ==================== Utility Methods ====================
 
-  /**
-   * Calculates the total character level across all classes.
-   *
-   * @return sum of all class levels
-   */
   public int getTotalLevel() {
     return classes.stream()
         .mapToInt(CharacterClass::getLevel)
         .sum();
   }
 
-  /**
-   * Adds an equipment item to the character's inventory.
-   *
-   * @param item the equipment to add
-   */
   public void addEquipment(Equipment item) {
     equipment.add(item);
   }
 
-  /**
-   * Removes an equipment item from the character's inventory.
-   *
-   * @param item the equipment to remove
-   */
   public void removeEquipment(Equipment item) {
     equipment.remove(item);
   }
 
-  /**
-   * Adds a spell to the character's known or prepared spells.
-   *
-   * @param spell the spell to add
-   */
   public void addSpell(Spell spell) {
     spells.add(spell);
   }
 
-  /**
-   * Removes a spell from the character's known or prepared spells.
-   *
-   * @param spell the spell to remove
-   */
   public void removeSpell(Spell spell) {
     spells.remove(spell);
   }

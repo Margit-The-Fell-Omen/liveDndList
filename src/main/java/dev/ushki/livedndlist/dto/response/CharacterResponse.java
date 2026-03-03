@@ -11,13 +11,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Response DTO containing complete character information. Includes all character attributes, combat
- * stats, equipment, spells, and roleplay details.
- *
- * <p>This is the full character sheet representation returned when
- * viewing or editing a specific character.
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -77,10 +70,6 @@ public class CharacterResponse {
   private LocalDateTime createdAt;
   private LocalDateTime updatedAt;
 
-  /**
-   * Represents a character's class and level in that class. Characters can have multiple classes
-   * when multiclassing.
-   */
   @Data
   @Builder
   @NoArgsConstructor
@@ -93,17 +82,6 @@ public class CharacterResponse {
     private Integer level;
   }
 
-  /**
-   * Represents the character's currency holdings in D&D coinage.
-   *
-   * <p>Exchange rates:
-   * <ul>
-   *   <li>10 copper (cp) = 1 silver (sp)</li>
-   *   <li>10 silver (sp) = 1 gold (gp)</li>
-   *   <li>2 electrum (ep) = 1 gold (gp)</li>
-   *   <li>10 gold (gp) = 1 platinum (pp)</li>
-   * </ul>
-   */
   @Data
   @Builder
   @NoArgsConstructor

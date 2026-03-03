@@ -12,19 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for creating a new D&D character. Contains all required and optional fields for
- * character creation.
- *
- * <p>Required fields:
- * <ul>
- *   <li>{@code name} - The character's name</li>
- *   <li>{@code race} - The character's race</li>
- *   <li>{@code className} - The character's starting class</li>
- * </ul>
- *
- * <p>The character will be created at level 1 in the specified class.
- */
 @Data
 @Builder
 @NoArgsConstructor

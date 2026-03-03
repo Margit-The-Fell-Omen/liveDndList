@@ -7,22 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for updating user account information. All fields are optional - only provided fields
- * will be updated.
- *
- * <p>This request supports partial updates. Fields set to {@code null}
- * will not modify the existing user data.
- *
- * <p>Validation rules (when provided):
- * <ul>
- *   <li>Username: 3-50 characters, must remain unique</li>
- *   <li>Email: valid email format, must remain unique</li>
- * </ul>
- *
- * <p>Note: Password updates should be handled through a separate
- * dedicated endpoint for security reasons.
- */
 @Data
 @Builder
 @NoArgsConstructor

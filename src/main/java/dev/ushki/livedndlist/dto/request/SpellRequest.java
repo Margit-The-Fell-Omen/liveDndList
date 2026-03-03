@@ -10,19 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for creating or updating a spell. Contains all spell properties as defined in D&D 5th
- * Edition.
- *
- * <p>Required fields:
- * <ul>
- *   <li>{@code name} - The spell's name</li>
- *   <li>{@code level} - The spell level (0-9)</li>
- *   <li>{@code school} - The school of magic</li>
- * </ul>
- *
- * <p>Level 0 spells are cantrips, which can be cast without expending spell slots.
- */
 @Data
 @Builder
 @NoArgsConstructor

@@ -8,18 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for creating or updating equipment items. Supports various equipment types including
- * weapons, armor, and general items.
- *
- * <p>Required fields:
- * <ul>
- *   <li>{@code name} - The equipment's name</li>
- * </ul>
- *
- * <p>Weapon-specific fields ({@code damage}, {@code damageType}, {@code properties})
- * should be provided when the equipment type is WEAPON.
- */
 @Data
 @Builder
 @NoArgsConstructor

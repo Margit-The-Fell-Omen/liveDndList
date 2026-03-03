@@ -15,20 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Entity representing an equipment item in D&D 5th Edition. Includes weapons, armor, shields, and
- * general adventuring gear.
- *
- * <p>Equipment can be:
- * <ul>
- *   <li>Equipped - actively worn or wielded</li>
- *   <li>Attuned - magically bonded (required for some magic items)</li>
- *   <li>Stacked - multiple items of the same type (e.g., arrows)</li>
- * </ul>
- *
- * <p>Weapon-specific fields ({@code damage}, {@code damageType}, {@code properties})
- * are used when the equipment type is WEAPON.
- */
 @Entity
 @Table(name = "equipment")
 @Getter

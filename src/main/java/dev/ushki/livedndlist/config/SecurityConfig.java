@@ -17,10 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * Security configuration for the application. Configures JWT authentication, authorization rules,
- * and security filters.
- */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -28,12 +24,6 @@ public class SecurityConfig {
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
   private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
-  /**
-   * Constructs SecurityConfig with required dependencies.
-   *
-   * @param jwtAuthenticationFilter     the JWT authentication filter
-   * @param jwtAuthenticationEntryPoint the authentication entry point for handling auth errors
-   */
   public SecurityConfig(
       @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
       JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
@@ -41,44 +31,17 @@ public class SecurityConfig {
     this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
   }
 
-  /**
-   * Creates a password encoder bean using BCrypt hashing algorithm.
-   *
-   * @return the BCrypt password encoder
-   */
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
 
-  /**
-   * Creates the authentication manager bean.
-   *
-   * @param config the authentication configuration
-   * @return the authentication manager
-   * @throws Exception if unable to get authentication manager
-   */
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
       throws Exception {
     return config.getAuthenticationManager();
   }
 
-  /**
-   * Configures the security filter chain.
-   *
-   * <p>Security rules:
-   * <ul>
-   *   <li>CSRF disabled (using JWT tokens)</li>
-   *   <li>Stateless session management</li>
-   *   <li>Public endpoints: auth, spells, equipment, swagger, h2-console</li>
-   *   <li>All other endpoints require authentication</li>
-   * </ul>
-   *
-   * @param http the HttpSecurity to configure
-   * @return the configured security filter chain
-   * @throws Exception if configuration fails
-   */
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http

@@ -20,12 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing equipment items. Provides endpoints for CRUD operations and
- * equipment filtering.
- *
- * <p>Base path: {@code /api/v1/equipment}
- */
 @RestController
 @RequestMapping("/api/v1/equipment")
 @RequiredArgsConstructor
@@ -33,16 +27,6 @@ public class EquipmentController {
 
   private final EquipmentService equipmentService;
 
-  /**
-   * Retrieves equipment with optional filtering.
-   *
-   * @param type      optional filter by equipment type
-   * @param minWeight optional minimum weight filter
-   * @param maxWeight optional maximum weight filter
-   * @param sortBy    field to sort by (default: name)
-   * @param sortDir   sort direction: asc or desc (default: asc)
-   * @return API response containing list of matching equipment
-   */
   @GetMapping
   public ApiResponse<List<EquipmentResponse>> getAll(
       @RequestParam(required = false) EquipmentType type,
@@ -54,24 +38,11 @@ public class EquipmentController {
         type, minWeight, maxWeight, sortBy, sortDir));
   }
 
-  /**
-   * Retrieves a specific equipment item by ID.
-   *
-   * @param id the equipment ID
-   * @return API response containing the equipment details
-   */
   @GetMapping("/{id}")
   public ApiResponse<EquipmentResponse> getById(@PathVariable Long id) {
     return ApiResponse.success(equipmentService.getById(id));
   }
 
-  /**
-   * Searches for equipment by name with optional type filter.
-   *
-   * @param name the name to search for (case-insensitive, partial match)
-   * @param type optional filter by equipment type
-   * @return API response containing matching equipment
-   */
   @GetMapping("/search")
   public ApiResponse<List<EquipmentResponse>> search(
       @RequestParam String name,
@@ -79,12 +50,6 @@ public class EquipmentController {
     return ApiResponse.success(equipmentService.searchByName(name, type));
   }
 
-  /**
-   * Creates a new equipment item.
-   *
-   * @param request the equipment creation request
-   * @return API response containing the created equipment
-   */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ApiResponse<EquipmentResponse> create(@Valid @RequestBody EquipmentRequest request) {
@@ -92,13 +57,6 @@ public class EquipmentController {
     return ApiResponse.success("Equipment created", response);
   }
 
-  /**
-   * Updates an existing equipment item.
-   *
-   * @param id      the equipment ID
-   * @param request the equipment update request
-   * @return API response containing the updated equipment
-   */
   @PutMapping("/{id}")
   public ApiResponse<EquipmentResponse> update(
       @PathVariable Long id,
@@ -107,11 +65,6 @@ public class EquipmentController {
     return ApiResponse.success("Equipment updated", response);
   }
 
-  /**
-   * Deletes an equipment item.
-   *
-   * @param id the equipment ID to delete
-   */
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void delete(@PathVariable Long id) {

@@ -8,19 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for user registration. Contains all required fields for creating a new user account.
- *
- * <p>Validation rules:
- * <ul>
- *   <li>Username: 3-50 characters, must be unique</li>
- *   <li>Email: valid email format, must be unique</li>
- *   <li>Password: minimum 6 characters</li>
- * </ul>
- *
- * <p>Upon successful registration, the user will be assigned the default
- * {@code ROLE_USER} role.
- */
 @Data
 @Builder
 @NoArgsConstructor

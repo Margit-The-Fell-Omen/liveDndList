@@ -27,13 +27,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service class for managing D&D characters. Handles CRUD operations, equipment management, and
- * spell management.
- *
- * <p>All operations include ownership verification to ensure users can only
- * access and modify their own characters.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -48,17 +41,6 @@ public class CharacterService {
 
   private static final String CHARACTER_RESOURCE = "Character";
 
-  /**
-   * Retrieves all characters owned by a specific user with optional filtering and sorting.
-   *
-   * @param username the username of the character owner
-   * @param race     optional filter by character race
-   * @param minLevel optional minimum level filter
-   * @param maxLevel optional maximum level filter
-   * @param sortBy   field to sort by
-   * @param sortDir  sort direction (asc/desc)
-   * @return list of character summaries matching the criteria
-   */
   @Transactional(readOnly = true)
   public List<CharacterSummaryResponse> getAllByUsername(
       String username,
@@ -94,13 +76,6 @@ public class CharacterService {
         .toList();
   }
 
-  /**
-   * Searches characters by name for a specific user.
-   *
-   * @param username the username of the character owner
-   * @param name     the name to search for (case-insensitive, partial match)
-   * @return list of matching character summaries
-   */
   @Transactional(readOnly = true)
   public List<CharacterSummaryResponse> searchByName(String username, String name) {
     User user = findUserByUsername(username);
@@ -109,26 +84,12 @@ public class CharacterService {
     return characterMapper.toSummaryResponseList(characters);
   }
 
-  /**
-   * Retrieves a specific character by ID with ownership verification.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return the character's full details
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getById(Long id, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Creates a new character for a user.
-   *
-   * @param request  the character creation request
-   * @param username the username of the owner
-   * @return the created character's details
-   */
   public CharacterResponse create(CharacterCreateRequest request, String username) {
     User user = findUserByUsername(username);
 
@@ -141,14 +102,6 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  /**
-   * Updates an existing character.
-   *
-   * @param id       the character ID
-   * @param request  the update request with fields to change
-   * @param username the username of the owner
-   * @return the updated character's details
-   */
   public CharacterResponse update(Long id, CharacterUpdateRequest request, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
 
@@ -160,26 +113,12 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  /**
-   * Deletes a character.
-   *
-   * @param id       the character ID
-   * @param username the username of the owner
-   */
   public void delete(Long id, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
     characterRepository.delete(character);
     log.info("Character '{}' deleted", character.getName());
   }
 
-  /**
-   * Adds equipment to a character's inventory.
-   *
-   * @param characterId the character ID
-   * @param request     the equipment details
-   * @param username    the username of the owner
-   * @return the updated character with the new equipment
-   */
   public CharacterResponse addEquipment(Long characterId, EquipmentRequest request,
       String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
@@ -193,14 +132,6 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  /**
-   * Removes equipment from a character's inventory.
-   *
-   * @param characterId the character ID
-   * @param equipmentId the equipment ID to remove
-   * @param username    the username of the owner
-   * @return the updated character without the equipment
-   */
   public CharacterResponse removeEquipment(Long characterId, Long equipmentId, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
 
@@ -217,14 +148,6 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  /**
-   * Adds a spell to a character's known spells.
-   *
-   * @param characterId the character ID
-   * @param spellId     the spell ID to add
-   * @param username    the username of the owner
-   * @return the updated character with the new spell
-   */
   public CharacterResponse addSpell(Long characterId, Long spellId, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
 
@@ -239,14 +162,6 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
-  /**
-   * Removes a spell from a character's known spells.
-   *
-   * @param characterId the character ID
-   * @param spellId     the spell ID to remove
-   * @param username    the username of the owner
-   * @return the updated character without the spell
-   */
   public CharacterResponse removeSpell(Long characterId, Long spellId, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
 
@@ -277,13 +192,6 @@ public class CharacterService {
     return character;
   }
 
-  /**
-   * Retrieves all characters owned by a user, ordered by most recently updated. Useful for
-   * dashboard views showing recent activity.
-   *
-   * @param username the username of the character owner
-   * @return list of character summaries ordered by updated date (newest first)
-   */
   @Transactional(readOnly = true)
   public List<CharacterSummaryResponse> getRecentCharacters(String username) {
     User user = findUserByUsername(username);
@@ -292,14 +200,6 @@ public class CharacterService {
     return characterMapper.toSummaryResponseList(characters);
   }
 
-  /**
-   * Retrieves character with owner and class information loaded. Optimized for character
-   * preview/summary displays.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response with owner and class data
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterSummary(Long id, String username) {
     DndCharacter character = characterRepository.findByIdWithOwnerAndClasses(id)
@@ -310,14 +210,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character with skills loaded. Optimized for skill management and character sheet
-   * skill display.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response with skills data
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithSkills(Long id, String username) {
     DndCharacter character = characterRepository.findByIdWithSkills(id)
@@ -328,14 +220,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character with spells loaded. Optimized for spellcasting management and spell
-   * selection.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response with spells data
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithSpells(Long id, String username) {
     DndCharacter character = characterRepository.findByIdWithSpells(id)
@@ -347,13 +231,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character with equipment loaded. Optimized for inventory management.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response with equipment data
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithEquipment(Long id, String username) {
     DndCharacter character = characterRepository.findByIdWithEquipment(id)
@@ -365,14 +242,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character with saving throw proficiencies loaded. Optimized for saving throw displays
-   * and combat.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response with saving throw data
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithSavingThrows(Long id, String username) {
     DndCharacter character = characterRepository.findByIdWithSavingThrows(id)
@@ -383,14 +252,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character optimized for character sheet display. Loads owner, classes, and skills in
-   * a single query.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response optimized for character sheet
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterSheet(Long id, String username) {
     DndCharacter character = characterRepository.findByIdForCharacterSheet(id)
@@ -401,14 +262,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character optimized for combat display. Loads equipment, saving throws, and class
-   * information.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response optimized for combat
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterForCombat(Long id, String username) {
     DndCharacter character = characterRepository.findByIdForCombat(id)
@@ -419,14 +272,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Retrieves character optimized for spellcasting display. Loads spells and class information for
-   * spell slot calculation.
-   *
-   * @param id       the character ID
-   * @param username the username of the requesting user
-   * @return character response optimized for spellcasting
-   */
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterForSpellcasting(Long id, String username) {
     DndCharacter character = characterRepository.findByIdForSpellcasting(id)
@@ -438,42 +283,12 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  /**
-   * Helper method to verify character ownership. Extracted for reuse across methods.
-   *
-   * @param character the character to verify
-   * @param username  the expected owner's username
-   * @throws UnauthorizedException if the user doesn't own the character
-   */
   private void verifyOwnership(DndCharacter character, String username) {
     if (!character.getOwner().getUsername().equals(username)) {
       throw new UnauthorizedException("You don't have access to this character");
     }
   }
 
-  /**
-   * Creates a character with a complete starter equipment pack. Demonstrates transactional behavior
-   * - all or nothing.
-   *
-   * <p>This method performs multiple database operations:
-   * <ol>
-   *   <li>Creates and saves the character</li>
-   *   <li>Adds starter weapon based on class</li>
-   *   <li>Adds starter armor based on class</li>
-   *   <li>Adds adventuring gear pack</li>
-   *   <li>Adds starter gold</li>
-   *   <li>Adds cantrips for spellcasters</li>
-   * </ol>
-   *
-   * <p>Thanks to @Transactional on this class, if any step fails,
-   * all previous steps are rolled back automatically.
-   *
-   * @param request  the character creation request
-   * @param username the username of the owner
-   * @return the created character with all starter equipment
-   * @throws ResourceNotFoundException if user not found
-   * @throws IllegalArgumentException  if validation fails
-   */
   public CharacterResponse createWithStarterPack(CharacterCreateRequest request, String username) {
     User user = findUserByUsername(username);
 

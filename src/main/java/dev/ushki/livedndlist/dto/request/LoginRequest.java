@@ -6,13 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for user authentication. Contains credentials required for logging into the
- * application.
- *
- * <p>Both username and password are required fields.
- * Upon successful authentication, a JWT token will be returned.
- */
 @Data
 @Builder
 @NoArgsConstructor

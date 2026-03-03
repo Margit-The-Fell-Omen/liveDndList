@@ -20,12 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing users. Provides endpoints for user retrieval, profile management,
- * and account operations.
- *
- * <p>Base path: {@code /api/v1/users}
- */
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -33,13 +27,6 @@ public class UserController {
 
   private final UserService userService;
 
-  /**
-   * Retrieves all users with optional filtering. Typically restricted to administrators.
-   *
-   * @param enabled optional filter by account enabled status
-   * @param role    optional filter by role name (e.g., "ROLE_ADMIN")
-   * @return API response containing list of users
-   */
   @GetMapping
   public ApiResponse<List<UserResponse>> getAllUsers(
       @RequestParam(required = false) Boolean enabled,
@@ -47,47 +34,22 @@ public class UserController {
     return ApiResponse.success(userService.getAllUsers(enabled, role));
   }
 
-  /**
-   * Searches for users by username or email.
-   *
-   * @param query the search term (matches username or email)
-   * @return API response containing matching users
-   */
   @GetMapping("/search")
   public ApiResponse<List<UserResponse>> searchUsers(@RequestParam String query) {
     return ApiResponse.success(userService.searchUsers(query));
   }
 
-  /**
-   * Retrieves the currently authenticated user's profile.
-   *
-   * @param userDetails the authenticated user's details
-   * @return API response containing the current user's information
-   */
   @GetMapping("/me")
   public ApiResponse<UserResponse> getCurrentUser(
       @AuthenticationPrincipal UserDetails userDetails) {
     return ApiResponse.success(userService.getUserByUsername(userDetails.getUsername()));
   }
 
-  /**
-   * Retrieves a specific user by ID.
-   *
-   * @param id the user ID
-   * @return API response containing the user details
-   */
   @GetMapping("/{id}")
   public ApiResponse<UserResponse> getUserById(@PathVariable Long id) {
     return ApiResponse.success(userService.getUserById(id));
   }
 
-  /**
-   * Updates a user's information.
-   *
-   * @param id      the user ID
-   * @param request the user update request containing fields to update
-   * @return API response containing the updated user information
-   */
   @PutMapping("/{id}")
   public ApiResponse<UserResponse> updateUser(
       @PathVariable Long id,
@@ -95,11 +57,6 @@ public class UserController {
     return ApiResponse.success("User updated", userService.updateUser(id, request));
   }
 
-  /**
-   * Deletes a user account.
-   *
-   * @param id the user ID to delete
-   */
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteUser(@PathVariable Long id) {

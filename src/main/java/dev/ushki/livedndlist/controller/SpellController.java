@@ -20,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing spells. Provides endpoints for CRUD operations and spell filtering.
- *
- * <p>Base path: {@code /api/v1/spells}
- */
 @RestController
 @RequestMapping("/api/v1/spells")
 @RequiredArgsConstructor
@@ -32,18 +27,6 @@ public class SpellController {
 
   private final SpellService spellService;
 
-  /**
-   * Retrieves spells with optional filtering.
-   *
-   * @param school        optional filter by spell school
-   * @param minLevel      optional minimum spell level filter
-   * @param maxLevel      optional maximum spell level filter
-   * @param ritual        optional filter for ritual spells
-   * @param concentration optional filter for concentration spells
-   * @param sortBy        field to sort by (default: name)
-   * @param sortDir       sort direction: asc or desc (default: asc)
-   * @return API response containing list of matching spells
-   */
   @GetMapping
   public ApiResponse<List<SpellResponse>> getAllSpells(
       @RequestParam(required = false) SpellSchool school,
@@ -57,25 +40,11 @@ public class SpellController {
         school, minLevel, maxLevel, ritual, concentration, sortBy, sortDir));
   }
 
-  /**
-   * Retrieves a specific spell by ID.
-   *
-   * @param id the spell ID
-   * @return API response containing the spell details
-   */
   @GetMapping("/{id}")
   public ApiResponse<SpellResponse> getSpellById(@PathVariable Long id) {
     return ApiResponse.success(spellService.getById(id));
   }
 
-  /**
-   * Searches for spells by name with optional filters.
-   *
-   * @param name     the name to search for (case-insensitive, partial match)
-   * @param school   optional filter by spell school
-   * @param maxLevel optional maximum spell level filter
-   * @return API response containing matching spells
-   */
   @GetMapping("/search")
   public ApiResponse<List<SpellResponse>> searchSpells(
       @RequestParam String name,
@@ -84,12 +53,6 @@ public class SpellController {
     return ApiResponse.success(spellService.searchByName(name, school, maxLevel));
   }
 
-  /**
-   * Creates a new spell.
-   *
-   * @param request the spell creation request
-   * @return API response containing the created spell
-   */
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ApiResponse<SpellResponse> createSpell(@Valid @RequestBody SpellRequest request) {
@@ -97,13 +60,6 @@ public class SpellController {
     return ApiResponse.success("Spell created", response);
   }
 
-  /**
-   * Updates an existing spell.
-   *
-   * @param id      the spell ID
-   * @param request the spell update request
-   * @return API response containing the updated spell
-   */
   @PutMapping("/{id}")
   public ApiResponse<SpellResponse> updateSpell(
       @PathVariable Long id,
@@ -112,11 +68,6 @@ public class SpellController {
     return ApiResponse.success("Spell updated", response);
   }
 
-  /**
-   * Deletes a spell.
-   *
-   * @param id the spell ID to delete
-   */
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteSpell(@PathVariable Long id) {

@@ -14,20 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-/**
- * Non-transactional service demonstrating partial save problem.
- *
- * <p><strong>WARNING:</strong> This service intentionally lacks @Transactional
- * to demonstrate what happens when transactions are not used properly. DO NOT use this pattern in
- * production code.
- *
- * <p>When an error occurs mid-operation:
- * <ul>
- *   <li>Already executed saves remain in database</li>
- *   <li>Database ends up in inconsistent state</li>
- *   <li>Manual cleanup may be required</li>
- * </ul>
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -38,16 +24,6 @@ public class NonTransactionalCharacterService {
   private final UserRepository userRepository;
   private final CharacterMapper characterMapper;
 
-  /**
-   * Creates a character with starter equipment WITHOUT transaction.
-   *
-   * <p><strong>DEMONSTRATION ONLY:</strong> Shows partial save problem.
-   * If this method fails after step 2, character and weapon remain in DB but armor and other items
-   * are not added.
-   *
-   * @param request  the character creation request
-   * @param username the username of the owner
-   */
   public void createWithStarterPackNoTransaction(
       CharacterCreateRequest request,
       String username) {

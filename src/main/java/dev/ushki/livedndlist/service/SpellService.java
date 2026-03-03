@@ -16,10 +16,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service class for managing spells. Handles CRUD operations and search functionality for the spell
- * library.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -29,18 +25,6 @@ public class SpellService {
   private final SpellRepository spellRepository;
   private final SpellMapper spellMapper;
 
-  /**
-   * Retrieves spells with optional filtering and sorting.
-   *
-   * @param school        optional filter by spell school
-   * @param minLevel      optional minimum level filter
-   * @param maxLevel      optional maximum level filter
-   * @param ritual        optional filter for ritual spells
-   * @param concentration optional filter for concentration spells
-   * @param sortBy        field to sort by
-   * @param sortDir       sort direction (asc/desc)
-   * @return list of spells matching the criteria
-   */
   @Transactional(readOnly = true)
   public List<SpellResponse> getAllSpells(
       SpellSchool school,
@@ -81,12 +65,6 @@ public class SpellService {
         .toList();
   }
 
-  /**
-   * Retrieves a specific spell by ID.
-   *
-   * @param id the spell ID
-   * @return the spell details
-   */
   @Transactional(readOnly = true)
   public SpellResponse getById(Long id) {
     Spell spell = spellRepository.findById(id)
@@ -94,14 +72,6 @@ public class SpellService {
     return spellMapper.toResponse(spell);
   }
 
-  /**
-   * Searches for spells by name with optional additional filters.
-   *
-   * @param name     the name to search for
-   * @param school   optional filter by spell school
-   * @param maxLevel optional maximum spell level filter
-   * @return list of matching spells
-   */
   @Transactional(readOnly = true)
   public List<SpellResponse> searchByName(String name, SpellSchool school, Integer maxLevel) {
     List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name);
@@ -120,12 +90,6 @@ public class SpellService {
         .toList();
   }
 
-  /**
-   * Creates a new spell in the library.
-   *
-   * @param request the spell creation request
-   * @return the created spell details
-   */
   public SpellResponse create(SpellRequest request) {
     if (spellRepository.existsByName(request.getName())) {
       throw new DuplicateResourceException("Spell with this name already exists");
@@ -138,13 +102,6 @@ public class SpellService {
     return spellMapper.toResponse(savedSpell);
   }
 
-  /**
-   * Updates an existing spell.
-   *
-   * @param id      the spell ID
-   * @param request the update request
-   * @return the updated spell details
-   */
   public SpellResponse update(Long id, SpellRequest request) {
     Spell spell = spellRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", id));
@@ -156,11 +113,6 @@ public class SpellService {
     return spellMapper.toResponse(savedSpell);
   }
 
-  /**
-   * Deletes a spell from the library.
-   *
-   * @param id the spell ID to delete
-   */
   public void delete(Long id) {
     if (!spellRepository.existsById(id)) {
       throw new ResourceNotFoundException("Spell", "id", id);

@@ -15,10 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Service class for managing user accounts. Handles user retrieval, profile updates, and account
- * deletion.
- */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,13 +24,6 @@ public class UserService {
   private final UserRepository userRepository;
   private final UserMapper userMapper;
 
-  /**
-   * Retrieves all user accounts with optional filtering.
-   *
-   * @param enabled optional filter by account enabled status
-   * @param role    optional filter by role name
-   * @return list of users matching the criteria
-   */
   @Transactional(readOnly = true)
   public List<UserResponse> getAllUsers(Boolean enabled, String role) {
     List<User> users = userRepository.findAll();
@@ -54,12 +43,6 @@ public class UserService {
         .toList();
   }
 
-  /**
-   * Searches for users by username or email.
-   *
-   * @param query the search term (case-insensitive, partial match)
-   * @return list of matching users
-   */
   @Transactional(readOnly = true)
   public List<UserResponse> searchUsers(String query) {
     List<User> users = userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
@@ -69,12 +52,6 @@ public class UserService {
         .toList();
   }
 
-  /**
-   * Retrieves a specific user by ID.
-   *
-   * @param id the user ID
-   * @return the user's information
-   */
   @Transactional(readOnly = true)
   public UserResponse getUserById(Long id) {
     User user = userRepository.findById(id)
@@ -82,12 +59,6 @@ public class UserService {
     return userMapper.toResponse(user);
   }
 
-  /**
-   * Retrieves a specific user by username.
-   *
-   * @param username the username to search for
-   * @return the user's information
-   */
   @Transactional(readOnly = true)
   public UserResponse getUserByUsername(String username) {
     User user = userRepository.findByUsername(username)
@@ -95,13 +66,6 @@ public class UserService {
     return userMapper.toResponse(user);
   }
 
-  /**
-   * Updates a user's profile information.
-   *
-   * @param id      the user ID
-   * @param request the update request with fields to change
-   * @return the updated user information
-   */
   public UserResponse updateUser(Long id, UserUpdateRequest request) {
     User user = userRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
@@ -126,11 +90,6 @@ public class UserService {
     return userMapper.toResponse(savedUser);
   }
 
-  /**
-   * Deletes a user account.
-   *
-   * @param id the user ID to delete
-   */
   public void deleteUser(Long id) {
     if (!userRepository.existsById(id)) {
       throw new ResourceNotFoundException("User", "id", id);

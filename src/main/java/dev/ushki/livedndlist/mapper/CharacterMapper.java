@@ -23,19 +23,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-/**
- * Mapper for converting between Character entities and DTOs. Handles mapping for character
- * creation, updates, and responses.
- *
- * <p>Responsibilities:
- * <ul>
- *   <li>Converting entities to full response DTOs</li>
- *   <li>Converting entities to summary response DTOs</li>
- *   <li>Converting creation requests to entities</li>
- *   <li>Updating existing entities from update requests</li>
- *   <li>Calculating skill bonuses based on ability scores and proficiencies</li>
- * </ul>
- */
 @Component
 @RequiredArgsConstructor
 public class CharacterMapper {
@@ -43,13 +30,6 @@ public class CharacterMapper {
   private final SpellMapper spellMapper;
   private final EquipmentMapper equipmentMapper;
 
-  /**
-   * Converts a DndCharacter entity to a full CharacterResponse DTO. Includes all character details
-   * including equipment, spells, and skills.
-   *
-   * @param character the character entity to convert
-   * @return the character response DTO, or null if character is null
-   */
   public CharacterResponse toResponse(DndCharacter character) {
     if (character == null) {
       return null;
@@ -96,13 +76,6 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Converts a DndCharacter entity to a CharacterSummaryResponse DTO. Includes only essential
-   * information for list views.
-   *
-   * @param character the character entity to convert
-   * @return the character summary DTO, or null if character is null
-   */
   public CharacterSummaryResponse toSummaryResponse(DndCharacter character) {
     if (character == null) {
       return null;
@@ -125,25 +98,12 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Converts a list of DndCharacter entities to CharacterSummaryResponse DTOs.
-   *
-   * @param characters the list of character entities
-   * @return list of character summary DTOs
-   */
   public List<CharacterSummaryResponse> toSummaryResponseList(List<DndCharacter> characters) {
     return characters.stream()
         .map(this::toSummaryResponse)
         .toList();
   }
 
-  /**
-   * Converts a CharacterCreateRequest to a new DndCharacter entity. Initializes all necessary
-   * fields including starting class, ability scores, and skills.
-   *
-   * @param request the character creation request
-   * @return the new character entity, or null if request is null
-   */
   public DndCharacter toEntity(CharacterCreateRequest request) {
     if (request == null) {
       return null;
@@ -183,13 +143,6 @@ public class CharacterMapper {
     return character;
   }
 
-  /**
-   * Updates an existing DndCharacter entity from a CharacterUpdateRequest. Only updates fields that
-   * are present (non-null) in the request.
-   *
-   * @param character the character entity to update
-   * @param request   the update request containing new values
-   */
   public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {
     updateIfPresent(request.getName(), character::setName);
     updateIfPresent(request.getRace(), character::setRace);
@@ -214,23 +167,10 @@ public class CharacterMapper {
         scores -> character.setAbilityScores(mapAbilityScoresRequest(scores)));
   }
 
-  /**
-   * Helper method for partial updates. Only applies the setter if the value is not null.
-   *
-   * @param value  the value to set (if not null)
-   * @param setter the setter method to call
-   * @param <T>    the type of the value
-   */
   private <T> void updateIfPresent(T value, Consumer<T> setter) {
     Optional.ofNullable(value).ifPresent(setter);
   }
 
-  /**
-   * Maps character class entities to response DTOs.
-   *
-   * @param classes the list of character class entities
-   * @return list of character class response DTOs
-   */
   private List<CharacterResponse.CharacterClassResponse> mapClasses(
       List<CharacterClass> classes) {
     return classes.stream()
@@ -243,13 +183,6 @@ public class CharacterMapper {
         .toList();
   }
 
-  /**
-   * Maps ability scores entity to response DTO. Calculates and includes modifiers for each ability
-   * score.
-   *
-   * @param scores the ability scores entity
-   * @return the ability scores response DTO, or null if scores is null
-   */
   private AbilityScoresResponse mapAbilityScores(AbilityScores scores) {
     if (scores == null) {
       return null;
@@ -271,12 +204,6 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Maps ability scores request DTO to entity.
-   *
-   * @param request the ability scores request
-   * @return the ability scores entity
-   */
   private AbilityScores mapAbilityScoresRequest(@Valid AbilityScoresRequest request) {
     return AbilityScores.builder()
         .strength(request.getStrength())
@@ -288,22 +215,6 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Maps skill entities to response DTOs. Calculates total bonuses including ability modifiers,
-   * proficiency, and expertise.
-   *
-   * <p>Bonus calculation:
-   * <ul>
-   *   <li>Base: ability modifier</li>
-   *   <li>Proficient: + proficiency bonus</li>
-   *   <li>Expertise: + proficiency bonus × 2 (replaces proficiency bonus)</li>
-   * </ul>
-   *
-   * @param skills           the list of skill entities
-   * @param abilityScores    the character's ability scores
-   * @param proficiencyBonus the character's proficiency bonus
-   * @return list of skill response DTOs with calculated bonuses
-   */
   private List<SkillResponse> mapSkills(List<Skill> skills, AbilityScores abilityScores,
       int proficiencyBonus) {
     return skills.stream()
@@ -329,12 +240,6 @@ public class CharacterMapper {
         .toList();
   }
 
-  /**
-   * Maps currency entity to response DTO.
-   *
-   * @param currency the currency entity
-   * @return the currency response DTO, or null if currency is null
-   */
   private CharacterResponse.DndCurrencyResponse mapCurrency(DndCurrency currency) {
     if (currency == null) {
       return null;
@@ -349,12 +254,6 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Initializes all 18 skills for a new character. All skills start with no proficiency or
-   * expertise.
-   *
-   * @param character the character to initialize skills for
-   */
   private void initializeSkills(DndCharacter character) {
     List<Skill> skills = new ArrayList<>();
     for (SkillType skillType : SkillType.values()) {

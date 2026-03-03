@@ -19,26 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * Service class for authentication and user registration operations. Handles login, registration,
- * and JWT token generation.
- *
- * <p>Responsibilities:
- * <ul>
- *   <li>User registration with validation</li>
- *   <li>User authentication via username/password</li>
- *   <li>JWT token generation for authenticated users</li>
- *   <li>Password encryption using BCrypt</li>
- * </ul>
- *
- * <p>Security features:
- * <ul>
- *   <li>Passwords are hashed with BCrypt before storage</li>
- *   <li>Duplicate username/email validation</li>
- *   <li>JWT tokens for stateless authentication</li>
- *   <li>New users assigned ROLE_USER by default</li>
- * </ul>
- */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -49,25 +29,6 @@ public class AuthService {
   private final JwtTokenProvider jwtTokenProvider;
   private final UserMapper userMapper;
 
-  /**
-   * Authenticates a user and generates JWT tokens.
-   *
-   * <p>Process flow:
-   * <ol>
-   *   <li>Validate credentials using Spring Security's AuthenticationManager</li>
-   *   <li>Generate JWT access token</li>
-   *   <li>Load full user details from database</li>
-   *   <li>Return JWT response with tokens and user information</li>
-   * </ol>
-   *
-   * <p>Note: Currently, both accessToken and refreshToken contain the same value.
-   * In a production system, refresh tokens should have longer expiration and
-   * different handling logic.
-   *
-   * @param request the login request containing username and password
-   * @return JWT response containing access token, refresh token, and user details
-   * @throws org.springframework.security.core.AuthenticationException if credentials are invalid
-   */
   public JwtResponse login(LoginRequest request) {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
@@ -87,24 +48,6 @@ public class AuthService {
         .build();
   }
 
-  /**
-   * Registers a new user account.
-   *
-   * <p>Process flow:
-   * <ol>
-   *   <li>Validate that username is unique</li>
-   *   <li>Validate that email is unique</li>
-   *   <li>Hash the password using BCrypt</li>
-   *   <li>Assign ROLE_USER role</li>
-   *   <li>Enable the account</li>
-   *   <li>Save user to database</li>
-   *   <li>Return user response (excluding password)</li>
-   * </ol>
-   *
-   * @param request the registration request containing username, email, and password
-   * @return the created user's information (excluding password)
-   * @throws DuplicateResourceException if username or email already exists
-   */
   public UserResponse register(RegisterRequest request) {
     if (userRepository.existsByUsername(request.getUsername())) {
       throw new DuplicateResourceException("Username already exists");

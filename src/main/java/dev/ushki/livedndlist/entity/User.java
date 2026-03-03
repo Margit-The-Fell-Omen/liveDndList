@@ -34,20 +34,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-/**
- * Entity representing a user account in the application. Implements Spring Security's
- * {@link UserDetails} for authentication and authorization.
- *
- * <p>Users can:
- * <ul>
- *   <li>Create and manage D&D characters</li>
- *   <li>Have multiple roles (ROLE_USER, ROLE_ADMIN)</li>
- *   <li>Be enabled or disabled</li>
- * </ul>
- *
- * <p>The {@code characters} field is marked as transient to prevent
- * serialization issues when the User object is used in JWT tokens or session storage.
- */
 @Entity
 @Table(name = "users")
 @Getter
@@ -119,20 +105,12 @@ public class User implements UserDetails {
   }
 
 
-  /**
-   * Sets creation and update timestamps when the entity is first persisted. Called automatically by
-   * JPA before insert.
-   */
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();
     updatedAt = LocalDateTime.now();
   }
 
-  /**
-   * Updates the modification timestamp whenever the entity is updated. Called automatically by JPA
-   * before update.
-   */
   @PreUpdate
   protected void onUpdate() {
     updatedAt = LocalDateTime.now();

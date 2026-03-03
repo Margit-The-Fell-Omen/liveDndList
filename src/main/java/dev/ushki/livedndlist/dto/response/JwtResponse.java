@@ -5,18 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Response DTO containing JWT authentication tokens. Returned upon successful login or token
- * refresh.
- *
- * <p>Usage example:
- * <pre>{@code
- * Authorization: Bearer <accessToken>
- * }</pre>
- *
- * <p>The access token should be included in the Authorization header
- * for all authenticated API requests.
- */
 @Data
 @Builder
 @NoArgsConstructor

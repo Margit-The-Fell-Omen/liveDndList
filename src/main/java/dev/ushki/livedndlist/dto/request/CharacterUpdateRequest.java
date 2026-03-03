@@ -9,21 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for updating an existing D&D character. All fields are optional - only provided
- * fields will be updated.
- *
- * <p>This request supports partial updates. Fields set to {@code null}
- * will not modify the existing character data.
- *
- * <p>Includes fields for:
- * <ul>
- *   <li>Basic information (name, race, alignment)</li>
- *   <li>Combat stats (HP, AC, speed)</li>
- *   <li>Ability scores</li>
- *   <li>Roleplay elements (backstory, personality traits, etc.)</li>
- * </ul>
- */
 @Data
 @Builder
 @NoArgsConstructor

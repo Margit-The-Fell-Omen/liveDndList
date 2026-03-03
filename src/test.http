@@ -1,0 +1,30 @@
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+> {%
+  client.global.set("authToken", response.body.data.token);
+%}
+
+### Get current user profile
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{authToken}}
+
+### Get user by ID (@PathVariable example)
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{authToken}}
+
+### Get users by role (@RequestParam example)
+GET {{baseUrl}}/users?role=ROLE_USER
+Authorization: Bearer {{authToken}}
+
+> {%
+  if (response.status === 200 && response.body && response.body.data) {
+    client.log("✓ @RequestParam role=ROLE_USER: " + response.body.data.length + " users");
+  }
+%}

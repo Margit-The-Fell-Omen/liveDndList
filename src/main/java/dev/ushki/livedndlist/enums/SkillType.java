@@ -1,22 +1,5 @@
 package dev.ushki.livedndlist.enums;
 
-/**
- * Enumeration of the 18 skills in D&D 5th Edition. Each skill is associated with one of the six
- * ability scores.
- *
- * <p>Skill check bonus = ability modifier + proficiency bonus (if proficient)
- * + expertise bonus (if expertise) + other modifiers
- *
- * <p>Skills are organized by their base ability:
- * <ul>
- *   <li>Strength (1): Athletics</li>
- *   <li>Dexterity (3): Acrobatics, Sleight of Hand, Stealth</li>
- *   <li>Intelligence (5): Arcana, History, Investigation, Nature, Religion</li>
- *   <li>Wisdom (5): Animal Handling, Insight, Medicine, Perception, Survival</li>
- *   <li>Charisma (4): Deception, Intimidation, Performance, Persuasion</li>
- *   <li>Constitution (0): No skills are tied to Constitution</li>
- * </ul>
- */
 public enum SkillType {
   // Strength
   ATHLETICS(AbilityType.STRENGTH),

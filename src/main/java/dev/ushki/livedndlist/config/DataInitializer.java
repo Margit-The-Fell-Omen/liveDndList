@@ -27,9 +27,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-/**
- * A class for database initialization.
- */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -68,9 +65,6 @@ public class DataInitializer implements CommandLineRunner {
     log.info("  User: username = player1, password = player123");
   }
 
-  /**
-   * Проверяет, были ли данные уже инициализированы.
-   */
   private boolean isDataAlreadyInitialized() {
     return userRepository.count() > 0
         || spellRepository.count() > 0

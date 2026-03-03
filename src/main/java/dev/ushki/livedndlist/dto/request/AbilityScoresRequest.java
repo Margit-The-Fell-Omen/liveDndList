@@ -7,15 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Request DTO for character ability scores. Represents the six core ability scores used in D&D 5th
- * Edition.
- *
- * <p>Each ability score must be between 1 and 30 (inclusive).
- * Default value for all scores is 10 (average human capability).
- *
- * <p>Ability score modifiers are calculated as: {@code (score - 10) / 2}
- */
 @Data
 @Builder
 @NoArgsConstructor
