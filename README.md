@@ -14,6 +14,8 @@ Will be decided in the future.
 CONTRIBUTING.md will be created in the future.
 ## Versioning scheme
 Will be decided in the future.
+## Sonar Cloud
+Project is checked by Sonar Cloud free [Link to Sonar Cloud](https://sonarcloud.io/summary/overall?id=Margit-The-Fell-Omen_liveDndList&branch=master)
 ## License
 This project is released into public domain.
 
