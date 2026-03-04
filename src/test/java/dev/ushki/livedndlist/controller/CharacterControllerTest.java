@@ -166,7 +166,7 @@ class CharacterControllerTest {
     @DisplayName("Should return characters with all filters applied")
     void shouldReturnCharactersWithAllFilters() throws Exception {
       when(characterService.getAllByUsername(
-          eq("testuser"), eq(CharacterRace.HUMAN), eq(3), eq(15), eq("totalLevel"), eq("desc")))
+          "testuser", CharacterRace.HUMAN, 3, 15, "totalLevel", "desc"))
           .thenReturn(List.of(testCharacterSummary));
 
       mockMvc.perform(get("/api/v1/characters")

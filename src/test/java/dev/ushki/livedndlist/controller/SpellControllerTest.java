@@ -31,9 +31,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * Unit tests for SpellController.
- */
 @WebMvcTest(SpellController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class SpellControllerTest {
@@ -293,7 +290,7 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should search spells with all filters")
     void shouldSearchSpellsWithAllFilters() throws Exception {
-      when(spellService.searchByName(eq("fire"), eq(SpellSchool.EVOCATION), eq(5)))
+      when(spellService.searchByName("fire", SpellSchool.EVOCATION, 5))
           .thenReturn(List.of(fireballResponse));
 
       mockMvc.perform(get("/api/v1/spells/search")

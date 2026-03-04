@@ -13,8 +13,6 @@ import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.LoginRequest;
 import dev.ushki.livedndlist.dto.request.RegisterRequest;
 import dev.ushki.livedndlist.enums.CharacterRace;
-import dev.ushki.livedndlist.repository.CharacterRepository;
-import dev.ushki.livedndlist.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -39,14 +37,7 @@ class FullIntegrationTest {
   @Autowired
   private ObjectMapper objectMapper;
 
-  @Autowired
-  private UserRepository userRepository;
-
-  @Autowired
-  private CharacterRepository characterRepository;
-
   private static String accessToken;
-  private static Long userId;
   private static Long characterId;
 
   @BeforeEach
@@ -74,7 +65,7 @@ class FullIntegrationTest {
 
     String response = result.getResponse().getContentAsString();
     JsonNode jsonNode = objectMapper.readTree(response);
-    userId = jsonNode.get("data").get("id").asLong();
+    Long userId = jsonNode.get("data").get("id").asLong();
 
     assertThat(userId).isNotNull();
   }

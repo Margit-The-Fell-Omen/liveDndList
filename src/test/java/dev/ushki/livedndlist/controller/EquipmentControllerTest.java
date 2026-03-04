@@ -181,7 +181,7 @@ class EquipmentControllerTest {
     @DisplayName("Should return equipment with multiple filters")
     void shouldReturnEquipmentWithMultipleFilters() throws Exception {
       when(equipmentService.getAll(
-          eq(EquipmentType.ARMOR), eq(50.0), eq(100.0), eq("weight"), eq("asc")))
+          EquipmentType.ARMOR, 50.0, 100.0, "weight", "asc"))
           .thenReturn(List.of(plateArmorResponse));
 
       mockMvc.perform(get("/api/v1/equipment")
@@ -235,7 +235,7 @@ class EquipmentControllerTest {
     @Test
     @DisplayName("Should search equipment by name with type filter")
     void shouldSearchEquipmentByNameWithTypeFilter() throws Exception {
-      when(equipmentService.searchByName(eq("plate"), eq(EquipmentType.ARMOR)))
+      when(equipmentService.searchByName("plate", EquipmentType.ARMOR))
           .thenReturn(List.of(plateArmorResponse));
 
       mockMvc.perform(get("/api/v1/equipment/search")

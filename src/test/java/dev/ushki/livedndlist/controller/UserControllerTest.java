@@ -33,9 +33,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * Unit tests for UserController.
- */
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
@@ -111,7 +108,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should return users filtered by role")
     void shouldReturnUsersFilteredByRole() throws Exception {
-      when(userService.getAllUsers(isNull(), eq("ROLE_ADMIN")))
+      when(userService.getAllUsers(isNull(), "ROLE_ADMIN"))
           .thenReturn(List.of(adminUserResponse));
 
       mockMvc.perform(get("/api/v1/users")
@@ -125,7 +122,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should return users filtered by enabled and role")
     void shouldReturnUsersFilteredByEnabledAndRole() throws Exception {
-      when(userService.getAllUsers(eq(true), eq("ROLE_USER")))
+      when(userService.getAllUsers(true, "ROLE_USER"))
           .thenReturn(List.of(testUserResponse));
 
       mockMvc.perform(get("/api/v1/users")

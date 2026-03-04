@@ -21,11 +21,9 @@ class EquipmentRepositoryTest {
   @Autowired
   private EquipmentRepository equipmentRepository;
 
-  private Equipment testEquipment;
-
   @BeforeEach
   void setUp() {
-    testEquipment = Equipment.builder()
+    Equipment testEquipment = Equipment.builder()
         .name("Longsword")
         .type(EquipmentType.WEAPON)
         .damage("1d8")
@@ -42,7 +40,7 @@ class EquipmentRepositoryTest {
     List<Equipment> equipment = equipmentRepository.findByType(EquipmentType.WEAPON);
 
     assertThat(equipment).hasSize(1);
-    assertThat(equipment.get(0).getName()).isEqualTo("Longsword");
+    assertThat(equipment.getFirst().getName()).isEqualTo("Longsword");
   }
 
   @Test
@@ -51,7 +49,7 @@ class EquipmentRepositoryTest {
     List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase("sword");
 
     assertThat(equipment).hasSize(1);
-    assertThat(equipment.get(0).getName()).isEqualTo("Longsword");
+    assertThat(equipment.getFirst().getName()).isEqualTo("Longsword");
   }
 
   @Test

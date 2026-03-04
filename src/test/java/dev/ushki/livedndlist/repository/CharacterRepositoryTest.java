@@ -56,7 +56,7 @@ class CharacterRepositoryTest {
     List<DndCharacter> characters = characterRepository.findAllByOwner(testUser);
 
     assertThat(characters).hasSize(1);
-    assertThat(characters.get(0).getName()).isEqualTo("Gandalf");
+    assertThat(characters.getFirst().getName()).isEqualTo("Gandalf");
   }
 
   @Test
