@@ -104,7 +104,6 @@ public class User implements UserDetails {
     return enabled;
   }
 
-
   @PrePersist
   protected void onCreate() {
     createdAt = LocalDateTime.now();

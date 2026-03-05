@@ -191,8 +191,7 @@ class SpellServiceTest {
       List<SpellResponse> result = spellService.getAllSpells(
           SpellSchool.EVOCATION, null, null, null, null, "name", "asc");
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(s -> s.getSchool() == SpellSchool.EVOCATION);
+      assertThat(result).hasSize(2).allMatch(s -> s.getSchool() == SpellSchool.EVOCATION);
     }
 
     @Test
@@ -206,7 +205,7 @@ class SpellServiceTest {
           null, 3, null, null, null, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getLevel()).isGreaterThanOrEqualTo(3);
+      assertThat(result.getFirst().getLevel()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
@@ -220,8 +219,7 @@ class SpellServiceTest {
       List<SpellResponse> result = spellService.getAllSpells(
           null, null, 1, null, null, "name", "asc");
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(s -> s.getLevel() <= 1);
+      assertThat(result).hasSize(2).allMatch(s -> s.getLevel() <= 1);
     }
 
     @Test
@@ -236,8 +234,7 @@ class SpellServiceTest {
       List<SpellResponse> result = spellService.getAllSpells(
           null, 1, 3, null, null, "name", "asc");
 
-      assertThat(result).hasSize(3);
-      assertThat(result).allMatch(s -> s.getLevel() >= 1 && s.getLevel() <= 3);
+      assertThat(result).hasSize(3).allMatch(s -> s.getLevel() >= 1 && s.getLevel() <= 3);
     }
 
     @Test
@@ -269,7 +266,7 @@ class SpellServiceTest {
           null, null, null, true, null, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).isRitual()).isTrue();
+      assertThat(result.getFirst().isRitual()).isTrue();
     }
 
     @Test
@@ -283,7 +280,7 @@ class SpellServiceTest {
           null, null, null, null, true, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).isConcentration()).isTrue();
+      assertThat(result.getFirst().isConcentration()).isTrue();
     }
 
     @Test
@@ -297,7 +294,7 @@ class SpellServiceTest {
           null, null, null, null, false, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).isConcentration()).isFalse();
+      assertThat(result.getFirst().isConcentration()).isFalse();
     }
 
     @Test
@@ -370,7 +367,7 @@ class SpellServiceTest {
       List<SpellResponse> result = spellService.searchByName("fire", null, null);
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getName()).containsIgnoringCase("fire");
+      assertThat(result.getFirst().getName()).containsIgnoringCase("fire");
       verify(spellRepository).findByNameContainingIgnoreCase("fire");
     }
 
@@ -385,7 +382,7 @@ class SpellServiceTest {
           "magic", SpellSchool.EVOCATION, null);
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getSchool()).isEqualTo(SpellSchool.EVOCATION);
+      assertThat(result.getFirst().getSchool()).isEqualTo(SpellSchool.EVOCATION);
     }
 
     @Test
@@ -398,7 +395,7 @@ class SpellServiceTest {
       List<SpellResponse> result = spellService.searchByName("missile", null, 2);
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getLevel()).isLessThanOrEqualTo(2);
+      assertThat(result.getFirst().getLevel()).isLessThanOrEqualTo(2);
     }
 
     @Test
@@ -412,8 +409,8 @@ class SpellServiceTest {
           "magic", SpellSchool.EVOCATION, 1);
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getSchool()).isEqualTo(SpellSchool.EVOCATION);
-      assertThat(result.get(0).getLevel()).isLessThanOrEqualTo(1);
+      assertThat(result.getFirst().getSchool()).isEqualTo(SpellSchool.EVOCATION);
+      assertThat(result.getFirst().getLevel()).isLessThanOrEqualTo(1);
     }
 
     @Test
@@ -437,8 +434,7 @@ class SpellServiceTest {
       List<SpellResponse> result = spellService.searchByName(
           "shield", SpellSchool.ABJURATION, null);
 
-      assertThat(result).hasSize(1);
-      assertThat(result).allMatch(s -> s.getSchool() == SpellSchool.ABJURATION);
+      assertThat(result).hasSize(1).allMatch(s -> s.getSchool() == SpellSchool.ABJURATION);
     }
   }
 

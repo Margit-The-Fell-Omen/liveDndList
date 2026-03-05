@@ -131,8 +131,7 @@ class UserServiceTest {
 
       List<UserResponse> result = userService.getAllUsers(true, null);
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(UserResponse::isEnabled);
+      assertThat(result).hasSize(2).allMatch(UserResponse::isEnabled);
     }
 
     @Test
@@ -144,7 +143,7 @@ class UserServiceTest {
       List<UserResponse> result = userService.getAllUsers(false, null);
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).isEnabled()).isFalse();
+      assertThat(result.getFirst().isEnabled()).isFalse();
     }
 
     @Test
@@ -157,8 +156,7 @@ class UserServiceTest {
 
       List<UserResponse> result = userService.getAllUsers(null, "ROLE_USER");
 
-      assertThat(result).hasSize(3);
-      assertThat(result).allMatch(u -> u.getRoles().contains(Role.ROLE_USER));
+      assertThat(result).hasSize(3).allMatch(u -> u.getRoles().contains(Role.ROLE_USER));
     }
 
     @Test
@@ -170,7 +168,7 @@ class UserServiceTest {
       List<UserResponse> result = userService.getAllUsers(null, "ROLE_ADMIN");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getRoles()).contains(Role.ROLE_ADMIN);
+      assertThat(result.getFirst().getRoles()).contains(Role.ROLE_ADMIN);
     }
 
     @Test
@@ -182,8 +180,8 @@ class UserServiceTest {
       List<UserResponse> result = userService.getAllUsers(true, "ROLE_ADMIN");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).isEnabled()).isTrue();
-      assertThat(result.get(0).getRoles()).contains(Role.ROLE_ADMIN);
+      assertThat(result.getFirst().isEnabled()).isTrue();
+      assertThat(result.getFirst().getRoles()).contains(Role.ROLE_ADMIN);
     }
 
     @Test
@@ -211,7 +209,7 @@ class UserServiceTest {
       List<UserResponse> result = userService.searchUsers("test");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getUsername()).contains("test");
+      assertThat(result.getFirst().getUsername()).contains("test");
       verify(userRepository).findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
           "test", "test");
     }
@@ -226,7 +224,7 @@ class UserServiceTest {
       List<UserResponse> result = userService.searchUsers("admin@test.com");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getEmail()).contains("admin@test.com");
+      assertThat(result.getFirst().getEmail()).contains("admin@test.com");
     }
 
     @Test
@@ -264,7 +262,7 @@ class UserServiceTest {
       List<UserResponse> result = userService.searchUsers("TEST");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getUsername()).isEqualToIgnoringCase("testuser");
+      assertThat(result.getFirst().getUsername()).isEqualToIgnoringCase("testuser");
     }
   }
 

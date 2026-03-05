@@ -141,8 +141,7 @@ class EquipmentServiceTest {
       List<EquipmentResponse> result = equipmentService.getAll(
           EquipmentType.WEAPON, null, null, "name", "asc");
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(e -> e.getType() == EquipmentType.WEAPON);
+      assertThat(result).hasSize(2).allMatch(e -> e.getType() == EquipmentType.WEAPON);
     }
 
     @Test
@@ -156,7 +155,7 @@ class EquipmentServiceTest {
           null, 50.0, null, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getWeight()).isGreaterThanOrEqualTo(50.0);
+      assertThat(result.getFirst().getWeight()).isGreaterThanOrEqualTo(50.0);
     }
 
     @Test
@@ -170,7 +169,7 @@ class EquipmentServiceTest {
           null, null, 5.0, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getWeight()).isLessThanOrEqualTo(5.0);
+      assertThat(result.getFirst().getWeight()).isLessThanOrEqualTo(5.0);
     }
 
     @Test
@@ -184,8 +183,7 @@ class EquipmentServiceTest {
       List<EquipmentResponse> result = equipmentService.getAll(
           null, 2.0, 10.0, "name", "asc");
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(e -> e.getWeight() >= 2.0 && e.getWeight() <= 10.0);
+      assertThat(result).hasSize(2).allMatch(e -> e.getWeight() >= 2.0 && e.getWeight() <= 10.0);
     }
 
     @Test
@@ -199,8 +197,8 @@ class EquipmentServiceTest {
           EquipmentType.WEAPON, 5.0, 10.0, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getType()).isEqualTo(EquipmentType.WEAPON);
-      assertThat(result.get(0).getWeight()).isBetween(5.0, 10.0);
+      assertThat(result.getFirst().getType()).isEqualTo(EquipmentType.WEAPON);
+      assertThat(result.getFirst().getWeight()).isBetween(5.0, 10.0);
     }
 
     @Test
@@ -245,7 +243,7 @@ class EquipmentServiceTest {
           null, 1.0, null, "name", "asc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getWeight()).isNotNull();
+      assertThat(result.getFirst().getWeight()).isNotNull();
     }
   }
 
@@ -292,8 +290,7 @@ class EquipmentServiceTest {
 
       List<EquipmentResponse> result = equipmentService.searchByName("sword", null);
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(e -> e.getName().toLowerCase().contains("sword"));
+      assertThat(result).hasSize(2).allMatch(e -> e.getName().toLowerCase().contains("sword"));
       verify(equipmentRepository).findByNameContainingIgnoreCase("sword");
     }
 
@@ -307,7 +304,7 @@ class EquipmentServiceTest {
       List<EquipmentResponse> result = equipmentService.searchByName("mail", EquipmentType.ARMOR);
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getType()).isEqualTo(EquipmentType.ARMOR);
+      assertThat(result.getFirst().getType()).isEqualTo(EquipmentType.ARMOR);
     }
 
     @Test
@@ -331,8 +328,7 @@ class EquipmentServiceTest {
 
       List<EquipmentResponse> result = equipmentService.searchByName("sword", EquipmentType.WEAPON);
 
-      assertThat(result).hasSize(2);
-      assertThat(result).allMatch(e -> e.getType() == EquipmentType.WEAPON);
+      assertThat(result).hasSize(2).allMatch(e -> e.getType() == EquipmentType.WEAPON);
     }
   }
 

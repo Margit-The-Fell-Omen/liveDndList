@@ -159,7 +159,7 @@ class CharacterServiceTest {
           "testuser", null, null, null, "updatedAt", "desc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getName()).isEqualTo("Gandalf");
+      assertThat(result.getFirst().getName()).isEqualTo("Gandalf");
       verify(characterRepository).findAllByOwner(eq(testUser), any(Sort.class));
     }
 
@@ -176,7 +176,7 @@ class CharacterServiceTest {
           "testuser", CharacterRace.ELF, null, null, "updatedAt", "desc");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getRace()).isEqualTo(CharacterRace.ELF);
+      assertThat(result.getFirst().getRace()).isEqualTo(CharacterRace.ELF);
     }
 
     @Test
@@ -192,7 +192,7 @@ class CharacterServiceTest {
           "testuser", null, null, null, "name", "asc");
 
       verify(characterRepository).findAllByOwner(
-          eq(testUser), eq(Sort.by("name").ascending()));
+          testUser, Sort.by("name").ascending());
     }
 
     @Test
@@ -207,7 +207,7 @@ class CharacterServiceTest {
       List<CharacterSummaryResponse> result = characterService.searchByName("testuser", "Gandalf");
 
       assertThat(result).hasSize(1);
-      assertThat(result.get(0).getName()).isEqualTo("Gandalf");
+      assertThat(result.getFirst().getName()).isEqualTo("Gandalf");
       verify(characterRepository).findByOwnerAndNameContainingIgnoreCase(testUser, "Gandalf");
     }
 
