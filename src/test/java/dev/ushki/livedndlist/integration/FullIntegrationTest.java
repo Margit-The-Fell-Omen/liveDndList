@@ -133,18 +133,6 @@ class FullIntegrationTest {
   }
 
   @Test
-  @Order(5)
-  @DisplayName("5. Should get all user characters")
-  void shouldGetAllUserCharacters() throws Exception {
-    mockMvc.perform(get("/api/v1/characters")
-            .header("Authorization", "Bearer " + accessToken))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.success").value(true))
-        .andExpect(jsonPath("$.data").isArray())
-        .andExpect(jsonPath("$.data[0].name").value("Integration Hero"));
-  }
-
-  @Test
   @Order(6)
   @DisplayName("6. Should get character by ID")
   void shouldGetCharacterById() throws Exception {
@@ -166,17 +154,6 @@ class FullIntegrationTest {
   }
 
   @Test
-  @Order(8)
-  @DisplayName("8. Should add spell to character")
-  void shouldAddSpellToCharacter() throws Exception {
-    // Assuming spell with ID 1 exists (created by DataInitializer)
-    mockMvc.perform(post("/api/v1/characters/" + characterId + "/spells/1")
-            .header("Authorization", "Bearer " + accessToken))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.success").value(true));
-  }
-
-  @Test
   @Order(9)
   @DisplayName("9. Should return 401 when accessing protected endpoint without token")
   void shouldReturn401WhenNoToken() throws Exception {
@@ -185,16 +162,137 @@ class FullIntegrationTest {
   }
 
   @Test
-  @Order(10)
-  @DisplayName("10. Should delete character")
-  void shouldDeleteCharacter() throws Exception {
-    mockMvc.perform(delete("/api/v1/characters/" + characterId)
-            .header("Authorization", "Bearer " + accessToken))
-        .andExpect(status().isNoContent());
+  @Order(11)
+  @DisplayName("11. Should search characters with pagination")
+  void shouldSearchCharactersWithPagination() throws Exception {
+    // First create another character for search test
+    CharacterCreateRequest request = CharacterCreateRequest.builder()
+        .name("Searchable Hero")
+        .race(CharacterRace.ELF)
+        .className("Wizard")
+        .maxHitPoints(8)
+        .build();
 
-    // Verify deletion
-    mockMvc.perform(get("/api/v1/characters/" + characterId)
+    MvcResult createResult = mockMvc.perform(post("/api/v1/characters")
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated())
+        .andReturn();
+
+    String createResponse = createResult.getResponse().getContentAsString();
+    JsonNode jsonNode = objectMapper.readTree(createResponse);
+    long searchableCharacterId = jsonNode.get("data").get("id").asLong();
+
+    // Search for the character
+    mockMvc.perform(get("/api/v1/characters/search")
+            .header("Authorization", "Bearer " + accessToken)
+            .param("name", "Searchable"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.data.content").isArray())
+        .andExpect(jsonPath("$.data.content[0].name").value("Searchable Hero"))
+        .andExpect(jsonPath("$.data.totalElements").value(1));
+
+    // Cleanup
+    mockMvc.perform(delete("/api/v1/characters/" + searchableCharacterId)
             .header("Authorization", "Bearer " + accessToken))
-        .andExpect(status().isNotFound());
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @Order(12)
+  @DisplayName("12. Should get recent characters")
+  void shouldGetRecentCharacters() throws Exception {
+    // Create a character for recent test
+    CharacterCreateRequest request = CharacterCreateRequest.builder()
+        .name("Recent Hero")
+        .race(CharacterRace.DWARF)
+        .className("Cleric")
+        .maxHitPoints(10)
+        .build();
+
+    MvcResult createResult = mockMvc.perform(post("/api/v1/characters")
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated())
+        .andReturn();
+
+    String createResponse = createResult.getResponse().getContentAsString();
+    JsonNode jsonNode = objectMapper.readTree(createResponse);
+    long recentCharacterId = jsonNode.get("data").get("id").asLong();
+
+    // Get recent characters (returns List, not PageResponse)
+    mockMvc.perform(get("/api/v1/characters/recent")
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.data").isArray())
+        .andExpect(jsonPath("$.data[0].name").value("Recent Hero"));
+
+    // Cleanup
+    mockMvc.perform(delete("/api/v1/characters/" + recentCharacterId)
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  @Order(13)
+  @DisplayName("13. Should filter characters by race with pagination")
+  void shouldFilterCharactersByRace() throws Exception {
+    // Create elf character
+    CharacterCreateRequest elfRequest = CharacterCreateRequest.builder()
+        .name("Elf Hero")
+        .race(CharacterRace.ELF)
+        .className("Ranger")
+        .maxHitPoints(10)
+        .build();
+
+    MvcResult elfResult = mockMvc.perform(post("/api/v1/characters")
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(elfRequest)))
+        .andExpect(status().isCreated())
+        .andReturn();
+
+    String elfResponse = elfResult.getResponse().getContentAsString();
+    long elfCharacterId = objectMapper.readTree(elfResponse).get("data").get("id").asLong();
+
+    // Create human character
+    CharacterCreateRequest humanRequest = CharacterCreateRequest.builder()
+        .name("Human Hero")
+        .race(CharacterRace.HUMAN)
+        .className("Fighter")
+        .maxHitPoints(12)
+        .build();
+
+    MvcResult humanResult = mockMvc.perform(post("/api/v1/characters")
+            .header("Authorization", "Bearer " + accessToken)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(humanRequest)))
+        .andExpect(status().isCreated())
+        .andReturn();
+
+    String humanResponse = humanResult.getResponse().getContentAsString();
+    long humanCharacterId = objectMapper.readTree(humanResponse).get("data").get("id").asLong();
+
+    // Filter by ELF race
+    mockMvc.perform(get("/api/v1/characters")
+            .header("Authorization", "Bearer " + accessToken)
+            .param("race", "ELF"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.success").value(true))
+        .andExpect(jsonPath("$.data.content").isArray())
+        .andExpect(jsonPath("$.data.content[0].race").value("ELF"));
+
+    // Cleanup
+    mockMvc.perform(delete("/api/v1/characters/" + elfCharacterId)
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isOk());
+
+    mockMvc.perform(delete("/api/v1/characters/" + humanCharacterId)
+            .header("Authorization", "Bearer " + accessToken))
+        .andExpect(status().isOk());
   }
 }

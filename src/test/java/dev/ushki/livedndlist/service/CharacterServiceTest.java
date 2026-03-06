@@ -14,6 +14,7 @@ import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
+import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.Equipment;
@@ -29,7 +30,6 @@ import dev.ushki.livedndlist.mapper.EquipmentMapper;
 import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +42,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
@@ -72,6 +76,7 @@ class CharacterServiceTest {
   private CharacterResponse testCharacterResponse;
   private CharacterSummaryResponse testCharacterSummary;
   private CharacterSummaryResponse elfCharacterSummary;
+  private Pageable defaultPageable;
 
   @BeforeEach
   void setUp() {
@@ -100,9 +105,9 @@ class CharacterServiceTest {
         .race(CharacterRace.HUMAN)
         .maxHitPoints(45)
         .currentHitPoints(45)
-        .classes(new ArrayList<>())
-        .skills(new ArrayList<>())
-        .equipment(new ArrayList<>())
+        .classes(new HashSet<>())
+        .skills(new HashSet<>())
+        .equipment(new HashSet<>())
         .spells(new HashSet<>())
         .build();
 
@@ -113,9 +118,9 @@ class CharacterServiceTest {
         .race(CharacterRace.ELF)
         .maxHitPoints(30)
         .currentHitPoints(30)
-        .classes(new ArrayList<>())
-        .skills(new ArrayList<>())
-        .equipment(new ArrayList<>())
+        .classes(new HashSet<>())
+        .skills(new HashSet<>())
+        .equipment(new HashSet<>())
         .spells(new HashSet<>())
         .build();
 
@@ -140,6 +145,8 @@ class CharacterServiceTest {
         .race(CharacterRace.ELF)
         .totalLevel(3)
         .build();
+
+    defaultPageable = PageRequest.of(0, 20, Sort.by("updatedAt").descending());
   }
 
   @Nested
@@ -147,83 +154,115 @@ class CharacterServiceTest {
   class GetOperations {
 
     @Test
-    @DisplayName("Should get all characters by username with default sorting")
-    void shouldGetAllCharactersByUsername() {
+    @DisplayName("Should get all characters by username with pagination")
+    void shouldGetAllCharactersByUsernameWithPagination() {
+      Page<DndCharacter> characterPage = new PageImpl<>(
+          List.of(testCharacter),
+          defaultPageable,
+          1
+      );
+
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
-          .thenReturn(List.of(testCharacter));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Pageable.class)))
+          .thenReturn(characterPage);
       when(characterMapper.toSummaryResponse(testCharacter))
           .thenReturn(testCharacterSummary);
 
-      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
-          "testuser", null, null, null, "updatedAt", "desc");
+      PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, null, null, defaultPageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().getName()).isEqualTo("Gandalf");
-      verify(characterRepository).findAllByOwner(eq(testUser), any(Sort.class));
+      assertThat(result).isNotNull();
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().getFirst().getName()).isEqualTo("Gandalf");
+      assertThat(result.getPageNumber()).isZero();
+      assertThat(result.getTotalElements()).isEqualTo(1);
+      verify(characterRepository).findAllByOwner(eq(testUser), any(Pageable.class));
     }
 
     @Test
-    @DisplayName("Should filter characters by race")
-    void shouldFilterCharactersByRace() {
+    @DisplayName("Should filter characters by race with pagination")
+    void shouldFilterCharactersByRaceWithPagination() {
+      Page<DndCharacter> characterPage = new PageImpl<>(
+          List.of(elfCharacter),
+          defaultPageable,
+          1
+      );
+
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
-          .thenReturn(List.of(testCharacter, elfCharacter));
+      when(characterRepository.findByOwnerAndRace(eq(testUser), eq(CharacterRace.ELF),
+          any(Pageable.class)))
+          .thenReturn(characterPage);
       when(characterMapper.toSummaryResponse(elfCharacter))
           .thenReturn(elfCharacterSummary);
 
-      List<CharacterSummaryResponse> result = characterService.getAllByUsername(
-          "testuser", CharacterRace.ELF, null, null, "updatedAt", "desc");
+      PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", CharacterRace.ELF, null, null, defaultPageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().getRace()).isEqualTo(CharacterRace.ELF);
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().getFirst().getRace()).isEqualTo(CharacterRace.ELF);
     }
 
     @Test
-    @DisplayName("Should sort ascending when specified")
-    void shouldSortAscending() {
+    @DisplayName("Should search characters by name with pagination")
+    void shouldSearchCharactersByNameWithPagination() {
+      Page<DndCharacter> characterPage = new PageImpl<>(
+          List.of(testCharacter),
+          defaultPageable,
+          1
+      );
+
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findAllByOwner(eq(testUser), any(Sort.class)))
-          .thenReturn(List.of(testCharacter));
+      when(characterRepository.findByOwnerAndNameContainingIgnoreCase(
+          eq(testUser), eq("Gandalf"), any(Pageable.class)))
+          .thenReturn(characterPage);
       when(characterMapper.toSummaryResponse(testCharacter))
           .thenReturn(testCharacterSummary);
 
-      characterService.getAllByUsername(
-          "testuser", null, null, null, "name", "asc");
+      PageResponse<CharacterSummaryResponse> result = characterService.searchByName(
+          "testuser", "Gandalf", defaultPageable);
 
-      verify(characterRepository).findAllByOwner(
-          testUser, Sort.by("name").ascending());
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().getFirst().getName()).isEqualTo("Gandalf");
+      verify(characterRepository).findByOwnerAndNameContainingIgnoreCase(
+          eq(testUser), eq("Gandalf"), any(Pageable.class));
     }
 
     @Test
-    @DisplayName("Should search characters by name")
-    void shouldSearchCharactersByName() {
+    @DisplayName("Should return empty page when no matches found")
+    void shouldReturnEmptyPageWhenNoMatches() {
+      Page<DndCharacter> emptyPage = new PageImpl<>(
+          List.of(),
+          defaultPageable,
+          0
+      );
+
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findByOwnerAndNameContainingIgnoreCase(testUser, "Gandalf"))
+      when(characterRepository.findByOwnerAndNameContainingIgnoreCase(
+          eq(testUser), eq("NonExistent"), any(Pageable.class)))
+          .thenReturn(emptyPage);
+
+      PageResponse<CharacterSummaryResponse> result = characterService.searchByName(
+          "testuser", "NonExistent", defaultPageable);
+
+      assertThat(result.getContent()).isEmpty();
+      assertThat(result.isEmpty()).isTrue();
+      assertThat(result.getTotalElements()).isZero();
+    }
+
+    @Test
+    @DisplayName("Should get recent characters (top 5)")
+    void shouldGetRecentCharacters() {
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findTop5ByOwnerOrderByUpdatedAtDesc(testUser))
           .thenReturn(List.of(testCharacter));
       when(characterMapper.toSummaryResponseList(anyList()))
           .thenReturn(List.of(testCharacterSummary));
 
-      List<CharacterSummaryResponse> result = characterService.searchByName("testuser", "Gandalf");
+      List<CharacterSummaryResponse> result = characterService.getRecentCharacters("testuser");
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getName()).isEqualTo("Gandalf");
-      verify(characterRepository).findByOwnerAndNameContainingIgnoreCase(testUser, "Gandalf");
-    }
-
-    @Test
-    @DisplayName("Should return empty list when no matches found")
-    void shouldReturnEmptyListWhenNoMatches() {
-      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findByOwnerAndNameContainingIgnoreCase(testUser, "NonExistent"))
-          .thenReturn(List.of());
-      when(characterMapper.toSummaryResponseList(anyList()))
-          .thenReturn(List.of());
-
-      List<CharacterSummaryResponse> result = characterService.searchByName(
-          "testuser", "NonExistent");
-
-      assertThat(result).isEmpty();
+      verify(characterRepository).findTop5ByOwnerOrderByUpdatedAtDesc(testUser);
     }
 
     @Test
@@ -273,7 +312,7 @@ class CharacterServiceTest {
       when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
 
       assertThatThrownBy(() -> characterService.getAllByUsername(
-          "nonexistent", null, null, null, "updatedAt", "desc"))
+          "nonexistent", null, null, null, defaultPageable))
           .isInstanceOf(ResourceNotFoundException.class)
           .hasMessageContaining("User")
           .hasMessageContaining("nonexistent");
@@ -469,6 +508,56 @@ class CharacterServiceTest {
       assertThatThrownBy(() -> characterService.addSpell(1L, 999L, "testuser"))
           .isInstanceOf(ResourceNotFoundException.class)
           .hasMessageContaining("Spell");
+    }
+  }
+
+  @Nested
+  @DisplayName("Pagination Edge Cases")
+  class PaginationEdgeCases {
+
+    @Test
+    @DisplayName("Should handle empty page correctly")
+    void shouldHandleEmptyPage() {
+      Page<DndCharacter> emptyPage = Page.empty(defaultPageable);
+
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Pageable.class)))
+          .thenReturn(emptyPage);
+
+      PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, null, null, defaultPageable);
+
+      assertThat(result.getContent()).isEmpty();
+      assertThat(result.isEmpty()).isTrue();
+      assertThat(result.getTotalElements()).isZero();
+      assertThat(result.getTotalPages()).isZero();
+    }
+
+    @Test
+    @DisplayName("Should handle multiple pages correctly")
+    void shouldHandleMultiplePages() {
+      Pageable pageRequest = PageRequest.of(1, 10, Sort.by("updatedAt").descending());
+      Page<DndCharacter> secondPage = new PageImpl<>(
+          List.of(testCharacter),
+          pageRequest,
+          25  // Total 25 elements = 3 pages of 10
+      );
+
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Pageable.class)))
+          .thenReturn(secondPage);
+      when(characterMapper.toSummaryResponse(testCharacter))
+          .thenReturn(testCharacterSummary);
+
+      PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
+          "testuser", null, null, null, pageRequest);
+
+      assertThat(result.getPageNumber()).isEqualTo(1);
+      assertThat(result.getPageSize()).isEqualTo(10);
+      assertThat(result.getTotalElements()).isEqualTo(25);
+      assertThat(result.getTotalPages()).isEqualTo(3);
+      assertThat(result.isFirst()).isFalse();
+      assertThat(result.isLast()).isFalse();
     }
   }
 }

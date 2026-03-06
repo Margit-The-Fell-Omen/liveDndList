@@ -6,12 +6,17 @@ import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
+import dev.ushki.livedndlist.dto.response.PageResponse;
+import dev.ushki.livedndlist.dto.response.RestoreHitPointsResponse;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.service.CharacterService;
 import dev.ushki.livedndlist.service.NonTransactionalCharacterService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,30 +40,38 @@ public class CharacterController {
   private final NonTransactionalCharacterService nonTransactionalCharacterService;
 
   @GetMapping
-  public ApiResponse<List<CharacterSummaryResponse>> getAllMyCharacters(
+  public ApiResponse<PageResponse<CharacterSummaryResponse>> getAllMyCharacters(
       @AuthenticationPrincipal UserDetails userDetails,
       @RequestParam(required = false) CharacterRace race,
       @RequestParam(required = false) Integer minLevel,
       @RequestParam(required = false) Integer maxLevel,
-      @RequestParam(defaultValue = "updatedAt") String sortBy,
-      @RequestParam(defaultValue = "desc") String sortDir) {
-    return ApiResponse.success(characterService.getAllByUsername(
-        userDetails.getUsername(), race, minLevel, maxLevel, sortBy, sortDir));
+      @PageableDefault(size = 20, sort = "updatedAt", direction = Sort.Direction.DESC)
+      Pageable pageable) {
+
+    PageResponse<CharacterSummaryResponse> page = characterService.getAllByUsername(
+        userDetails.getUsername(), race, minLevel, maxLevel, pageable);
+
+    return ApiResponse.success(page);
   }
 
   @GetMapping("/search")
-  public ApiResponse<List<CharacterSummaryResponse>> searchCharacters(
+  public ApiResponse<PageResponse<CharacterSummaryResponse>> searchCharacters(
       @AuthenticationPrincipal UserDetails userDetails,
-      @RequestParam String name) {
-    return ApiResponse.success(
-        characterService.searchByName(userDetails.getUsername(), name));
+      @RequestParam String name,
+      @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
+      Pageable pageable) {
+
+    PageResponse<CharacterSummaryResponse> page =
+        characterService.searchByName(userDetails.getUsername(), name, pageable);
+
+    return ApiResponse.success(page);
   }
 
-  @GetMapping("/{id}")
-  public ApiResponse<CharacterResponse> getCharacter(
-      @PathVariable Long id,
+  @GetMapping("/recent")
+  public ApiResponse<List<CharacterSummaryResponse>> getRecentCharacters(
       @AuthenticationPrincipal UserDetails userDetails) {
-    return ApiResponse.success(characterService.getById(id, userDetails.getUsername()));
+    return ApiResponse.success(
+        characterService.getRecentCharacters(userDetails.getUsername()));
   }
 
   @PostMapping
@@ -68,6 +81,35 @@ public class CharacterController {
       @AuthenticationPrincipal UserDetails userDetails) {
     CharacterResponse response = characterService.create(request, userDetails.getUsername());
     return ApiResponse.success("Character created successfully", response);
+  }
+
+  @PostMapping("/starter-pack")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ApiResponse<CharacterResponse> createWithStarterPack(
+      @Valid @RequestBody CharacterCreateRequest request,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response = characterService.createWithStarterPack(
+        request, userDetails.getUsername());
+    return ApiResponse.success("Character created with starter pack", response);
+  }
+
+  @PostMapping("/starter-pack-no-tx")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ApiResponse<Void> createWithStarterPackNoTransaction(
+      @Valid @RequestBody CharacterCreateRequest request,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    nonTransactionalCharacterService.createWithStarterPackNoTransaction(
+        request, userDetails.getUsername());
+    return ApiResponse.success("Character created (no transaction)");
+  }
+
+  // ==================== Single Character Operations ====================
+
+  @GetMapping("/{id}")
+  public ApiResponse<CharacterResponse> getCharacter(
+      @PathVariable Long id,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    return ApiResponse.success(characterService.getById(id, userDetails.getUsername()));
   }
 
   @PutMapping("/{id}")
@@ -88,52 +130,7 @@ public class CharacterController {
     return ApiResponse.success("Character deleted successfully");
   }
 
-  @PostMapping("/{id}/equipment")
-  public ApiResponse<CharacterResponse> addEquipment(
-      @PathVariable Long id,
-      @Valid @RequestBody EquipmentRequest request,
-      @AuthenticationPrincipal UserDetails userDetails) {
-    CharacterResponse response =
-        characterService.addEquipment(id, request, userDetails.getUsername());
-    return ApiResponse.success("Equipment added", response);
-  }
-
-  @DeleteMapping("/{id}/equipment/{equipmentId}")
-  public ApiResponse<CharacterResponse> removeEquipment(
-      @PathVariable Long id,
-      @PathVariable Long equipmentId,
-      @AuthenticationPrincipal UserDetails userDetails) {
-    CharacterResponse response =
-        characterService.removeEquipment(id, equipmentId, userDetails.getUsername());
-    return ApiResponse.success("Equipment removed", response);
-  }
-
-  @PostMapping("/{id}/spells/{spellId}")
-  public ApiResponse<CharacterResponse> addSpell(
-      @PathVariable Long id,
-      @PathVariable Long spellId,
-      @AuthenticationPrincipal UserDetails userDetails) {
-    CharacterResponse response =
-        characterService.addSpell(id, spellId, userDetails.getUsername());
-    return ApiResponse.success("Spell added", response);
-  }
-
-  @DeleteMapping("/{id}/spells/{spellId}")
-  public ApiResponse<CharacterResponse> removeSpell(
-      @PathVariable Long id,
-      @PathVariable Long spellId,
-      @AuthenticationPrincipal UserDetails userDetails) {
-    CharacterResponse response =
-        characterService.removeSpell(id, spellId, userDetails.getUsername());
-    return ApiResponse.success("Spell removed", response);
-  }
-
-  @GetMapping("/recent")
-  public ApiResponse<List<CharacterSummaryResponse>> getRecentCharacters(
-      @AuthenticationPrincipal UserDetails userDetails) {
-    return ApiResponse.success(
-        characterService.getRecentCharacters(userDetails.getUsername()));
-  }
+  // ==================== Character View Endpoints ====================
 
   @GetMapping("/{id}/sheet")
   public ApiResponse<CharacterResponse> getCharacterSheet(
@@ -199,23 +196,62 @@ public class CharacterController {
         characterService.getCharacterWithSpells(id, userDetails.getUsername()));
   }
 
-  @PostMapping("/starter-pack")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ApiResponse<CharacterResponse> createWithStarterPack(
-      @Valid @RequestBody CharacterCreateRequest request,
+  // ==================== Equipment Management ====================
+
+  @PostMapping("/{id}/equipment")
+  public ApiResponse<CharacterResponse> addEquipment(
+      @PathVariable Long id,
+      @Valid @RequestBody EquipmentRequest request,
       @AuthenticationPrincipal UserDetails userDetails) {
-    CharacterResponse response = characterService.createWithStarterPack(
-        request, userDetails.getUsername());
-    return ApiResponse.success("Character created with starter pack", response);
+    CharacterResponse response =
+        characterService.addEquipment(id, request, userDetails.getUsername());
+    return ApiResponse.success("Equipment added", response);
   }
 
-  @PostMapping("/starter-pack-no-tx")
-  @ResponseStatus(HttpStatus.CREATED)
-  public ApiResponse<Void> createWithStarterPackNoTransaction(
-      @Valid @RequestBody CharacterCreateRequest request,
+  @DeleteMapping("/{id}/equipment/{equipmentId}")
+  public ApiResponse<CharacterResponse> removeEquipment(
+      @PathVariable Long id,
+      @PathVariable Long equipmentId,
       @AuthenticationPrincipal UserDetails userDetails) {
-    nonTransactionalCharacterService.createWithStarterPackNoTransaction(
-        request, userDetails.getUsername());
-    return ApiResponse.success("Character created (no transaction)");
+    CharacterResponse response =
+        characterService.removeEquipment(id, equipmentId, userDetails.getUsername());
+    return ApiResponse.success("Equipment removed", response);
+  }
+
+  // ==================== Spell Management ====================
+
+  @PostMapping("/{id}/spells/{spellId}")
+  public ApiResponse<CharacterResponse> addSpell(
+      @PathVariable Long id,
+      @PathVariable Long spellId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response =
+        characterService.addSpell(id, spellId, userDetails.getUsername());
+    return ApiResponse.success("Spell added", response);
+  }
+
+  @DeleteMapping("/{id}/spells/{spellId}")
+  public ApiResponse<CharacterResponse> removeSpell(
+      @PathVariable Long id,
+      @PathVariable Long spellId,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response =
+        characterService.removeSpell(id, spellId, userDetails.getUsername());
+    return ApiResponse.success("Spell removed", response);
+  }
+
+  @PostMapping("/restore-hp")
+  public ApiResponse<RestoreHitPointsResponse> restoreAllHitPoints(
+      @AuthenticationPrincipal UserDetails userDetails) {
+
+    int updatedCount = characterService.restoreAllCharactersHitPoints(
+        userDetails.getUsername());
+
+    RestoreHitPointsResponse response = RestoreHitPointsResponse.builder()
+        .charactersUpdated(updatedCount)
+        .message("All characters restored to full hit points")
+        .build();
+
+    return ApiResponse.success("Hit points restored successfully", response);
   }
 }

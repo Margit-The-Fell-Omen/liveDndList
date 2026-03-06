@@ -1,10 +1,13 @@
 package dev.ushki.livedndlist.service;
 
+import dev.ushki.livedndlist.cache.CharacterQueryIndex;
+import dev.ushki.livedndlist.cache.CharacterQueryKey;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
+import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.Equipment;
@@ -20,10 +23,12 @@ import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,49 +43,97 @@ public class CharacterService {
   private final SpellRepository spellRepository;
   private final CharacterMapper characterMapper;
   private final EquipmentMapper equipmentMapper;
+  private final CharacterQueryIndex queryIndex;  // Added
 
   private static final String CHARACTER_RESOURCE = "Character";
 
   @Transactional(readOnly = true)
-  public List<CharacterSummaryResponse> getAllByUsername(
+  public PageResponse<CharacterSummaryResponse> getAllByUsername(
       String username,
       CharacterRace race,
       Integer minLevel,
       Integer maxLevel,
-      String sortBy,
-      String sortDir) {
+      Pageable pageable) {
 
     User user = findUserByUsername(username);
 
-    Sort sort = sortDir.equalsIgnoreCase("asc")
-        ? Sort.by(sortBy).ascending()
-        : Sort.by(sortBy).descending();
+    CharacterQueryKey cacheKey = CharacterQueryKey.builder()
+        .userId(user.getId())
+        .race(race)
+        .minLevel(minLevel)
+        .maxLevel(maxLevel)
+        .pageNumber(pageable.getPageNumber())
+        .pageSize(pageable.getPageSize())
+        .sortBy(pageable.getSort().toString())
+        .sortDirection(pageable.getSort().isSorted() ? "sorted" : "unsorted")
+        .build();
 
-    List<DndCharacter> characters = characterRepository.findAllByOwner(user, sort);
+    Optional<PageResponse<CharacterSummaryResponse>> cached = queryIndex.get(cacheKey);
+    if (cached.isPresent()) {
+      log.debug("Returning cached result for user '{}'", username);
+      return cached.get();
+    }
 
-    // Apply filters using streams
-    Stream<DndCharacter> stream = characters.stream();
+    Page<DndCharacter> characterPage;
 
     if (race != null) {
-      stream = stream.filter(c -> c.getRace() == race);
-    }
-    if (minLevel != null) {
-      stream = stream.filter(c -> c.getTotalLevel() >= minLevel);
-    }
-    if (maxLevel != null) {
-      stream = stream.filter(c -> c.getTotalLevel() <= maxLevel);
+      characterPage = characterRepository.findByOwnerAndRace(user, race, pageable);
+    } else {
+      characterPage = characterRepository.findAllByOwner(user, pageable);
     }
 
-    return stream
-        .map(characterMapper::toSummaryResponse)
+    Page<CharacterSummaryResponse> responsePage = characterPage.map(character -> {
+      int totalLevel = character.getTotalLevel();
+      if (minLevel != null && totalLevel < minLevel) {
+        return null;
+      }
+      if (maxLevel != null && totalLevel > maxLevel) {
+        return null;
+      }
+      return characterMapper.toSummaryResponse(character);
+    });
+
+    List<CharacterSummaryResponse> filteredContent = responsePage.getContent().stream()
+        .filter(Objects::nonNull)
         .toList();
+
+    PageResponse<CharacterSummaryResponse> result = PageResponse.<CharacterSummaryResponse>builder()
+        .content(filteredContent)
+        .pageNumber(characterPage.getNumber())
+        .pageSize(characterPage.getSize())
+        .totalElements(characterPage.getTotalElements())
+        .totalPages(characterPage.getTotalPages())
+        .first(characterPage.isFirst())
+        .last(characterPage.isLast())
+        .empty(filteredContent.isEmpty())
+        .build();
+
+    queryIndex.put(cacheKey, result);
+
+    return result;
   }
 
   @Transactional(readOnly = true)
-  public List<CharacterSummaryResponse> searchByName(String username, String name) {
+  public PageResponse<CharacterSummaryResponse> searchByName(
+      String username,
+      String name,
+      Pageable pageable) {
+
     User user = findUserByUsername(username);
-    List<DndCharacter> characters =
-        characterRepository.findByOwnerAndNameContainingIgnoreCase(user, name);
+    Page<DndCharacter> characterPage =
+        characterRepository.findByOwnerAndNameContainingIgnoreCase(user, name, pageable);
+
+    Page<CharacterSummaryResponse> responsePage =
+        characterPage.map(characterMapper::toSummaryResponse);
+
+    return PageResponse.of(responsePage);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CharacterSummaryResponse> getRecentCharacters(String username) {
+    User user = findUserByUsername(username);
+    List<DndCharacter> characters = characterRepository.findTop5ByOwnerOrderByUpdatedAtDesc(user);
+    log.info("Retrieved {} recent characters for user '{}'", characters.size(), username);
     return characterMapper.toSummaryResponseList(characters);
   }
 
@@ -99,6 +152,8 @@ public class CharacterService {
     DndCharacter savedCharacter = characterRepository.save(character);
     log.info("Character '{}' created for user '{}'", savedCharacter.getName(), username);
 
+    invalidateUserCache(user.getId());
+
     return characterMapper.toResponse(savedCharacter);
   }
 
@@ -110,13 +165,19 @@ public class CharacterService {
     DndCharacter savedCharacter = characterRepository.save(character);
     log.info("Character '{}' updated", savedCharacter.getName());
 
+    invalidateUserCache(character.getOwner().getId());
+
     return characterMapper.toResponse(savedCharacter);
   }
 
   public void delete(Long id, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
+    Long userId = character.getOwner().getId();
+
     characterRepository.delete(character);
     log.info("Character '{}' deleted", character.getName());
+
+    invalidateUserCache(userId);
   }
 
   public CharacterResponse addEquipment(Long characterId, EquipmentRequest request,
@@ -128,6 +189,8 @@ public class CharacterService {
 
     DndCharacter savedCharacter = characterRepository.save(character);
     log.info("Equipment '{}' added to character '{}'", equipment.getName(), character.getName());
+
+    invalidateUserCache(character.getOwner().getId());
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -145,6 +208,8 @@ public class CharacterService {
     DndCharacter savedCharacter = characterRepository.save(character);
     log.info("Equipment removed from character '{}'", character.getName());
 
+    invalidateUserCache(character.getOwner().getId());
+
     return characterMapper.toResponse(savedCharacter);
   }
 
@@ -158,6 +223,8 @@ public class CharacterService {
 
     DndCharacter savedCharacter = characterRepository.save(character);
     log.info("Spell '{}' added to character '{}'", spell.getName(), character.getName());
+
+    invalidateUserCache(character.getOwner().getId());
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -173,31 +240,22 @@ public class CharacterService {
     DndCharacter savedCharacter = characterRepository.save(character);
     log.info("Spell '{}' removed from character '{}'", spell.getName(), character.getName());
 
+    invalidateUserCache(character.getOwner().getId());
+
     return characterMapper.toResponse(savedCharacter);
   }
 
-  private User findUserByUsername(String username) {
-    return userRepository.findByUsername(username)
-        .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-  }
-
-  private DndCharacter findCharacterWithOwnershipCheck(Long id, String username) {
-    DndCharacter character = characterRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-    if (!character.getOwner().getUsername().equals(username)) {
-      throw new UnauthorizedException("You don't have access to this character");
-    }
-
-    return character;
-  }
-
-  @Transactional(readOnly = true)
-  public List<CharacterSummaryResponse> getRecentCharacters(String username) {
+  public int restoreAllCharactersHitPoints(String username) {
     User user = findUserByUsername(username);
-    List<DndCharacter> characters = characterRepository.findAllByOwnerOrderByUpdatedAtDesc(user);
-    log.info("Retrieved {} recent characters for user '{}'", characters.size(), username);
-    return characterMapper.toSummaryResponseList(characters);
+
+    int updatedCount = characterRepository.restoreAllCharactersHitPointsNative(user.getId());
+
+    log.info("Restored hit points for {} characters belonging to user '{}'",
+        updatedCount, username);
+
+    invalidateUserCache(user.getId());
+
+    return updatedCount;
   }
 
   @Transactional(readOnly = true)
@@ -283,12 +341,6 @@ public class CharacterService {
     return characterMapper.toResponse(character);
   }
 
-  private void verifyOwnership(DndCharacter character, String username) {
-    if (!character.getOwner().getUsername().equals(username)) {
-      throw new UnauthorizedException("You don't have access to this character");
-    }
-  }
-
   public CharacterResponse createWithStarterPack(CharacterCreateRequest request, String username) {
     User user = findUserByUsername(username);
 
@@ -308,7 +360,6 @@ public class CharacterService {
       addStarterSpells(character);
     }
 
-    // Simulate failure for testing transaction rollback
     if (request.getName().contains("FAIL")) {
       log.error("Step 4: FAILURE! But nothing saved yet - transaction will rollback");
       throw new ResourceSaveFailureException("Simulated failure during starter pack creation");
@@ -319,7 +370,38 @@ public class CharacterService {
     log.info("Step 6: Character '{}' saved with ID {}", savedCharacter.getName(),
         savedCharacter.getId());
 
+    invalidateUserCache(user.getId());
+
     return characterMapper.toResponse(savedCharacter);
+  }
+
+  // ==================== Private Helper Methods ====================
+
+  private User findUserByUsername(String username) {
+    return userRepository.findByUsername(username)
+        .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+  }
+
+  private DndCharacter findCharacterWithOwnershipCheck(Long id, String username) {
+    DndCharacter character = characterRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+    if (!character.getOwner().getUsername().equals(username)) {
+      throw new UnauthorizedException("You don't have access to this character");
+    }
+
+    return character;
+  }
+
+  private void verifyOwnership(DndCharacter character, String username) {
+    if (!character.getOwner().getUsername().equals(username)) {
+      throw new UnauthorizedException("You don't have access to this character");
+    }
+  }
+
+  private void invalidateUserCache(Long userId) {
+    queryIndex.invalidateByUser(userId);
+    log.debug("Cache invalidated for user {}", userId);
   }
 
   private void addStarterWeapon(DndCharacter character) {

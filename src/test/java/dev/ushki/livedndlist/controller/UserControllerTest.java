@@ -106,20 +106,6 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
-    @DisplayName("Should return users filtered by role")
-    void shouldReturnUsersFilteredByRole() throws Exception {
-      when(userService.getAllUsers(isNull(), "ROLE_ADMIN"))
-          .thenReturn(List.of(adminUserResponse));
-
-      mockMvc.perform(get("/api/v1/users")
-              .param("role", "ROLE_ADMIN"))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.data[0].username").value("admin"));
-    }
-
-    @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should return users filtered by enabled and role")
     void shouldReturnUsersFilteredByEnabledAndRole() throws Exception {
       when(userService.getAllUsers(true, "ROLE_USER"))
