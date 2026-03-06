@@ -15,9 +15,11 @@ import dev.ushki.livedndlist.entity.character.Skill;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.SkillType;
 import jakarta.validation.Valid;
-import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -82,6 +84,7 @@ public class CharacterMapper {
     }
 
     String classDisplay = character.getClasses().stream()
+        .sorted(Comparator.comparing(CharacterClass::getLevel).reversed())
         .map(c -> c.getClassName() + " " + c.getLevel())
         .collect(Collectors.joining(" / "));
 
@@ -171,9 +174,19 @@ public class CharacterMapper {
     Optional.ofNullable(value).ifPresent(setter);
   }
 
+  /**
+   * Maps Set of CharacterClass to List of CharacterClassResponse. Sorted by level descending
+   * (highest level class first).
+   */
   private List<CharacterResponse.CharacterClassResponse> mapClasses(
-      List<CharacterClass> classes) {
+      Set<CharacterClass> classes) {
+    if (classes == null) {
+      return List.of();
+    }
+
     return classes.stream()
+        .sorted(Comparator.comparing(CharacterClass::getLevel).reversed()
+            .thenComparing(CharacterClass::getClassName))
         .map(c -> CharacterResponse.CharacterClassResponse.builder()
             .id(c.getId())
             .className(c.getClassName())
@@ -215,9 +228,18 @@ public class CharacterMapper {
         .build();
   }
 
-  private List<SkillResponse> mapSkills(List<Skill> skills, AbilityScores abilityScores,
+  /**
+   * Maps Set of Skills to List of SkillResponse. Sorted by skill type name for consistent
+   * ordering.
+   */
+  private List<SkillResponse> mapSkills(Set<Skill> skills, AbilityScores abilityScores,
       int proficiencyBonus) {
+    if (skills == null) {
+      return List.of();
+    }
+
     return skills.stream()
+        .sorted(Comparator.comparing(s -> s.getSkillType().name()))
         .map(skill -> {
           AbilityType baseAbility = skill.getSkillType().getBaseAbility();
           int totalBonus = abilityScores.getModifier(baseAbility);
@@ -254,14 +276,20 @@ public class CharacterMapper {
         .build();
   }
 
+  /**
+   * Initializes all 18 D&D 5e skills with no proficiencies. Uses Set instead of List for Hibernate
+   * optimization.
+   */
   private void initializeSkills(DndCharacter character) {
-    List<Skill> skills = new ArrayList<>();
+    Set<Skill> skills = new HashSet<>();
     for (SkillType skillType : SkillType.values()) {
-      skills.add(Skill.builder()
+      Skill skill = Skill.builder()
           .skillType(skillType)
           .proficiency(false)
           .expertise(false)
-          .build());
+          .build();
+      skill.setCharacter(character);
+      skills.add(skill);
     }
     character.setSkills(skills);
   }

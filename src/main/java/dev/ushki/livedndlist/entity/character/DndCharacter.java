@@ -27,9 +27,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -115,7 +113,7 @@ public class DndCharacter {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "character_id")
   @Builder.Default
-  private List<CharacterClass> classes = new ArrayList<>();
+  private Set<CharacterClass> classes = new HashSet<>();
 
   // ==================== Ability Scores ====================
 
@@ -159,7 +157,7 @@ public class DndCharacter {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "character_id")
   @Builder.Default
-  private List<Skill> skills = new ArrayList<>();
+  private Set<Skill> skills = new HashSet<>();
 
   @ElementCollection
   @CollectionTable(name = "character_saving_throws")
@@ -172,7 +170,7 @@ public class DndCharacter {
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "character_id")
   @Builder.Default
-  private List<Equipment> equipment = new ArrayList<>();
+  private Set<Equipment> equipment = new HashSet<>();
 
   @Embedded
   @Builder.Default

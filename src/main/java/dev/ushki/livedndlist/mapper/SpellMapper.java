@@ -33,7 +33,14 @@ public class SpellMapper {
         .build();
   }
 
+  /**
+   * Converts Set of Spells to Set of SpellResponse.
+   */
   public Set<SpellResponse> toResponseSet(Set<Spell> spells) {
+    if (spells == null) {
+      return Set.of();
+    }
+
     return spells.stream()
         .map(this::toResponse)
         .collect(Collectors.toSet());

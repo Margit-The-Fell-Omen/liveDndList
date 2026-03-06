@@ -8,6 +8,7 @@ import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.service.CharacterService;
+import dev.ushki.livedndlist.service.NonTransactionalCharacterService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -25,33 +26,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * REST controller for managing D&D characters. Provides endpoints for CRUD operations, equipment
- * management, and spell management.
- *
- * <p>Base path: {@code /api/v1/characters}
- *
- * <p>All endpoints require authentication. Characters are scoped to the authenticated user.
- */
 @RestController
 @RequestMapping("/api/v1/characters")
 @RequiredArgsConstructor
 public class CharacterController {
 
   private final CharacterService characterService;
+  private final NonTransactionalCharacterService nonTransactionalCharacterService;
 
-  /**
-   * Retrieves all characters belonging to the authenticated user. Supports filtering by race, level
-   * range, and sorting.
-   *
-   * @param userDetails the authenticated user's details
-   * @param race        optional filter by character race
-   * @param minLevel    optional minimum total level filter
-   * @param maxLevel    optional maximum total level filter
-   * @param sortBy      field to sort by (default: updatedAt)
-   * @param sortDir     sort direction: asc or desc (default: desc)
-   * @return API response containing a list of character summaries
-   */
   @GetMapping
   public ApiResponse<List<CharacterSummaryResponse>> getAllMyCharacters(
       @AuthenticationPrincipal UserDetails userDetails,
@@ -99,11 +81,11 @@ public class CharacterController {
   }
 
   @DeleteMapping("/{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteCharacter(
+  public ApiResponse<Void> deleteCharacter(
       @PathVariable Long id,
       @AuthenticationPrincipal UserDetails userDetails) {
     characterService.delete(id, userDetails.getUsername());
+    return ApiResponse.success("Character deleted successfully");
   }
 
   @PostMapping("/{id}/equipment")
@@ -215,5 +197,25 @@ public class CharacterController {
       @AuthenticationPrincipal UserDetails userDetails) {
     return ApiResponse.success(
         characterService.getCharacterWithSpells(id, userDetails.getUsername()));
+  }
+
+  @PostMapping("/starter-pack")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ApiResponse<CharacterResponse> createWithStarterPack(
+      @Valid @RequestBody CharacterCreateRequest request,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response = characterService.createWithStarterPack(
+        request, userDetails.getUsername());
+    return ApiResponse.success("Character created with starter pack", response);
+  }
+
+  @PostMapping("/starter-pack-no-tx")
+  @ResponseStatus(HttpStatus.CREATED)
+  public ApiResponse<Void> createWithStarterPackNoTransaction(
+      @Valid @RequestBody CharacterCreateRequest request,
+      @AuthenticationPrincipal UserDetails userDetails) {
+    nonTransactionalCharacterService.createWithStarterPackNoTransaction(
+        request, userDetails.getUsername());
+    return ApiResponse.success("Character created (no transaction)");
   }
 }

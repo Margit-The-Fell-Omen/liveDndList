@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,4 +51,25 @@ public class Equipment {
   private String damage;
   private String damageType;
   private String properties;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Equipment equipment = (Equipment) o;
+    if (id != null && equipment.id != null) {
+      return id.equals(equipment.id);
+    }
+    return Objects.equals(name, equipment.name)
+        && type == equipment.type;
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }

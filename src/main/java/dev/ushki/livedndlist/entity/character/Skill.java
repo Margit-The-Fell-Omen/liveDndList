@@ -48,4 +48,24 @@ public class Skill {
   public boolean isProficient() {
     return proficiency;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Skill skill = (Skill) o;
+    if (id != null && skill.id != null) {
+      return id.equals(skill.id);
+    }
+    return skillType == skill.skillType;
+  }
+
+  @Override
+  public int hashCode() {
+    return getClass().hashCode();
+  }
 }

@@ -3,8 +3,10 @@ package dev.ushki.livedndlist.mapper;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
 import dev.ushki.livedndlist.entity.character.Equipment;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import org.springframework.stereotype.Component;
 
@@ -31,8 +33,21 @@ public class EquipmentMapper {
         .build();
   }
 
-  public List<EquipmentResponse> toResponseList(List<Equipment> equipmentList) {
-    return equipmentList.stream()
+  /**
+   * Converts Set of Equipment to List of EquipmentResponse. Sorted by: equipped items first, then
+   * by type, then by name.
+   */
+  public List<EquipmentResponse> toResponseList(Set<Equipment> equipmentSet) {
+    if (equipmentSet == null) {
+      return List.of();
+    }
+
+    return equipmentSet.stream()
+        .sorted(Comparator
+            .comparing((Equipment e) -> !e.isEquipped())  // Equipped first
+            .thenComparing(e -> e.getType() != null ? e.getType().name() : "",
+                Comparator.nullsLast(String::compareTo))
+            .thenComparing(Equipment::getName, Comparator.nullsLast(String::compareTo)))
         .map(this::toResponse)
         .toList();
   }
