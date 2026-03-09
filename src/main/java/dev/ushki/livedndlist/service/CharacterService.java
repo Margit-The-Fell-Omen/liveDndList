@@ -14,6 +14,7 @@ import dev.ushki.livedndlist.entity.character.Equipment;
 import dev.ushki.livedndlist.entity.character.Spell;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.EquipmentType;
+import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.exceptions.ResourceSaveFailureException;
 import dev.ushki.livedndlist.exceptions.UnauthorizedException;
@@ -465,5 +466,34 @@ public class CharacterService {
     cantrips.stream()
         .limit(2)
         .forEach(character::addSpell);
+  }
+
+  @Transactional(readOnly = true)
+  public PageResponse<CharacterSummaryResponse> findByComplexCriteria(
+      String username,
+      String className,
+      Integer minClassLevel,
+      SpellSchool spellSchool,
+      Pageable pageable) {
+
+    User user = findUserByUsername(username);
+
+    Page<DndCharacter> characterPage = characterRepository.findByComplexCriteria(
+        user.getId(),
+        className,
+        minClassLevel,
+        spellSchool.name(),
+        pageable
+    );
+
+    log.info("Found {} characters (page {}/{}) for complex criteria search",
+        characterPage.getTotalElements(),
+        characterPage.getNumber(),
+        characterPage.getTotalPages());
+
+    Page<CharacterSummaryResponse> responsePage =
+        characterPage.map(characterMapper::toSummaryResponse);
+
+    return PageResponse.of(responsePage);
   }
 }

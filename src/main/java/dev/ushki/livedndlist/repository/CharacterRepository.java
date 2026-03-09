@@ -3,6 +3,7 @@ package dev.ushki.livedndlist.repository;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.enums.CharacterRace;
+import dev.ushki.livedndlist.enums.SpellSchool;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -91,4 +92,41 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
       + "WHERE user_id = :userId",
       nativeQuery = true)
   int restoreAllCharactersHitPointsNative(@Param("userId") Long userId);
+
+  //  @Query("SELECT DISTINCT c FROM DndCharacter c " +
+  //      "JOIN c.classes cc " +
+  //      "JOIN c.spells s " +
+  //      "WHERE c.owner.id = :userId " +
+  //      "AND LOWER(cc.className) = LOWER(:className) " +
+  //      "AND cc.level >= :minClassLevel " +
+  //      "AND s.school = :spellSchool")
+  @Query(value = """
+      SELECT DISTINCT c.* 
+      FROM characters c
+      INNER JOIN character_classes cc ON cc.character_id = c.id
+      INNER JOIN character_spells cs ON cs.character_id = c.id
+      INNER JOIN spells s ON s.id = cs.spell_id
+      WHERE c.user_id = :userId
+      AND LOWER(cc.class_name) = LOWER(:className)
+      AND cc.level >= :minClassLevel
+      AND s.school = CAST(:spellSchool AS VARCHAR)
+      """,
+      countQuery = """
+          SELECT COUNT(DISTINCT c.id) 
+          FROM characters c
+          INNER JOIN character_classes cc ON cc.character_id = c.id
+          INNER JOIN character_spells cs ON cs.character_id = c.id
+          INNER JOIN spells s ON s.id = cs.spell_id
+          WHERE c.user_id = :userId
+          AND LOWER(cc.class_name) = LOWER(:className)
+          AND cc.level >= :minClassLevel
+          AND s.school = CAST(:spellSchool AS VARCHAR)
+          """,
+      nativeQuery = true)
+  Page<DndCharacter> findByComplexCriteria(
+      @Param("userId") Long userId,
+      @Param("className") String className,
+      @Param("minClassLevel") Integer minClassLevel,
+      @Param("spellSchool") String spellSchool,
+      Pageable pageable);
 }

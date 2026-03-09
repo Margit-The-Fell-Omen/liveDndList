@@ -9,9 +9,11 @@ import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.dto.response.RestoreHitPointsResponse;
 import dev.ushki.livedndlist.enums.CharacterRace;
+import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.service.CharacterService;
 import dev.ushki.livedndlist.service.NonTransactionalCharacterService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -253,5 +255,24 @@ public class CharacterController {
         .build();
 
     return ApiResponse.success("Hit points restored successfully", response);
+  }
+
+  @GetMapping("/search/advanced/paged")
+  public ApiResponse<PageResponse<CharacterSummaryResponse>> searchByComplexCriteriaPaged(
+      @AuthenticationPrincipal UserDetails userDetails,
+      @RequestParam String className,
+      @RequestParam @Min(1) Integer minClassLevel,
+      @RequestParam SpellSchool spellSchool,
+      @PageableDefault(size = 20, sort = "name") Pageable pageable) {
+
+    PageResponse<CharacterSummaryResponse> results = characterService.findByComplexCriteria(
+        userDetails.getUsername(),
+        className,
+        minClassLevel,
+        spellSchool,
+        pageable
+    );
+
+    return ApiResponse.success(results);
   }
 }
