@@ -3,7 +3,6 @@ package dev.ushki.livedndlist.repository;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.enums.CharacterRace;
-import dev.ushki.livedndlist.enums.SpellSchool;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -19,16 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
 
-  // ==================== Paginated Queries ====================
-
   @EntityGraph(attributePaths = {"owner", "classes"})
   Page<DndCharacter> findByOwnerAndNameContainingIgnoreCase(
       User owner, String name, Pageable pageable);
 
   @EntityGraph(attributePaths = {"owner", "classes"})
   Page<DndCharacter> findByOwnerAndRace(User owner, CharacterRace race, Pageable pageable);
-
-  // ==================== Non-Paginated Queries ====================
 
   @EntityGraph(attributePaths = {"owner", "classes"})
   Page<DndCharacter> findAllByOwner(User owner, Pageable pageable);
@@ -46,32 +41,39 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
 
   long countByOwner(User owner);
 
-  // ==================== Additional Fetch Join Queries ====================
+  @EntityGraph(attributePaths = {"owner", "classes", "skills", "spells", "equipment",
+      "savingThrowProficiencies"})
+  @Query("SELECT c FROM DndCharacter c WHERE c.id = :id")
+  Optional<DndCharacter> findByIdFull(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-      + "JOIN FETCH c.owner "
-      + "LEFT JOIN FETCH c.classes "
-      + "WHERE c.id = :id")
+         + "JOIN FETCH c.owner "
+         + "LEFT JOIN FETCH c.classes "
+         + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithOwnerAndClasses(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-      + "LEFT JOIN FETCH c.skills "
-      + "WHERE c.id = :id")
+         + "JOIN FETCH c.owner "
+         + "LEFT JOIN FETCH c.skills "
+         + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithSkills(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-      + "LEFT JOIN FETCH c.spells "
-      + "WHERE c.id = :id")
+         + "JOIN FETCH c.owner "
+         + "LEFT JOIN FETCH c.spells "
+         + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithSpells(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-      + "LEFT JOIN FETCH c.equipment "
-      + "WHERE c.id = :id")
+         + "JOIN FETCH c.owner "
+         + "LEFT JOIN FETCH c.equipment "
+         + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithEquipment(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-      + "LEFT JOIN FETCH c.savingThrowProficiencies "
-      + "WHERE c.id = :id")
+         + "JOIN FETCH c.owner "
+         + "LEFT JOIN FETCH c.savingThrowProficiencies "
+         + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithSavingThrows(@Param("id") Long id);
 
   @EntityGraph(attributePaths = {"owner", "classes", "skills"})
@@ -89,17 +91,10 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   @Modifying
   @Transactional
   @Query(value = "UPDATE characters SET current_hit_points = max_hit_points "
-      + "WHERE user_id = :userId",
+                 + "WHERE user_id = :userId",
       nativeQuery = true)
   int restoreAllCharactersHitPointsNative(@Param("userId") Long userId);
 
-  //  @Query("SELECT DISTINCT c FROM DndCharacter c " +
-  //      "JOIN c.classes cc " +
-  //      "JOIN c.spells s " +
-  //      "WHERE c.owner.id = :userId " +
-  //      "AND LOWER(cc.className) = LOWER(:className) " +
-  //      "AND cc.level >= :minClassLevel " +
-  //      "AND s.school = :spellSchool")
   @Query(value = """
       SELECT DISTINCT c.* 
       FROM characters c
@@ -129,4 +124,28 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
       @Param("minClassLevel") Integer minClassLevel,
       @Param("spellSchool") String spellSchool,
       Pageable pageable);
+
+  @Modifying
+  @Query(value = "DELETE FROM skills WHERE character_id = :id", nativeQuery = true)
+  void deleteAllSkillsByCharacterId(@Param("id") Long id);
+
+  @Modifying
+  @Query(value = "DELETE FROM character_classes WHERE character_id = :id", nativeQuery = true)
+  void deleteAllClassesByCharacterId(@Param("id") Long id);
+
+  @Modifying
+  @Query(value = "DELETE FROM equipment WHERE character_id = :id", nativeQuery = true)
+  void deleteAllEquipmentByCharacterId(@Param("id") Long id);
+
+  @Modifying
+  @Query(value = "DELETE FROM character_saving_throws WHERE dnd_character_id = :id", nativeQuery = true)
+  void deleteAllSavingThrowsByCharacterId(@Param("id") Long id);
+
+  @Modifying
+  @Query(value = "DELETE FROM character_spells WHERE character_id = :id", nativeQuery = true)
+  void deleteAllSpellsByCharacterId(@Param("id") Long id);
+
+  @Modifying
+  @Query(value = "DELETE FROM characters WHERE id = :id", nativeQuery = true)
+  void deleteCharacterById(@Param("id") Long id);
 }

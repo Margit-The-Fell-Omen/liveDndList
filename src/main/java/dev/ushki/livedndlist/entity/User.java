@@ -3,27 +3,22 @@ package dev.ushki.livedndlist.entity;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.enums.Role;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,7 +40,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
+  @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 50)
   private Long id;
 
   @Column(unique = true, nullable = false)
@@ -60,16 +56,14 @@ public class User implements UserDetails {
   @Builder.Default
   private boolean enabled = true;
 
-  @ElementCollection(fetch = FetchType.LAZY)
-  @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
   @Enumerated(EnumType.STRING)
-  @Column(name = "role")
+  @Column(name = "role", nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
   @Builder.Default
-  private Set<Role> roles = new HashSet<>();
+  private Role role = Role.ROLE_USER;
 
   @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
-  private transient List<DndCharacter> characters = new ArrayList<>();  // ← Added transient
+  private transient List<DndCharacter> characters = new ArrayList<>();
 
   @Column(name = "created_at")
   private LocalDateTime createdAt;
@@ -79,9 +73,7 @@ public class User implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return roles.stream()
-        .map(role -> new SimpleGrantedAuthority(role.name()))
-        .toList();  // ← Changed from collect(Collectors.toList())
+    return List.of(new SimpleGrantedAuthority(role.name()));
   }
 
   @Override

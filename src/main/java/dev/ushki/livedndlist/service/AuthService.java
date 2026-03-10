@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.service;
 
+import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.LoginRequest;
 import dev.ushki.livedndlist.dto.request.RegisterRequest;
 import dev.ushki.livedndlist.dto.response.JwtResponse;
@@ -10,7 +11,6 @@ import dev.ushki.livedndlist.exceptions.DuplicateResourceException;
 import dev.ushki.livedndlist.mapper.UserMapper;
 import dev.ushki.livedndlist.repository.UserRepository;
 import dev.ushki.livedndlist.security.jwt.JwtTokenProvider;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +28,7 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
   private final JwtTokenProvider jwtTokenProvider;
   private final UserMapper userMapper;
+  private final CacheManager cacheManager;
 
   public JwtResponse login(LoginRequest request) {
     Authentication authentication = authenticationManager.authenticate(
@@ -61,11 +62,14 @@ public class AuthService {
         .username(request.getUsername())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_ADMIN)
         .enabled(true)
         .build();
 
     User savedUser = userRepository.save(user);
+
+    cacheManager.invalidateByPrefix("Users");
+
     return userMapper.toResponse(savedUser);
   }
 }

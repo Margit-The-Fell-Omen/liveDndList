@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,8 +47,10 @@ public class CharacterMapper {
         .background(character.getBackground())
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
-        .classes(mapClasses(character.getClasses()))
-        .totalLevel(character.getTotalLevel())
+        .classes(
+            Hibernate.isInitialized(character.getClasses()) ? mapClasses(character.getClasses())
+                : null)
+        .totalLevel(Hibernate.isInitialized(character.getClasses()) ? character.getTotalLevel() : 0)
         .abilityScores(mapAbilityScores(character.getAbilityScores()))
         .maxHitPoints(character.getMaxHitPoints())
         .currentHitPoints(character.getCurrentHitPoints())
@@ -59,12 +62,16 @@ public class CharacterMapper {
         .hitDice(character.getHitDice())
         .deathSaveSuccesses(character.getDeathSaveSuccesses())
         .deathSaveFailures(character.getDeathSaveFailures())
-        .skills(mapSkills(character.getSkills(), character.getAbilityScores(),
-            character.getProficiencyBonus()))
-        .savingThrowProficiencies(character.getSavingThrowProficiencies())
-        .equipment(equipmentMapper.toResponseList(character.getEquipment()))
+        .skills(Hibernate.isInitialized(character.getSkills()) ? mapSkills(character.getSkills(),
+            character.getAbilityScores(), character.getProficiencyBonus()) : null)
+        .savingThrowProficiencies(Hibernate.isInitialized(character.getSavingThrowProficiencies())
+            ? character.getSavingThrowProficiencies() : null)
+        .equipment(
+            Hibernate.isInitialized(character.getEquipment()) ? equipmentMapper.toResponseList(
+                character.getEquipment()) : null)
         .currency(mapCurrency(character.getCurrency()))
-        .spells(spellMapper.toResponseSet(character.getSpells()))
+        .spells(Hibernate.isInitialized(character.getSpells()) ? spellMapper.toResponseSet(
+            character.getSpells()) : null)
         .spellcastingAbility(character.getSpellcastingAbility())
         .featuresAndTraits(character.getFeaturesAndTraits())
         .backstory(character.getBackstory())
@@ -83,17 +90,18 @@ public class CharacterMapper {
       return null;
     }
 
-    String classDisplay = character.getClasses().stream()
-        .sorted(Comparator.comparing(CharacterClass::getLevel).reversed())
-        .map(c -> c.getClassName() + " " + c.getLevel())
-        .collect(Collectors.joining(" / "));
+    String classDisplay =
+        Hibernate.isInitialized(character.getClasses()) ? character.getClasses().stream()
+            .sorted(Comparator.comparing(CharacterClass::getLevel).reversed())
+            .map(c -> c.getClassName() + " " + c.getLevel())
+            .collect(Collectors.joining(" / ")) : null;
 
     return CharacterSummaryResponse.builder()
         .id(character.getId())
         .name(character.getName())
         .race(character.getRace())
         .classDisplay(classDisplay)
-        .totalLevel(character.getTotalLevel())
+        .totalLevel(Hibernate.isInitialized(character.getClasses()) ? character.getTotalLevel() : 0)
         .currentHitPoints(character.getCurrentHitPoints())
         .maxHitPoints(character.getMaxHitPoints())
         .portraitUrl(character.getPortraitUrl())
@@ -121,26 +129,22 @@ public class CharacterMapper {
         .portraitUrl(request.getPortraitUrl())
         .build();
 
-    // Add initial class at level 1
     CharacterClass characterClass = CharacterClass.builder()
         .className(request.getClassName())
         .subClass(request.getSubclass())
         .level(1)
         .build();
-    character.getClasses().add(characterClass);
+    character.addClass(characterClass);
 
-    // Set ability scores (or use defaults if not provided)
     if (request.getAbilityScores() != null) {
       character.setAbilityScores(mapAbilityScoresRequest(request.getAbilityScores()));
     }
 
-    // Set hit points
     if (request.getMaxHitPoints() != null) {
       character.setMaxHitPoints(request.getMaxHitPoints());
       character.setCurrentHitPoints(request.getMaxHitPoints());
     }
 
-    // Initialize all 18 skills with no proficiencies
     initializeSkills(character);
 
     return character;
@@ -165,7 +169,6 @@ public class CharacterMapper {
     updateIfPresent(request.getFlaws(), character::setFlaws);
     updateIfPresent(request.getNotes(), character::setNotes);
 
-    // Ability scores require mapping transformation
     updateIfPresent(request.getAbilityScores(),
         scores -> character.setAbilityScores(mapAbilityScoresRequest(scores)));
   }
@@ -174,10 +177,6 @@ public class CharacterMapper {
     Optional.ofNullable(value).ifPresent(setter);
   }
 
-  /**
-   * Maps Set of CharacterClass to List of CharacterClassResponse. Sorted by level descending
-   * (highest level class first).
-   */
   private List<CharacterResponse.CharacterClassResponse> mapClasses(
       Set<CharacterClass> classes) {
     if (classes == null) {
@@ -228,10 +227,6 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Maps Set of Skills to List of SkillResponse. Sorted by skill type name for consistent
-   * ordering.
-   */
   private List<SkillResponse> mapSkills(Set<Skill> skills, AbilityScores abilityScores,
       int proficiencyBonus) {
     if (skills == null) {
@@ -276,10 +271,6 @@ public class CharacterMapper {
         .build();
   }
 
-  /**
-   * Initializes all 18 D&D 5e skills with no proficiencies. Uses Set instead of List for Hibernate
-   * optimization.
-   */
   private void initializeSkills(DndCharacter character) {
     Set<Skill> skills = new HashSet<>();
     for (SkillType skillType : SkillType.values()) {

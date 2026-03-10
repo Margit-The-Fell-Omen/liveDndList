@@ -63,7 +63,7 @@ class AuthServiceTest {
         .username("testuser")
         .email("test@test.com")
         .password("encoded_password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(true)
         .build();
 

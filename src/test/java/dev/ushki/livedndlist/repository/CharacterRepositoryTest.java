@@ -8,7 +8,6 @@ import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.Role;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ class CharacterRepositoryTest {
         .username("testuser")
         .email("test@test.com")
         .password("password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(true)
         .build();
     entityManager.persist(testUser);
@@ -76,7 +75,7 @@ class CharacterRepositoryTest {
         .username("another")
         .email("another@test.com")
         .password("password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(true)
         .build();
     entityManager.persist(anotherUser);

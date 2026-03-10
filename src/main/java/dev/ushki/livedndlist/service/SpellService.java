@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.service;
 
+import dev.ushki.livedndlist.cache.CacheManager;
+import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.entity.character.Spell;
@@ -19,13 +21,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class SpellService {
 
   private final SpellRepository spellRepository;
   private final SpellMapper spellMapper;
+  private final CacheManager cacheManager;
 
-  @Transactional(readOnly = true)
+  private static final String SPELL_STRING = "Spells";
+
   public List<SpellResponse> getAllSpells(
       SpellSchool school,
       Integer minLevel,
@@ -35,61 +38,72 @@ public class SpellService {
       String sortBy,
       String sortDir) {
 
-    Sort sort = sortDir.equalsIgnoreCase("asc")
-        ? Sort.by(sortBy).ascending()
-        : Sort.by(sortBy).descending();
+    CompositeKey key = new CompositeKey("all", school, minLevel, maxLevel, ritual, concentration,
+        sortBy, sortDir);
 
-    List<Spell> spells = spellRepository.findAll(sort);
+    return cacheManager.get(SPELL_STRING, key, () -> {
+      Sort sort = sortDir.equalsIgnoreCase("asc")
+          ? Sort.by(sortBy).ascending()
+          : Sort.by(sortBy).descending();
 
-    // Apply filters using streams
-    Stream<Spell> stream = spells.stream();
+      List<Spell> spells = spellRepository.findAll(sort);
 
-    if (school != null) {
-      stream = stream.filter(s -> s.getSchool() == school);
-    }
-    if (minLevel != null) {
-      stream = stream.filter(s -> s.getLevel() >= minLevel);
-    }
-    if (maxLevel != null) {
-      stream = stream.filter(s -> s.getLevel() <= maxLevel);
-    }
-    if (ritual != null) {
-      stream = stream.filter(s -> s.isRitual() == ritual);
-    }
-    if (concentration != null) {
-      stream = stream.filter(s -> s.isConcentration() == concentration);
-    }
+      Stream<Spell> stream = spells.stream();
 
-    return stream
-        .map(spellMapper::toResponse)
-        .toList();
+      if (school != null) {
+        stream = stream.filter(s -> s.getSchool() == school);
+      }
+      if (minLevel != null) {
+        stream = stream.filter(s -> s.getLevel() >= minLevel);
+      }
+      if (maxLevel != null) {
+        stream = stream.filter(s -> s.getLevel() <= maxLevel);
+      }
+      if (ritual != null) {
+        stream = stream.filter(s -> s.isRitual() == ritual);
+      }
+      if (concentration != null) {
+        stream = stream.filter(s -> s.isConcentration() == concentration);
+      }
+
+      return stream
+          .map(spellMapper::toResponse)
+          .toList();
+    });
   }
 
-  @Transactional(readOnly = true)
   public SpellResponse getById(Long id) {
-    Spell spell = spellRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", id));
-    return spellMapper.toResponse(spell);
+    CompositeKey key = new CompositeKey("byId", id);
+
+    return cacheManager.get(SPELL_STRING, key, () -> {
+      Spell spell = spellRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", id));
+      return spellMapper.toResponse(spell);
+    });
   }
 
-  @Transactional(readOnly = true)
   public List<SpellResponse> searchByName(String name, SpellSchool school, Integer maxLevel) {
-    List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name);
+    CompositeKey key = new CompositeKey("search", name, school, maxLevel);
 
-    Stream<Spell> stream = spells.stream();
+    return cacheManager.get(SPELL_STRING, key, () -> {
+      List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name);
 
-    if (school != null) {
-      stream = stream.filter(s -> s.getSchool() == school);
-    }
-    if (maxLevel != null) {
-      stream = stream.filter(s -> s.getLevel() <= maxLevel);
-    }
+      Stream<Spell> stream = spells.stream();
 
-    return stream
-        .map(spellMapper::toResponse)
-        .toList();
+      if (school != null) {
+        stream = stream.filter(s -> s.getSchool() == school);
+      }
+      if (maxLevel != null) {
+        stream = stream.filter(s -> s.getLevel() <= maxLevel);
+      }
+
+      return stream
+          .map(spellMapper::toResponse)
+          .toList();
+    });
   }
 
+  @Transactional
   public SpellResponse create(SpellRequest request) {
     if (spellRepository.existsByName(request.getName())) {
       throw new DuplicateResourceException("Spell with this name already exists");
@@ -99,9 +113,12 @@ public class SpellService {
     Spell savedSpell = spellRepository.save(spell);
     log.info("Spell '{}' created", savedSpell.getName());
 
+    cacheManager.invalidateByPrefix(SPELL_STRING);
+
     return spellMapper.toResponse(savedSpell);
   }
 
+  @Transactional
   public SpellResponse update(Long id, SpellRequest request) {
     Spell spell = spellRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", id));
@@ -110,14 +127,19 @@ public class SpellService {
     Spell savedSpell = spellRepository.save(spell);
     log.info("Spell '{}' updated", savedSpell.getName());
 
+    cacheManager.invalidateByPrefix(SPELL_STRING);
+
     return spellMapper.toResponse(savedSpell);
   }
 
+  @Transactional
   public void delete(Long id) {
     if (!spellRepository.existsById(id)) {
       throw new ResourceNotFoundException("Spell", "id", id);
     }
     spellRepository.deleteById(id);
     log.info("Spell deleted: {}", id);
+
+    cacheManager.invalidateByPrefix(SPELL_STRING);
   }
 }

@@ -25,6 +25,7 @@ import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -73,18 +74,15 @@ public class DndCharacter {
 
   private static final int DEFAULT_PROF_BONUS = 2;
 
-  // ==================== Identity ====================
-
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_seq")
+  @SequenceGenerator(name = "character_seq", sequenceName = "character_sequence", allocationSize = 50)
   @EqualsAndHashCode.Include
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User owner;
-
-  // ==================== Basic Information ====================
 
   @Column(nullable = false)
   private String name;
@@ -105,23 +103,16 @@ public class DndCharacter {
 
   private String portraitUrl;
 
-  // ==================== Classes & Level ====================
-
   @Builder.Default
   private Integer level = DEFAULT_LEVEL;
 
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "character_id")
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private Set<CharacterClass> classes = new HashSet<>();
-
-  // ==================== Ability Scores ====================
 
   @Embedded
   @Builder.Default
   private AbilityScores abilityScores = new AbilityScores();
-
-  // ==================== Combat Statistics ====================
 
   @Builder.Default
   private Integer maxHitPoints = DEFAULT_HP;
@@ -152,10 +143,7 @@ public class DndCharacter {
   @Builder.Default
   private Integer deathSaveFailures = 0;
 
-  // ==================== Skills & Proficiencies ====================
-
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "character_id")
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private Set<Skill> skills = new HashSet<>();
 
@@ -165,18 +153,13 @@ public class DndCharacter {
   @Builder.Default
   private Set<AbilityType> savingThrowProficiencies = new HashSet<>();
 
-  // ==================== Equipment & Currency ====================
-
-  @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "character_id")
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
   private Set<Equipment> equipment = new HashSet<>();
 
   @Embedded
   @Builder.Default
   private DndCurrency currency = new DndCurrency();
-
-  // ==================== Spellcasting ====================
 
   @ManyToMany
   @JoinTable(
@@ -189,8 +172,6 @@ public class DndCharacter {
 
   @Enumerated(EnumType.STRING)
   private AbilityType spellcastingAbility;
-
-  // ==================== Roleplay Elements ====================
 
   @Column(columnDefinition = "TEXT")
   private String featuresAndTraits;
@@ -213,8 +194,6 @@ public class DndCharacter {
   @Column(columnDefinition = "TEXT")
   private String notes;
 
-  // ==================== Metadata ====================
-
   @Column(name = "created_at")
   private LocalDateTime createdAt;
 
@@ -234,20 +213,25 @@ public class DndCharacter {
     updatedAt = LocalDateTime.now();
   }
 
-  // ==================== Utility Methods ====================
-
   public int getTotalLevel() {
     return classes.stream()
         .mapToInt(CharacterClass::getLevel)
         .sum();
   }
 
+  public void addClass(CharacterClass clazz) {
+    classes.add(clazz);
+    clazz.setCharacter(this);
+  }
+
   public void addEquipment(Equipment item) {
     equipment.add(item);
+    item.setCharacter(this);
   }
 
   public void removeEquipment(Equipment item) {
     equipment.remove(item);
+    item.setCharacter(null);
   }
 
   public void addSpell(Spell spell) {

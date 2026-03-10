@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.service;
 
+import dev.ushki.livedndlist.cache.CacheManager;
+import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.UserUpdateRequest;
 import dev.ushki.livedndlist.dto.response.UserResponse;
 import dev.ushki.livedndlist.entity.User;
@@ -23,52 +25,75 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final UserMapper userMapper;
+  private final CacheManager cacheManager;
+
+  private static final String USER_RESOURCE = "User:";
+  private static final String USERS_NAMESPACE = "Users";
 
   @Transactional(readOnly = true)
   public List<UserResponse> getAllUsers(Boolean enabled, String role) {
-    List<User> users = userRepository.findAll();
+    CompositeKey key = new CompositeKey("all", enabled, role);
 
-    Stream<User> stream = users.stream();
+    return cacheManager.get(USERS_NAMESPACE, key, () -> {
+      List<User> users = userRepository.findAll();
 
-    if (enabled != null) {
-      stream = stream.filter(u -> u.isEnabled() == enabled);
-    }
-    if (role != null) {
-      Role roleEnum = Role.valueOf(role);
-      stream = stream.filter(u -> u.getRoles().contains(roleEnum));
-    }
+      Stream<User> stream = users.stream();
 
-    return stream
-        .map(userMapper::toResponse)
-        .toList();
+      if (enabled != null) {
+        stream = stream.filter(u -> u.isEnabled() == enabled);
+      }
+      if (role != null) {
+        Role roleEnum = Role.valueOf(role);
+        stream = stream.filter(u -> u.getRole() == roleEnum);
+      }
+
+      return stream
+          .map(userMapper::toResponse)
+          .toList();
+    });
   }
 
   @Transactional(readOnly = true)
   public List<UserResponse> searchUsers(String query) {
-    List<User> users = userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-        query, query);
-    return users.stream()
-        .map(userMapper::toResponse)
-        .toList();
+    CompositeKey key = new CompositeKey("search", query);
+
+    return cacheManager.get(USERS_NAMESPACE, key, () -> {
+      List<User> users = userRepository
+          .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+      return users.stream()
+          .map(userMapper::toResponse)
+          .toList();
+    });
   }
 
   @Transactional(readOnly = true)
   public UserResponse getUserById(Long id) {
-    User user = userRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
-    return userMapper.toResponse(user);
+    CompositeKey key = new CompositeKey("byId", id);
+
+    return cacheManager.get(USERS_NAMESPACE, key, () -> {
+      User user = userRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+      return userMapper.toResponse(user);
+    });
   }
 
   @Transactional(readOnly = true)
   public UserResponse getUserByUsername(String username) {
-    User user = userRepository.findByUsername(username)
-        .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
-    return userMapper.toResponse(user);
+    CompositeKey key = new CompositeKey("byUsername", username);
+
+    return cacheManager.get(USERS_NAMESPACE, key, () -> {
+      User user = userRepository.findByUsername(username)
+          .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+      return userMapper.toResponse(user);
+    });
   }
 
+  @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
   public UserResponse updateUser(Long id, UserUpdateRequest request) {
     User user = userRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+    String oldUsername = user.getUsername();
 
     if (request.getUsername() != null && !request.getUsername().equals(user.getUsername())) {
       if (userRepository.existsByUsername(request.getUsername())) {
@@ -85,16 +110,25 @@ public class UserService {
     }
 
     User savedUser = userRepository.save(user);
-    log.info("User updated: {}", savedUser.getUsername());
+
+    cacheManager.invalidateByPrefix(USERS_NAMESPACE);
+    cacheManager.invalidateByPrefix(USER_RESOURCE + oldUsername);
+    if (!oldUsername.equals(savedUser.getUsername())) {
+      cacheManager.invalidateByPrefix(USER_RESOURCE + savedUser.getUsername());
+    }
 
     return userMapper.toResponse(savedUser);
   }
 
   public void deleteUser(Long id) {
-    if (!userRepository.existsById(id)) {
-      throw new ResourceNotFoundException("User", "id", id);
-    }
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
+    String username = user.getUsername();
+
     userRepository.deleteById(id);
-    log.info("User deleted: {}", id);
+
+    cacheManager.invalidateByPrefix(USERS_NAMESPACE);
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
   }
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ import lombok.Setter;
 public class Spell {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spell_seq")
+  @SequenceGenerator(name = "spell_seq", sequenceName = "spell_sequence", allocationSize = 50)
   private Long id;
 
   @Column(nullable = false, unique = true)

@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.service;
 
+import dev.ushki.livedndlist.cache.CacheManager;
+import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
 import dev.ushki.livedndlist.entity.character.Equipment;
@@ -23,8 +25,10 @@ public class EquipmentService {
 
   private final EquipmentRepository equipmentRepository;
   private final EquipmentMapper equipmentMapper;
+  private final CacheManager cacheManager;
 
-  @Transactional(readOnly = true)
+  private static final String EQUIPMENT_STRING = "Equipment";
+
   public List<EquipmentResponse> getAll(
       EquipmentType type,
       Double minWeight,
@@ -32,76 +36,94 @@ public class EquipmentService {
       String sortBy,
       String sortDir) {
 
-    Sort sort = sortDir.equalsIgnoreCase("asc")
-        ? Sort.by(sortBy).ascending()
-        : Sort.by(sortBy).descending();
+    CompositeKey key = new CompositeKey("all", type, minWeight, maxWeight, sortBy, sortDir);
 
-    List<Equipment> equipment = equipmentRepository.findAll(sort);
+    return cacheManager.get(EQUIPMENT_STRING, key, () -> {
+      Sort sort = sortDir.equalsIgnoreCase("asc")
+          ? Sort.by(sortBy).ascending()
+          : Sort.by(sortBy).descending();
 
-    // Apply filters using streams
-    Stream<Equipment> stream = equipment.stream();
+      List<Equipment> equipment = equipmentRepository.findAll(sort);
 
-    if (type != null) {
-      stream = stream.filter(e -> e.getType() == type);
-    }
-    if (minWeight != null) {
-      stream = stream.filter(e -> e.getWeight() != null && e.getWeight() >= minWeight);
-    }
-    if (maxWeight != null) {
-      stream = stream.filter(e -> e.getWeight() != null && e.getWeight() <= maxWeight);
-    }
+      Stream<Equipment> stream = equipment.stream();
 
-    return stream
-        .map(equipmentMapper::toResponse)
-        .toList();
+      if (type != null) {
+        stream = stream.filter(e -> e.getType() == type);
+      }
+      if (minWeight != null) {
+        stream = stream.filter(e -> e.getWeight() != null && e.getWeight() >= minWeight);
+      }
+      if (maxWeight != null) {
+        stream = stream.filter(e -> e.getWeight() != null && e.getWeight() <= maxWeight);
+      }
+
+      return stream
+          .map(equipmentMapper::toResponse)
+          .toList();
+    });
   }
 
-  @Transactional(readOnly = true)
   public EquipmentResponse getById(Long id) {
-    Equipment equipment = equipmentRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Equipment", "id", id));
-    return equipmentMapper.toResponse(equipment);
+    CompositeKey key = new CompositeKey("byId", id);
+
+    return cacheManager.get(EQUIPMENT_STRING, key, () -> {
+      Equipment equipment = equipmentRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException(EQUIPMENT_STRING, "id", id));
+      return equipmentMapper.toResponse(equipment);
+    });
   }
 
-  @Transactional(readOnly = true)
   public List<EquipmentResponse> searchByName(String name, EquipmentType type) {
-    List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase(name);
+    CompositeKey key = new CompositeKey("search", name, type);
 
-    Stream<Equipment> stream = equipment.stream();
+    return cacheManager.get(EQUIPMENT_STRING, key, () -> {
+      List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase(name);
 
-    if (type != null) {
-      stream = stream.filter(e -> e.getType() == type);
-    }
+      Stream<Equipment> stream = equipment.stream();
 
-    return stream
-        .map(equipmentMapper::toResponse)
-        .toList();
+      if (type != null) {
+        stream = stream.filter(e -> e.getType() == type);
+      }
+
+      return stream
+          .map(equipmentMapper::toResponse)
+          .toList();
+    });
   }
 
+  @Transactional
   public EquipmentResponse create(EquipmentRequest request) {
     Equipment equipment = equipmentMapper.toEntity(request);
     Equipment savedEquipment = equipmentRepository.save(equipment);
     log.info("Equipment '{}' created", savedEquipment.getName());
 
+    cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
+
     return equipmentMapper.toResponse(savedEquipment);
   }
 
+  @Transactional
   public EquipmentResponse update(Long id, EquipmentRequest request) {
     Equipment equipment = equipmentRepository.findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Equipment", "id", id));
+        .orElseThrow(() -> new ResourceNotFoundException(EQUIPMENT_STRING, "id", id));
 
     equipmentMapper.updateEntity(equipment, request);
     Equipment savedEquipment = equipmentRepository.save(equipment);
     log.info("Equipment '{}' updated", savedEquipment.getName());
 
+    cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
+
     return equipmentMapper.toResponse(savedEquipment);
   }
 
+  @Transactional
   public void delete(Long id) {
     if (!equipmentRepository.existsById(id)) {
-      throw new ResourceNotFoundException("Equipment", "id", id);
+      throw new ResourceNotFoundException(EQUIPMENT_STRING, "id", id);
     }
     equipmentRepository.deleteById(id);
     log.info("Equipment deleted: {}", id);
+
+    cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
   }
 }

@@ -2,9 +2,13 @@ package dev.ushki.livedndlist.entity.character;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -23,8 +27,13 @@ import lombok.Setter;
 public class CharacterClass {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "class_seq")
+  @SequenceGenerator(name = "class_seq", sequenceName = "class_sequence", allocationSize = 50)
   private Long id;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "character_id", nullable = false)
+  private DndCharacter character;
 
   @Column(nullable = false)
   private String className;
@@ -43,7 +52,6 @@ public class CharacterClass {
       return false;
     }
     CharacterClass that = (CharacterClass) o;
-    // Use id if persisted, otherwise use business key
     if (id != null && that.id != null) {
       return id.equals(that.id);
     }
@@ -52,7 +60,6 @@ public class CharacterClass {
 
   @Override
   public int hashCode() {
-    // Use constant for entities - avoids issues when id changes after persist
     return getClass().hashCode();
   }
 }

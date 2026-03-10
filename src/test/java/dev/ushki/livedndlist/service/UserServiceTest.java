@@ -54,7 +54,7 @@ class UserServiceTest {
         .username("testuser")
         .email("test@test.com")
         .password("encoded_password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(true)
         .build();
 
@@ -63,7 +63,7 @@ class UserServiceTest {
         .username("adminuser")
         .email("admin@test.com")
         .password("encoded_password")
-        .roles(Set.of(Role.ROLE_USER, Role.ROLE_ADMIN))
+        .role(Role.ROLE_ADMIN)
         .enabled(true)
         .build();
 
@@ -72,7 +72,7 @@ class UserServiceTest {
         .username("disableduser")
         .email("disabled@test.com")
         .password("encoded_password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(false)
         .build();
 
@@ -341,7 +341,7 @@ class UserServiceTest {
           .username("updateduser")
           .email("updated@test.com")
           .password("encoded_password")
-          .roles(Set.of(Role.ROLE_USER))
+          .role(Role.ROLE_USER)
           .enabled(true)
           .build();
 

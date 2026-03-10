@@ -1,7 +1,7 @@
 package dev.ushki.livedndlist.service;
 
-import dev.ushki.livedndlist.cache.CharacterQueryIndex;
-import dev.ushki.livedndlist.cache.CharacterQueryKey;
+import dev.ushki.livedndlist.cache.CacheManager;
+import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
@@ -25,7 +25,6 @@ import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,9 +43,12 @@ public class CharacterService {
   private final SpellRepository spellRepository;
   private final CharacterMapper characterMapper;
   private final EquipmentMapper equipmentMapper;
-  private final CharacterQueryIndex queryIndex;  // Added
+  private final CacheManager cacheManager;
 
   private static final String CHARACTER_RESOURCE = "Character";
+  private static final String USER_RESOURCE = "User:";
+  private static final String CHARACTERS_SUFFIX = ":Characters";
+  private static final String CHARACTER_ID_SUFFIX = ":Character:";
 
   @Transactional(readOnly = true)
   public PageResponse<CharacterSummaryResponse> getAllByUsername(
@@ -56,62 +58,47 @@ public class CharacterService {
       Integer maxLevel,
       Pageable pageable) {
 
-    User user = findUserByUsername(username);
+    CompositeKey key = new CompositeKey(race, minLevel, maxLevel, pageable.getPageNumber(),
+        pageable.getPageSize(), pageable.getSort().toString());
+    String namespace = USER_RESOURCE + username + CHARACTERS_SUFFIX;
 
-    CharacterQueryKey cacheKey = CharacterQueryKey.builder()
-        .userId(user.getId())
-        .race(race)
-        .minLevel(minLevel)
-        .maxLevel(maxLevel)
-        .pageNumber(pageable.getPageNumber())
-        .pageSize(pageable.getPageSize())
-        .sortBy(pageable.getSort().toString())
-        .sortDirection(pageable.getSort().isSorted() ? "sorted" : "unsorted")
-        .build();
+    return cacheManager.get(namespace, key, () -> {
+      User user = findUserByUsername(username);
 
-    Optional<PageResponse<CharacterSummaryResponse>> cached = queryIndex.get(cacheKey);
-    if (cached.isPresent()) {
-      log.debug("Returning cached result for user '{}'", username);
-      return cached.get();
-    }
+      Page<DndCharacter> characterPage;
 
-    Page<DndCharacter> characterPage;
-
-    if (race != null) {
-      characterPage = characterRepository.findByOwnerAndRace(user, race, pageable);
-    } else {
-      characterPage = characterRepository.findAllByOwner(user, pageable);
-    }
-
-    Page<CharacterSummaryResponse> responsePage = characterPage.map(character -> {
-      int totalLevel = character.getTotalLevel();
-      if (minLevel != null && totalLevel < minLevel) {
-        return null;
+      if (race != null) {
+        characterPage = characterRepository.findByOwnerAndRace(user, race, pageable);
+      } else {
+        characterPage = characterRepository.findAllByOwner(user, pageable);
       }
-      if (maxLevel != null && totalLevel > maxLevel) {
-        return null;
-      }
-      return characterMapper.toSummaryResponse(character);
+
+      Page<CharacterSummaryResponse> responsePage = characterPage.map(character -> {
+        int totalLevel = character.getTotalLevel();
+        if (minLevel != null && totalLevel < minLevel) {
+          return null;
+        }
+        if (maxLevel != null && totalLevel > maxLevel) {
+          return null;
+        }
+        return characterMapper.toSummaryResponse(character);
+      });
+
+      List<CharacterSummaryResponse> filteredContent = responsePage.getContent().stream()
+          .filter(Objects::nonNull)
+          .toList();
+
+      return PageResponse.<CharacterSummaryResponse>builder()
+          .content(filteredContent)
+          .pageNumber(characterPage.getNumber())
+          .pageSize(characterPage.getSize())
+          .totalElements(characterPage.getTotalElements())
+          .totalPages(characterPage.getTotalPages())
+          .first(characterPage.isFirst())
+          .last(characterPage.isLast())
+          .empty(filteredContent.isEmpty())
+          .build();
     });
-
-    List<CharacterSummaryResponse> filteredContent = responsePage.getContent().stream()
-        .filter(Objects::nonNull)
-        .toList();
-
-    PageResponse<CharacterSummaryResponse> result = PageResponse.<CharacterSummaryResponse>builder()
-        .content(filteredContent)
-        .pageNumber(characterPage.getNumber())
-        .pageSize(characterPage.getSize())
-        .totalElements(characterPage.getTotalElements())
-        .totalPages(characterPage.getTotalPages())
-        .first(characterPage.isFirst())
-        .last(characterPage.isLast())
-        .empty(filteredContent.isEmpty())
-        .build();
-
-    queryIndex.put(cacheKey, result);
-
-    return result;
   }
 
   @Transactional(readOnly = true)
@@ -120,28 +107,45 @@ public class CharacterService {
       String name,
       Pageable pageable) {
 
-    User user = findUserByUsername(username);
-    Page<DndCharacter> characterPage =
-        characterRepository.findByOwnerAndNameContainingIgnoreCase(user, name, pageable);
+    CompositeKey key = new CompositeKey(name, pageable.getPageNumber(), pageable.getPageSize(),
+        pageable.getSort().toString());
+    String namespace = USER_RESOURCE + username + CHARACTERS_SUFFIX;
 
-    Page<CharacterSummaryResponse> responsePage =
-        characterPage.map(characterMapper::toSummaryResponse);
+    return cacheManager.get(namespace, key, () -> {
+      User user = findUserByUsername(username);
+      Page<DndCharacter> characterPage =
+          characterRepository.findByOwnerAndNameContainingIgnoreCase(user, name, pageable);
 
-    return PageResponse.of(responsePage);
+      Page<CharacterSummaryResponse> responsePage =
+          characterPage.map(characterMapper::toSummaryResponse);
+
+      return PageResponse.of(responsePage);
+    });
   }
 
   @Transactional(readOnly = true)
   public List<CharacterSummaryResponse> getRecentCharacters(String username) {
-    User user = findUserByUsername(username);
-    List<DndCharacter> characters = characterRepository.findTop5ByOwnerOrderByUpdatedAtDesc(user);
-    log.info("Retrieved {} recent characters for user '{}'", characters.size(), username);
-    return characterMapper.toSummaryResponseList(characters);
+    CompositeKey key = new CompositeKey("recent");
+    String namespace = USER_RESOURCE + username + CHARACTERS_SUFFIX;
+
+    return cacheManager.get(namespace, key, () -> {
+      User user = findUserByUsername(username);
+      List<DndCharacter> characters = characterRepository.findTop5ByOwnerOrderByUpdatedAtDesc(user);
+      return characterMapper.toSummaryResponseList(characters);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getById(Long id, String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(id, username);
-    return characterMapper.toResponse(character);
+    CompositeKey key = new CompositeKey("byId", id);
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
+
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdFull(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   public CharacterResponse create(CharacterCreateRequest request, String username) {
@@ -151,9 +155,8 @@ public class CharacterService {
     character.setOwner(user);
 
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Character '{}' created for user '{}'", savedCharacter.getName(), username);
 
-    invalidateUserCache(user.getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -164,21 +167,23 @@ public class CharacterService {
     characterMapper.updateEntity(character, request);
 
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Character '{}' updated", savedCharacter.getName());
 
-    invalidateUserCache(character.getOwner().getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
 
   public void delete(Long id, String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(id, username);
-    Long userId = character.getOwner().getId();
 
-    characterRepository.delete(character);
-    log.info("Character '{}' deleted", character.getName());
+    characterRepository.deleteAllSkillsByCharacterId(id);
+    characterRepository.deleteAllClassesByCharacterId(id);
+    characterRepository.deleteAllEquipmentByCharacterId(id);
+    characterRepository.deleteAllSavingThrowsByCharacterId(id);
+    characterRepository.deleteAllSpellsByCharacterId(id);
 
-    invalidateUserCache(userId);
+    characterRepository.deleteCharacterById(id);
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
   }
 
   public CharacterResponse addEquipment(Long characterId, EquipmentRequest request,
@@ -189,9 +194,8 @@ public class CharacterService {
     character.addEquipment(equipment);
 
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Equipment '{}' added to character '{}'", equipment.getName(), character.getName());
 
-    invalidateUserCache(character.getOwner().getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -207,9 +211,8 @@ public class CharacterService {
     character.removeEquipment(equipment);
 
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Equipment removed from character '{}'", character.getName());
 
-    invalidateUserCache(character.getOwner().getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -223,9 +226,8 @@ public class CharacterService {
     character.addSpell(spell);
 
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Spell '{}' added to character '{}'", spell.getName(), character.getName());
 
-    invalidateUserCache(character.getOwner().getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -239,9 +241,8 @@ public class CharacterService {
     character.removeSpell(spell);
 
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Spell '{}' removed from character '{}'", spell.getName(), character.getName());
 
-    invalidateUserCache(character.getOwner().getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -251,132 +252,148 @@ public class CharacterService {
 
     int updatedCount = characterRepository.restoreAllCharactersHitPointsNative(user.getId());
 
-    log.info("Restored hit points for {} characters belonging to user '{}'",
-        updatedCount, username);
-
-    invalidateUserCache(user.getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return updatedCount;
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterSummary(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdWithOwnerAndClasses(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("summary");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character summary for '{}'", character.getName());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdWithOwnerAndClasses(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithSkills(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdWithSkills(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("skills");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character '{}' with skills", character.getName());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdWithSkills(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithSpells(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdWithSpells(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("spells");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character '{}' with {} spells",
-        character.getName(), character.getSpells().size());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdWithSpells(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithEquipment(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdWithEquipment(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("equipment");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character '{}' with {} equipment items",
-        character.getName(), character.getEquipment().size());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdWithEquipment(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterWithSavingThrows(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdWithSavingThrows(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("savingThrows");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character '{}' with saving throws", character.getName());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdWithSavingThrows(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterSheet(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdForCharacterSheet(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("sheet");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character sheet for '{}'", character.getName());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdForCharacterSheet(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterForCombat(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdForCombat(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("combat");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character '{}' for combat", character.getName());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdForCombat(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   @Transactional(readOnly = true)
   public CharacterResponse getCharacterForSpellcasting(Long id, String username) {
-    DndCharacter character = characterRepository.findByIdForSpellcasting(id)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    CompositeKey key = new CompositeKey("spellcasting");
+    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
 
-    verifyOwnership(character, username);
-    log.info("Retrieved character '{}' for spellcasting with {} spells",
-        character.getName(), character.getSpells().size());
-    return characterMapper.toResponse(character);
+    return cacheManager.get(namespace, key, () -> {
+      DndCharacter character = characterRepository.findByIdForSpellcasting(id)
+          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+
+      verifyOwnership(character, username);
+      return characterMapper.toResponse(character);
+    });
   }
 
   public CharacterResponse createWithStarterPack(CharacterCreateRequest request, String username) {
     User user = findUserByUsername(username);
 
-    log.info("Step 1: Creating character '{}'", request.getName());
-
     DndCharacter character = characterMapper.toEntity(request);
     character.setOwner(user);
 
-    log.info("Step 2: Adding starter equipment");
     addStarterWeapon(character);
     addStarterArmor(character);
     addStarterPack(character);
     setStarterGold(character);
 
     if (request.getSpellcastingAbility() != null) {
-      log.info("Step 3: Adding starter spells");
       addStarterSpells(character);
     }
 
     if (request.getName().contains("FAIL")) {
-      log.error("Step 4: FAILURE! But nothing saved yet - transaction will rollback");
       throw new ResourceSaveFailureException("Simulated failure during starter pack creation");
     }
 
-    log.info("Step 5: Saving character to database");
     DndCharacter savedCharacter = characterRepository.save(character);
-    log.info("Step 6: Character '{}' saved with ID {}", savedCharacter.getName(),
-        savedCharacter.getId());
 
-    invalidateUserCache(user.getId());
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
     return characterMapper.toResponse(savedCharacter);
   }
-
-  // ==================== Private Helper Methods ====================
 
   private User findUserByUsername(String username) {
     return userRepository.findByUsername(username)
@@ -384,13 +401,10 @@ public class CharacterService {
   }
 
   private DndCharacter findCharacterWithOwnershipCheck(Long id, String username) {
-    DndCharacter character = characterRepository.findById(id)
+    DndCharacter character = characterRepository.findByIdWithOwnerAndClasses(id)
         .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
 
-    if (!character.getOwner().getUsername().equals(username)) {
-      throw new UnauthorizedException("You don't have access to this character");
-    }
-
+    verifyOwnership(character, username);
     return character;
   }
 
@@ -398,11 +412,6 @@ public class CharacterService {
     if (!character.getOwner().getUsername().equals(username)) {
       throw new UnauthorizedException("You don't have access to this character");
     }
-  }
-
-  private void invalidateUserCache(Long userId) {
-    queryIndex.invalidateByUser(userId);
-    log.debug("Cache invalidated for user {}", userId);
   }
 
   private void addStarterWeapon(DndCharacter character) {
@@ -476,24 +485,25 @@ public class CharacterService {
       SpellSchool spellSchool,
       Pageable pageable) {
 
-    User user = findUserByUsername(username);
+    CompositeKey key = new CompositeKey(className, minClassLevel, spellSchool,
+        pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort().toString());
+    String namespace = USER_RESOURCE + username + CHARACTERS_SUFFIX;
 
-    Page<DndCharacter> characterPage = characterRepository.findByComplexCriteria(
-        user.getId(),
-        className,
-        minClassLevel,
-        spellSchool.name(),
-        pageable
-    );
+    return cacheManager.get(namespace, key, () -> {
+      User user = findUserByUsername(username);
 
-    log.info("Found {} characters (page {}/{}) for complex criteria search",
-        characterPage.getTotalElements(),
-        characterPage.getNumber(),
-        characterPage.getTotalPages());
+      Page<DndCharacter> characterPage = characterRepository.findByComplexCriteria(
+          user.getId(),
+          className,
+          minClassLevel,
+          spellSchool.name(),
+          pageable
+      );
 
-    Page<CharacterSummaryResponse> responsePage =
-        characterPage.map(characterMapper::toSummaryResponse);
+      Page<CharacterSummaryResponse> responsePage =
+          characterPage.map(characterMapper::toSummaryResponse);
 
-    return PageResponse.of(responsePage);
+      return PageResponse.of(responsePage);
+    });
   }
 }

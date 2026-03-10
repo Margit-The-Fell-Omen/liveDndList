@@ -33,7 +33,6 @@ import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -85,7 +84,7 @@ class CharacterServiceTest {
         .username("testuser")
         .email("test@test.com")
         .password("password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(true)
         .build();
 
@@ -94,7 +93,7 @@ class CharacterServiceTest {
         .username("otheruser")
         .email("other@test.com")
         .password("password")
-        .roles(Set.of(Role.ROLE_USER))
+        .role(Role.ROLE_USER)
         .enabled(true)
         .build();
 
