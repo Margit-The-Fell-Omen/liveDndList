@@ -18,6 +18,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "skills")
@@ -30,7 +32,7 @@ public class Skill {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skill_seq")
-  @SequenceGenerator(name = "skill_seq", sequenceName = "skill_sequence", allocationSize = 50)
+  @SequenceGenerator(name = "skill_seq", sequenceName = "skill_sequence")
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +40,8 @@ public class Skill {
   private DndCharacter character;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(nullable = false, columnDefinition = "skill_type")
   private SkillType skillType;
 
   @Builder.Default

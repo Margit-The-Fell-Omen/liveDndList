@@ -36,6 +36,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "characters")
@@ -63,20 +65,15 @@ import lombok.Setter;
 public class DndCharacter {
 
   private static final int DEFAULT_LEVEL = 1;
-
   private static final int DEFAULT_XP = 0;
-
   private static final int DEFAULT_HP = 10;
-
   private static final int DEFAULT_AC = 10;
-
   private static final int DEFAULT_SPEED = 30;
-
   private static final int DEFAULT_PROF_BONUS = 2;
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_seq")
-  @SequenceGenerator(name = "character_seq", sequenceName = "character_sequence", allocationSize = 50)
+  @SequenceGenerator(name = "character_seq", sequenceName = "character_sequence")
   @EqualsAndHashCode.Include
   private Long id;
 
@@ -88,12 +85,15 @@ public class DndCharacter {
   private String name;
 
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(nullable = false, columnDefinition = "character_race_type")
   private CharacterRace race;
 
   private String subrace;
 
   @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(columnDefinition = "character_alignment_type")
   private CharacterAlignment alignment;
 
   private String background;
@@ -150,6 +150,8 @@ public class DndCharacter {
   @ElementCollection
   @CollectionTable(name = "character_saving_throws")
   @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(name = "saving_throw_proficiencies", columnDefinition = "ability_type")
   @Builder.Default
   private Set<AbilityType> savingThrowProficiencies = new HashSet<>();
 
@@ -171,6 +173,8 @@ public class DndCharacter {
   private Set<Spell> spells = new HashSet<>();
 
   @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(columnDefinition = "ability_type")
   private AbilityType spellcastingAbility;
 
   @Column(columnDefinition = "TEXT")

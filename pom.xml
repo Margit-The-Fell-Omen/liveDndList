@@ -91,9 +91,15 @@
       <scope>runtime</scope>
     </dependency>
 
-        <!-- ═══════════════════════════════════════════ -->
-        <!-- TEST DEPENDENCIES                           -->
-        <!-- ═══════════════════════════════════════════ -->
+    <dependency>
+      <groupId>io.hypersistence</groupId>
+      <artifactId>hypersistence-utils-hibernate-63</artifactId>
+      <version>3.7.0</version>
+    </dependency>
+
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- TEST DEPENDENCIES                           -->
+    <!-- ═══════════════════════════════════════════ -->
 
     <dependency>
       <groupId>org.springframework.boot</groupId>

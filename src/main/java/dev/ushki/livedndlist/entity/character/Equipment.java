@@ -19,6 +19,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "equipment")
@@ -55,6 +57,8 @@ public class Equipment {
   private boolean attuned = false;
 
   @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(columnDefinition = "equipment_type")
   private EquipmentType type;
 
   private String damage;
@@ -73,8 +77,7 @@ public class Equipment {
     if (id != null && equipment.id != null) {
       return id.equals(equipment.id);
     }
-    return Objects.equals(name, equipment.name)
-        && type == equipment.type;
+    return Objects.equals(name, equipment.name) && type == equipment.type;
   }
 
   @Override

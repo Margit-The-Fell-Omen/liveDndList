@@ -4,6 +4,7 @@ import dev.ushki.livedndlist.dto.response.ApiResponse;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,10 +27,24 @@ public class GlobalExceptionHandler {
     return ApiResponse.error(ex.getMessage());
   }
 
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ApiResponse<Void>> handleBadRequest(BadRequestException ex) {
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(ApiResponse.error(ex.getMessage()));
+  }
+
   @ExceptionHandler(UnauthorizedException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ApiResponse<Void> handleUnauthorized(UnauthorizedException ex) {
     return ApiResponse.error(ex.getMessage());
+  }
+
+  @ExceptionHandler(BusinessRuleException.class)
+  public ResponseEntity<ApiResponse<Void>> handleBusinessRule(BusinessRuleException ex) {
+    return ResponseEntity
+        .status(HttpStatus.UNPROCESSABLE_ENTITY)
+        .body(ApiResponse.error(ex.getMessage()));
   }
 
   @ExceptionHandler(BadCredentialsException.class)

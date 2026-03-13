@@ -16,6 +16,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "spells")
@@ -28,7 +30,7 @@ public class Spell {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "spell_seq")
-  @SequenceGenerator(name = "spell_seq", sequenceName = "spell_sequence", allocationSize = 50)
+  @SequenceGenerator(name = "spell_seq", sequenceName = "spell_sequence")
   private Long id;
 
   @Column(nullable = false, unique = true)
@@ -38,13 +40,15 @@ public class Spell {
   private Integer level;
 
   @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(columnDefinition = "spell_school_type")
   private SpellSchool school;
 
   private String castingTime;
 
   private String range;
 
-  private String components; // V, S, M (materials)
+  private String components;
 
   private String duration;
 

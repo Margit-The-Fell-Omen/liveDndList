@@ -25,6 +25,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +43,7 @@ public class User implements UserDetails {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-  @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 50)
+  @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence")
   private Long id;
 
   @Column(unique = true, nullable = false)
@@ -57,7 +59,8 @@ public class User implements UserDetails {
   private boolean enabled = true;
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "role", nullable = false, columnDefinition = "varchar(255) default 'ROLE_USER'")
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(name = "role", nullable = false)
   @Builder.Default
   private Role role = Role.ROLE_USER;
 
