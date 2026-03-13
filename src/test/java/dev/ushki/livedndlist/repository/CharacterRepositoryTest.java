@@ -6,7 +6,6 @@ import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.Role;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,15 +46,6 @@ class CharacterRepositoryTest {
         .build();
     entityManager.persist(testCharacter);
     entityManager.flush();
-  }
-
-  @Test
-  @DisplayName("Should find all characters by owner")
-  void shouldFindAllCharactersByOwner() {
-    List<DndCharacter> characters = characterRepository.findAllByOwner(testUser);
-
-    assertThat(characters).hasSize(1);
-    assertThat(characters.getFirst().getName()).isEqualTo("Gandalf");
   }
 
   @Test

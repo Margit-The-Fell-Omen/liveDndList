@@ -8,6 +8,9 @@ import dev.ushki.livedndlist.service.SpellService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,8 +52,10 @@ public class SpellController {
   public ApiResponse<List<SpellResponse>> searchSpells(
       @RequestParam String name,
       @RequestParam(required = false) SpellSchool school,
-      @RequestParam(required = false) Integer maxLevel) {
-    return ApiResponse.success(spellService.searchByName(name, school, maxLevel));
+      @RequestParam(required = false) Integer maxLevel,
+      @PageableDefault(size = 20, sort = "updatedAt", direction = Sort.Direction.DESC)
+      Pageable pageable) {
+    return ApiResponse.success(spellService.searchByName(name, school, maxLevel, pageable));
   }
 
   @PostMapping

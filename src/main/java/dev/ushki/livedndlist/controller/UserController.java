@@ -7,6 +7,9 @@ import dev.ushki.livedndlist.service.UserService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,8 +38,10 @@ public class UserController {
   }
 
   @GetMapping("/search")
-  public ApiResponse<List<UserResponse>> searchUsers(@RequestParam String query) {
-    return ApiResponse.success(userService.searchUsers(query));
+  public ApiResponse<List<UserResponse>> searchUsers(@RequestParam String query,
+      @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.ASC)
+      Pageable pageable) {
+    return ApiResponse.success(userService.searchUsers(query, pageable));
   }
 
   @GetMapping("/me")

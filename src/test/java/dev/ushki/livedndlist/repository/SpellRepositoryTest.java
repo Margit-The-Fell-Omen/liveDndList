@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 import dev.ushki.livedndlist.entity.character.Spell;
 import dev.ushki.livedndlist.enums.SpellSchool;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 class SpellRepositoryTest {
@@ -22,11 +24,9 @@ class SpellRepositoryTest {
   @Autowired
   private SpellRepository spellRepository;
 
-  private Spell testSpell;
-
   @BeforeEach
   void setUp() {
-    testSpell = Spell.builder()
+    Spell testSpell = Spell.builder()
         .name("Fireball")
         .level(3)
         .school(SpellSchool.EVOCATION)
@@ -50,25 +50,26 @@ class SpellRepositoryTest {
   @Test
   @DisplayName("Should find spells by level")
   void shouldFindSpellsByLevel() {
-    List<Spell> spells = spellRepository.findByLevel(3);
+    List<Spell> spells = spellRepository.findByLevel(3, any(Pageable.class));
 
     assertThat(spells).hasSize(1);
-    assertThat(spells.get(0).getName()).isEqualTo("Fireball");
+    assertThat(spells.getFirst().getName()).isEqualTo("Fireball");
   }
 
   @Test
   @DisplayName("Should find spells by school")
   void shouldFindSpellsBySchool() {
-    List<Spell> spells = spellRepository.findBySchool(SpellSchool.EVOCATION);
+    List<Spell> spells = spellRepository.findBySchool(SpellSchool.EVOCATION, any(Pageable.class));
 
     assertThat(spells).hasSize(1);
-    assertThat(spells.get(0).getName()).isEqualTo("Fireball");
+    assertThat(spells.getFirst().getName()).isEqualTo("Fireball");
   }
 
   @Test
   @DisplayName("Should find spells by level and school")
   void shouldFindSpellsByLevelAndSchool() {
-    List<Spell> spells = spellRepository.findByLevelAndSchool(3, SpellSchool.EVOCATION);
+    List<Spell> spells = spellRepository.findByLevelAndSchool(3, SpellSchool.EVOCATION,
+        any(Pageable.class));
 
     assertThat(spells).hasSize(1);
   }
@@ -76,10 +77,11 @@ class SpellRepositoryTest {
   @Test
   @DisplayName("Should search spells by name containing")
   void shouldSearchSpellsByNameContaining() {
-    List<Spell> spells = spellRepository.findByNameContainingIgnoreCase("fire");
+    List<Spell> spells = spellRepository.findByNameContainingIgnoreCase("fire",
+        any(Pageable.class));
 
     assertThat(spells).hasSize(1);
-    assertThat(spells.get(0).getName()).isEqualTo("Fireball");
+    assertThat(spells.getFirst().getName()).isEqualTo("Fireball");
   }
 
   @Test
@@ -101,7 +103,7 @@ class SpellRepositoryTest {
     entityManager.persist(cantrip);
     entityManager.flush();
 
-    List<Spell> spells = spellRepository.findByLevelLessThanEqual(3);
+    List<Spell> spells = spellRepository.findByLevelLessThanEqual(3, any(Pageable.class));
 
     assertThat(spells).hasSize(2);
   }

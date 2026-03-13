@@ -89,9 +89,11 @@ public class CharacterController {
   @ResponseStatus(HttpStatus.CREATED)
   public ApiResponse<CharacterResponse> createWithStarterPack(
       @Valid @RequestBody CharacterCreateRequest request,
-      @AuthenticationPrincipal UserDetails userDetails) {
+      @AuthenticationPrincipal UserDetails userDetails,
+      @PageableDefault(size = 20, sort = "updatedAt", direction = Sort.Direction.DESC)
+      Pageable pageable) {
     CharacterResponse response = characterService.createWithStarterPack(
-        request, userDetails.getUsername());
+        request, userDetails.getUsername(), pageable);
     return ApiResponse.success("Character created with starter pack", response);
   }
 

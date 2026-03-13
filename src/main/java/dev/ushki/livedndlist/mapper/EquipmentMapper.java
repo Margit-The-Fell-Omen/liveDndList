@@ -33,10 +33,6 @@ public class EquipmentMapper {
         .build();
   }
 
-  /**
-   * Converts Set of Equipment to List of EquipmentResponse. Sorted by: equipped items first, then
-   * by type, then by name.
-   */
   public List<EquipmentResponse> toResponseList(Set<Equipment> equipmentSet) {
     if (equipmentSet == null) {
       return List.of();

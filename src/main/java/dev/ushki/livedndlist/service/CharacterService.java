@@ -369,7 +369,8 @@ public class CharacterService {
     });
   }
 
-  public CharacterResponse createWithStarterPack(CharacterCreateRequest request, String username) {
+  public CharacterResponse createWithStarterPack(CharacterCreateRequest request, String username,
+      Pageable pageable) {
     User user = findUserByUsername(username);
 
     DndCharacter character = characterMapper.toEntity(request);
@@ -381,7 +382,7 @@ public class CharacterService {
     setStarterGold(character);
 
     if (request.getSpellcastingAbility() != null) {
-      addStarterSpells(character);
+      addStarterSpells(character, pageable);
     }
 
     if (request.getName().contains("FAIL")) {
@@ -470,8 +471,8 @@ public class CharacterService {
     character.getCurrency().setSilver(10);
   }
 
-  private void addStarterSpells(DndCharacter character) {
-    List<Spell> cantrips = spellRepository.findByLevel(0);
+  private void addStarterSpells(DndCharacter character, Pageable pageable) {
+    List<Spell> cantrips = spellRepository.findByLevel(0, pageable);
     cantrips.stream()
         .limit(2)
         .forEach(character::addSpell);

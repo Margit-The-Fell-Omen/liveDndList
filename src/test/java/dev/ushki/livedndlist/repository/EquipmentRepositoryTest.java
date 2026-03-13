@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 import dev.ushki.livedndlist.entity.character.Equipment;
 import dev.ushki.livedndlist.enums.EquipmentType;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 class EquipmentRepositoryTest {
@@ -37,7 +39,8 @@ class EquipmentRepositoryTest {
   @Test
   @DisplayName("Should find equipment by type")
   void shouldFindEquipmentByType() {
-    List<Equipment> equipment = equipmentRepository.findByType(EquipmentType.WEAPON);
+    List<Equipment> equipment = equipmentRepository.findByType(EquipmentType.WEAPON,
+        any(Pageable.class));
 
     assertThat(equipment).hasSize(1);
     assertThat(equipment.getFirst().getName()).isEqualTo("Longsword");
@@ -46,7 +49,8 @@ class EquipmentRepositoryTest {
   @Test
   @DisplayName("Should search equipment by name containing")
   void shouldSearchEquipmentByNameContaining() {
-    List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase("sword");
+    List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase("sword",
+        any(Pageable.class));
 
     assertThat(equipment).hasSize(1);
     assertThat(equipment.getFirst().getName()).isEqualTo("Longsword");

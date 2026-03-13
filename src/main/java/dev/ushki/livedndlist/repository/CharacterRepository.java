@@ -28,9 +28,6 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   @EntityGraph(attributePaths = {"owner", "classes"})
   Page<DndCharacter> findAllByOwner(User owner, Pageable pageable);
 
-  @EntityGraph(attributePaths = {"owner"})
-  List<DndCharacter> findAllByOwner(User owner);
-
   @EntityGraph(attributePaths = {"owner", "classes"})
   List<DndCharacter> findTop5ByOwnerOrderByUpdatedAtDesc(User owner);
 
@@ -47,33 +44,33 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   Optional<DndCharacter> findByIdFull(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-         + "JOIN FETCH c.owner "
-         + "LEFT JOIN FETCH c.classes "
-         + "WHERE c.id = :id")
+      + "JOIN FETCH c.owner "
+      + "LEFT JOIN FETCH c.classes "
+      + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithOwnerAndClasses(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-         + "JOIN FETCH c.owner "
-         + "LEFT JOIN FETCH c.skills "
-         + "WHERE c.id = :id")
+      + "JOIN FETCH c.owner "
+      + "LEFT JOIN FETCH c.skills "
+      + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithSkills(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-         + "JOIN FETCH c.owner "
-         + "LEFT JOIN FETCH c.spells "
-         + "WHERE c.id = :id")
+      + "JOIN FETCH c.owner "
+      + "LEFT JOIN FETCH c.spells "
+      + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithSpells(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-         + "JOIN FETCH c.owner "
-         + "LEFT JOIN FETCH c.equipment "
-         + "WHERE c.id = :id")
+      + "JOIN FETCH c.owner "
+      + "LEFT JOIN FETCH c.equipment "
+      + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithEquipment(@Param("id") Long id);
 
   @Query("SELECT c FROM DndCharacter c "
-         + "JOIN FETCH c.owner "
-         + "LEFT JOIN FETCH c.savingThrowProficiencies "
-         + "WHERE c.id = :id")
+      + "JOIN FETCH c.owner "
+      + "LEFT JOIN FETCH c.savingThrowProficiencies "
+      + "WHERE c.id = :id")
   Optional<DndCharacter> findByIdWithSavingThrows(@Param("id") Long id);
 
   @EntityGraph(attributePaths = {"owner", "classes", "skills"})
@@ -91,7 +88,7 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   @Modifying
   @Transactional
   @Query(value = "UPDATE characters SET current_hit_points = max_hit_points "
-                 + "WHERE user_id = :userId",
+      + "WHERE user_id = :userId",
       nativeQuery = true)
   int restoreAllCharactersHitPointsNative(@Param("userId") Long userId);
 

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,11 +74,12 @@ public class EquipmentService {
     });
   }
 
-  public List<EquipmentResponse> searchByName(String name, EquipmentType type) {
+  public List<EquipmentResponse> searchByName(String name, EquipmentType type, Pageable pageable) {
     CompositeKey key = new CompositeKey("search", name, type);
 
     return cacheManager.get(EQUIPMENT_STRING, key, () -> {
-      List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase(name);
+      List<Equipment> equipment = equipmentRepository.findByNameContainingIgnoreCase(name,
+          pageable);
 
       Stream<Equipment> stream = equipment.stream();
 

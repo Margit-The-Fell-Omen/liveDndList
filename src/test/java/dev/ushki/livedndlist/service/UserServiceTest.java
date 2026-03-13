@@ -27,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -203,25 +204,25 @@ class UserServiceTest {
     @DisplayName("Should search users by username")
     void shouldSearchUsersByUsername() {
       when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-          "test", "test")).thenReturn(List.of(testUser));
+          "test", "test", any(Pageable.class))).thenReturn(List.of(testUser));
       when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
 
-      List<UserResponse> result = userService.searchUsers("test");
+      List<UserResponse> result = userService.searchUsers("test", any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getUsername()).contains("test");
       verify(userRepository).findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-          "test", "test");
+          "test", "test", any(Pageable.class));
     }
 
     @Test
     @DisplayName("Should search users by email")
     void shouldSearchUsersByEmail() {
       when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-          "admin@test.com", "admin@test.com")).thenReturn(List.of(adminUser));
+          "admin@test.com", "admin@test.com", any(Pageable.class))).thenReturn(List.of(adminUser));
       when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
 
-      List<UserResponse> result = userService.searchUsers("admin@test.com");
+      List<UserResponse> result = userService.searchUsers("admin@test.com", any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getEmail()).contains("admin@test.com");
@@ -231,12 +232,13 @@ class UserServiceTest {
     @DisplayName("Should search users by partial match")
     void shouldSearchUsersByPartialMatch() {
       when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-          "user", "user")).thenReturn(List.of(testUser, adminUser, disabledUser));
+          "user", "user", any(Pageable.class))).thenReturn(
+          List.of(testUser, adminUser, disabledUser));
       when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
       when(userMapper.toResponse(adminUser)).thenReturn(adminUserResponse);
       when(userMapper.toResponse(disabledUser)).thenReturn(disabledUserResponse);
 
-      List<UserResponse> result = userService.searchUsers("user");
+      List<UserResponse> result = userService.searchUsers("user", any(Pageable.class));
 
       assertThat(result).hasSize(3);
     }
@@ -245,9 +247,9 @@ class UserServiceTest {
     @DisplayName("Should return empty list when no users match search")
     void shouldReturnEmptyListWhenNoMatch() {
       when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-          "nonexistent", "nonexistent")).thenReturn(List.of());
+          "nonexistent", "nonexistent", any(Pageable.class))).thenReturn(List.of());
 
-      List<UserResponse> result = userService.searchUsers("nonexistent");
+      List<UserResponse> result = userService.searchUsers("nonexistent", any(Pageable.class));
 
       assertThat(result).isEmpty();
     }
@@ -256,10 +258,10 @@ class UserServiceTest {
     @DisplayName("Should search users case-insensitively")
     void shouldSearchCaseInsensitively() {
       when(userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-          "TEST", "TEST")).thenReturn(List.of(testUser));
+          "TEST", "TEST", any(Pageable.class))).thenReturn(List.of(testUser));
       when(userMapper.toResponse(testUser)).thenReturn(testUserResponse);
 
-      List<UserResponse> result = userService.searchUsers("TEST");
+      List<UserResponse> result = userService.searchUsers("TEST", any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getUsername()).isEqualToIgnoringCase("testuser");

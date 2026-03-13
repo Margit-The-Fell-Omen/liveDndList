@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,12 +55,12 @@ public class UserService {
   }
 
   @Transactional(readOnly = true)
-  public List<UserResponse> searchUsers(String query) {
+  public List<UserResponse> searchUsers(String query, Pageable pageable) {
     CompositeKey key = new CompositeKey("search", query);
 
     return cacheManager.get(USERS_NAMESPACE, key, () -> {
       List<User> users = userRepository
-          .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+          .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query, pageable);
       return users.stream()
           .map(userMapper::toResponse)
           .toList();

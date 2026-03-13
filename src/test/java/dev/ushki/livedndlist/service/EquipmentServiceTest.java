@@ -25,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
@@ -283,25 +284,27 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should search equipment by name")
     void shouldSearchEquipmentByName() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("sword"))
+      when(equipmentRepository.findByNameContainingIgnoreCase("sword", any(Pageable.class)))
           .thenReturn(List.of(testWeapon, heavyWeapon));
       when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
       when(equipmentMapper.toResponse(heavyWeapon)).thenReturn(heavyWeaponResponse);
 
-      List<EquipmentResponse> result = equipmentService.searchByName("sword", null);
+      List<EquipmentResponse> result = equipmentService.searchByName("sword", null,
+          any(Pageable.class));
 
       assertThat(result).hasSize(2).allMatch(e -> e.getName().toLowerCase().contains("sword"));
-      verify(equipmentRepository).findByNameContainingIgnoreCase("sword");
+      verify(equipmentRepository).findByNameContainingIgnoreCase("sword", any(Pageable.class));
     }
 
     @Test
     @DisplayName("Should search equipment by name and filter by type")
     void shouldSearchEquipmentByNameAndFilterByType() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("mail"))
+      when(equipmentRepository.findByNameContainingIgnoreCase("mail", any(Pageable.class)))
           .thenReturn(List.of(testArmor));
       when(equipmentMapper.toResponse(testArmor)).thenReturn(testArmorResponse);
 
-      List<EquipmentResponse> result = equipmentService.searchByName("mail", EquipmentType.ARMOR);
+      List<EquipmentResponse> result = equipmentService.searchByName("mail", EquipmentType.ARMOR,
+          any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getType()).isEqualTo(EquipmentType.ARMOR);
@@ -310,10 +313,11 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should return empty list when no matches found")
     void shouldReturnEmptyListWhenNoMatches() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("NonExistent"))
+      when(equipmentRepository.findByNameContainingIgnoreCase("NonExistent", any(Pageable.class)))
           .thenReturn(List.of());
 
-      List<EquipmentResponse> result = equipmentService.searchByName("NonExistent", null);
+      List<EquipmentResponse> result = equipmentService.searchByName("NonExistent", null,
+          any(Pageable.class));
 
       assertThat(result).isEmpty();
     }
@@ -321,12 +325,13 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should filter out non-matching types in search")
     void shouldFilterOutNonMatchingTypesInSearch() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("sword"))
+      when(equipmentRepository.findByNameContainingIgnoreCase("sword", any(Pageable.class)))
           .thenReturn(List.of(testWeapon, heavyWeapon));
       when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
       when(equipmentMapper.toResponse(heavyWeapon)).thenReturn(heavyWeaponResponse);
 
-      List<EquipmentResponse> result = equipmentService.searchByName("sword", EquipmentType.WEAPON);
+      List<EquipmentResponse> result = equipmentService.searchByName("sword", EquipmentType.WEAPON,
+          any(Pageable.class));
 
       assertThat(result).hasSize(2).allMatch(e -> e.getType() == EquipmentType.WEAPON);
     }

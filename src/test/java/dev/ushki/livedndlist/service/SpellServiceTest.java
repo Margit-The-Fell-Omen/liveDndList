@@ -26,6 +26,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
@@ -360,26 +361,27 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should search spells by name")
     void shouldSearchSpellsByName() {
-      when(spellRepository.findByNameContainingIgnoreCase("fire"))
+      when(spellRepository.findByNameContainingIgnoreCase("fire", any(Pageable.class)))
           .thenReturn(List.of(fireball));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      List<SpellResponse> result = spellService.searchByName("fire", null, null);
+      List<SpellResponse> result = spellService.searchByName("fire", null, null,
+          any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getName()).containsIgnoringCase("fire");
-      verify(spellRepository).findByNameContainingIgnoreCase("fire");
+      verify(spellRepository).findByNameContainingIgnoreCase("fire", any(Pageable.class));
     }
 
     @Test
     @DisplayName("Should search spells by name and filter by school")
     void shouldSearchSpellsByNameAndFilterBySchool() {
-      when(spellRepository.findByNameContainingIgnoreCase("magic"))
+      when(spellRepository.findByNameContainingIgnoreCase("magic", any(Pageable.class)))
           .thenReturn(List.of(magicMissile));
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
 
       List<SpellResponse> result = spellService.searchByName(
-          "magic", SpellSchool.EVOCATION, null);
+          "magic", SpellSchool.EVOCATION, null, any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getSchool()).isEqualTo(SpellSchool.EVOCATION);
@@ -388,11 +390,12 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should search spells by name and filter by max level")
     void shouldSearchSpellsByNameAndFilterByMaxLevel() {
-      when(spellRepository.findByNameContainingIgnoreCase("missile"))
+      when(spellRepository.findByNameContainingIgnoreCase("missile", any(Pageable.class)))
           .thenReturn(List.of(magicMissile, fireball));
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
 
-      List<SpellResponse> result = spellService.searchByName("missile", null, 2);
+      List<SpellResponse> result = spellService.searchByName("missile", null, 2,
+          any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getLevel()).isLessThanOrEqualTo(2);
@@ -401,12 +404,12 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should search with all filters applied")
     void shouldSearchWithAllFiltersApplied() {
-      when(spellRepository.findByNameContainingIgnoreCase("magic"))
+      when(spellRepository.findByNameContainingIgnoreCase("magic", any(Pageable.class)))
           .thenReturn(List.of(magicMissile));
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
 
       List<SpellResponse> result = spellService.searchByName(
-          "magic", SpellSchool.EVOCATION, 1);
+          "magic", SpellSchool.EVOCATION, 1, any(Pageable.class));
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getSchool()).isEqualTo(SpellSchool.EVOCATION);
@@ -416,10 +419,11 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should return empty list when no matches found")
     void shouldReturnEmptyListWhenNoMatches() {
-      when(spellRepository.findByNameContainingIgnoreCase("NonExistent"))
+      when(spellRepository.findByNameContainingIgnoreCase("NonExistent", any(Pageable.class)))
           .thenReturn(List.of());
 
-      List<SpellResponse> result = spellService.searchByName("NonExistent", null, null);
+      List<SpellResponse> result = spellService.searchByName("NonExistent", null, null,
+          any(Pageable.class));
 
       assertThat(result).isEmpty();
     }
@@ -427,12 +431,12 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should filter out spells that don't match school in search")
     void shouldFilterOutNonMatchingSchoolInSearch() {
-      when(spellRepository.findByNameContainingIgnoreCase("shield"))
+      when(spellRepository.findByNameContainingIgnoreCase("shield", any(Pageable.class)))
           .thenReturn(List.of(shield));
       when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
 
       List<SpellResponse> result = spellService.searchByName(
-          "shield", SpellSchool.ABJURATION, null);
+          "shield", SpellSchool.ABJURATION, null, any(Pageable.class));
 
       assertThat(result).hasSize(1).allMatch(s -> s.getSchool() == SpellSchool.ABJURATION);
     }

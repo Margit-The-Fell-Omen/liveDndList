@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,11 +83,12 @@ public class SpellService {
     });
   }
 
-  public List<SpellResponse> searchByName(String name, SpellSchool school, Integer maxLevel) {
+  public List<SpellResponse> searchByName(String name, SpellSchool school, Integer maxLevel,
+      Pageable pageable) {
     CompositeKey key = new CompositeKey("search", name, school, maxLevel);
 
     return cacheManager.get(SPELL_STRING, key, () -> {
-      List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name);
+      List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name, pageable);
 
       Stream<Spell> stream = spells.stream();
 
