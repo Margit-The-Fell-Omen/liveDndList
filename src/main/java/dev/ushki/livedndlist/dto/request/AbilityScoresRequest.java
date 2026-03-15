@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Request object containing the six base ability scores")
 public class AbilityScoresRequest {
 
   private static final int MIN_SCORE = 1;
@@ -22,30 +24,36 @@ public class AbilityScoresRequest {
   @Min(MIN_SCORE)
   @Max(MAX_SCORE)
   @Builder.Default
+  @Schema(description = "Strength score (1-30)", example = "10")
   private Integer strength = DEFAULT_SCORE;
 
   @Min(MIN_SCORE)
   @Max(MAX_SCORE)
   @Builder.Default
+  @Schema(description = "Dexterity score (1-30)", example = "14")
   private Integer dexterity = DEFAULT_SCORE;
 
   @Min(MIN_SCORE)
   @Max(MAX_SCORE)
   @Builder.Default
+  @Schema(description = "Constitution score (1-30)", example = "12")
   private Integer constitution = DEFAULT_SCORE;
 
   @Min(MIN_SCORE)
   @Max(MAX_SCORE)
   @Builder.Default
+  @Schema(description = "Intelligence score (1-30)", example = "10")
   private Integer intelligence = DEFAULT_SCORE;
 
   @Min(MIN_SCORE)
   @Max(MAX_SCORE)
   @Builder.Default
+  @Schema(description = "Wisdom score (1-30)", example = "13")
   private Integer wisdom = DEFAULT_SCORE;
 
   @Min(MIN_SCORE)
   @Max(MAX_SCORE)
   @Builder.Default
+  @Schema(description = "Charisma score (1-30)", example = "8")
   private Integer charisma = DEFAULT_SCORE;
 }

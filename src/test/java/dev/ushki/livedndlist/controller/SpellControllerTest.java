@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -248,7 +249,7 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should search spells by name")
     void shouldSearchSpellsByName() throws Exception {
-      when(spellService.searchByName(eq("fire"), isNull(), isNull()))
+      when(spellService.searchByName(eq("fire"), isNull(), isNull(), any(Pageable.class)))
           .thenReturn(List.of(fireballResponse));
 
       mockMvc.perform(get("/api/v1/spells/search")
@@ -261,7 +262,8 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should search spells by name with school filter")
     void shouldSearchSpellsByNameWithSchoolFilter() throws Exception {
-      when(spellService.searchByName(eq("bolt"), eq(SpellSchool.EVOCATION), isNull()))
+      when(spellService.searchByName(eq("bolt"), eq(SpellSchool.EVOCATION), isNull(),
+          any(Pageable.class)))
           .thenReturn(List.of(lightningBoltResponse));
 
       mockMvc.perform(get("/api/v1/spells/search")
@@ -275,7 +277,7 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should search spells by name with maxLevel filter")
     void shouldSearchSpellsByNameWithMaxLevelFilter() throws Exception {
-      when(spellService.searchByName(eq("shield"), isNull(), eq(2)))
+      when(spellService.searchByName(eq("shield"), isNull(), eq(2), any(Pageable.class)))
           .thenReturn(List.of(shieldResponse));
 
       mockMvc.perform(get("/api/v1/spells/search")
@@ -290,7 +292,7 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should search spells with all filters")
     void shouldSearchSpellsWithAllFilters() throws Exception {
-      when(spellService.searchByName("fire", SpellSchool.EVOCATION, 5))
+      when(spellService.searchByName("fire", SpellSchool.EVOCATION, 5, any(Pageable.class)))
           .thenReturn(List.of(fireballResponse));
 
       mockMvc.perform(get("/api/v1/spells/search")
@@ -305,7 +307,7 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should return empty list when no spells match search")
     void shouldReturnEmptyListWhenNoMatch() throws Exception {
-      when(spellService.searchByName(eq("nonexistent"), isNull(), isNull()))
+      when(spellService.searchByName(eq("nonexistent"), isNull(), isNull(), any(Pageable.class)))
           .thenReturn(List.of());
 
       mockMvc.perform(get("/api/v1/spells/search")

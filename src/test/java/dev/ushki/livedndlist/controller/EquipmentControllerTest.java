@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -222,7 +223,7 @@ class EquipmentControllerTest {
     @Test
     @DisplayName("Should search equipment by name")
     void shouldSearchEquipmentByName() throws Exception {
-      when(equipmentService.searchByName(eq("sword"), isNull()))
+      when(equipmentService.searchByName(eq("sword"), isNull(), any(Pageable.class)))
           .thenReturn(List.of(longswordResponse));
 
       mockMvc.perform(get("/api/v1/equipment/search")
@@ -235,7 +236,8 @@ class EquipmentControllerTest {
     @Test
     @DisplayName("Should search equipment by name with type filter")
     void shouldSearchEquipmentByNameWithTypeFilter() throws Exception {
-      when(equipmentService.searchByName("plate", EquipmentType.ARMOR))
+      when(equipmentService.searchByName("plate", EquipmentType.ARMOR, any(Pageable.class)))
+
           .thenReturn(List.of(plateArmorResponse));
 
       mockMvc.perform(get("/api/v1/equipment/search")
@@ -250,7 +252,7 @@ class EquipmentControllerTest {
     @Test
     @DisplayName("Should return empty list when no equipment matches search")
     void shouldReturnEmptyListWhenNoMatch() throws Exception {
-      when(equipmentService.searchByName(eq("nonexistent"), isNull()))
+      when(equipmentService.searchByName(eq("nonexistent"), isNull(), any(Pageable.class)))
           .thenReturn(List.of());
 
       mockMvc.perform(get("/api/v1/equipment/search")
@@ -263,7 +265,7 @@ class EquipmentControllerTest {
     @Test
     @DisplayName("Should search equipment with partial name match")
     void shouldSearchEquipmentWithPartialMatch() throws Exception {
-      when(equipmentService.searchByName(eq("ar"), isNull()))
+      when(equipmentService.searchByName(eq("ar"), isNull(), any(Pageable.class)))
           .thenReturn(List.of(plateArmorResponse));
 
       mockMvc.perform(get("/api/v1/equipment/search")

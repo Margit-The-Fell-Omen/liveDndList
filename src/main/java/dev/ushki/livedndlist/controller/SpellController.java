@@ -5,6 +5,13 @@ import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.service.SpellService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,32 +33,73 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/spells")
 @RequiredArgsConstructor
+@Tag(name = "Spells", description = "Spell catalog management endpoints")
+@SecurityRequirement(name = "bearerAuth")
 public class SpellController {
 
   private final SpellService spellService;
 
   @GetMapping
+  @Operation(summary = "Get all spells",
+      description = "Retrieve all spells with optional filters and sorting")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+          description = "Spell list retrieved successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized", content = @Content)
+  })
   public ApiResponse<List<SpellResponse>> getAllSpells(
+      @Parameter(description = "Filter by spell school", example = "EVOCATION")
       @RequestParam(required = false) SpellSchool school,
+      @Parameter(description = "Minimum spell level", example = "0")
       @RequestParam(required = false) Integer minLevel,
+      @Parameter(description = "Maximum spell level", example = "9")
       @RequestParam(required = false) Integer maxLevel,
+      @Parameter(description = "Filter ritual spells", example = "true")
       @RequestParam(required = false) Boolean ritual,
+      @Parameter(description = "Filter concentration spells", example = "false")
       @RequestParam(required = false) Boolean concentration,
+      @Parameter(description = "Sort by field", example = "name")
       @RequestParam(defaultValue = "name") String sortBy,
+      @Parameter(description = "Sort direction", example = "asc", schema =
+      @Schema(allowableValues = {
+          "asc", "desc"}))
       @RequestParam(defaultValue = "asc") String sortDir) {
     return ApiResponse.success(spellService.getAllSpells(
         school, minLevel, maxLevel, ritual, concentration, sortBy, sortDir));
   }
 
   @GetMapping("/{id}")
-  public ApiResponse<SpellResponse> getSpellById(@PathVariable Long id) {
+  @Operation(summary = "Get spell by ID", description = "Retrieve spell details by its identifier")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+          description = "Spell retrieved successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
+          description = "Spell not found", content = @Content),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized", content = @Content)
+  })
+  public ApiResponse<SpellResponse> getSpellById(
+      @Parameter(description = "Spell ID", example = "1", required = true)
+      @PathVariable Long id) {
     return ApiResponse.success(spellService.getById(id));
   }
 
   @GetMapping("/search")
+  @Operation(summary = "Search spells",
+      description = "Search spells by name with optional filters and paging")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+          description = "Search results returned"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized", content = @Content)
+  })
   public ApiResponse<List<SpellResponse>> searchSpells(
+      @Parameter(description = "Name query", example = "Fire", required = true)
       @RequestParam String name,
+      @Parameter(description = "Filter by spell school", example = "EVOCATION")
       @RequestParam(required = false) SpellSchool school,
+      @Parameter(description = "Maximum spell level", example = "3")
       @RequestParam(required = false) Integer maxLevel,
       @PageableDefault(size = 20, sort = "updatedAt", direction = Sort.Direction.DESC)
       Pageable pageable) {
@@ -60,14 +108,46 @@ public class SpellController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public ApiResponse<SpellResponse> createSpell(@Valid @RequestBody SpellRequest request) {
+  @Operation(summary = "Create spell", description = "Create a new spell in the catalog")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+          description = "Spell created successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
+          description = "Invalid input", content = @Content),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized", content = @Content)
+  })
+  public ApiResponse<SpellResponse> createSpell(
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "Spell data",
+          required = true,
+          content = @Content(schema = @Schema(implementation = SpellRequest.class))
+      )
+      @Valid @RequestBody SpellRequest request) {
     SpellResponse response = spellService.create(request);
     return ApiResponse.success("Spell created", response);
   }
 
   @PutMapping("/{id}")
+  @Operation(summary = "Update spell", description = "Update an existing spell")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+          description = "Spell updated successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
+          description = "Invalid input", content = @Content),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
+          description = "Spell not found", content = @Content),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized", content = @Content)
+  })
   public ApiResponse<SpellResponse> updateSpell(
+      @Parameter(description = "Spell ID", example = "1", required = true)
       @PathVariable Long id,
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "Updated spell data",
+          required = true,
+          content = @Content(schema = @Schema(implementation = SpellRequest.class))
+      )
       @Valid @RequestBody SpellRequest request) {
     SpellResponse response = spellService.update(id, request);
     return ApiResponse.success("Spell updated", response);
@@ -75,7 +155,18 @@ public class SpellController {
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteSpell(@PathVariable Long id) {
+  @Operation(summary = "Delete spell", description = "Delete a spell by ID")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204",
+          description = "Spell deleted successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
+          description = "Spell not found", content = @Content),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized", content = @Content)
+  })
+  public void deleteSpell(
+      @Parameter(description = "Spell ID", example = "1", required = true)
+      @PathVariable Long id) {
     spellService.delete(id);
   }
 }
