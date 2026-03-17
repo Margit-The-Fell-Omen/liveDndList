@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.MockMvc;
     controllers = AuthController.class,
     excludeFilters = @ComponentScan.Filter(
         type = FilterType.ASSIGNABLE_TYPE,
-        classes = JwtAuthenticationFilter.class  // Exclude the filter entirely
+        classes = JwtAuthenticationFilter.class
     )
 )
 @AutoConfigureMockMvc(addFilters = false)
@@ -50,7 +50,6 @@ class AuthControllerTest {
   @MockitoBean
   private AuthService authService;
 
-  // Mock the JWT components so context can load
   @MockitoBean
   private JwtTokenProvider jwtTokenProvider;
 

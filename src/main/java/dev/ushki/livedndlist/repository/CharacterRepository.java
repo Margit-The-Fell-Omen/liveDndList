@@ -89,32 +89,34 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   @Transactional
   @Query(value = "UPDATE characters SET current_hit_points = max_hit_points "
       + "WHERE user_id = :userId",
-      nativeQuery = true)
+         nativeQuery = true)
   int restoreAllCharactersHitPointsNative(@Param("userId") Long userId);
 
-  @Query(value = """
-      SELECT DISTINCT c.* 
-      FROM characters c
-      INNER JOIN character_classes cc ON cc.character_id = c.id
-      INNER JOIN character_spells cs ON cs.character_id = c.id
-      INNER JOIN spells s ON s.id = cs.spell_id
-      WHERE c.user_id = :userId
-      AND LOWER(cc.class_name) = LOWER(:className)
-      AND cc.level >= :minClassLevel
-      AND s.school = CAST(:spellSchool AS VARCHAR)
-      """,
-      countQuery = """
-          SELECT COUNT(DISTINCT c.id) 
-          FROM characters c
-          INNER JOIN character_classes cc ON cc.character_id = c.id
-          INNER JOIN character_spells cs ON cs.character_id = c.id
-          INNER JOIN spells s ON s.id = cs.spell_id
-          WHERE c.user_id = :userId
-          AND LOWER(cc.class_name) = LOWER(:className)
-          AND cc.level >= :minClassLevel
-          AND s.school = CAST(:spellSchool AS VARCHAR)
-          """,
-      nativeQuery = true)
+  @Query(value =
+             """
+                 SELECT DISTINCT c.*
+                 FROM characters c
+                 INNER JOIN character_classes cc ON cc.character_id = c.id
+                 INNER JOIN character_spells cs ON cs.character_id = c.id
+                 INNER JOIN spells s ON s.id = cs.spell_id
+                 WHERE c.user_id = :userId
+                 AND LOWER(cc.class_name) = LOWER(:className)
+                 AND cc.level >= :minClassLevel
+                 AND s.school = CAST(:spellSchool AS spell_school_type)
+             """,
+         countQuery =
+             """
+                 SELECT COUNT(DISTINCT c.id)
+                 FROM characters c
+                 INNER JOIN character_classes cc ON cc.character_id = c.id
+                 INNER JOIN character_spells cs ON cs.character_id = c.id
+                 INNER JOIN spells s ON s.id = cs.spell_id
+                 WHERE c.user_id = :userId
+                 AND LOWER(cc.class_name) = LOWER(:className)
+                 AND cc.level >= :minClassLevel
+                 AND s.school = CAST(:spellSchool AS spell_school_type)
+             """,
+         nativeQuery = true)
   Page<DndCharacter> findByComplexCriteria(
       @Param("userId") Long userId,
       @Param("className") String className,
@@ -135,7 +137,8 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   void deleteAllEquipmentByCharacterId(@Param("id") Long id);
 
   @Modifying
-  @Query(value = "DELETE FROM character_saving_throws WHERE dnd_character_id = :id", nativeQuery = true)
+  @Query(value = "DELETE FROM character_saving_throws WHERE dnd_character_id = :id",
+         nativeQuery = true)
   void deleteAllSavingThrowsByCharacterId(@Param("id") Long id);
 
   @Modifying
