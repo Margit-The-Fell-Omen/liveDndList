@@ -32,9 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-/**
- * Unit tests for EquipmentController.
- */
 @WebMvcTest(EquipmentController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class EquipmentControllerTest {
@@ -236,7 +233,7 @@ class EquipmentControllerTest {
     @Test
     @DisplayName("Should search equipment by name with type filter")
     void shouldSearchEquipmentByNameWithTypeFilter() throws Exception {
-      when(equipmentService.searchByName("plate", EquipmentType.ARMOR, any(Pageable.class)))
+      when(equipmentService.searchByName(eq("plate"), eq(EquipmentType.ARMOR), any(Pageable.class)))
 
           .thenReturn(List.of(plateArmorResponse));
 

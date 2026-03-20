@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
 import dev.ushki.livedndlist.entity.character.Equipment;
@@ -22,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +39,6 @@ class EquipmentServiceTest {
   @Mock
   private EquipmentMapper equipmentMapper;
 
-  @InjectMocks
   private EquipmentService equipmentService;
 
   private Equipment testWeapon;
@@ -50,6 +51,9 @@ class EquipmentServiceTest {
 
   @BeforeEach
   void setUp() {
+    CacheManager cacheManager = new CacheManager();
+    equipmentService = new EquipmentService(equipmentRepository, equipmentMapper, cacheManager);
+
     testWeapon = Equipment.builder()
         .id(1L)
         .name("Longsword")
@@ -110,6 +114,81 @@ class EquipmentServiceTest {
         .damageType("slashing")
         .quantity(1)
         .build();
+  }
+
+  @Nested
+  @DisplayName("Caching Behavior Tests")
+  class CachingTests {
+
+    @Test
+    @DisplayName("Should return from cache on second call (getById)")
+    void shouldReturnFromCacheOnSecondCall() {
+      when(equipmentRepository.findById(1L)).thenReturn(Optional.of(testWeapon));
+      when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
+
+      equipmentService.getById(1L);
+      equipmentService.getById(1L);
+
+      verify(equipmentRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should return from cache on second call with complex keys (getAll)")
+    void shouldReturnFromCacheForComplexKeys() {
+      when(equipmentRepository.findAll(any(Sort.class))).thenReturn(List.of(testWeapon));
+      when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
+
+      equipmentService.getAll(EquipmentType.WEAPON, 1.0, 5.0, "name", "asc");
+      equipmentService.getAll(EquipmentType.WEAPON, 1.0, 5.0, "name", "asc");
+
+      verify(equipmentRepository, times(1)).findAll(any(Sort.class));
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on create")
+    void shouldInvalidateCacheOnCreate() {
+      when(equipmentRepository.findById(1L)).thenReturn(Optional.of(testWeapon));
+      when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
+      equipmentService.getById(1L);
+
+      when(equipmentMapper.toEntity(testEquipmentRequest)).thenReturn(testWeapon);
+      when(equipmentRepository.save(testWeapon)).thenReturn(testWeapon);
+      equipmentService.create(testEquipmentRequest);
+
+      equipmentService.getById(1L);
+
+      verify(equipmentRepository, times(2)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on update")
+    void shouldInvalidateCacheOnUpdate() {
+      when(equipmentRepository.findById(1L)).thenReturn(Optional.of(testWeapon));
+      when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
+      equipmentService.getById(1L);
+
+      when(equipmentRepository.save(testWeapon)).thenReturn(testWeapon);
+      equipmentService.update(1L, testEquipmentRequest);
+
+      equipmentService.getById(1L);
+
+      verify(equipmentRepository, times(3)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on delete")
+    void shouldInvalidateCacheOnDelete() {
+      when(equipmentRepository.findById(1L)).thenReturn(Optional.of(testWeapon));
+      when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
+      equipmentService.getById(1L);
+
+      when(equipmentRepository.existsById(1L)).thenReturn(true);
+      equipmentService.delete(1L);
+
+      equipmentService.getById(1L);
+
+      verify(equipmentRepository, times(2)).findById(1L);
+    }
   }
 
   @Nested
@@ -284,27 +363,30 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should search equipment by name")
     void shouldSearchEquipmentByName() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("sword", any(Pageable.class)))
+      Pageable pageable = Pageable.unpaged();
+
+      when(equipmentRepository.findByNameContainingIgnoreCase(eq("sword"), any(Pageable.class)))
           .thenReturn(List.of(testWeapon, heavyWeapon));
       when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
       when(equipmentMapper.toResponse(heavyWeapon)).thenReturn(heavyWeaponResponse);
 
-      List<EquipmentResponse> result = equipmentService.searchByName("sword", null,
-          any(Pageable.class));
+      List<EquipmentResponse> result = equipmentService.searchByName("sword", null, pageable);
 
       assertThat(result).hasSize(2).allMatch(e -> e.getName().toLowerCase().contains("sword"));
-      verify(equipmentRepository).findByNameContainingIgnoreCase("sword", any(Pageable.class));
+      verify(equipmentRepository).findByNameContainingIgnoreCase(eq("sword"), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Should search equipment by name and filter by type")
     void shouldSearchEquipmentByNameAndFilterByType() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("mail", any(Pageable.class)))
+      Pageable pageable = Pageable.unpaged();
+
+      when(equipmentRepository.findByNameContainingIgnoreCase(eq("mail"), any(Pageable.class)))
           .thenReturn(List.of(testArmor));
       when(equipmentMapper.toResponse(testArmor)).thenReturn(testArmorResponse);
 
       List<EquipmentResponse> result = equipmentService.searchByName("mail", EquipmentType.ARMOR,
-          any(Pageable.class));
+          pageable);
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getType()).isEqualTo(EquipmentType.ARMOR);
@@ -313,11 +395,13 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should return empty list when no matches found")
     void shouldReturnEmptyListWhenNoMatches() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("NonExistent", any(Pageable.class)))
+      Pageable pageable = Pageable.unpaged();
+
+      when(equipmentRepository.findByNameContainingIgnoreCase(eq("NonExistent"),
+          any(Pageable.class)))
           .thenReturn(List.of());
 
-      List<EquipmentResponse> result = equipmentService.searchByName("NonExistent", null,
-          any(Pageable.class));
+      List<EquipmentResponse> result = equipmentService.searchByName("NonExistent", null, pageable);
 
       assertThat(result).isEmpty();
     }
@@ -325,13 +409,15 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should filter out non-matching types in search")
     void shouldFilterOutNonMatchingTypesInSearch() {
-      when(equipmentRepository.findByNameContainingIgnoreCase("sword", any(Pageable.class)))
+      Pageable pageable = Pageable.unpaged();
+
+      when(equipmentRepository.findByNameContainingIgnoreCase(eq("sword"), any(Pageable.class)))
           .thenReturn(List.of(testWeapon, heavyWeapon));
       when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
       when(equipmentMapper.toResponse(heavyWeapon)).thenReturn(heavyWeaponResponse);
 
       List<EquipmentResponse> result = equipmentService.searchByName("sword", EquipmentType.WEAPON,
-          any(Pageable.class));
+          pageable);
 
       assertThat(result).hasSize(2).allMatch(e -> e.getType() == EquipmentType.WEAPON);
     }

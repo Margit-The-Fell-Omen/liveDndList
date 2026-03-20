@@ -136,7 +136,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should search users by query")
     void shouldSearchUsersByQuery() throws Exception {
-      when(userService.searchUsers("test", any(Pageable.class)))
+      when(userService.searchUsers(eq("test"), any(Pageable.class)))
           .thenReturn(List.of(testUserResponse));
 
       mockMvc.perform(get("/api/v1/users/search")
@@ -150,7 +150,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should return empty list when no users match query")
     void shouldReturnEmptyListWhenNoMatch() throws Exception {
-      when(userService.searchUsers("nonexistent", any(Pageable.class)))
+      when(userService.searchUsers(eq("nonexistent"), any(Pageable.class)))
           .thenReturn(List.of());
 
       mockMvc.perform(get("/api/v1/users/search")
@@ -164,7 +164,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should search users by email")
     void shouldSearchUsersByEmail() throws Exception {
-      when(userService.searchUsers("@test.com", any(Pageable.class)))
+      when(userService.searchUsers(eq("@test.com"), any(Pageable.class)))
           .thenReturn(List.of(testUserResponse, adminUserResponse));
 
       mockMvc.perform(get("/api/v1/users/search")

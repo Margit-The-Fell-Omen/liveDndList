@@ -6,9 +6,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
@@ -38,7 +40,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -65,7 +66,6 @@ class CharacterServiceTest {
   @Mock
   private EquipmentMapper equipmentMapper;
 
-  @InjectMocks
   private CharacterService characterService;
 
   private User testUser;
@@ -79,6 +79,11 @@ class CharacterServiceTest {
 
   @BeforeEach
   void setUp() {
+    CacheManager cacheManager = new CacheManager();
+
+    characterService = new CharacterService(characterRepository, userRepository, spellRepository,
+        characterMapper, equipmentMapper, cacheManager);
+
     testUser = User.builder()
         .id(1L)
         .username("testuser")
@@ -146,6 +151,111 @@ class CharacterServiceTest {
         .build();
 
     defaultPageable = PageRequest.of(0, 20, Sort.by("updatedAt").descending());
+  }
+
+  @Nested
+  @DisplayName("Caching Behavior Tests")
+  class CachingTests {
+
+    @Test
+    @DisplayName("Should return from cache on second call for getById")
+    void shouldReturnFromCacheOnSecondCallGetById() {
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      characterService.getById(1L, "testuser");
+      characterService.getById(1L, "testuser");
+
+      verify(characterRepository, times(1)).findByIdFull(1L);
+    }
+
+    @Test
+    @DisplayName("Should return from cache on second call for getAllByUsername")
+    void shouldReturnFromCacheOnSecondCallGetAll() {
+      Page<DndCharacter> characterPage = new PageImpl<>(List.of(testCharacter), defaultPageable, 1);
+
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterRepository.findAllByOwner(eq(testUser), any(Pageable.class))).thenReturn(
+          characterPage);
+      when(characterMapper.toSummaryResponse(testCharacter)).thenReturn(testCharacterSummary);
+
+      characterService.getAllByUsername("testuser", null, null, null, defaultPageable);
+      characterService.getAllByUsername("testuser", null, null, null, defaultPageable);
+
+      verify(characterRepository, times(1)).findAllByOwner(eq(testUser), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on create")
+    void shouldInvalidateCacheOnCreate() {
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      characterService.getById(1L, "testuser");
+
+      CharacterCreateRequest request = CharacterCreateRequest.builder().name("New").build();
+      when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+      when(characterMapper.toEntity(request)).thenReturn(testCharacter);
+      when(characterRepository.save(any(DndCharacter.class))).thenReturn(testCharacter);
+
+      characterService.create(request, "testuser");
+      characterService.getById(1L, "testuser");
+
+      verify(characterRepository, times(2)).findByIdFull(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on update")
+    void shouldInvalidateCacheOnUpdate() {
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      characterService.getById(1L, "testuser");
+
+      CharacterUpdateRequest request = CharacterUpdateRequest.builder().name("Updated").build();
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
+
+      characterService.update(1L, request, "testuser");
+      characterService.getById(1L, "testuser");
+
+      verify(characterRepository, times(2)).findByIdFull(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on delete")
+    void shouldInvalidateCacheOnDelete() {
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      characterService.getById(1L, "testuser");
+      characterService.delete(1L, "testuser");
+      characterService.getById(1L, "testuser");
+
+      verify(characterRepository, times(2)).findByIdFull(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache when adding equipment")
+    void shouldInvalidateCacheOnAddEquipment() {
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      characterService.getById(1L, "testuser");
+
+      EquipmentRequest request = EquipmentRequest.builder().name("Sword").build();
+      Equipment equipment = Equipment.builder().name("Sword").build();
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(equipmentMapper.toEntity(request)).thenReturn(equipment);
+      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
+
+      characterService.addEquipment(1L, request, "testuser");
+      characterService.getById(1L, "testuser");
+
+      verify(characterRepository, times(2)).findByIdFull(1L);
+    }
   }
 
   @Nested
@@ -267,7 +377,7 @@ class CharacterServiceTest {
     @Test
     @DisplayName("Should get character by ID")
     void shouldGetCharacterById() {
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
       when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
 
       CharacterResponse result = characterService.getById(1L, "testuser");
@@ -280,7 +390,7 @@ class CharacterServiceTest {
     @Test
     @DisplayName("Should throw exception when character not found")
     void shouldThrowExceptionWhenCharacterNotFound() {
-      when(characterRepository.findById(999L)).thenReturn(Optional.empty());
+      when(characterRepository.findByIdFull(999L)).thenReturn(Optional.empty());
 
       assertThatThrownBy(() -> characterService.getById(999L, "testuser"))
           .isInstanceOf(ResourceNotFoundException.class)
@@ -298,7 +408,7 @@ class CharacterServiceTest {
           .race(CharacterRace.ELF)
           .build();
 
-      when(characterRepository.findById(2L)).thenReturn(Optional.of(otherCharacter));
+      when(characterRepository.findByIdFull(2L)).thenReturn(Optional.of(otherCharacter));
 
       assertThatThrownBy(() -> characterService.getById(2L, "testuser"))
           .isInstanceOf(UnauthorizedException.class)
@@ -355,7 +465,8 @@ class CharacterServiceTest {
           .maxHitPoints(50)
           .build();
 
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
       when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
 
@@ -369,11 +480,14 @@ class CharacterServiceTest {
     @Test
     @DisplayName("Should delete character successfully")
     void shouldDeleteCharacterSuccessfully() {
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
-
       characterService.delete(1L, "testuser");
 
-      verify(characterRepository).delete(testCharacter);
+      verify(characterRepository).deleteAllSkillsByCharacterId(1L);
+      verify(characterRepository).deleteAllClassesByCharacterId(1L);
+      verify(characterRepository).deleteAllEquipmentByCharacterId(1L);
+      verify(characterRepository).deleteAllSavingThrowsByCharacterId(1L);
+      verify(characterRepository).deleteAllSpellsByCharacterId(1L);
+      verify(characterRepository).deleteCharacterById(1L);
     }
 
     @Test
@@ -383,7 +497,8 @@ class CharacterServiceTest {
           .name("Hacked Name")
           .build();
 
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
 
       assertThatThrownBy(() -> characterService.update(1L, request, "otheruser"))
           .isInstanceOf(UnauthorizedException.class);
@@ -409,7 +524,8 @@ class CharacterServiceTest {
           .type(EquipmentType.WEAPON)
           .build();
 
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
       when(equipmentMapper.toEntity(request)).thenReturn(equipment);
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
       when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
@@ -430,7 +546,8 @@ class CharacterServiceTest {
 
       testCharacter.getEquipment().add(equipment);
 
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
       when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
 
@@ -443,7 +560,8 @@ class CharacterServiceTest {
     @Test
     @DisplayName("Should throw exception when equipment not found")
     void shouldThrowExceptionWhenEquipmentNotFound() {
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
 
       assertThatThrownBy(() -> characterService.removeEquipment(1L, 999L, "testuser"))
           .isInstanceOf(ResourceNotFoundException.class)
@@ -465,7 +583,8 @@ class CharacterServiceTest {
           .school(SpellSchool.EVOCATION)
           .build();
 
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
       when(spellRepository.findById(1L)).thenReturn(Optional.of(spell));
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
       when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
@@ -487,7 +606,8 @@ class CharacterServiceTest {
 
       testCharacter.getSpells().add(spell);
 
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
       when(spellRepository.findById(1L)).thenReturn(Optional.of(spell));
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
       when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
@@ -501,7 +621,8 @@ class CharacterServiceTest {
     @Test
     @DisplayName("Should throw exception when spell not found")
     void shouldThrowExceptionWhenSpellNotFound() {
-      when(characterRepository.findById(1L)).thenReturn(Optional.of(testCharacter));
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
       when(spellRepository.findById(999L)).thenReturn(Optional.empty());
 
       assertThatThrownBy(() -> characterService.addSpell(1L, 999L, "testuser"))
@@ -539,7 +660,7 @@ class CharacterServiceTest {
       Page<DndCharacter> secondPage = new PageImpl<>(
           List.of(testCharacter),
           pageRequest,
-          25  // Total 25 elements = 3 pages of 10
+          25
       );
 
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));

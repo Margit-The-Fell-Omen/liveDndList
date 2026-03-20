@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.LoginRequest;
 import dev.ushki.livedndlist.dto.request.RegisterRequest;
 import dev.ushki.livedndlist.dto.response.JwtResponse;
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,7 +50,6 @@ class AuthServiceTest {
   @Mock
   private UserMapper userMapper;
 
-  @InjectMocks
   private AuthService authService;
 
   private User testUser;
@@ -58,6 +57,11 @@ class AuthServiceTest {
 
   @BeforeEach
   void setUp() {
+    CacheManager cacheManager = new CacheManager();
+
+    authService = new AuthService(userRepository, passwordEncoder, authenticationManager,
+        jwtTokenProvider, userMapper, cacheManager);
+
     testUser = User.builder()
         .id(1L)
         .username("testuser")

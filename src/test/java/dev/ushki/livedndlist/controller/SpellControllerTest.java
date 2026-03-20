@@ -292,7 +292,8 @@ class SpellControllerTest {
     @Test
     @DisplayName("Should search spells with all filters")
     void shouldSearchSpellsWithAllFilters() throws Exception {
-      when(spellService.searchByName("fire", SpellSchool.EVOCATION, 5, any(Pageable.class)))
+      when(spellService.searchByName(eq("fire"), eq(SpellSchool.EVOCATION), eq(5),
+          any(Pageable.class)))
           .thenReturn(List.of(fireballResponse));
 
       mockMvc.perform(get("/api/v1/spells/search")
