@@ -41,12 +41,14 @@ public class SpellController {
 
   @GetMapping
   @Operation(summary = "Get all spells",
-      description = "Retrieve all spells with optional filters and sorting")
+             description = "Retrieve all spells with optional filters and sorting")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-          description = "Spell list retrieved successfully"),
+                                                           description =
+                                                               "Spell list retrieved successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-          description = "Unauthorized", content = @Content)
+                                                           description =
+                                                               "Unauthorized", content = @Content)
   })
   public ApiResponse<List<SpellResponse>> getAllSpells(
       @Parameter(description = "Filter by spell school", example = "EVOCATION")
@@ -73,11 +75,14 @@ public class SpellController {
   @Operation(summary = "Get spell by ID", description = "Retrieve spell details by its identifier")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-          description = "Spell retrieved successfully"),
+                                                           description =
+                                                               "Spell retrieved successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-          description = "Spell not found", content = @Content),
+                                                           description = "Spell not found",
+                                                           content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-          description = "Unauthorized", content = @Content)
+                                                           description =
+                                                               "Unauthorized", content = @Content)
   })
   public ApiResponse<SpellResponse> getSpellById(
       @Parameter(description = "Spell ID", example = "1", required = true)
@@ -87,12 +92,13 @@ public class SpellController {
 
   @GetMapping("/search")
   @Operation(summary = "Search spells",
-      description = "Search spells by name with optional filters and paging")
+             description = "Search spells by name with optional filters and paging")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-          description = "Search results returned"),
+                                                           description = "Search results returned"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-          description = "Unauthorized", content = @Content)
+                                                           description = "Unauthorized",
+                                                           content = @Content)
   })
   public ApiResponse<List<SpellResponse>> searchSpells(
       @Parameter(description = "Name query", example = "Fire", required = true)
@@ -111,11 +117,14 @@ public class SpellController {
   @Operation(summary = "Create spell", description = "Create a new spell in the catalog")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
-          description = "Spell created successfully"),
+                                                           description =
+                                                               "Spell created successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-          description = "Invalid input", content = @Content),
+                                                           description = "Invalid input",
+                                                           content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-          description = "Unauthorized", content = @Content)
+                                                           description = "Unauthorized",
+                                                           content = @Content)
   })
   public ApiResponse<SpellResponse> createSpell(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -132,13 +141,17 @@ public class SpellController {
   @Operation(summary = "Update spell", description = "Update an existing spell")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-          description = "Spell updated successfully"),
+                                                           description =
+                                                               "Spell updated successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-          description = "Invalid input", content = @Content),
+                                                           description = "Invalid input",
+                                                           content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-          description = "Spell not found", content = @Content),
+                                                           description = "Spell not found",
+                                                           content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-          description = "Unauthorized", content = @Content)
+                                                           description = "Unauthorized",
+                                                           content = @Content)
   })
   public ApiResponse<SpellResponse> updateSpell(
       @Parameter(description = "Spell ID", example = "1", required = true)
@@ -158,15 +171,40 @@ public class SpellController {
   @Operation(summary = "Delete spell", description = "Delete a spell by ID")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204",
-          description = "Spell deleted successfully"),
+                                                           description =
+                                                               "Spell deleted successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-          description = "Spell not found", content = @Content),
+                                                           description = "Spell not found",
+                                                           content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-          description = "Unauthorized", content = @Content)
+                                                           description = "Unauthorized",
+                                                           content = @Content)
   })
   public void deleteSpell(
       @Parameter(description = "Spell ID", example = "1", required = true)
       @PathVariable Long id) {
     spellService.delete(id);
+  }
+
+  @PostMapping("/bulk")
+  @ResponseStatus(HttpStatus.CREATED)
+  @Operation(summary = "Create multiple spells", description =
+      "Bulk create multiple spells at once")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+                                                           description =
+                                                               "Spells created successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
+                                                           description = "Invalid input or "
+                                                               + "duplicate spell name",
+                                                           content = @Content),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+                                                           description = "Unauthorized",
+                                                           content = @Content)
+  })
+  public ApiResponse<List<SpellResponse>> createSpellsBulk(
+      @Valid @RequestBody List<SpellRequest> requests) {
+    List<SpellResponse> response = spellService.createBulk(requests);
+    return ApiResponse.success(response.size() + " spells created successfully", response);
   }
 }

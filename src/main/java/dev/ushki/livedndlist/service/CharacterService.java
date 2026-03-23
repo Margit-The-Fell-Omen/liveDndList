@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -506,5 +507,45 @@ public class CharacterService {
 
       return PageResponse.of(responsePage);
     });
+  }
+
+  @Transactional
+  public CharacterResponse addEquipmentBulkWithTransaction(Long characterId,
+      List<EquipmentRequest> requests, String username) {
+    DndCharacter character = characterRepository.findByIdWithEquipment(characterId)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", characterId));
+    verifyOwnership(character, username);
+
+    for (EquipmentRequest request : requests) {
+      if (request.getName().contains("FAIL")) {
+        throw new ResourceSaveFailureException(
+            "Simulated failure WITH transaction! Everything should roll back.");
+      }
+      character.addEquipment(equipmentMapper.toEntity(request));
+      characterRepository.save(character);
+    }
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+    return characterMapper.toResponse(character);
+  }
+
+  @Transactional(propagation = Propagation.NOT_SUPPORTED)
+  public CharacterResponse addEquipmentBulkNoTransaction(Long characterId,
+      List<EquipmentRequest> requests, String username) {
+    DndCharacter character = characterRepository.findByIdWithEquipment(characterId)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", characterId));
+    verifyOwnership(character, username);
+
+    for (EquipmentRequest request : requests) {
+      if (request.getName().contains("FAIL")) {
+        throw new ResourceSaveFailureException(
+            "Simulated failure WITHOUT transaction! Previous items remain in DB.");
+      }
+      character.addEquipment(equipmentMapper.toEntity(request));
+      characterRepository.save(character);
+    }
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+    return characterMapper.toResponse(character);
   }
 }

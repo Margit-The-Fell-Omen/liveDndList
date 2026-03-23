@@ -144,4 +144,26 @@ public class SpellService {
 
     cacheManager.invalidateByPrefix(SPELL_STRING);
   }
+
+  @Transactional
+  public List<SpellResponse> createBulk(List<SpellRequest> requests) {
+    List<Spell> spellsToSave = requests.stream()
+        .map(request -> {
+          if (spellRepository.existsByName(request.getName())) {
+            throw new DuplicateResourceException(
+                "Spell with name '" + request.getName() + "' already exists");
+          }
+          return spellMapper.toEntity(request);
+        })
+        .toList();
+
+    List<Spell> savedSpells = spellRepository.saveAll(spellsToSave);
+    log.info("Bulk created {} spells", savedSpells.size());
+
+    cacheManager.invalidateByPrefix(SPELL_STRING);
+
+    return savedSpells.stream()
+        .map(spellMapper::toResponse)
+        .toList();
+  }
 }

@@ -1,7 +1,6 @@
 \echo ''
 \echo '========================================================'
-\echo '   TRANSACTION BEHAVIOR DEMO - DATABASE STATE CHECK'
-\echo '   Timestamp:' :TIMESTAMP
+\echo '   TRANSACTION BEHAVIOR DEMO - BULK EQUIPMENT ADD'
 \echo '========================================================'
 \echo ''
 
@@ -11,53 +10,36 @@
 
 SELECT 
     test_type,
-    CASE WHEN char_count > 0 THEN '✅ EXISTS' ELSE '❌ NONE' END as character,
-    char_count,
-    equipment_count,
     CASE 
-        WHEN test_type = 'WITH @Transactional' AND char_count = 0 
+        WHEN test_type = 'WITH @Transactional' AND equipment_count = 0 
             THEN '✅ CORRECT (Full Rollback)'
-        WHEN test_type = 'WITHOUT @Transactional' AND char_count > 0 
-            THEN '⚠️  PROBLEM (Partial Data)'
+        WHEN test_type = 'WITHOUT @Transactional' AND equipment_count > 0 
+            THEN '⚠️  PROBLEM (Partial Data Saved)'
         ELSE 'ℹ️  Check manually'
-    END as status
+    END as status,
+    equipment_count as items_stuck_in_db
 FROM (
     SELECT 
         'WITH @Transactional' as test_type,
-        (SELECT COUNT(*) FROM characters WHERE name LIKE '%FAIL_WITH_TRANSACTION%') as char_count,
-        (SELECT COUNT(*) FROM equipment e 
-         JOIN characters c ON e.character_id = c.id 
-         WHERE c.name LIKE '%FAIL_WITH_TRANSACTION%') as equipment_count
+        (SELECT COUNT(*) FROM equipment WHERE name LIKE 'TX-%') as equipment_count
     UNION ALL
     SELECT 
         'WITHOUT @Transactional',
-        (SELECT COUNT(*) FROM characters WHERE name LIKE '%FAIL_NO_TRANSACTION%'),
-        (SELECT COUNT(*) FROM equipment e 
-         JOIN characters c ON e.character_id = c.id 
-         WHERE c.name LIKE '%FAIL_NO_TRANSACTION%')
+        (SELECT COUNT(*) FROM equipment WHERE name LIKE 'NOTX-%')
 ) as results;
 
 \echo ''
-\echo '📋 DETAILED VIEW:'
+\echo '📋 DETAILED VIEW (Items actually saved to DB despite error):'
 \echo ''
 
--- All FAIL characters
-\echo '--- All FAIL Characters ---'
-SELECT id, name, race, 
-       (SELECT COUNT(*) FROM equipment WHERE character_id = characters.id) as equip_count,
-       created_at
-FROM characters 
-WHERE name LIKE '%FAIL%'
-ORDER BY created_at DESC;
-
--- Equipment details
-\echo ''
-\echo '--- Equipment for FAIL Characters ---'
-SELECT c.id, c.name as character, e.name as equipment, e.type
-FROM characters c
-LEFT JOIN equipment e ON e.character_id = c.id
-WHERE c.name LIKE '%FAIL%'
-ORDER BY c.id, e.id;
+SELECT 
+    c.name as character_name, 
+    e.name as equipment_name, 
+    e.type
+FROM equipment e
+JOIN characters c ON e.character_id = c.id
+WHERE e.name LIKE 'TX-%' OR e.name LIKE 'NOTX-%'
+ORDER BY e.name ASC;
 
 \echo ''
 \echo '========================================================'
