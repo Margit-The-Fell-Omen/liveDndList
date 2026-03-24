@@ -3,7 +3,6 @@ package dev.ushki.livedndlist.entity.character;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
-import dev.ushki.livedndlist.enums.CharacterRace;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -36,6 +35,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -84,12 +84,11 @@ public class DndCharacter {
   @Column(nullable = false)
   private String name;
 
-  @Enumerated(EnumType.STRING)
-  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-  @Column(nullable = false, columnDefinition = "character_race_type")
-  private CharacterRace race;
-
-  private String subrace;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "race_id", nullable = false)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
+  private Race race;
 
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)

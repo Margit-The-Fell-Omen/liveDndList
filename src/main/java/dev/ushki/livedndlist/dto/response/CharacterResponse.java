@@ -1,8 +1,8 @@
 package dev.ushki.livedndlist.dto.response;
 
+import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
-import dev.ushki.livedndlist.enums.CharacterRace;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,10 +26,7 @@ public class CharacterResponse {
   private String name;
 
   @Schema(description = "Character race", example = "HUMAN")
-  private CharacterRace race;
-
-  @Schema(description = "Character subrace", example = "Dunedain")
-  private String subrace;
+  private Race race;
 
   @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
   private CharacterAlignment alignment;

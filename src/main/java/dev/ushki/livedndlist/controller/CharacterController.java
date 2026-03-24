@@ -11,7 +11,6 @@ import dev.ushki.livedndlist.dto.response.RestoreHitPointsResponse;
 import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.service.CharacterService;
-import dev.ushki.livedndlist.service.NonTransactionalCharacterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,11 +47,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CharacterController {
 
   private final CharacterService characterService;
-  private final NonTransactionalCharacterService nonTransactionalCharacterService;
 
   @GetMapping
   @Operation(summary = "Get all user characters",
-             description = "Retrieve all characters owned by the authenticated user with optional filters")
+      description = "Retrieve all characters owned by the authenticated user with optional filters")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse
           (responseCode = "200", description = "Characters retrieved successfully"),
@@ -79,12 +77,12 @@ public class CharacterController {
 
   @GetMapping("/search")
   @Operation(summary = "Search characters by name",
-             description = "Search user's characters by name")
+      description = "Search user's characters by name")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description = "Search results returned"),
+          description = "Search results returned"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<PageResponse<CharacterSummaryResponse>> searchCharacters(
       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
@@ -101,12 +99,12 @@ public class CharacterController {
 
   @GetMapping("/recent")
   @Operation(summary = "Get recent characters",
-             description = "Get recently updated characters for the user")
+      description = "Get recently updated characters for the user")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description = "Recent characters retrieved"),
+          description = "Recent characters retrieved"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<List<CharacterSummaryResponse>> getRecentCharacters(
       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
@@ -119,12 +117,12 @@ public class CharacterController {
   @Operation(summary = "Create new character", description = "Create a new D&D character")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
-                                                           description = "Character created successfully",
-                                                           content = @Content(schema = @Schema(implementation = CharacterResponse.class))),
+          description = "Character created successfully",
+          content = @Content(schema = @Schema(implementation = CharacterResponse.class))),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input", content = @Content),
+          description = "Invalid input", content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<CharacterResponse> createCharacter(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -141,14 +139,14 @@ public class CharacterController {
   @PostMapping("/starter-pack")
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create character with starter pack",
-             description = "Create a character with default equipment and spells")
+      description = "Create a character with default equipment and spells")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
-                                                           description = "Character created with starter pack"),
+          description = "Character created with starter pack"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input", content = @Content),
+          description = "Invalid input", content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<CharacterResponse> createWithStarterPack(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -165,40 +163,15 @@ public class CharacterController {
     return ApiResponse.success("Character created with starter pack", response);
   }
 
-  @PostMapping("/starter-pack-no-tx")
-  @ResponseStatus(HttpStatus.CREATED)
-  @Operation(summary = "Create character without transaction",
-             description = "Create character with starter pack (non-transactional)")
-  @ApiResponses(value = {
-      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
-                                                           description = "Character creation initiated"),
-      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input", content = @Content),
-      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
-  })
-  public ApiResponse<Void> createWithStarterPackNoTransaction(
-      @io.swagger.v3.oas.annotations.parameters.RequestBody(
-          description = "Character creation details",
-          required = true,
-          content = @Content(schema = @Schema(implementation = CharacterCreateRequest.class))
-      )
-      @Valid @RequestBody CharacterCreateRequest request,
-      @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
-    nonTransactionalCharacterService.createWithStarterPackNoTransaction(
-        request, userDetails.getUsername());
-    return ApiResponse.success("Character created (no transaction)");
-  }
-
   @GetMapping("/{id}")
   @Operation(summary = "Get character by ID", description = "Retrieve full character details")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description = "Character retrieved"),
+          description = "Character retrieved"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-                                                           description = "Character not found", content = @Content),
+          description = "Character not found", content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<CharacterResponse> getCharacter(
       @Parameter(description = "Character ID", example = "1", required = true)
@@ -211,13 +184,13 @@ public class CharacterController {
   @Operation(summary = "Update character", description = "Update character details")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description = "Character updated successfully"),
+          description = "Character updated successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-                                                           description = "Character not found", content = @Content),
+          description = "Character not found", content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input", content = @Content),
+          description = "Invalid input", content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<CharacterResponse> updateCharacter(
       @Parameter(description = "Character ID", example = "1", required = true)
@@ -238,11 +211,11 @@ public class CharacterController {
   @Operation(summary = "Delete character", description = "Delete a character by ID")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description = "Character deleted successfully"),
+          description = "Character deleted successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-                                                           description = "Character not found", content = @Content),
+          description = "Character not found", content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized", content = @Content)
+          description = "Unauthorized", content = @Content)
   })
   public ApiResponse<Void> deleteCharacter(
       @Parameter(description = "Character ID", example = "1", required = true)
@@ -264,7 +237,7 @@ public class CharacterController {
 
   @GetMapping("/{id}/combat")
   @Operation(summary = "Get character combat view",
-             description = "Get character data optimized for combat")
+      description = "Get character data optimized for combat")
   public ApiResponse<CharacterResponse> getCharacterForCombat(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -275,7 +248,7 @@ public class CharacterController {
 
   @GetMapping("/{id}/spellcasting")
   @Operation(summary = "Get character spellcasting view",
-             description = "Get character data for spellcasting")
+      description = "Get character data for spellcasting")
   public ApiResponse<CharacterResponse> getCharacterForSpellcasting(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -296,7 +269,7 @@ public class CharacterController {
 
   @GetMapping("/{id}/inventory")
   @Operation(summary = "Get character inventory",
-             description = "Get character equipment and inventory")
+      description = "Get character equipment and inventory")
   public ApiResponse<CharacterResponse> getCharacterWithEquipment(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -307,7 +280,7 @@ public class CharacterController {
 
   @GetMapping("/{id}/saving-throws")
   @Operation(summary = "Get character saving throws",
-             description = "Get character saving throw proficiencies")
+      description = "Get character saving throw proficiencies")
   public ApiResponse<CharacterResponse> getCharacterWithSavingThrows(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -328,7 +301,7 @@ public class CharacterController {
 
   @GetMapping("/{id}/spells")
   @Operation(summary = "Get character spells",
-             description = "Get all spells known by the character")
+      description = "Get all spells known by the character")
   public ApiResponse<CharacterResponse> getCharacterWithSpells(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -339,7 +312,7 @@ public class CharacterController {
 
   @PostMapping("/{id}/equipment")
   @Operation(summary = "Add equipment to character",
-             description = "Add new equipment item to character inventory")
+      description = "Add new equipment item to character inventory")
   public ApiResponse<CharacterResponse> addEquipment(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -357,7 +330,7 @@ public class CharacterController {
 
   @DeleteMapping("/{id}/equipment/{equipmentId}")
   @Operation(summary = "Remove equipment from character",
-             description = "Remove equipment item from character inventory")
+      description = "Remove equipment item from character inventory")
   public ApiResponse<CharacterResponse> removeEquipment(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -371,7 +344,7 @@ public class CharacterController {
 
   @PostMapping("/{id}/spells/{spellId}")
   @Operation(summary = "Add spell to character",
-             description = "Add a spell to character's spell list")
+      description = "Add a spell to character's spell list")
   public ApiResponse<CharacterResponse> addSpell(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -385,7 +358,7 @@ public class CharacterController {
 
   @DeleteMapping("/{id}/spells/{spellId}")
   @Operation(summary = "Remove spell from character",
-             description = "Remove a spell from character's spell list")
+      description = "Remove a spell from character's spell list")
   public ApiResponse<CharacterResponse> removeSpell(
       @Parameter(description = "Character ID", example = "1", required = true)
       @PathVariable Long id,
@@ -399,7 +372,7 @@ public class CharacterController {
 
   @PostMapping("/restore-hp")
   @Operation(summary = "Restore all characters HP",
-             description = "Restore all user's characters to full hit points")
+      description = "Restore all user's characters to full hit points")
   public ApiResponse<RestoreHitPointsResponse> restoreAllHitPoints(
       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
 
@@ -416,7 +389,7 @@ public class CharacterController {
 
   @GetMapping("/search/advanced/paged")
   @Operation(summary = "Advanced character search",
-             description = "Search characters by class, level and spell school")
+      description = "Search characters by class, level and spell school")
   public ApiResponse<PageResponse<CharacterSummaryResponse>> searchByComplexCriteriaPaged(
       @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
       @Parameter(description = "Class name", example = "Wizard", required = true)

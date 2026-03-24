@@ -42,7 +42,6 @@ public class CharacterMapper {
         .id(character.getId())
         .name(character.getName())
         .race(character.getRace())
-        .subrace(character.getSubrace())
         .alignment(character.getAlignment())
         .background(character.getBackground())
         .experiencePoints(character.getExperiencePoints())
@@ -123,7 +122,6 @@ public class CharacterMapper {
     DndCharacter character = DndCharacter.builder()
         .name(request.getName())
         .race(request.getRace())
-        .subrace(request.getSubrace())
         .alignment(request.getAlignment())
         .background(request.getBackground())
         .portraitUrl(request.getPortraitUrl())
@@ -153,7 +151,6 @@ public class CharacterMapper {
   public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {
     updateIfPresent(request.getName(), character::setName);
     updateIfPresent(request.getRace(), character::setRace);
-    updateIfPresent(request.getSubrace(), character::setSubrace);
     updateIfPresent(request.getAlignment(), character::setAlignment);
     updateIfPresent(request.getBackground(), character::setBackground);
     updateIfPresent(request.getMaxHitPoints(), character::setMaxHitPoints);

@@ -106,7 +106,7 @@ class CharacterServiceTest {
         .id(1L)
         .owner(testUser)
         .name("Gandalf")
-        .race(CharacterRace.HUMAN)
+        //.race(CharacterRace.HUMAN)
         .maxHitPoints(45)
         .currentHitPoints(45)
         .classes(new HashSet<>())
@@ -119,7 +119,7 @@ class CharacterServiceTest {
         .id(2L)
         .owner(testUser)
         .name("Legolas")
-        .race(CharacterRace.ELF)
+        //.race(CharacterRace.ELF)
         .maxHitPoints(30)
         .currentHitPoints(30)
         .classes(new HashSet<>())
@@ -131,7 +131,7 @@ class CharacterServiceTest {
     testCharacterResponse = CharacterResponse.builder()
         .id(1L)
         .name("Gandalf")
-        .race(CharacterRace.HUMAN)
+        //.race(CharacterRace.HUMAN)
         .maxHitPoints(45)
         .currentHitPoints(45)
         .build();
@@ -139,14 +139,14 @@ class CharacterServiceTest {
     testCharacterSummary = CharacterSummaryResponse.builder()
         .id(1L)
         .name("Gandalf")
-        .race(CharacterRace.HUMAN)
+        //.race(CharacterRace.HUMAN)
         .totalLevel(5)
         .build();
 
     elfCharacterSummary = CharacterSummaryResponse.builder()
         .id(2L)
         .name("Legolas")
-        .race(CharacterRace.ELF)
+        //.race(CharacterRace.ELF)
         .totalLevel(3)
         .build();
 
@@ -405,7 +405,7 @@ class CharacterServiceTest {
           .id(2L)
           .owner(otherUser)
           .name("Other")
-          .race(CharacterRace.ELF)
+          //.race(CharacterRace.ELF)
           .build();
 
       when(characterRepository.findByIdFull(2L)).thenReturn(Optional.of(otherCharacter));
@@ -437,13 +437,13 @@ class CharacterServiceTest {
     void shouldCreateCharacterSuccessfully() {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
-          .race(CharacterRace.ELF)
+          //.race(CharacterRace.ELF)
           .className("Ranger")
           .build();
 
       DndCharacter newCharacter = DndCharacter.builder()
           .name("Legolas")
-          .race(CharacterRace.ELF)
+          //.race(CharacterRace.ELF)
           .build();
 
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));

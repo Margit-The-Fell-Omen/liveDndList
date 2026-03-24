@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.service;
 
+import dev.ushki.livedndlist.config.Open5eRateLimitConfig;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5eRaceResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
@@ -7,18 +8,17 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.mapper.RaceMapper;
 import dev.ushki.livedndlist.repository.RaceRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestClient;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClient;
 
 @Service
 @Slf4j
@@ -28,11 +28,13 @@ public class Open5eRaceService {
   private final RaceRepository raceRepository;
   private final RaceMapper raceMapper;
   private final RestClient open5eRestClient;
+  private final Open5eRateLimitConfig rateLimitConfig;
 
   private final AtomicBoolean syncInProgress = new AtomicBoolean(false);
   private final AtomicInteger processedCount = new AtomicInteger(0);
   private final AtomicInteger totalCount = new AtomicInteger(0);
-  private String currentOperation = "";
+  private volatile String currentOperation = "";
+  private volatile long lastRequestTime = 0;
 
   public SyncStatusDto getSyncStatus() {
     return SyncStatusDto.builder()
@@ -52,12 +54,69 @@ public class Open5eRaceService {
     return Math.round((double) processedCount.get() / total * 10000.0) / 100.0;
   }
 
+  private void rateLimitDelay() {
+    long now = System.currentTimeMillis();
+    long timeSinceLastRequest = now - lastRequestTime;
+
+    if (timeSinceLastRequest < rateLimitConfig.getDelayMs()) {
+      long sleepTime = rateLimitConfig.getDelayMs() - timeSinceLastRequest;
+      try {
+        Thread.sleep(sleepTime);
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        log.warn("Rate limit delay interrupted");
+      }
+    }
+
+    lastRequestTime = System.currentTimeMillis();
+  }
+
+  private <T> T executeWithRetry(String uri, Class<T> responseType) {
+    int attempt = 0;
+    Exception lastException = null;
+
+    while (attempt < rateLimitConfig.getMaxRetries()) {
+      try {
+        rateLimitDelay();
+
+        T response = open5eRestClient.get()
+            .uri(uri)
+            .retrieve()
+            .body(responseType);
+
+        if (response != null) {
+          return response;
+        }
+
+      } catch (Exception e) {
+        lastException = e;
+        attempt++;
+
+        if (attempt < rateLimitConfig.getMaxRetries()) {
+          log.warn("API request failed (attempt {}/{}): {} - {}",
+              attempt, rateLimitConfig.getMaxRetries(), uri, e.getMessage());
+
+          try {
+            Thread.sleep(rateLimitConfig.getRetryDelayMs() * attempt);
+          } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Sync interrupted", ie);
+          }
+        }
+      }
+    }
+
+    throw new RuntimeException(
+        "Request failed after " + rateLimitConfig.getMaxRetries() + " attempts: " + uri,
+        lastException);
+  }
+
   @Transactional
   public SyncResultDto syncAllRaces() {
-    if (syncInProgress.get()) {
+    if (!syncInProgress.compareAndSet(false, true)) {
       return SyncResultDto.builder()
           .success(false)
-          .message("Синхронизация уже выполняется")
+          .message("Sync already in progress")
           .syncedAt(LocalDateTime.now())
           .build();
     }
@@ -69,17 +128,16 @@ public class Open5eRaceService {
     int failed = 0;
 
     try {
-      syncInProgress.set(true);
       processedCount.set(0);
-      currentOperation = "Загрузка данных из API";
+      currentOperation = "Fetching data from API";
 
-      log.info("Начинаем синхронизацию рас из Open5e API");
+      log.info("Starting race sync from Open5e API");
 
       List<Open5eRaceDto> allRaces = fetchAllRacesFromApi();
       totalCount.set(allRaces.size());
 
-      log.info("Загружено {} рас из API", allRaces.size());
-      currentOperation = "Сохранение в базу данных";
+      log.info("Fetched {} races from API", allRaces.size());
+      currentOperation = "Saving to database";
 
       for (Open5eRaceDto raceDto : allRaces) {
         try {
@@ -91,7 +149,7 @@ public class Open5eRaceService {
           }
         } catch (Exception e) {
           failed++;
-          String error = String.format("Ошибка обработки расы '%s': %s",
+          String error = String.format("Error processing race '%s': %s",
               raceDto.getName(), e.getMessage());
           errors.add(error);
           log.error(error, e);
@@ -102,13 +160,12 @@ public class Open5eRaceService {
 
       long duration = System.currentTimeMillis() - startTime;
 
-      log.info("Синхронизация завершена. Создано: {}, Обновлено: {}, Ошибок: {}",
-          created, updated, failed);
+      log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
+          duration, created, updated, failed);
 
       return SyncResultDto.builder()
           .success(errors.isEmpty())
-          .message(errors.isEmpty() ? "Синхронизация успешно завершена" :
-              "Синхронизация завершена с ошибками")
+          .message(errors.isEmpty() ? "Sync completed successfully" : "Sync completed with errors")
           .syncedAt(LocalDateTime.now())
           .statistics(SyncResultDto.SyncStatistics.builder()
               .totalFetched(allRaces.size())
@@ -121,11 +178,11 @@ public class Open5eRaceService {
           .build();
 
     } catch (Exception e) {
-      log.error("Критическая ошибка синхронизации: {}", e.getMessage(), e);
+      log.error("Critical sync error: {}", e.getMessage(), e);
 
       return SyncResultDto.builder()
           .success(false)
-          .message("Критическая ошибка: " + e.getMessage())
+          .message("Critical error: " + e.getMessage())
           .syncedAt(LocalDateTime.now())
           .errors(List.of(e.getMessage()))
           .build();
@@ -143,20 +200,9 @@ public class Open5eRaceService {
     long startTime = System.currentTimeMillis();
 
     try {
-      log.info("Синхронизация расы по slug: {}", slug);
+      log.info("Syncing race by slug: {}", slug);
 
-      Open5eRaceDto raceDto = open5eRestClient.get()
-          .uri("/races/{slug}/", slug)
-          .retrieve()
-          .body(Open5eRaceDto.class);
-
-      if (raceDto == null) {
-        return SyncResultDto.builder()
-            .success(false)
-            .message("Раса не найдена в API: " + slug)
-            .syncedAt(LocalDateTime.now())
-            .build();
-      }
+      Open5eRaceDto raceDto = executeWithRetry("/races/" + slug + "/", Open5eRaceDto.class);
 
       SyncAction action = saveOrUpdateRace(raceDto);
       long duration = System.currentTimeMillis() - startTime;
@@ -164,8 +210,8 @@ public class Open5eRaceService {
       return SyncResultDto.builder()
           .success(true)
           .message(action == SyncAction.CREATED ?
-              "Раса создана: " + raceDto.getName() :
-              "Раса обновлена: " + raceDto.getName())
+              "Race created: " + raceDto.getName() :
+              "Race updated: " + raceDto.getName())
           .syncedAt(LocalDateTime.now())
           .statistics(SyncResultDto.SyncStatistics.builder()
               .totalFetched(1)
@@ -177,11 +223,11 @@ public class Open5eRaceService {
           .build();
 
     } catch (Exception e) {
-      log.error("Ошибка при запросе к API: {}", e.getMessage());
+      log.error("API request error: {}", e.getMessage());
 
       return SyncResultDto.builder()
           .success(false)
-          .message("Ошибка API: " + e.getMessage())
+          .message("API error: " + e.getMessage())
           .syncedAt(LocalDateTime.now())
           .errors(List.of(e.getMessage()))
           .build();
@@ -195,29 +241,19 @@ public class Open5eRaceService {
 
     while (currentPath != null) {
       pageCount++;
-      log.debug("Загрузка страницы {}: {}", pageCount, currentPath);
+      currentOperation = String.format("Fetching page %d from API", pageCount);
 
-      try {
-        Open5eRaceResponse response = open5eRestClient.get()
-            .uri(currentPath)
-            .retrieve()
-            .body(Open5eRaceResponse.class);
+      Open5eRaceResponse response = executeWithRetry(currentPath, Open5eRaceResponse.class);
 
-        if (response != null && response.getResults() != null) {
-          allRaces.addAll(response.getResults());
+      if (response.getResults() != null) {
+        allRaces.addAll(response.getResults());
 
-          String nextFullUrl = response.getNext();
-          currentPath = nextFullUrl != null
-              ? nextFullUrl.replace("https://api.open5e.com/v1", "")
-              : null;
-
-          Thread.sleep(100);
-        } else {
-          break;
-        }
-      } catch (InterruptedException e) {
-        Thread.currentThread().interrupt();
-        throw new RuntimeException("Синхронизация прервана пользователем", e);
+        String nextFullUrl = response.getNext();
+        currentPath = nextFullUrl != null
+            ? nextFullUrl.replace("https://api.open5e.com/v1", "")
+            : null;
+      } else {
+        break;
       }
     }
 
@@ -231,14 +267,10 @@ public class Open5eRaceService {
       Race race = existingRace.get();
       raceMapper.updateEntity(race, raceDto);
       raceRepository.save(race);
-
-      log.debug("Обновлена раса: {}", raceDto.getName());
       return SyncAction.UPDATED;
     } else {
       Race race = raceMapper.toEntity(raceDto);
       raceRepository.save(race);
-
-      log.debug("Создана раса: {}", raceDto.getName());
       return SyncAction.CREATED;
     }
   }
@@ -251,13 +283,13 @@ public class Open5eRaceService {
 
       return SyncResultDto.builder()
           .success(true)
-          .message("Удалено рас: " + count)
+          .message("Deleted races: " + count)
           .syncedAt(LocalDateTime.now())
           .build();
     } catch (Exception e) {
       return SyncResultDto.builder()
           .success(false)
-          .message("Ошибка удаления: " + e.getMessage())
+          .message("Delete error: " + e.getMessage())
           .syncedAt(LocalDateTime.now())
           .build();
     }

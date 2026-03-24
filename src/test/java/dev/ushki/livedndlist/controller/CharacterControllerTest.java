@@ -28,7 +28,6 @@ import dev.ushki.livedndlist.security.jwt.JwtAuthenticationEntryPoint;
 import dev.ushki.livedndlist.security.jwt.JwtAuthenticationFilter;
 import dev.ushki.livedndlist.security.jwt.JwtTokenProvider;
 import dev.ushki.livedndlist.service.CharacterService;
-import dev.ushki.livedndlist.service.NonTransactionalCharacterService;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,9 +64,6 @@ class CharacterControllerTest {
   private CharacterService characterService;
 
   @MockitoBean
-  private NonTransactionalCharacterService nonTransactionalCharacterService;
-
-  @MockitoBean
   private JwtTokenProvider jwtTokenProvider;
 
   @MockitoBean
@@ -85,7 +81,7 @@ class CharacterControllerTest {
     testCharacterResponse = CharacterResponse.builder()
         .id(1L)
         .name("Gandalf")
-        .race(CharacterRace.HUMAN)
+        //.race(CharacterRace.HUMAN)
         .alignment(CharacterAlignment.NEUTRAL_GOOD)
         .totalLevel(5)
         .maxHitPoints(45)
@@ -96,7 +92,7 @@ class CharacterControllerTest {
     testCharacterSummary = CharacterSummaryResponse.builder()
         .id(1L)
         .name("Gandalf")
-        .race(CharacterRace.HUMAN)
+        //.race(CharacterRace.HUMAN)
         .classDisplay("Wizard 5")
         .totalLevel(5)
         .currentHitPoints(45)
@@ -338,7 +334,7 @@ class CharacterControllerTest {
     void shouldCreateCharacterSuccessfully() throws Exception {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
-          .race(CharacterRace.ELF)
+          //.race(CharacterRace.ELF)
           .className("Ranger")
           .alignment(CharacterAlignment.CHAOTIC_GOOD)
           .abilityScores(AbilityScoresRequest.builder()
@@ -355,7 +351,7 @@ class CharacterControllerTest {
       CharacterResponse createdResponse = CharacterResponse.builder()
           .id(2L)
           .name("Legolas")
-          .race(CharacterRace.ELF)
+          //.race(CharacterRace.ELF)
           .alignment(CharacterAlignment.CHAOTIC_GOOD)
           .totalLevel(1)
           .maxHitPoints(28)
@@ -382,7 +378,7 @@ class CharacterControllerTest {
     void shouldReturn400WhenNameBlank() throws Exception {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("")
-          .race(CharacterRace.ELF)
+          //.race(CharacterRace.ELF)
           .className("Ranger")
           .build();
 
@@ -428,7 +424,7 @@ class CharacterControllerTest {
       CharacterResponse updatedResponse = CharacterResponse.builder()
           .id(1L)
           .name("Gandalf the White")
-          .race(CharacterRace.HUMAN)
+          //.race(CharacterRace.HUMAN)
           .maxHitPoints(50)
           .currentHitPoints(50)
           .build();

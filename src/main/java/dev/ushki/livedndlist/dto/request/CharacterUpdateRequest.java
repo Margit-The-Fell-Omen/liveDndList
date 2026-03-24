@@ -1,7 +1,7 @@
 package dev.ushki.livedndlist.dto.request;
 
+import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
-import dev.ushki.livedndlist.enums.CharacterRace;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
@@ -22,10 +22,7 @@ public class CharacterUpdateRequest {
   private String name;
 
   @Schema(description = "Character race", example = "HUMAN")
-  private CharacterRace race;
-
-  @Schema(description = "Character subrace", example = "High Elf")
-  private String subrace;
+  private Race race;
 
   @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
   private CharacterAlignment alignment;

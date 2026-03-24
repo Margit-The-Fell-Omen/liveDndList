@@ -60,7 +60,7 @@ public class User implements UserDetails {
 
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-  @Column(name = "role", nullable = false)
+  @Column(name = "role", nullable = false, columnDefinition = "role_type")
   @Builder.Default
   private Role role = Role.ROLE_USER;
 
