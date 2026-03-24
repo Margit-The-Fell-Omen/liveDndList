@@ -32,5 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
+### notes ###
+notes.txt
+
 ### Logs ###
 logs/
