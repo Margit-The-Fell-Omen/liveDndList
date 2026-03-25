@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.dto.request;
 
+import dev.ushki.livedndlist.entity.character.Archetype;
+import dev.ushki.livedndlist.entity.character.DndClass;
 import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
@@ -40,12 +42,12 @@ public class CharacterCreateRequest {
   @Schema(description = "Character background", example = "Sage")
   private String background;
 
-  @NotBlank(message = "Class name is required")
-  @Schema(description = "Name of the character class", example = "Wizard")
-  private String className;
+  @NotBlank(message = "Class is required")
+  @Schema(description = "Character class")
+  private DndClass dndClass;
 
-  @Schema(description = "Name of the character subclass", example = "School of Evocation")
-  private String subclass;
+  @Schema(description = "Character class archetype")
+  private Archetype archetype;
 
   @Valid
   @Schema(description = "Base ability scores")

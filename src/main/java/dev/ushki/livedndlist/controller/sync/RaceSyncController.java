@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/sync/races")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Race Sync", description = "API для синхронизации рас из Open5e")
+@Tag(name = "Race Sync", description = "API for syncing races from Open5e")
 @SecurityRequirement(name = "bearerAuth")
 public class RaceSyncController {
 
@@ -32,60 +32,60 @@ public class RaceSyncController {
   private final RaceRepository raceRepository;
 
   @GetMapping("/status")
-  @Operation(summary = "Получить статус синхронизации")
+  @Operation(summary = "Get sync status")
   public ResponseEntity<SyncStatusDto> getSyncStatus() {
     return ResponseEntity.ok(raceSyncService.getSyncStatus());
   }
 
   @PostMapping
-  @Operation(summary = "Запустить синхронизацию всех рас")
+  @Operation(summary = "Start synchronization of all races")
   public ResponseEntity<SyncResultDto> syncAllRaces() {
-    log.info("Получен запрос на синхронизацию всех рас");
+    log.info("Received request to sync all races");
     SyncResultDto result = raceSyncService.syncAllRaces();
     return ResponseEntity.ok(result);
   }
 
   @PostMapping("/async")
-  @Operation(summary = "Запустить асинхронную синхронизацию всех рас")
+  @Operation(summary = "Start asynchronous synchronization of all races")
   public ResponseEntity<String> syncAllRacesAsync() {
-    log.info("Получен запрос на асинхронную синхронизацию всех рас");
+    log.info("Received request to async sync all races");
 
     SyncStatusDto status = raceSyncService.getSyncStatus();
     if (status.isInProgress()) {
       return ResponseEntity.badRequest()
-          .body("Синхронизация уже выполняется");
+          .body("Sync already in progress");
     }
 
     CompletableFuture.runAsync(raceSyncService::syncAllRaces);
 
     return ResponseEntity.accepted()
-        .body("Синхронизация запущена. Проверяйте статус: GET /api/sync/races/status");
+        .body("Sync started. Check status at: GET /api/sync/races/status");
   }
 
   @PostMapping("/{slug}")
-  @Operation(summary = "Синхронизировать конкретную расу по slug")
+  @Operation(summary = "Sync specific race by slug")
   public ResponseEntity<SyncResultDto> syncRaceBySlug(@PathVariable String slug) {
-    log.info("Получен запрос на синхронизацию расы: {}", slug);
+    log.info("Received request to sync race: {}", slug);
     SyncResultDto result = raceSyncService.syncRaceBySlug(slug);
     return ResponseEntity.ok(result);
   }
 
   @DeleteMapping
-  @Operation(summary = "Удалить все расы из базы данных")
+  @Operation(summary = "Delete all races from database")
   public ResponseEntity<SyncResultDto> clearAllRaces() {
-    log.info("Получен запрос на удаление всех рас");
+    log.info("Received request to delete all races");
     SyncResultDto result = raceSyncService.clearAllRaces();
     return ResponseEntity.ok(result);
   }
 
   @GetMapping("/count")
-  @Operation(summary = "Получить количество рас в базе данных")
+  @Operation(summary = "Get race count in database")
   public ResponseEntity<Long> getRaceCount() {
     return ResponseEntity.ok(raceRepository.count());
   }
 
   @GetMapping("/list")
-  @Operation(summary = "Получить список всех рас из БД")
+  @Operation(summary = "Get list of all races from database")
   public ResponseEntity<List<RaceSummary>> getAllRaces() {
     List<Race> races = raceRepository.findAll();
     List<RaceSummary> summaries = races.stream()

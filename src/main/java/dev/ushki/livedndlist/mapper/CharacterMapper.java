@@ -46,10 +46,10 @@ public class CharacterMapper {
         .background(character.getBackground())
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
-        .classes(
-            Hibernate.isInitialized(character.getClasses()) ? mapClasses(character.getClasses())
-                : null)
-        .totalLevel(Hibernate.isInitialized(character.getClasses()) ? character.getTotalLevel() : 0)
+        .classes(Hibernate.isInitialized(character.getClasses())
+            ? mapClasses(character.getClasses()) : null)
+        .totalLevel(Hibernate.isInitialized(character.getClasses())
+            ? character.getTotalLevel() : 0)
         .abilityScores(mapAbilityScores(character.getAbilityScores()))
         .maxHitPoints(character.getMaxHitPoints())
         .currentHitPoints(character.getCurrentHitPoints())
@@ -61,16 +61,16 @@ public class CharacterMapper {
         .hitDice(character.getHitDice())
         .deathSaveSuccesses(character.getDeathSaveSuccesses())
         .deathSaveFailures(character.getDeathSaveFailures())
-        .skills(Hibernate.isInitialized(character.getSkills()) ? mapSkills(character.getSkills(),
-            character.getAbilityScores(), character.getProficiencyBonus()) : null)
+        .skills(Hibernate.isInitialized(character.getSkills())
+            ? mapSkills(character.getSkills(), character.getAbilityScores(),
+            character.getProficiencyBonus()) : null)
         .savingThrowProficiencies(Hibernate.isInitialized(character.getSavingThrowProficiencies())
             ? character.getSavingThrowProficiencies() : null)
-        .equipment(
-            Hibernate.isInitialized(character.getEquipment()) ? equipmentMapper.toResponseList(
-                character.getEquipment()) : null)
+        .equipment(Hibernate.isInitialized(character.getEquipment())
+            ? equipmentMapper.toResponseList(character.getEquipment()) : null)
         .currency(mapCurrency(character.getCurrency()))
-        .spells(Hibernate.isInitialized(character.getSpells()) ? spellMapper.toResponseSet(
-            character.getSpells()) : null)
+        .spells(Hibernate.isInitialized(character.getSpells())
+            ? spellMapper.toResponseSet(character.getSpells()) : null)
         .spellcastingAbility(character.getSpellcastingAbility())
         .featuresAndTraits(character.getFeaturesAndTraits())
         .backstory(character.getBackstory())
@@ -89,18 +89,20 @@ public class CharacterMapper {
       return null;
     }
 
-    String classDisplay =
-        Hibernate.isInitialized(character.getClasses()) ? character.getClasses().stream()
-            .sorted(Comparator.comparing(CharacterClass::getLevel).reversed())
-            .map(c -> c.getClassName() + " " + c.getLevel())
-            .collect(Collectors.joining(" / ")) : null;
+    String classDisplay = Hibernate.isInitialized(character.getClasses())
+        ? character.getClasses().stream()
+        .sorted(Comparator.comparing(CharacterClass::getLevel).reversed())
+        .map(c -> c.getDndClass().getName() + " " + c.getLevel())
+        .collect(Collectors.joining(" / "))
+        : null;
 
     return CharacterSummaryResponse.builder()
         .id(character.getId())
         .name(character.getName())
         .race(character.getRace())
         .classDisplay(classDisplay)
-        .totalLevel(Hibernate.isInitialized(character.getClasses()) ? character.getTotalLevel() : 0)
+        .totalLevel(Hibernate.isInitialized(character.getClasses())
+            ? character.getTotalLevel() : 0)
         .currentHitPoints(character.getCurrentHitPoints())
         .maxHitPoints(character.getMaxHitPoints())
         .portraitUrl(character.getPortraitUrl())
@@ -128,8 +130,8 @@ public class CharacterMapper {
         .build();
 
     CharacterClass characterClass = CharacterClass.builder()
-        .className(request.getClassName())
-        .subClass(request.getSubclass())
+        .dndClass(request.getDndClass())
+        .archetype(request.getArchetype())
         .level(1)
         .build();
     character.addClass(characterClass);
@@ -174,22 +176,33 @@ public class CharacterMapper {
     Optional.ofNullable(value).ifPresent(setter);
   }
 
-  private List<CharacterResponse.CharacterClassResponse> mapClasses(
-      Set<CharacterClass> classes) {
+  private List<CharacterResponse.CharacterClassResponse> mapClasses(Set<CharacterClass> classes) {
     if (classes == null) {
       return List.of();
     }
 
     return classes.stream()
         .sorted(Comparator.comparing(CharacterClass::getLevel).reversed()
-            .thenComparing(CharacterClass::getClassName))
-        .map(c -> CharacterResponse.CharacterClassResponse.builder()
-            .id(c.getId())
-            .className(c.getClassName())
-            .subclass(c.getSubClass())
-            .level(c.getLevel())
-            .build())
+            .thenComparing(c -> c.getDndClass().getName()))
+        .map(this::mapCharacterClass)
         .toList();
+  }
+
+  private CharacterResponse.CharacterClassResponse mapCharacterClass(
+      CharacterClass characterClass) {
+    return CharacterResponse.CharacterClassResponse.builder()
+        .id(characterClass.getId())
+        .classId(characterClass.getDndClass().getId())
+        .className(characterClass.getDndClass().getName())
+        .classSlug(characterClass.getDndClass().getSlug())
+        .archetypeId(characterClass.getArchetype() != null
+            ? characterClass.getArchetype().getId() : null)
+        .archetypeName(characterClass.getArchetype() != null
+            ? characterClass.getArchetype().getName() : null)
+        .archetypeSlug(characterClass.getArchetype() != null
+            ? characterClass.getArchetype().getSlug() : null)
+        .level(characterClass.getLevel())
+        .build();
   }
 
   private AbilityScoresResponse mapAbilityScores(AbilityScores scores) {
@@ -232,26 +245,28 @@ public class CharacterMapper {
 
     return skills.stream()
         .sorted(Comparator.comparing(s -> s.getSkillType().name()))
-        .map(skill -> {
-          AbilityType baseAbility = skill.getSkillType().getBaseAbility();
-          int totalBonus = abilityScores.getModifier(baseAbility);
-
-          if (skill.isExpertise()) {
-            totalBonus += proficiencyBonus * 2;
-          } else if (skill.isProficient()) {
-            totalBonus += proficiencyBonus;
-          }
-
-          return SkillResponse.builder()
-              .id(skill.getId())
-              .skillType(skill.getSkillType())
-              .abilityType(baseAbility)
-              .proficient(skill.isProficient())
-              .expertise(skill.isExpertise())
-              .totalBonus(totalBonus)
-              .build();
-        })
+        .map(skill -> mapSkill(skill, abilityScores, proficiencyBonus))
         .toList();
+  }
+
+  private SkillResponse mapSkill(Skill skill, AbilityScores abilityScores, int proficiencyBonus) {
+    AbilityType baseAbility = skill.getSkillType().getBaseAbility();
+    int totalBonus = abilityScores.getModifier(baseAbility);
+
+    if (skill.isExpertise()) {
+      totalBonus += proficiencyBonus * 2;
+    } else if (skill.isProficient()) {
+      totalBonus += proficiencyBonus;
+    }
+
+    return SkillResponse.builder()
+        .id(skill.getId())
+        .skillType(skill.getSkillType())
+        .abilityType(baseAbility)
+        .proficient(skill.isProficient())
+        .expertise(skill.isExpertise())
+        .totalBonus(totalBonus)
+        .build();
   }
 
   private CharacterResponse.DndCurrencyResponse mapCurrency(DndCurrency currency) {

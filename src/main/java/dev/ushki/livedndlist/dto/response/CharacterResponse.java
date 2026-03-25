@@ -131,16 +131,13 @@ public class CharacterResponse {
   @Schema(description = "Represents a single class of the character")
   public static class CharacterClassResponse {
 
-    @Schema(description = "Class ID", example = "10")
     private Long id;
-
-    @Schema(description = "Class name", example = "Ranger")
+    private Long classId;
     private String className;
-
-    @Schema(description = "Subclass name", example = "Hunter")
-    private String subclass;
-
-    @Schema(description = "Level in this class", example = "5")
+    private String classSlug;
+    private Long archetypeId;
+    private String archetypeName;
+    private String archetypeSlug;
     private Integer level;
   }
 

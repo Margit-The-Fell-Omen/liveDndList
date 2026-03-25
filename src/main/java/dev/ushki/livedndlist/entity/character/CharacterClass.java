@@ -1,6 +1,5 @@
 package dev.ushki.livedndlist.entity.character;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -10,12 +9,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "character_classes")
@@ -24,6 +24,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"character", "dndClass"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CharacterClass {
 
   @Id
@@ -35,31 +37,14 @@ public class CharacterClass {
   @JoinColumn(name = "character_id", nullable = false)
   private DndCharacter character;
 
-  @Column(nullable = false)
-  private String className;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "class_id", nullable = false)
+  private DndClass dndClass;
 
-  private String subClass;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "archetype_id")
+  private Archetype archetype;
 
   @Builder.Default
   private Integer level = 1;
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-    CharacterClass that = (CharacterClass) o;
-    if (id != null && that.id != null) {
-      return id.equals(that.id);
-    }
-    return Objects.equals(className, that.className);
-  }
-
-  @Override
-  public int hashCode() {
-    return getClass().hashCode();
-  }
 }
