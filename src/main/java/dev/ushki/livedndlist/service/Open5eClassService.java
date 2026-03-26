@@ -1,13 +1,13 @@
 package dev.ushki.livedndlist.service;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
-import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eRaceResponse;
+import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
+import dev.ushki.livedndlist.dto.open5e.response.Open5eClassResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.character.Race;
-import dev.ushki.livedndlist.mapper.RaceMapper;
-import dev.ushki.livedndlist.repository.RaceRepository;
+import dev.ushki.livedndlist.entity.character.DndClass;
+import dev.ushki.livedndlist.mapper.DndClassMapper;
+import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
@@ -24,12 +24,12 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class Open5eRaceService {
+public class Open5eClassService {
 
-  private static final String API_PATH = "/races/";
+  private static final String API_PATH = "/classes/";
 
-  private final RaceRepository raceRepository;
-  private final RaceMapper raceMapper;
+  private final DndClassRepository dndClassRepository;
+  private final DndClassMapper dndClassMapper;
   private final Open5eApiClient apiClient;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
@@ -39,7 +39,7 @@ public class Open5eRaceService {
   }
 
   @Transactional
-  public SyncResultDto syncAllRaces() {
+  public SyncResultDto syncAllClasses() {
     if (!progressTracker.tryStart()) {
       return buildAlreadyInProgressResult();
     }
@@ -49,16 +49,16 @@ public class Open5eRaceService {
 
     try {
       progressTracker.setOperation("Fetching data from API");
-      log.info("Starting race sync from Open5e API");
+      log.info("Starting class sync from Open5e API");
 
-      List<Open5eRaceDto> allRaces = fetchAllFromApi();
-      progressTracker.setTotal(allRaces.size());
+      List<Open5eClassDto> allClasses = fetchAllFromApi();
+      progressTracker.setTotal(allClasses.size());
 
-      log.info("Fetched {} races from API", allRaces.size());
+      log.info("Fetched {} classes from API", allClasses.size());
       progressTracker.setOperation("Saving to database");
 
-      for (Open5eRaceDto dto : allRaces) {
-        processRace(dto, result);
+      for (Open5eClassDto dto : allClasses) {
+        processClass(dto, result);
         progressTracker.incrementProcessed();
       }
 
@@ -66,7 +66,7 @@ public class Open5eRaceService {
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
 
-      return buildSuccessResult(result, allRaces.size(), duration);
+      return buildSuccessResult(result, allClasses.size(), duration);
 
     } catch (Exception e) {
       log.error("Critical sync error: {}", e.getMessage(), e);
@@ -82,9 +82,9 @@ public class Open5eRaceService {
     long startTime = System.currentTimeMillis();
 
     try {
-      log.info("Syncing race by slug: {}", slug);
+      log.info("Syncing class by slug: {}", slug);
 
-      Open5eRaceDto dto = apiClient.get(API_PATH + slug + "/", Open5eRaceDto.class);
+      Open5eClassDto dto = apiClient.get(API_PATH + slug + "/", Open5eClassDto.class);
       SyncAction action = saveOrUpdate(dto);
 
       long duration = System.currentTimeMillis() - startTime;
@@ -92,8 +92,8 @@ public class Open5eRaceService {
       return SyncResultDto.builder()
           .success(true)
           .message(action == SyncAction.CREATED
-              ? "Race created: " + dto.getName()
-              : "Race updated: " + dto.getName())
+              ? "Class created: " + dto.getName()
+              : "Class updated: " + dto.getName())
           .syncedAt(LocalDateTime.now())
           .statistics(SyncResultDto.SyncStatistics.builder()
               .totalFetched(1)
@@ -113,12 +113,12 @@ public class Open5eRaceService {
   @Transactional
   public SyncResultDto clearAll() {
     try {
-      long count = raceRepository.count();
-      raceRepository.deleteAll();
+      long count = dndClassRepository.count();
+      dndClassRepository.deleteAll();
 
       return SyncResultDto.builder()
           .success(true)
-          .message("Deleted races: " + count)
+          .message("Deleted classes: " + count)
           .syncedAt(LocalDateTime.now())
           .build();
     } catch (Exception e) {
@@ -130,8 +130,8 @@ public class Open5eRaceService {
     }
   }
 
-  private List<Open5eRaceDto> fetchAllFromApi() {
-    List<Open5eRaceDto> allRaces = new ArrayList<>();
+  private List<Open5eClassDto> fetchAllFromApi() {
+    List<Open5eClassDto> allClasses = new ArrayList<>();
     String currentPath = API_PATH;
     int pageCount = 0;
 
@@ -139,20 +139,20 @@ public class Open5eRaceService {
       pageCount++;
       progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
 
-      Open5eRaceResponse response = apiClient.get(currentPath, Open5eRaceResponse.class);
+      Open5eClassResponse response = apiClient.get(currentPath, Open5eClassResponse.class);
 
       if (response.getResults() != null) {
-        allRaces.addAll(response.getResults());
+        allClasses.addAll(response.getResults());
         currentPath = apiClient.extractNextPath(response.getNext());
       } else {
         break;
       }
     }
 
-    return allRaces;
+    return allClasses;
   }
 
-  private void processRace(Open5eRaceDto dto, SyncResult result) {
+  private void processClass(Open5eClassDto dto, SyncResult result) {
     try {
       SyncAction action = saveOrUpdate(dto);
       if (action == SyncAction.CREATED) {
@@ -162,21 +162,21 @@ public class Open5eRaceService {
       }
     } catch (Exception e) {
       result.recordError(dto.getName(), e);
-      log.error("Error processing race '{}': {}", dto.getName(), e.getMessage(), e);
+      log.error("Error processing class '{}': {}", dto.getName(), e.getMessage(), e);
     }
   }
 
-  private SyncAction saveOrUpdate(Open5eRaceDto dto) {
-    Optional<Race> existing = raceRepository.findBySlug(dto.getSlug());
+  private SyncAction saveOrUpdate(Open5eClassDto dto) {
+    Optional<DndClass> existing = dndClassRepository.findBySlug(dto.getSlug());
 
     if (existing.isPresent()) {
-      Race race = existing.get();
-      raceMapper.updateEntity(race, dto);
-      raceRepository.save(race);
+      DndClass dndClass = existing.get();
+      dndClassMapper.updateEntity(dndClass, dto);
+      dndClassRepository.save(dndClass);
       return SyncAction.UPDATED;
     } else {
-      Race race = raceMapper.toEntity(dto);
-      raceRepository.save(race);
+      DndClass dndClass = dndClassMapper.toEntity(dto);
+      dndClassRepository.save(dndClass);
       return SyncAction.CREATED;
     }
   }

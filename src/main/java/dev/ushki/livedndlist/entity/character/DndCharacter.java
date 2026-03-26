@@ -61,7 +61,6 @@ import org.hibernate.type.SqlTypes;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(exclude = {"owner", "race", "classes", "skills", "equipment", "spells"})
 @Builder
 public class DndCharacter {
 

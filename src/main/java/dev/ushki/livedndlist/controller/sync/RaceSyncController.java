@@ -66,7 +66,7 @@ public class RaceSyncController {
   @Operation(summary = "Sync specific race by slug")
   public ResponseEntity<SyncResultDto> syncRaceBySlug(@PathVariable String slug) {
     log.info("Received request to sync race: {}", slug);
-    SyncResultDto result = raceSyncService.syncRaceBySlug(slug);
+    SyncResultDto result = raceSyncService.syncBySlug(slug);
     return ResponseEntity.ok(result);
   }
 
@@ -74,7 +74,7 @@ public class RaceSyncController {
   @Operation(summary = "Delete all races from database")
   public ResponseEntity<SyncResultDto> clearAllRaces() {
     log.info("Received request to delete all races");
-    SyncResultDto result = raceSyncService.clearAllRaces();
+    SyncResultDto result = raceSyncService.clearAll();
     return ResponseEntity.ok(result);
   }
 
