@@ -438,7 +438,7 @@ class CharacterServiceTest {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
           //.race(CharacterRace.ELF)
-          .className("Ranger")
+          //.className("Ranger")
           .build();
 
       DndCharacter newCharacter = DndCharacter.builder()

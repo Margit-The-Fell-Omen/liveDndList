@@ -335,7 +335,7 @@ class CharacterControllerTest {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
           //.race(CharacterRace.ELF)
-          .className("Ranger")
+          //.className("Ranger")
           .alignment(CharacterAlignment.CHAOTIC_GOOD)
           .abilityScores(AbilityScoresRequest.builder()
               .strength(12)
@@ -379,7 +379,7 @@ class CharacterControllerTest {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("")
           //.race(CharacterRace.ELF)
-          .className("Ranger")
+          //.className("Ranger")
           .build();
 
       mockMvc.perform(post("/api/v1/characters")
@@ -396,7 +396,7 @@ class CharacterControllerTest {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
           .race(null)
-          .className("Ranger")
+          //.className("Ranger")
           .build();
 
       mockMvc.perform(post("/api/v1/characters")

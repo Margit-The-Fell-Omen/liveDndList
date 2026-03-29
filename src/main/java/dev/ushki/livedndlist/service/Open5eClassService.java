@@ -6,20 +6,20 @@ import dev.ushki.livedndlist.dto.open5e.response.Open5eClassResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.character.DndClass;
+import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
 import dev.ushki.livedndlist.repository.DndClassRepository;
-import dev.ushki.livedndlist.enums.SyncAction;
+import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -31,6 +31,7 @@ public class Open5eClassService {
   private final DndClassRepository dndClassRepository;
   private final DndClassMapper dndClassMapper;
   private final Open5eApiClient apiClient;
+  private final SyncMetrics syncMetrics;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
 
@@ -48,6 +49,7 @@ public class Open5eClassService {
     SyncResult result = new SyncResult();
 
     try {
+      syncMetrics.startOperation();
       progressTracker.setOperation("Fetching data from API");
       log.info("Starting class sync from Open5e API");
 
@@ -58,7 +60,10 @@ public class Open5eClassService {
       progressTracker.setOperation("Saving to database");
 
       for (Open5eClassDto dto : allClasses) {
+        long itemStart = System.currentTimeMillis();
         processClass(dto, result);
+        long itemDuration = System.currentTimeMillis() - itemStart;
+        syncMetrics.recordRequest(itemDuration, true);
         progressTracker.incrementProcessed();
       }
 
@@ -69,10 +74,12 @@ public class Open5eClassService {
       return buildSuccessResult(result, allClasses.size(), duration);
 
     } catch (Exception e) {
+      syncMetrics.recordRequest(System.currentTimeMillis() - startTime, false);
       log.error("Critical sync error: {}", e.getMessage(), e);
       return buildErrorResult(e);
 
     } finally {
+      syncMetrics.endOperation();
       progressTracker.finish();
     }
   }
