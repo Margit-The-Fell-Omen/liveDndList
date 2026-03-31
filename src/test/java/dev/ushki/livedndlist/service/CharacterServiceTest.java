@@ -21,7 +21,6 @@ import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.Equipment;
 import dev.ushki.livedndlist.entity.character.Spell;
-import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.enums.SpellSchool;

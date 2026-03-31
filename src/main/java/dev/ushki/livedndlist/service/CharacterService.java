@@ -11,8 +11,8 @@ import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.Equipment;
+import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.entity.character.Spell;
-import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
@@ -54,12 +54,11 @@ public class CharacterService {
   @Transactional(readOnly = true)
   public PageResponse<CharacterSummaryResponse> getAllByUsername(
       String username,
-      CharacterRace race,
       Integer minLevel,
       Integer maxLevel,
       Pageable pageable) {
 
-    CompositeKey key = new CompositeKey(race, minLevel, maxLevel, pageable.getPageNumber(),
+    CompositeKey key = new CompositeKey(minLevel, maxLevel, pageable.getPageNumber(),
         pageable.getPageSize(), pageable.getSort().toString());
     String namespace = USER_RESOURCE + username + CHARACTERS_SUFFIX;
 
@@ -68,11 +67,7 @@ public class CharacterService {
 
       Page<DndCharacter> characterPage;
 
-      if (race != null) {
-        characterPage = characterRepository.findByOwnerAndRace(user, race, pageable);
-      } else {
-        characterPage = characterRepository.findAllByOwner(user, pageable);
-      }
+      characterPage = characterRepository.findAllByOwner(user, pageable);
 
       Page<CharacterSummaryResponse> responsePage = characterPage.map(character -> {
         int totalLevel = character.getTotalLevel();
@@ -477,36 +472,6 @@ public class CharacterService {
     cantrips.stream()
         .limit(2)
         .forEach(character::addSpell);
-  }
-
-  @Transactional(readOnly = true)
-  public PageResponse<CharacterSummaryResponse> findByComplexCriteria(
-      String username,
-      String className,
-      Integer minClassLevel,
-      SpellSchool spellSchool,
-      Pageable pageable) {
-
-    CompositeKey key = new CompositeKey(className, minClassLevel, spellSchool,
-        pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort().toString());
-    String namespace = USER_RESOURCE + username + CHARACTERS_SUFFIX;
-
-    return cacheManager.get(namespace, key, () -> {
-      User user = findUserByUsername(username);
-
-      Page<DndCharacter> characterPage = characterRepository.findByComplexCriteria(
-          user.getId(),
-          className,
-          minClassLevel,
-          spellSchool.name(),
-          pageable
-      );
-
-      Page<CharacterSummaryResponse> responsePage =
-          characterPage.map(characterMapper::toSummaryResponse);
-
-      return PageResponse.of(responsePage);
-    });
   }
 
   @Transactional

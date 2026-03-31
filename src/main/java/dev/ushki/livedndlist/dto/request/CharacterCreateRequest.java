@@ -1,12 +1,9 @@
 package dev.ushki.livedndlist.dto.request;
 
-import dev.ushki.livedndlist.entity.character.Archetype;
-import dev.ushki.livedndlist.entity.character.DndClass;
-import dev.ushki.livedndlist.entity.character.Race;
-import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,47 +16,88 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Request object to create a new character")
+@Schema(
+    description = "Request object to create a new character",
+    example =
+        """
+        {
+          "name": "Gandalf the Grey",
+          "raceId": 1,
+          "alignment": "NEUTRAL_GOOD",
+          "background": "Sage",
+          "classId": 3,
+          "archetypeId": 5,
+          "abilityScores": {
+            "strength": 10,
+            "dexterity": 14,
+            "constitution": 12,
+            "intelligence": 18,
+            "wisdom": 16,
+            "charisma": 14
+          },
+          "maxHitPoints": 12,
+          "portraitUrl": "https://example.com/gandalf.jpg",
+          "spellcastingAbility": "INTELLIGENCE"
+        }
+        """
+)
 public class CharacterCreateRequest {
 
   private static final int NAME_MIN_LENGTH = 2;
-
   private static final int NAME_MAX_LENGTH = 100;
 
   @NotBlank(message = "Character name is required")
   @Size(min = NAME_MIN_LENGTH, max = NAME_MAX_LENGTH,
-      message = "Name must be between 2 and 100 characters")
+        message = "Name must be between 2 and 100 characters")
   @Schema(description = "Name of the character", example = "Gandalf the Grey")
   private String name;
 
-  @NotNull(message = "Race is required")
-  @Schema(description = "Character race", example = "HUMAN")
-  private Race race;
+  @NotNull(message = "Race ID is required")
+  @Schema(description = "ID of the character race", example = "1")
+  private Long raceId;
 
-  @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
+  @Schema(
+      description = "Character alignment",
+      example = "NEUTRAL_GOOD",
+      allowableValues = {
+          "LAWFUL_GOOD", "NEUTRAL_GOOD", "CHAOTIC_GOOD",
+          "LAWFUL_NEUTRAL", "TRUE_NEUTRAL", "CHAOTIC_NEUTRAL",
+          "LAWFUL_EVIL", "NEUTRAL_EVIL", "CHAOTIC_EVIL"
+      }
+  )
   private CharacterAlignment alignment;
 
-  @Schema(description = "Character background", example = "Sage")
+  @Schema(description = "Character background story", example = "Sage")
   private String background;
 
-  @NotBlank(message = "Class is required")
-  @Schema(description = "Character class")
-  private DndClass dndClass;
+  @NotNull(message = "Class ID is required")
+  @Schema(description = "ID of the character class", example = "3")
+  private Long classId;
 
-  @Schema(description = "Character class archetype")
-  private Archetype archetype;
+  @Schema(description = "ID of the character class archetype (optional)", example = "5")
+  private Long archetypeId;
 
   @Valid
-  @Schema(description = "Base ability scores")
+  @Schema(description = "Base ability scores for the character")
   private AbilityScoresRequest abilityScores;
 
-  @Schema(description = "Maximum hit points", example = "12")
+  @Min(value = 1, message = "Maximum hit points must be at least 1")
+  @Schema(description = "Maximum hit points", example = "12", minimum = "1")
   private Integer maxHitPoints;
 
-  @Schema(description = "URL to character portrait image", example = "https://example.com/portrait.jpg")
+  @Schema(
+      description = "URL to character portrait image",
+      example = "https://example.com/gandalf.jpg"
+  )
   private String portraitUrl;
 
-  @Schema(description = "Ability used for spellcasting", example = "INTELLIGENCE")
-  private AbilityType spellcastingAbility;
-
+  @Schema(
+      description = "Primary ability score used for spellcasting",
+      example = "INTELLIGENCE",
+      allowableValues = {
+          "STRENGTH", "DEXTERITY", "CONSTITUTION",
+          "INTELLIGENCE", "WISDOM", "CHARISMA"
+      }
+  )
+  private String spellcastingAbility;
 }

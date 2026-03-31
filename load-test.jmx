@@ -3,8 +3,6 @@
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="LiveDndList Complete API Load Test">
       <stringProp name="TestPlan.comments">Complete test plan - uses JMeter properties for cross-thread-group variable sharing</stringProp>
-      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
-      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments">
           <elementProp name="BASE_HOST" elementType="Argument">
@@ -26,7 +24,7 @@
       </elementProp>
     </TestPlan>
     <hashTree>
-      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="Setup - Register and Login">
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="Setup - Register and Login" enabled="true">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">0</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -46,7 +44,7 @@
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/auth/register">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/auth/register" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -96,7 +94,7 @@ log.info(&quot;Stored TEST_USERNAME property: &quot; + vars.get(&quot;REGISTERED
           </ResponseAssertion>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/auth/login">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/auth/login" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -119,14 +117,14 @@ log.info(&quot;Stored TEST_USERNAME property: &quot; + vars.get(&quot;REGISTERED
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract JWT Token">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract JWT Token" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">JWT_TOKEN</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.accessToken</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
             <stringProp name="JSONPostProcessor.defaultValues">NO_TOKEN</stringProp>
           </JSONPostProcessor>
           <hashTree/>
-          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Store JWT as Property">
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Store JWT as Property" enabled="true">
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
             <boolProp name="resetInterpreter">false</boolProp>
@@ -201,7 +199,7 @@ log.info(&quot;Stored SETUP_SPELL_ID: &quot; + vars.get(&quot;SETUP_SPELL_ID&quo
           </BeanShellPostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters (Setup Character)">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters (Setup Character)" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -216,10 +214,11 @@ log.info(&quot;Stored SETUP_SPELL_ID: &quot; + vars.get(&quot;SETUP_SPELL_ID&quo
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
   &quot;name&quot;: &quot;SetupCharacter_${__time(,)}&quot;,&#xd;
-  &quot;race&quot;: {&quot;id&quot;: 1},&#xd;
+  &quot;raceId&quot;: 15,&#xd;
   &quot;alignment&quot;: &quot;NEUTRAL_GOOD&quot;,&#xd;
   &quot;background&quot;: &quot;Sage&quot;,&#xd;
-  &quot;dndClass&quot;: {&quot;id&quot;: 1},&#xd;
+  &quot;classId&quot;: 104,&#xd;
+  &quot;archetypeId&quot;: 325,&#xd;
   &quot;abilityScores&quot;: {&#xd;
     &quot;strength&quot;: 10,&#xd;
     &quot;dexterity&quot;: 14,&#xd;
@@ -228,8 +227,10 @@ log.info(&quot;Stored SETUP_SPELL_ID: &quot; + vars.get(&quot;SETUP_SPELL_ID&quo
     &quot;wisdom&quot;: 16,&#xd;
     &quot;charisma&quot;: 14&#xd;
   },&#xd;
-  &quot;maxHitPoints&quot;: 35,&#xd;
+  &quot;maxHitPoints&quot;: 12,&#xd;
+  &quot;portraitUrl&quot;: &quot;https://example.com/gandalf.jpg&quot;,&#xd;
   &quot;spellcastingAbility&quot;: &quot;INTELLIGENCE&quot;&#xd;
+}&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
@@ -263,7 +264,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           <hashTree/>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="User Management Tests">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="User Management Tests" enabled="true">
         <intProp name="ThreadGroup.num_threads">10</intProp>
         <intProp name="ThreadGroup.ramp_time">2</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -301,7 +302,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract User ID" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract User ID">
             <stringProp name="JSONPostProcessor.referenceNames">USER_ID</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -323,7 +324,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/users?enabled=true&amp;role=USER" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/users?enabled=true&amp;role=ROLE_USER" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -343,7 +344,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
               </elementProp>
               <elementProp name="role" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">USER</stringProp>
+                <stringProp name="Argument.value">ROLE_USER</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.name">role</stringProp>
@@ -364,7 +365,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
             <collectionProp name="Arguments.arguments">
               <elementProp name="query" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <boolProp name="HTTPArgument.always_encode">true</boolProp>
                 <stringProp name="Argument.value">loadtest</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
@@ -383,6 +384,13 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.name">size</stringProp>
+              </elementProp>
+              <elementProp name="sort" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">username,asc</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+                <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                <stringProp name="Argument.name">sort</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
@@ -416,7 +424,6 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
-  &quot;username&quot;: &quot;updated_${__P(TEST_USERNAME,)}_${__threadNum}&quot;,&#xd;
   &quot;email&quot;: &quot;updated_${__threadNum}_${__time(,)}@example.com&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
@@ -441,7 +448,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Auth Header Manager" enabled="true">
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Auth Header Manager">
           <collectionProp name="HeaderManager.headers">
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Content-Type</stringProp>
@@ -454,7 +461,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -469,10 +476,11 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">{&#xd;
   &quot;name&quot;: &quot;Gandalf_${__threadNum}_${__time(,)}&quot;,&#xd;
-  &quot;race&quot;: {&quot;id&quot;: 1},&#xd;
+  &quot;raceId&quot;: 1,&#xd;
   &quot;alignment&quot;: &quot;NEUTRAL_GOOD&quot;,&#xd;
   &quot;background&quot;: &quot;Sage&quot;,&#xd;
-  &quot;dndClass&quot;: {&quot;id&quot;: 1},&#xd;
+  &quot;classId&quot;: 104,&#xd;
+  &quot;archetypeId&quot;: 319,&#xd;
   &quot;abilityScores&quot;: {&#xd;
     &quot;strength&quot;: 10,&#xd;
     &quot;dexterity&quot;: 14,&#xd;
@@ -482,6 +490,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
     &quot;charisma&quot;: 14&#xd;
   },&#xd;
   &quot;maxHitPoints&quot;: 35,&#xd;
+  &quot;portraitUrl&quot;: &quot;https://example.com/gandalf.jpg&quot;,&#xd;
   &quot;spellcastingAbility&quot;: &quot;INTELLIGENCE&quot;&#xd;
 }</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
@@ -490,15 +499,37 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Character ID" enabled="true">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Character ID">
             <stringProp name="JSONPostProcessor.referenceNames">CHARACTER_ID</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            <stringProp name="JSONPostProcessor.defaultValues">${__P(SETUP_CHARACTER_ID,1)}</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">1</stringProp>
           </JSONPostProcessor>
           <hashTree/>
+          <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Assert 201 Created" enabled="true">
+            <collectionProp name="Asserion.test_strings">
+              <stringProp name="49587">201</stringProp>
+            </collectionProp>
+            <stringProp name="Assertion.custom_message">Character creation failed</stringProp>
+            <stringProp name="Assertion.test_field">Assertion.response_code</stringProp>
+            <boolProp name="Assertion.assume_success">false</boolProp>
+            <intProp name="Assertion.test_type">8</intProp>
+          </ResponseAssertion>
+          <hashTree/>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Log Character ID">
+            <stringProp name="script">String charId = vars.get(&quot;CHARACTER_ID&quot;);
+String responseCode = prev.getResponseCode();
+log.info(&quot;Character creation response code: &quot; + responseCode + &quot;, CHARACTER_ID: &quot; + charId);
+if (!&quot;201&quot;.equals(responseCode)) {
+    log.error(&quot;Character creation failed! Response: &quot; + prev.getResponseDataAsString());
+}</stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -523,13 +554,6 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
             <collectionProp name="Arguments.arguments">
-              <elementProp name="race" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">HUMAN</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">race</stringProp>
-              </elementProp>
               <elementProp name="minLevel" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <stringProp name="Argument.value">1</stringProp>
@@ -562,7 +586,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters/{id}" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters/{id}">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -741,14 +765,6 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
   &quot;name&quot;: &quot;Gandalf the White&quot;,&#xd;
   &quot;alignment&quot;: &quot;LAWFUL_GOOD&quot;,&#xd;
   &quot;background&quot;: &quot;Archmage&quot;,&#xd;
-  &quot;abilityScores&quot;: {&#xd;
-    &quot;strength&quot;: 12,&#xd;
-    &quot;dexterity&quot;: 14,&#xd;
-    &quot;constitution&quot;: 14,&#xd;
-    &quot;intelligence&quot;: 20,&#xd;
-    &quot;wisdom&quot;: 18,&#xd;
-    &quot;charisma&quot;: 16&#xd;
-  },&#xd;
   &quot;maxHitPoints&quot;: 45,&#xd;
   &quot;currentHitPoints&quot;: 40,&#xd;
   &quot;temporaryHitPoints&quot;: 5,&#xd;
@@ -767,7 +783,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/{id}/equipment" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/{id}/equipment">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -800,7 +816,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
             <stringProp name="JSONPostProcessor.referenceNames">CHAR_EQUIPMENT_ID</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.equipment[0].id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            <stringProp name="JSONPostProcessor.defaultValues">1</stringProp>
+            <stringProp name="JSONPostProcessor.defaultValues">0</stringProp>
           </JSONPostProcessor>
           <hashTree/>
         </hashTree>
@@ -818,7 +834,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/restore-hp" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/restore-hp">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -832,163 +848,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters/search/advanced/paged" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/characters/search/advanced/paged</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="className" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">Wizard</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">className</stringProp>
-              </elementProp>
-              <elementProp name="minClassLevel" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">1</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">minClassLevel</stringProp>
-              </elementProp>
-              <elementProp name="spellSchool" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">EVOCATION</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-                <boolProp name="HTTPArgument.use_equals">true</boolProp>
-                <stringProp name="Argument.name">spellSchool</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/starter-pack" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/characters/starter-pack</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&#xd;
-  &quot;name&quot;: &quot;Legolas_${__threadNum}_${__time(,)}&quot;,&#xd;
-  &quot;race&quot;: {&quot;id&quot;: 2},&#xd;
-  &quot;alignment&quot;: &quot;CHAOTIC_GOOD&quot;,&#xd;
-  &quot;background&quot;: &quot;Outlander&quot;,&#xd;
-  &quot;dndClass&quot;: {&quot;id&quot;: 2},&#xd;
-  &quot;abilityScores&quot;: {&#xd;
-    &quot;strength&quot;: 12,&#xd;
-    &quot;dexterity&quot;: 18,&#xd;
-    &quot;constitution&quot;: 14,&#xd;
-    &quot;intelligence&quot;: 12,&#xd;
-    &quot;wisdom&quot;: 16,&#xd;
-    &quot;charisma&quot;: 10&#xd;
-  },&#xd;
-  &quot;maxHitPoints&quot;: 12,&#xd;
-  &quot;spellcastingAbility&quot;: &quot;WISDOM&quot;&#xd;
-}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/{id}/equipment/bulk/transactional" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/characters/${CHARACTER_ID}/equipment/bulk/transactional</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">[&#xd;
-  {&#xd;
-    &quot;name&quot;: &quot;Health Potion&quot;,&#xd;
-    &quot;description&quot;: &quot;Restores 2d4+2 hit points&quot;,&#xd;
-    &quot;quantity&quot;: 3,&#xd;
-    &quot;weight&quot;: 0.5,&#xd;
-    &quot;type&quot;: &quot;POTION&quot;&#xd;
-  },&#xd;
-  {&#xd;
-    &quot;name&quot;: &quot;Rope (50 feet)&quot;,&#xd;
-    &quot;description&quot;: &quot;Hemp rope&quot;,&#xd;
-    &quot;quantity&quot;: 1,&#xd;
-    &quot;weight&quot;: 10.0,&#xd;
-    &quot;type&quot;: &quot;ADVENTURING_GEAR&quot;&#xd;
-  }&#xd;
-]</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/{id}/equipment/bulk/no-transaction" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/characters/${CHARACTER_ID}/equipment/bulk/no-transaction</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">[&#xd;
-  {&#xd;
-    &quot;name&quot;: &quot;Backpack&quot;,&#xd;
-    &quot;description&quot;: &quot;Sturdy leather backpack&quot;,&#xd;
-    &quot;quantity&quot;: 1,&#xd;
-    &quot;weight&quot;: 5.0,&#xd;
-    &quot;type&quot;: &quot;ADVENTURING_GEAR&quot;&#xd;
-  },&#xd;
-  {&#xd;
-    &quot;name&quot;: &quot;Bedroll&quot;,&#xd;
-    &quot;description&quot;: &quot;For sleeping outdoors&quot;,&#xd;
-    &quot;quantity&quot;: 1,&#xd;
-    &quot;weight&quot;: 7.0,&#xd;
-    &quot;type&quot;: &quot;ADVENTURING_GEAR&quot;&#xd;
-  }&#xd;
-]</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}/equipment/{equipmentId}" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/characters/${CHARACTER_ID}/equipment/${CHAR_EQUIPMENT_ID}</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">DELETE</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}/spells/{spellId}" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}/spells/{spellId}">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1002,7 +862,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1015,6 +875,10 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
         </HTTPSamplerProxy>
+        <hashTree/>
+        <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time" enabled="true">
+          <stringProp name="ConstantTimer.delay">150</stringProp>
+        </ConstantTimer>
         <hashTree/>
         <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Think Time" enabled="true">
           <stringProp name="ConstantTimer.delay">150</stringProp>
@@ -1177,7 +1041,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/spells/search" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/spells/search">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1309,7 +1173,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
         </ConstantTimer>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Equipment Management Tests" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Equipment Management Tests">
         <intProp name="ThreadGroup.num_threads">15</intProp>
         <intProp name="ThreadGroup.ramp_time">3</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -1333,44 +1197,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/equipment" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/equipment</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">POST</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&#xd;
-  &quot;name&quot;: &quot;Longsword_${__threadNum}_${__time(,)}&quot;,&#xd;
-  &quot;description&quot;: &quot;A versatile martial weapon favored by knights&quot;,&#xd;
-  &quot;quantity&quot;: 1,&#xd;
-  &quot;weight&quot;: 3.0,&#xd;
-  &quot;type&quot;: &quot;WEAPON&quot;,&#xd;
-  &quot;damage&quot;: &quot;1d8&quot;,&#xd;
-  &quot;damageType&quot;: &quot;Slashing&quot;,&#xd;
-  &quot;properties&quot;: &quot;Versatile (1d10)&quot;&#xd;
-}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Equipment ID" enabled="true">
-            <stringProp name="JSONPostProcessor.referenceNames">EQUIPMENT_ID</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            <stringProp name="JSONPostProcessor.defaultValues">1</stringProp>
-          </JSONPostProcessor>
-          <hashTree/>
-        </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/equipment" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/equipment">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1434,20 +1261,6 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/equipment/{id}" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/equipment/${EQUIPMENT_ID}</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/equipment/search" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
@@ -1474,49 +1287,6 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
                 <stringProp name="Argument.name">type</stringProp>
               </elementProp>
             </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="PUT /api/v1/equipment/{id}" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/equipment/${EQUIPMENT_ID}</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">PUT</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="HTTPArgument">
-                <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">{&#xd;
-  &quot;name&quot;: &quot;Enchanted Longsword&quot;,&#xd;
-  &quot;description&quot;: &quot;A magical longsword that glows faintly&quot;,&#xd;
-  &quot;quantity&quot;: 1,&#xd;
-  &quot;weight&quot;: 3.0,&#xd;
-  &quot;type&quot;: &quot;WEAPON&quot;,&#xd;
-  &quot;damage&quot;: &quot;1d8+1&quot;,&#xd;
-  &quot;damageType&quot;: &quot;Slashing&quot;,&#xd;
-  &quot;properties&quot;: &quot;Versatile (1d10+1), Magical&quot;&#xd;
-}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-        </HTTPSamplerProxy>
-        <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/equipment/{id}" enabled="true">
-          <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
-          <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
-          <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/equipment/${EQUIPMENT_ID}</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">DELETE</stringProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
-            <collectionProp name="Arguments.arguments"/>
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
@@ -1562,7 +1332,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table">
+      <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>
@@ -1599,7 +1369,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results">
+      <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>

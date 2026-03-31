@@ -8,13 +8,24 @@ import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.SkillResponse;
 import dev.ushki.livedndlist.entity.character.AbilityScores;
+import dev.ushki.livedndlist.entity.character.Archetype;
 import dev.ushki.livedndlist.entity.character.CharacterClass;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
+import dev.ushki.livedndlist.entity.character.DndClass;
 import dev.ushki.livedndlist.entity.character.DndCurrency;
+import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.entity.character.Skill;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.SkillType;
+import dev.ushki.livedndlist.repository.ArchetypeRepository;
+import dev.ushki.livedndlist.repository.DndClassRepository;
+import dev.ushki.livedndlist.repository.RaceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.stereotype.Component;
+
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -22,14 +33,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class CharacterMapper {
 
+  private final RaceRepository raceRepository;
+  private final DndClassRepository dndClassRepository;
+  private final ArchetypeRepository archetypeRepository;
   private final SpellMapper spellMapper;
   private final EquipmentMapper equipmentMapper;
 
@@ -41,13 +52,15 @@ public class CharacterMapper {
     return CharacterResponse.builder()
         .id(character.getId())
         .name(character.getName())
-        .race(character.getRace())
+        .raceName(character.getRace().getName())
         .alignment(character.getAlignment())
         .background(character.getBackground())
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
-        .classes(Hibernate.isInitialized(character.getClasses())
-            ? mapClasses(character.getClasses()) : null)
+        .classesInfo(Hibernate.isInitialized(character.getClasses())
+            ? character.getClasses().stream()
+            .map(c -> c.getDndClass().getName())
+            .toList() : null)
         .totalLevel(Hibernate.isInitialized(character.getClasses())
             ? character.getTotalLevel() : 0)
         .abilityScores(mapAbilityScores(character.getAbilityScores()))
@@ -121,17 +134,37 @@ public class CharacterMapper {
       return null;
     }
 
+    Race race = raceRepository.findById(request.getRaceId())
+        .orElseThrow(() -> new EntityNotFoundException(
+            "Race not found with id: " + request.getRaceId()));
+
+    DndClass dndClass = dndClassRepository.findById(request.getClassId())
+        .orElseThrow(() -> new EntityNotFoundException(
+            "Class not found with id: " + request.getClassId()));
+
+    Archetype archetype = null;
+    if (request.getArchetypeId() != null) {
+      archetype = archetypeRepository.findById(request.getArchetypeId())
+          .orElseThrow(() -> new EntityNotFoundException(
+              "Archetype not found with id: " + request.getArchetypeId()));
+
+      if (!archetype.getDndClass().getId().equals(dndClass.getId())) {
+        throw new IllegalArgumentException(
+            "Archetype " + archetype.getName() + " does not belong to class " + dndClass.getName());
+      }
+    }
+
     DndCharacter character = DndCharacter.builder()
         .name(request.getName())
-        .race(request.getRace())
+        .race(race)
         .alignment(request.getAlignment())
         .background(request.getBackground())
         .portraitUrl(request.getPortraitUrl())
         .build();
 
     CharacterClass characterClass = CharacterClass.builder()
-        .dndClass(request.getDndClass())
-        .archetype(request.getArchetype())
+        .dndClass(dndClass)
+        .archetype(archetype)
         .level(1)
         .build();
     character.addClass(characterClass);
@@ -145,6 +178,11 @@ public class CharacterMapper {
       character.setCurrentHitPoints(request.getMaxHitPoints());
     }
 
+    if (request.getSpellcastingAbility() != null) {
+      character.setSpellcastingAbility(
+          AbilityType.valueOf(request.getSpellcastingAbility()));
+    }
+
     initializeSkills(character);
 
     return character;
@@ -152,7 +190,6 @@ public class CharacterMapper {
 
   public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {
     updateIfPresent(request.getName(), character::setName);
-    updateIfPresent(request.getRace(), character::setRace);
     updateIfPresent(request.getAlignment(), character::setAlignment);
     updateIfPresent(request.getBackground(), character::setBackground);
     updateIfPresent(request.getMaxHitPoints(), character::setMaxHitPoints);
@@ -168,8 +205,21 @@ public class CharacterMapper {
     updateIfPresent(request.getFlaws(), character::setFlaws);
     updateIfPresent(request.getNotes(), character::setNotes);
 
-    updateIfPresent(request.getAbilityScores(),
-        scores -> character.setAbilityScores(mapAbilityScoresRequest(scores)));
+    if (request.getRaceId() != null) {
+      Race race = raceRepository.findById(request.getRaceId())
+          .orElseThrow(() -> new EntityNotFoundException(
+              "Race not found with id: " + request.getRaceId()));
+      character.setRace(race);
+    }
+
+    if (request.getAbilityScores() != null) {
+      character.setAbilityScores(mapAbilityScoresRequest(request.getAbilityScores()));
+    }
+
+    if (request.getSpellcastingAbility() != null) {
+      character.setSpellcastingAbility(
+          AbilityType.valueOf(request.getSpellcastingAbility()));
+    }
   }
 
   private <T> void updateIfPresent(T value, Consumer<T> setter) {

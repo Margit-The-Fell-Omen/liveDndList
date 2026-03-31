@@ -25,8 +25,8 @@ public class CharacterResponse {
   @Schema(description = "Character name", example = "Aragorn")
   private String name;
 
-  @Schema(description = "Character race", example = "HUMAN")
-  private Race race;
+  @Schema(description = "Character race name", example = "Human")
+  private String raceName;
 
   @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
   private CharacterAlignment alignment;
@@ -41,7 +41,7 @@ public class CharacterResponse {
   private String portraitUrl;
 
   @Schema(description = "List of character classes and levels")
-  private List<CharacterClassResponse> classes;
+  private List<String> classesInfo;
 
   @Schema(description = "Total level across all classes", example = "5")
   private Integer totalLevel;

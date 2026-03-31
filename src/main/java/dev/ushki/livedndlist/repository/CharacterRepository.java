@@ -2,7 +2,7 @@ package dev.ushki.livedndlist.repository;
 
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
-import dev.ushki.livedndlist.enums.CharacterRace;
+import dev.ushki.livedndlist.entity.character.Race;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
       User owner, String name, Pageable pageable);
 
   @EntityGraph(attributePaths = {"owner", "classes"})
-  Page<DndCharacter> findByOwnerAndRace(User owner, CharacterRace race, Pageable pageable);
+  Page<DndCharacter> findByOwnerAndRace(User owner, Race race, Pageable pageable);
 
   @EntityGraph(attributePaths = {"owner", "classes"})
   Page<DndCharacter> findAllByOwner(User owner, Pageable pageable);
@@ -91,38 +91,6 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
       + "WHERE user_id = :userId",
          nativeQuery = true)
   int restoreAllCharactersHitPointsNative(@Param("userId") Long userId);
-
-  @Query(value =
-             """
-                 SELECT DISTINCT c.*
-                 FROM characters c
-                 INNER JOIN character_classes cc ON cc.character_id = c.id
-                 INNER JOIN character_spells cs ON cs.character_id = c.id
-                 INNER JOIN spells s ON s.id = cs.spell_id
-                 WHERE c.user_id = :userId
-                 AND LOWER(cc.class_name) = LOWER(:className)
-                 AND cc.level >= :minClassLevel
-                 AND s.school = CAST(:spellSchool AS spell_school_type)
-             """,
-         countQuery =
-             """
-                 SELECT COUNT(DISTINCT c.id)
-                 FROM characters c
-                 INNER JOIN character_classes cc ON cc.character_id = c.id
-                 INNER JOIN character_spells cs ON cs.character_id = c.id
-                 INNER JOIN spells s ON s.id = cs.spell_id
-                 WHERE c.user_id = :userId
-                 AND LOWER(cc.class_name) = LOWER(:className)
-                 AND cc.level >= :minClassLevel
-                 AND s.school = CAST(:spellSchool AS spell_school_type)
-             """,
-         nativeQuery = true)
-  Page<DndCharacter> findByComplexCriteria(
-      @Param("userId") Long userId,
-      @Param("className") String className,
-      @Param("minClassLevel") Integer minClassLevel,
-      @Param("spellSchool") String spellSchool,
-      Pageable pageable);
 
   @Modifying
   @Query(value = "DELETE FROM skills WHERE character_id = :id", nativeQuery = true)

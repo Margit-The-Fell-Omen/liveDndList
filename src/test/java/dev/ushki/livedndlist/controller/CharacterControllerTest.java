@@ -22,7 +22,6 @@ import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
-import dev.ushki.livedndlist.enums.CharacterRace;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.security.jwt.JwtAuthenticationEntryPoint;
 import dev.ushki.livedndlist.security.jwt.JwtAuthenticationFilter;

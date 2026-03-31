@@ -107,7 +107,7 @@ public class SpellController {
       @RequestParam(required = false) SpellSchool school,
       @Parameter(description = "Maximum spell level", example = "3")
       @RequestParam(required = false) Integer maxLevel,
-      @PageableDefault(size = 20, sort = "updatedAt", direction = Sort.Direction.DESC)
+      @PageableDefault(size = 20, sort = "name", direction = Sort.Direction.DESC)
       Pageable pageable) {
     return ApiResponse.success(spellService.searchByName(name, school, maxLevel, pageable));
   }

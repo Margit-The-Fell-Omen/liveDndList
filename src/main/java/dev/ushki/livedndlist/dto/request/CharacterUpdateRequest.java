@@ -1,9 +1,9 @@
 package dev.ushki.livedndlist.dto.request;
 
-import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,59 +14,67 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Request object to update an existing character")
+@Schema(description = "Request object to update character")
 public class CharacterUpdateRequest {
 
   @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
-  @Schema(description = "Name of the character", example = "Gandalf the White")
+  @Schema(description = "Character name", example = "Gandalf the White")
   private String name;
 
-  @Schema(description = "Character race", example = "HUMAN")
-  private Race race;
+  @Schema(description = "Race ID", example = "1")
+  private Long raceId;
 
-  @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
+  @Schema(description = "Character alignment", example = "LAWFUL_GOOD")
   private CharacterAlignment alignment;
 
   @Schema(description = "Character background", example = "Sage")
   private String background;
 
   @Valid
-  @Schema(description = "Base ability scores")
+  @Schema(description = "Ability scores")
   private AbilityScoresRequest abilityScores;
 
-  @Schema(description = "Maximum hit points", example = "20")
+  @Min(1)
+  @Schema(description = "Maximum hit points", example = "45")
   private Integer maxHitPoints;
 
-  @Schema(description = "Current hit points", example = "18")
+  @Min(0)
+  @Schema(description = "Current hit points", example = "32")
   private Integer currentHitPoints;
 
+  @Min(0)
   @Schema(description = "Temporary hit points", example = "5")
   private Integer temporaryHitPoints;
 
-  @Schema(description = "Armor class", example = "14")
+  @Min(1)
+  @Schema(description = "Armor class", example = "16")
   private Integer armorClass;
 
-  @Schema(description = "Movement speed in feet", example = "30")
+  @Min(0)
+  @Schema(description = "Speed in feet", example = "30")
   private Integer speed;
 
-  @Schema(description = "URL to character portrait image", example = "https://example.com/portrait.jpg")
+  @Schema(description = "Portrait URL", example = "https://example.com/portrait.jpg")
   private String portraitUrl;
 
-  @Schema(description = "Detailed backstory text", example = "Born in the Shire...")
+  @Schema(description = "Character backstory")
   private String backstory;
 
-  @Schema(description = "Personality traits", example = "Brave, Curious")
+  @Schema(description = "Personality traits")
   private String personalityTraits;
 
-  @Schema(description = "Ideals", example = "Honor, Freedom")
+  @Schema(description = "Ideals")
   private String ideals;
 
-  @Schema(description = "Bonds", example = "Protects my friends")
+  @Schema(description = "Bonds")
   private String bonds;
 
-  @Schema(description = "Flaws", example = "Afraid of spiders")
+  @Schema(description = "Flaws")
   private String flaws;
 
-  @Schema(description = "Additional notes", example = "Met a stranger at the inn.")
+  @Schema(description = "Notes")
   private String notes;
+
+  @Schema(description = "Spellcasting ability", example = "INTELLIGENCE")
+  private String spellcastingAbility;
 }
