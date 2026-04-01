@@ -520,4 +520,210 @@ class CharacterControllerTest {
           .andExpect(jsonPath("$.message").value("Spell removed"));
     }
   }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/sheet")
+  class GetCharacterSheetTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character sheet")
+    void shouldReturnCharacterSheet() throws Exception {
+      when(characterService.getCharacterSheet(1L, "testuser")).thenReturn(testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/sheet"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/sheet"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/combat")
+  class GetCharacterForCombatTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character combat view")
+    void shouldReturnCharacterCombatView() throws Exception {
+      when(characterService.getCharacterForCombat(1L, "testuser")).thenReturn(
+          testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/combat"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/combat"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/spellcasting")
+  class GetCharacterForSpellcastingTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character spellcasting view")
+    void shouldReturnCharacterSpellcastingView() throws Exception {
+      when(characterService.getCharacterForSpellcasting(1L, "testuser")).thenReturn(
+          testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/spellcasting"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/spellcasting"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/skills")
+  class GetCharacterWithSkillsTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character with skills")
+    void shouldReturnCharacterWithSkills() throws Exception {
+      when(characterService.getCharacterWithSkills(1L, "testuser")).thenReturn(
+          testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/skills"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/skills"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/inventory")
+  class GetCharacterWithEquipmentTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character with equipment")
+    void shouldReturnCharacterWithEquipment() throws Exception {
+      when(characterService.getCharacterWithEquipment(1L, "testuser")).thenReturn(
+          testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/inventory"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/inventory"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/saving-throws")
+  class GetCharacterWithSavingThrowsTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character with saving throws")
+    void shouldReturnCharacterWithSavingThrows() throws Exception {
+      when(characterService.getCharacterWithSavingThrows(1L, "testuser")).thenReturn(
+          testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/saving-throws"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/saving-throws"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/summary")
+  class GetCharacterSummaryTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character summary")
+    void shouldReturnCharacterSummary() throws Exception {
+      when(characterService.getCharacterSummary(1L, "testuser")).thenReturn(testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/summary"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/summary"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
+
+  @Nested
+  @DisplayName("GET /api/v1/characters/{id}/spells")
+  class GetCharacterWithSpellsTests {
+
+    @Test
+    @WithMockUser(username = "testuser")
+    @DisplayName("Should return character with spells")
+    void shouldReturnCharacterWithSpells() throws Exception {
+      when(characterService.getCharacterWithSpells(1L, "testuser")).thenReturn(
+          testCharacterResponse);
+
+      mockMvc.perform(get("/api/v1/characters/1/spells"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
+    }
+
+    @Test
+    @DisplayName("Should return 401 when not authenticated")
+    void shouldReturn401WhenNotAuthenticated() throws Exception {
+      mockMvc.perform(get("/api/v1/characters/1/spells"))
+          .andExpect(status().isUnauthorized());
+    }
+  }
 }
