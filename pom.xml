@@ -33,6 +33,30 @@
     <sonar.organization>margit-the-fell-omen</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+
+    <!-- SonarCloud exclusions -->
+    <sonar.coverage.exclusions>
+      **/config/**,
+      **/dto/**,
+      **/entity/**,
+      **/enums/**,
+      **/exception/**,
+      **/exceptions/**,
+      **/*Application.java,
+      **/security/**,
+      **/cache/**,
+      **/aop/**,
+      **/client/**,
+      **/demo/**
+    </sonar.coverage.exclusions>
+
+    <!-- Exclude from duplication detection -->
+    <sonar.cpd.exclusions>
+      **/*Test.java,
+      **/*Tests.java,
+      **/dto/**,
+      **/entity/**
+    </sonar.cpd.exclusions>
   </properties>
   <dependencies>
     <!-- ═══════════════════════════════════════════ -->
