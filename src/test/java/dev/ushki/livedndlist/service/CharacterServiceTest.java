@@ -40,6 +40,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -105,7 +106,6 @@ class CharacterServiceTest {
         .id(1L)
         .owner(testUser)
         .name("Gandalf")
-        //.race(CharacterRace.HUMAN)
         .maxHitPoints(45)
         .currentHitPoints(45)
         .classes(new HashSet<>())
@@ -118,7 +118,6 @@ class CharacterServiceTest {
         .id(2L)
         .owner(testUser)
         .name("Legolas")
-        //.race(CharacterRace.ELF)
         .maxHitPoints(30)
         .currentHitPoints(30)
         .classes(new HashSet<>())
@@ -130,7 +129,6 @@ class CharacterServiceTest {
     testCharacterResponse = CharacterResponse.builder()
         .id(1L)
         .name("Gandalf")
-        //.race(CharacterRace.HUMAN)
         .maxHitPoints(45)
         .currentHitPoints(45)
         .build();
@@ -138,14 +136,12 @@ class CharacterServiceTest {
     testCharacterSummary = CharacterSummaryResponse.builder()
         .id(1L)
         .name("Gandalf")
-        //.race(CharacterRace.HUMAN)
         .totalLevel(5)
         .build();
 
     elfCharacterSummary = CharacterSummaryResponse.builder()
         .id(2L)
         .name("Legolas")
-        //.race(CharacterRace.ELF)
         .totalLevel(3)
         .build();
 
@@ -178,8 +174,8 @@ class CharacterServiceTest {
           characterPage);
       when(characterMapper.toSummaryResponse(testCharacter)).thenReturn(testCharacterSummary);
 
-      characterService.getAllByUsername("testuser", null, null, null, defaultPageable);
-      characterService.getAllByUsername("testuser", null, null, null, defaultPageable);
+      characterService.getAllByUsername("testuser", null, null, defaultPageable);
+      characterService.getAllByUsername("testuser", null, null, defaultPageable);
 
       verify(characterRepository, times(1)).findAllByOwner(eq(testUser), any(Pageable.class));
     }
@@ -277,7 +273,7 @@ class CharacterServiceTest {
           .thenReturn(testCharacterSummary);
 
       PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
-          "testuser", null, null, null, defaultPageable);
+          "testuser", null, null, defaultPageable);
 
       assertThat(result).isNotNull();
       assertThat(result.getContent()).hasSize(1);
@@ -288,26 +284,28 @@ class CharacterServiceTest {
     }
 
     @Test
-    @DisplayName("Should filter characters by race with pagination")
-    void shouldFilterCharactersByRaceWithPagination() {
+    @DisplayName("Should filter characters by level with pagination")
+    void shouldFilterCharactersByLevelWithPagination() {
+      DndCharacter spyElfCharacter = Mockito.spy(elfCharacter);
+      when(spyElfCharacter.getTotalLevel()).thenReturn(3);
+
       Page<DndCharacter> characterPage = new PageImpl<>(
-          List.of(elfCharacter),
+          List.of(spyElfCharacter),
           defaultPageable,
           1
       );
 
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-      when(characterRepository.findByOwnerAndRace(eq(testUser), eq(CharacterRace.ELF),
-          any(Pageable.class)))
+      when(characterRepository.findAllByOwner(eq(testUser), any(Pageable.class)))
           .thenReturn(characterPage);
-      when(characterMapper.toSummaryResponse(elfCharacter))
+      when(characterMapper.toSummaryResponse(spyElfCharacter))
           .thenReturn(elfCharacterSummary);
 
       PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
-          "testuser", CharacterRace.ELF, null, null, defaultPageable);
+          "testuser", 1, 5, defaultPageable);
 
       assertThat(result.getContent()).hasSize(1);
-      assertThat(result.getContent().getFirst().getRace()).isEqualTo(CharacterRace.ELF);
+      assertThat(result.getContent().getFirst().getTotalLevel()).isEqualTo(3);
     }
 
     @Test
@@ -404,7 +402,6 @@ class CharacterServiceTest {
           .id(2L)
           .owner(otherUser)
           .name("Other")
-          //.race(CharacterRace.ELF)
           .build();
 
       when(characterRepository.findByIdFull(2L)).thenReturn(Optional.of(otherCharacter));
@@ -420,7 +417,7 @@ class CharacterServiceTest {
       when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
 
       assertThatThrownBy(() -> characterService.getAllByUsername(
-          "nonexistent", null, null, null, defaultPageable))
+          "nonexistent", null, null, defaultPageable))
           .isInstanceOf(ResourceNotFoundException.class)
           .hasMessageContaining("User")
           .hasMessageContaining("nonexistent");
@@ -436,13 +433,10 @@ class CharacterServiceTest {
     void shouldCreateCharacterSuccessfully() {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
-          //.race(CharacterRace.ELF)
-          //.className("Ranger")
           .build();
 
       DndCharacter newCharacter = DndCharacter.builder()
           .name("Legolas")
-          //.race(CharacterRace.ELF)
           .build();
 
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
@@ -644,7 +638,7 @@ class CharacterServiceTest {
           .thenReturn(emptyPage);
 
       PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
-          "testuser", null, null, null, defaultPageable);
+          "testuser", null, null, defaultPageable);
 
       assertThat(result.getContent()).isEmpty();
       assertThat(result.isEmpty()).isTrue();
@@ -669,7 +663,7 @@ class CharacterServiceTest {
           .thenReturn(testCharacterSummary);
 
       PageResponse<CharacterSummaryResponse> result = characterService.getAllByUsername(
-          "testuser", null, null, null, pageRequest);
+          "testuser", null, null, pageRequest);
 
       assertThat(result.getPageNumber()).isEqualTo(1);
       assertThat(result.getPageSize()).isEqualTo(10);

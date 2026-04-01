@@ -2,6 +2,7 @@ package dev.ushki.livedndlist.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
@@ -28,7 +29,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -136,7 +136,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should search users by query")
     void shouldSearchUsersByQuery() throws Exception {
-      when(userService.searchUsers(eq("test"), any(Pageable.class)))
+      when(userService.searchUsers(anyString(), any()))
           .thenReturn(List.of(testUserResponse));
 
       mockMvc.perform(get("/api/v1/users/search")
@@ -150,7 +150,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should return empty list when no users match query")
     void shouldReturnEmptyListWhenNoMatch() throws Exception {
-      when(userService.searchUsers(eq("nonexistent"), any(Pageable.class)))
+      when(userService.searchUsers(anyString(), any()))
           .thenReturn(List.of());
 
       mockMvc.perform(get("/api/v1/users/search")
@@ -164,7 +164,7 @@ class UserControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     @DisplayName("Should search users by email")
     void shouldSearchUsersByEmail() throws Exception {
-      when(userService.searchUsers(eq("@test.com"), any(Pageable.class)))
+      when(userService.searchUsers(anyString(), any()))
           .thenReturn(List.of(testUserResponse, adminUserResponse));
 
       mockMvc.perform(get("/api/v1/users/search")

@@ -80,7 +80,6 @@ class CharacterControllerTest {
     testCharacterResponse = CharacterResponse.builder()
         .id(1L)
         .name("Gandalf")
-        //.race(CharacterRace.HUMAN)
         .alignment(CharacterAlignment.NEUTRAL_GOOD)
         .totalLevel(5)
         .maxHitPoints(45)
@@ -91,7 +90,6 @@ class CharacterControllerTest {
     testCharacterSummary = CharacterSummaryResponse.builder()
         .id(1L)
         .name("Gandalf")
-        //.race(CharacterRace.HUMAN)
         .classDisplay("Wizard 5")
         .totalLevel(5)
         .currentHitPoints(45)
@@ -120,14 +118,13 @@ class CharacterControllerTest {
     @DisplayName("Should return all user's characters with default pagination")
     void shouldReturnAllCharacters() throws Exception {
       when(characterService.getAllByUsername(
-          eq("testuser"), isNull(), isNull(), isNull(), any(Pageable.class)))
+          eq("testuser"), isNull(), isNull(), any(Pageable.class)))
           .thenReturn(testPageResponse);
 
       mockMvc.perform(get("/api/v1/characters"))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data.content[0].name").value("Gandalf"))
-          .andExpect(jsonPath("$.data.content[0].race").value("HUMAN"))
           .andExpect(jsonPath("$.data.pageNumber").value(0))
           .andExpect(jsonPath("$.data.pageSize").value(20))
           .andExpect(jsonPath("$.data.totalElements").value(1));
@@ -135,25 +132,10 @@ class CharacterControllerTest {
 
     @Test
     @WithMockUser(username = "testuser")
-    @DisplayName("Should return characters filtered by race with pagination")
-    void shouldReturnCharactersFilteredByRace() throws Exception {
-      when(characterService.getAllByUsername(
-          eq("testuser"), eq(CharacterRace.ELF), isNull(), isNull(), any(Pageable.class)))
-          .thenReturn(testPageResponse);
-
-      mockMvc.perform(get("/api/v1/characters")
-              .param("race", "ELF"))
-          .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.data.content").isArray());
-    }
-
-    @Test
-    @WithMockUser(username = "testuser")
     @DisplayName("Should return characters filtered by level range with pagination")
     void shouldReturnCharactersFilteredByLevelRange() throws Exception {
       when(characterService.getAllByUsername(
-          eq("testuser"), isNull(), eq(1), eq(10), any(Pageable.class)))
+          eq("testuser"), eq(1), eq(10), any(Pageable.class)))
           .thenReturn(testPageResponse);
 
       mockMvc.perform(get("/api/v1/characters")
@@ -169,7 +151,7 @@ class CharacterControllerTest {
     @DisplayName("Should return characters with custom pagination")
     void shouldReturnCharactersWithCustomPagination() throws Exception {
       when(characterService.getAllByUsername(
-          eq("testuser"), isNull(), isNull(), isNull(), any(Pageable.class)))
+          eq("testuser"), isNull(), isNull(), any(Pageable.class)))
           .thenReturn(testPageResponse);
 
       mockMvc.perform(get("/api/v1/characters")
@@ -185,11 +167,10 @@ class CharacterControllerTest {
     @DisplayName("Should return characters with all filters applied")
     void shouldReturnCharactersWithAllFilters() throws Exception {
       when(characterService.getAllByUsername(
-          eq("testuser"), eq(CharacterRace.HUMAN), eq(3), eq(15), any(Pageable.class)))
+          eq("testuser"), eq(3), eq(15), any(Pageable.class)))
           .thenReturn(testPageResponse);
 
       mockMvc.perform(get("/api/v1/characters")
-              .param("race", "HUMAN")
               .param("minLevel", "3")
               .param("maxLevel", "15")
               .param("page", "0")
@@ -318,8 +299,7 @@ class CharacterControllerTest {
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data.id").value(1))
-          .andExpect(jsonPath("$.data.name").value("Gandalf"))
-          .andExpect(jsonPath("$.data.race").value("HUMAN"));
+          .andExpect(jsonPath("$.data.name").value("Gandalf"));
     }
   }
 
@@ -333,8 +313,8 @@ class CharacterControllerTest {
     void shouldCreateCharacterSuccessfully() throws Exception {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
-          //.race(CharacterRace.ELF)
-          //.className("Ranger")
+          .raceId(1L)
+          .classId(1L)
           .alignment(CharacterAlignment.CHAOTIC_GOOD)
           .abilityScores(AbilityScoresRequest.builder()
               .strength(12)
@@ -350,7 +330,6 @@ class CharacterControllerTest {
       CharacterResponse createdResponse = CharacterResponse.builder()
           .id(2L)
           .name("Legolas")
-          //.race(CharacterRace.ELF)
           .alignment(CharacterAlignment.CHAOTIC_GOOD)
           .totalLevel(1)
           .maxHitPoints(28)
@@ -367,8 +346,7 @@ class CharacterControllerTest {
           .andExpect(status().isCreated())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.message").value("Character created successfully"))
-          .andExpect(jsonPath("$.data.name").value("Legolas"))
-          .andExpect(jsonPath("$.data.race").value("ELF"));
+          .andExpect(jsonPath("$.data.name").value("Legolas"));
     }
 
     @Test
@@ -377,8 +355,6 @@ class CharacterControllerTest {
     void shouldReturn400WhenNameBlank() throws Exception {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("")
-          //.race(CharacterRace.ELF)
-          //.className("Ranger")
           .build();
 
       mockMvc.perform(post("/api/v1/characters")
@@ -390,12 +366,11 @@ class CharacterControllerTest {
 
     @Test
     @WithMockUser(username = "testuser")
-    @DisplayName("Should return 400 when race is null")
-    void shouldReturn400WhenRaceNull() throws Exception {
+    @DisplayName("Should return 400 when max hit points is negative")
+    void shouldReturn400WhenMaxHitPointsNegative() throws Exception {
       CharacterCreateRequest request = CharacterCreateRequest.builder()
           .name("Legolas")
-          .race(null)
-          //.className("Ranger")
+          .maxHitPoints(-10)
           .build();
 
       mockMvc.perform(post("/api/v1/characters")
@@ -423,7 +398,6 @@ class CharacterControllerTest {
       CharacterResponse updatedResponse = CharacterResponse.builder()
           .id(1L)
           .name("Gandalf the White")
-          //.race(CharacterRace.HUMAN)
           .maxHitPoints(50)
           .currentHitPoints(50)
           .build();
