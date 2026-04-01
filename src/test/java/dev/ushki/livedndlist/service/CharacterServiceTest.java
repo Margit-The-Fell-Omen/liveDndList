@@ -31,6 +31,7 @@ import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
 import dev.ushki.livedndlist.repository.CharacterRepository;
+import dev.ushki.livedndlist.repository.EquipmentRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import java.util.HashSet;
@@ -78,13 +79,14 @@ class CharacterServiceTest {
   private CharacterSummaryResponse testCharacterSummary;
   private CharacterSummaryResponse elfCharacterSummary;
   private Pageable defaultPageable;
+  private EquipmentRepository equipmentRepository;
 
   @BeforeEach
   void setUp() {
     CacheManager cacheManager = new CacheManager();
 
     characterService = new CharacterService(characterRepository, userRepository, spellRepository,
-        characterMapper, equipmentMapper, cacheManager);
+        characterMapper, equipmentMapper, cacheManager, equipmentRepository);
 
     testUser = User.builder()
         .id(1L)
@@ -922,95 +924,6 @@ class CharacterServiceTest {
       assertThatThrownBy(() -> characterService.removeEquipment(1L, 999L, "testuser"))
           .isInstanceOf(ResourceNotFoundException.class)
           .hasMessageContaining("Equipment");
-    }
-  }
-
-  @Nested
-  @DisplayName("Bulk Equipment Operations")
-  class BulkEquipmentOperations {
-
-    @Test
-    @DisplayName("Should add equipment bulk with transaction")
-    void shouldAddEquipmentBulkWithTransaction() {
-      EquipmentRequest request1 = EquipmentRequest.builder().name("Sword").build();
-      EquipmentRequest request2 = EquipmentRequest.builder().name("Shield").build();
-      List<EquipmentRequest> requests = List.of(request1, request2);
-
-      Equipment sword = Equipment.builder().name("Sword").build();
-      Equipment shield = Equipment.builder().name("Shield").build();
-
-      when(characterRepository.findByIdWithEquipment(1L)).thenReturn(Optional.of(testCharacter));
-      when(equipmentMapper.toEntity(request1)).thenReturn(sword);
-      when(equipmentMapper.toEntity(request2)).thenReturn(shield);
-      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
-      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
-
-      CharacterResponse result = characterService.addEquipmentBulkWithTransaction(1L, requests,
-          "testuser");
-
-      assertThat(result).isNotNull();
-      verify(characterRepository, times(2)).save(testCharacter);
-    }
-
-    @Test
-    @DisplayName("Should throw exception when bulk equipment with transaction fails")
-    void shouldThrowExceptionWhenBulkEquipmentWithTransactionFails() {
-      EquipmentRequest request1 = EquipmentRequest.builder().name("Sword").build();
-      EquipmentRequest request2 = EquipmentRequest.builder().name("FAIL_Item").build();
-      List<EquipmentRequest> requests = List.of(request1, request2);
-
-      Equipment sword = Equipment.builder().name("Sword").build();
-
-      when(characterRepository.findByIdWithEquipment(1L)).thenReturn(Optional.of(testCharacter));
-      when(equipmentMapper.toEntity(request1)).thenReturn(sword);
-      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
-
-      assertThatThrownBy(
-          () -> characterService.addEquipmentBulkWithTransaction(1L, requests, "testuser"))
-          .isInstanceOf(ResourceSaveFailureException.class)
-          .hasMessageContaining("WITH transaction");
-    }
-
-    @Test
-    @DisplayName("Should add equipment bulk without transaction")
-    void shouldAddEquipmentBulkNoTransaction() {
-      EquipmentRequest request1 = EquipmentRequest.builder().name("Sword").build();
-      EquipmentRequest request2 = EquipmentRequest.builder().name("Shield").build();
-      List<EquipmentRequest> requests = List.of(request1, request2);
-
-      Equipment sword = Equipment.builder().name("Sword").build();
-      Equipment shield = Equipment.builder().name("Shield").build();
-
-      when(characterRepository.findByIdWithEquipment(1L)).thenReturn(Optional.of(testCharacter));
-      when(equipmentMapper.toEntity(request1)).thenReturn(sword);
-      when(equipmentMapper.toEntity(request2)).thenReturn(shield);
-      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
-      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
-
-      CharacterResponse result = characterService.addEquipmentBulkNoTransaction(1L, requests,
-          "testuser");
-
-      assertThat(result).isNotNull();
-      verify(characterRepository, times(2)).save(testCharacter);
-    }
-
-    @Test
-    @DisplayName("Should throw exception when bulk equipment without transaction fails")
-    void shouldThrowExceptionWhenBulkEquipmentNoTransactionFails() {
-      EquipmentRequest request1 = EquipmentRequest.builder().name("Sword").build();
-      EquipmentRequest request2 = EquipmentRequest.builder().name("FAIL_Item").build();
-      List<EquipmentRequest> requests = List.of(request1, request2);
-
-      Equipment sword = Equipment.builder().name("Sword").build();
-
-      when(characterRepository.findByIdWithEquipment(1L)).thenReturn(Optional.of(testCharacter));
-      when(equipmentMapper.toEntity(request1)).thenReturn(sword);
-      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
-
-      assertThatThrownBy(
-          () -> characterService.addEquipmentBulkNoTransaction(1L, requests, "testuser"))
-          .isInstanceOf(ResourceSaveFailureException.class)
-          .hasMessageContaining("WITHOUT transaction");
     }
   }
 

@@ -1,16 +1,15 @@
 package dev.ushki.livedndlist.client;
 
 import dev.ushki.livedndlist.config.Open5eRateLimitConfig;
+import java.net.URI;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URI;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
 
 @Component
 @Slf4j
@@ -105,8 +104,7 @@ public class Open5eApiClient {
     }
     try {
       Path normalized = Path.of(path).normalize();
-      if (normalized.startsWith("..") || !normalized.startsWith(
-          Path.of(path).getName(0).toString())) {
+      if (normalized.startsWith("..")) {
         throw new IllegalArgumentException("Invalid path: potential path traversal attempt");
       }
     } catch (InvalidPathException e) {
