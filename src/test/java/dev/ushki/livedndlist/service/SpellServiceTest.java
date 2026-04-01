@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,10 +45,12 @@ class SpellServiceTest {
   private Spell magicMissile;
   private Spell shield;
   private Spell heal;
+  private Spell detectMagic;
   private SpellResponse fireballResponse;
   private SpellResponse magicMissileResponse;
   private SpellResponse shieldResponse;
   private SpellResponse healResponse;
+  private SpellResponse detectMagicResponse;
   private SpellRequest testSpellRequest;
 
   @BeforeEach
@@ -110,6 +112,19 @@ class SpellServiceTest {
         .concentration(true)
         .build();
 
+    detectMagic = Spell.builder()
+        .id(5L)
+        .name("Detect Magic")
+        .level(1)
+        .school(SpellSchool.DIVINATION)
+        .castingTime("1 action")
+        .range("Self")
+        .components("V, S")
+        .duration("Concentration, up to 10 minutes")
+        .ritual(true)
+        .concentration(true)
+        .build();
+
     fireballResponse = SpellResponse.builder()
         .id(1L)
         .name("Fireball")
@@ -154,6 +169,17 @@ class SpellServiceTest {
         .concentration(true)
         .build();
 
+    detectMagicResponse = SpellResponse.builder()
+        .id(5L)
+        .name("Detect Magic")
+        .level(1)
+        .school(SpellSchool.DIVINATION)
+        .castingTime("1 action")
+        .range("Self")
+        .ritual(true)
+        .concentration(true)
+        .build();
+
     testSpellRequest = SpellRequest.builder()
         .name("Fireball")
         .level(3)
@@ -163,6 +189,125 @@ class SpellServiceTest {
         .components("V, S, M")
         .duration("Instantaneous")
         .build();
+  }
+
+  @Nested
+  @DisplayName("Caching Behavior Tests")
+  class CachingTests {
+
+    @Test
+    @DisplayName("Should return from cache on second call for getAllSpells")
+    void shouldReturnFromCacheOnSecondCallGetAllSpells() {
+      when(spellRepository.findAll(any(Sort.class))).thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+
+      verify(spellRepository, times(1)).findAll(any(Sort.class));
+    }
+
+    @Test
+    @DisplayName("Should return from cache on second call for getById")
+    void shouldReturnFromCacheOnSecondCallGetById() {
+      when(spellRepository.findById(1L)).thenReturn(Optional.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getById(1L);
+      spellService.getById(1L);
+
+      verify(spellRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should return from cache on second call for searchByName")
+    void shouldReturnFromCacheOnSecondCallSearchByName() {
+      Pageable pageable = Pageable.unpaged();
+      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
+          .thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.searchByName("fire", null, null, pageable);
+      spellService.searchByName("fire", null, null, pageable);
+
+      verify(spellRepository, times(1)).findByNameContainingIgnoreCase("fire", pageable);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on create")
+    void shouldInvalidateCacheOnCreate() {
+      when(spellRepository.findAll(any(Sort.class))).thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+
+      when(spellRepository.existsByName("New Spell")).thenReturn(false);
+      SpellRequest newRequest = SpellRequest.builder().name("New Spell").build();
+      Spell newSpell = Spell.builder().name("New Spell").build();
+      when(spellMapper.toEntity(newRequest)).thenReturn(newSpell);
+      when(spellRepository.save(newSpell)).thenReturn(newSpell);
+      when(spellMapper.toResponse(newSpell)).thenReturn(
+          SpellResponse.builder().name("New Spell").build());
+
+      spellService.create(newRequest);
+      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+
+      verify(spellRepository, times(2)).findAll(any(Sort.class));
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on update")
+    void shouldInvalidateCacheOnUpdate() {
+      when(spellRepository.findById(1L)).thenReturn(Optional.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getById(1L);
+
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+      spellService.update(1L, testSpellRequest);
+
+      spellService.getById(1L);
+
+      verify(spellRepository, times(3)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on delete")
+    void shouldInvalidateCacheOnDelete() {
+      when(spellRepository.findById(1L)).thenReturn(Optional.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getById(1L);
+
+      when(spellRepository.existsById(1L)).thenReturn(true);
+      spellService.delete(1L);
+
+      spellService.getById(1L);
+
+      verify(spellRepository, times(2)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Should invalidate cache on bulk create")
+    void shouldInvalidateCacheOnBulkCreate() {
+      when(spellRepository.findAll(any(Sort.class))).thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+
+      SpellRequest newRequest = SpellRequest.builder().name("New Spell").build();
+      Spell newSpell = Spell.builder().name("New Spell").build();
+      when(spellRepository.existsByName("New Spell")).thenReturn(false);
+      when(spellMapper.toEntity(newRequest)).thenReturn(newSpell);
+      when(spellRepository.saveAll(List.of(newSpell))).thenReturn(List.of(newSpell));
+      when(spellMapper.toResponse(newSpell)).thenReturn(
+          SpellResponse.builder().name("New Spell").build());
+
+      spellService.createBulk(List.of(newRequest));
+      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+
+      verify(spellRepository, times(2)).findAll(any(Sort.class));
+    }
   }
 
   @Nested
@@ -243,29 +388,11 @@ class SpellServiceTest {
     }
 
     @Test
-    @DisplayName("Should filter spells by ritual")
-    void shouldFilterSpellsByRitual() {
-      Spell ritualSpell = Spell.builder()
-          .id(5L)
-          .name("Detect Magic")
-          .level(1)
-          .school(SpellSchool.DIVINATION)
-          .ritual(true)
-          .concentration(false)
-          .build();
-
-      SpellResponse ritualResponse = SpellResponse.builder()
-          .id(5L)
-          .name("Detect Magic")
-          .level(1)
-          .school(SpellSchool.DIVINATION)
-          .ritual(true)
-          .concentration(false)
-          .build();
-
+    @DisplayName("Should filter spells by ritual true")
+    void shouldFilterSpellsByRitualTrue() {
       when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, ritualSpell));
-      when(spellMapper.toResponse(ritualSpell)).thenReturn(ritualResponse);
+          .thenReturn(List.of(fireball, detectMagic));
+      when(spellMapper.toResponse(detectMagic)).thenReturn(detectMagicResponse);
 
       List<SpellResponse> result = spellService.getAllSpells(
           null, null, null, true, null, "name", "asc");
@@ -275,8 +402,22 @@ class SpellServiceTest {
     }
 
     @Test
-    @DisplayName("Should filter spells by concentration")
-    void shouldFilterSpellsByConcentration() {
+    @DisplayName("Should filter spells by ritual false")
+    void shouldFilterSpellsByRitualFalse() {
+      when(spellRepository.findAll(any(Sort.class)))
+          .thenReturn(List.of(fireball, detectMagic));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      List<SpellResponse> result = spellService.getAllSpells(
+          null, null, null, false, null, "name", "asc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.getFirst().isRitual()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should filter spells by concentration true")
+    void shouldFilterSpellsByConcentrationTrue() {
       when(spellRepository.findAll(any(Sort.class)))
           .thenReturn(List.of(fireball, heal));
       when(spellMapper.toResponse(heal)).thenReturn(healResponse);
@@ -289,8 +430,8 @@ class SpellServiceTest {
     }
 
     @Test
-    @DisplayName("Should filter non-concentration spells")
-    void shouldFilterNonConcentrationSpells() {
+    @DisplayName("Should filter spells by concentration false")
+    void shouldFilterSpellsByConcentrationFalse() {
       when(spellRepository.findAll(any(Sort.class)))
           .thenReturn(List.of(fireball, heal));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
@@ -300,6 +441,20 @@ class SpellServiceTest {
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().isConcentration()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should apply all filters together")
+    void shouldApplyAllFiltersTogether() {
+      when(spellRepository.findAll(any(Sort.class)))
+          .thenReturn(List.of(fireball, magicMissile, shield, heal, detectMagic));
+      when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
+
+      List<SpellResponse> result = spellService.getAllSpells(
+          SpellSchool.EVOCATION, 1, 2, false, false, "name", "asc");
+
+      assertThat(result).hasSize(1);
+      assertThat(result.getFirst().getName()).isEqualTo("Magic Missile");
     }
 
     @Test
@@ -326,6 +481,31 @@ class SpellServiceTest {
           null, null, null, null, null, "level", "desc");
 
       verify(spellRepository).findAll(Sort.by("level").descending());
+    }
+
+    @Test
+    @DisplayName("Should handle uppercase sort direction")
+    void shouldHandleUppercaseSortDirection() {
+      when(spellRepository.findAll(any(Sort.class)))
+          .thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      spellService.getAllSpells(
+          null, null, null, null, null, "level", "ASC");
+
+      verify(spellRepository).findAll(Sort.by("level").ascending());
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no spells match filters")
+    void shouldReturnEmptyListWhenNoSpellsMatchFilters() {
+      when(spellRepository.findAll(any(Sort.class)))
+          .thenReturn(List.of(fireball));
+
+      List<SpellResponse> result = spellService.getAllSpells(
+          SpellSchool.NECROMANCY, null, null, null, null, "name", "asc");
+
+      assertThat(result).isEmpty();
     }
   }
 
@@ -366,32 +546,26 @@ class SpellServiceTest {
     @DisplayName("Should search spells by name")
     void shouldSearchSpellsByName() {
       Pageable pageable = Pageable.unpaged();
-      Spell spell = Spell.builder().name("Fireball").school(SpellSchool.EVOCATION).level(3).build();
-      SpellResponse response = SpellResponse.builder().name("Fireball")
-          .school(SpellSchool.EVOCATION).level(3).build();
 
-      when(spellRepository.findByNameContainingIgnoreCase(eq("fire"), any(Pageable.class)))
-          .thenReturn(List.of(spell));
-      when(spellMapper.toResponse(spell)).thenReturn(response);
+      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
+          .thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", null, null, pageable);
 
       assertThat(result).hasSize(1);
       assertThat(result.getFirst().getName()).isEqualTo("Fireball");
-      verify(spellRepository).findByNameContainingIgnoreCase(eq("fire"), any(Pageable.class));
+      verify(spellRepository).findByNameContainingIgnoreCase("fire", pageable);
     }
 
     @Test
     @DisplayName("Should search spells by name and filter by school")
     void shouldSearchSpellsByNameAndFilterBySchool() {
       Pageable pageable = Pageable.unpaged();
-      Spell spell = Spell.builder().name("Fireball").school(SpellSchool.EVOCATION).level(3).build();
-      SpellResponse response = SpellResponse.builder().name("Fireball")
-          .school(SpellSchool.EVOCATION).level(3).build();
 
-      when(spellRepository.findByNameContainingIgnoreCase(eq("fire"), any(Pageable.class)))
-          .thenReturn(List.of(spell));
-      when(spellMapper.toResponse(spell)).thenReturn(response);
+      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
+          .thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", SpellSchool.EVOCATION, null,
           pageable);
@@ -404,10 +578,9 @@ class SpellServiceTest {
     @DisplayName("Should filter out non-matching school in search")
     void shouldFilterOutNonMatchingSchoolInSearch() {
       Pageable pageable = Pageable.unpaged();
-      Spell spell = Spell.builder().name("Fireball").school(SpellSchool.EVOCATION).level(3).build();
 
-      when(spellRepository.findByNameContainingIgnoreCase(eq("fire"), any(Pageable.class)))
-          .thenReturn(List.of(spell));
+      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
+          .thenReturn(List.of(fireball));
 
       List<SpellResponse> result = spellService.searchByName("fire", SpellSchool.ABJURATION, null,
           pageable);
@@ -419,15 +592,24 @@ class SpellServiceTest {
     @DisplayName("Should search spells by name and filter by max level")
     void shouldSearchSpellsByNameAndFilterByMaxLevel() {
       Pageable pageable = Pageable.unpaged();
-      Spell spell1 = Spell.builder().name("Fire Bolt").school(SpellSchool.EVOCATION).level(1)
+      Spell fireBolt = Spell.builder()
+          .id(6L)
+          .name("Fire Bolt")
+          .school(SpellSchool.EVOCATION)
+          .level(0)
+          .ritual(false)
+          .concentration(false)
           .build();
-      Spell spell3 = Spell.builder().name("Fireball").school(SpellSchool.EVOCATION).level(3)
+      SpellResponse fireBoltResponse = SpellResponse.builder()
+          .id(6L)
+          .name("Fire Bolt")
+          .level(0)
+          .school(SpellSchool.EVOCATION)
           .build();
-      SpellResponse response1 = SpellResponse.builder().name("Fire Bolt").level(1).build();
 
-      when(spellRepository.findByNameContainingIgnoreCase(eq("fire"), any(Pageable.class)))
-          .thenReturn(List.of(spell1, spell3));
-      when(spellMapper.toResponse(spell1)).thenReturn(response1);
+      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
+          .thenReturn(List.of(fireBolt, fireball));
+      when(spellMapper.toResponse(fireBolt)).thenReturn(fireBoltResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", null, 2, pageable);
 
@@ -439,19 +621,30 @@ class SpellServiceTest {
     @DisplayName("Should search with all filters applied")
     void shouldSearchWithAllFiltersApplied() {
       Pageable pageable = Pageable.unpaged();
-      Spell validSpell = Spell.builder().name("Fire Bolt").school(SpellSchool.EVOCATION).level(1)
+      Spell fireBolt = Spell.builder()
+          .id(6L)
+          .name("Fire Bolt")
+          .school(SpellSchool.EVOCATION)
+          .level(0)
+          .ritual(false)
+          .concentration(false)
           .build();
-      SpellResponse validResponse = SpellResponse.builder().name("Fire Bolt")
-          .school(SpellSchool.EVOCATION).level(1).build();
+      SpellResponse fireBoltResponse = SpellResponse.builder()
+          .id(6L)
+          .name("Fire Bolt")
+          .school(SpellSchool.EVOCATION)
+          .level(0)
+          .build();
 
-      when(spellRepository.findByNameContainingIgnoreCase(eq("fire"), any(Pageable.class)))
-          .thenReturn(List.of(validSpell));
-      when(spellMapper.toResponse(validSpell)).thenReturn(validResponse);
+      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
+          .thenReturn(List.of(fireBolt, fireball));
+      when(spellMapper.toResponse(fireBolt)).thenReturn(fireBoltResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", SpellSchool.EVOCATION, 2,
           pageable);
 
       assertThat(result).hasSize(1);
+      assertThat(result.getFirst().getName()).isEqualTo("Fire Bolt");
     }
 
     @Test
@@ -459,7 +652,7 @@ class SpellServiceTest {
     void shouldReturnEmptyListWhenNoMatches() {
       Pageable pageable = Pageable.unpaged();
 
-      when(spellRepository.findByNameContainingIgnoreCase(eq("nonexistent"), any(Pageable.class)))
+      when(spellRepository.findByNameContainingIgnoreCase("nonexistent", pageable))
           .thenReturn(List.of());
 
       List<SpellResponse> result = spellService.searchByName("nonexistent", null, null, pageable);
@@ -524,7 +717,9 @@ class SpellServiceTest {
       when(spellRepository.findById(999L)).thenReturn(Optional.empty());
 
       assertThatThrownBy(() -> spellService.update(999L, testSpellRequest))
-          .isInstanceOf(ResourceNotFoundException.class);
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("Spell")
+          .hasMessageContaining("999");
 
       verify(spellRepository, never()).save(any());
     }
@@ -550,9 +745,127 @@ class SpellServiceTest {
       when(spellRepository.existsById(999L)).thenReturn(false);
 
       assertThatThrownBy(() -> spellService.delete(999L))
-          .isInstanceOf(ResourceNotFoundException.class);
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("Spell")
+          .hasMessageContaining("999");
 
       verify(spellRepository, never()).deleteById(anyLong());
+    }
+  }
+
+  @Nested
+  @DisplayName("Create Bulk Spells")
+  class CreateBulkSpellsTests {
+
+    @Test
+    @DisplayName("Should create multiple spells successfully")
+    void shouldCreateMultipleSpellsSuccessfully() {
+      SpellRequest request1 = SpellRequest.builder()
+          .name("Fireball")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .build();
+      SpellRequest request2 = SpellRequest.builder()
+          .name("Magic Missile")
+          .level(1)
+          .school(SpellSchool.EVOCATION)
+          .build();
+      List<SpellRequest> requests = List.of(request1, request2);
+
+      when(spellRepository.existsByName("Fireball")).thenReturn(false);
+      when(spellRepository.existsByName("Magic Missile")).thenReturn(false);
+      when(spellMapper.toEntity(request1)).thenReturn(fireball);
+      when(spellMapper.toEntity(request2)).thenReturn(magicMissile);
+      when(spellRepository.saveAll(List.of(fireball, magicMissile)))
+          .thenReturn(List.of(fireball, magicMissile));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+      when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
+
+      List<SpellResponse> result = spellService.createBulk(requests);
+
+      assertThat(result).hasSize(2);
+      assertThat(result.get(0).getName()).isEqualTo("Fireball");
+      assertThat(result.get(1).getName()).isEqualTo("Magic Missile");
+      verify(spellRepository).saveAll(List.of(fireball, magicMissile));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when bulk create contains duplicate name")
+    void shouldThrowExceptionWhenBulkCreateContainsDuplicate() {
+      SpellRequest request1 = SpellRequest.builder()
+          .name("Existing Spell")
+          .level(1)
+          .school(SpellSchool.EVOCATION)
+          .build();
+      List<SpellRequest> requests = List.of(request1);
+
+      when(spellRepository.existsByName("Existing Spell")).thenReturn(true);
+
+      assertThatThrownBy(() -> spellService.createBulk(requests))
+          .isInstanceOf(DuplicateResourceException.class)
+          .hasMessageContaining("Existing Spell")
+          .hasMessageContaining("already exists");
+
+      verify(spellRepository, never()).saveAll(any());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when second spell in bulk is duplicate")
+    void shouldThrowExceptionWhenSecondSpellInBulkIsDuplicate() {
+      SpellRequest request1 = SpellRequest.builder()
+          .name("New Spell")
+          .level(1)
+          .school(SpellSchool.EVOCATION)
+          .build();
+      SpellRequest request2 = SpellRequest.builder()
+          .name("Existing Spell")
+          .level(2)
+          .school(SpellSchool.ABJURATION)
+          .build();
+      List<SpellRequest> requests = List.of(request1, request2);
+
+      when(spellRepository.existsByName("New Spell")).thenReturn(false);
+      when(spellRepository.existsByName("Existing Spell")).thenReturn(true);
+
+      assertThatThrownBy(() -> spellService.createBulk(requests))
+          .isInstanceOf(DuplicateResourceException.class)
+          .hasMessageContaining("Existing Spell");
+
+      verify(spellRepository, never()).saveAll(any());
+    }
+
+    @Test
+    @DisplayName("Should create single spell in bulk")
+    void shouldCreateSingleSpellInBulk() {
+      SpellRequest request = SpellRequest.builder()
+          .name("Fireball")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .build();
+      List<SpellRequest> requests = List.of(request);
+
+      when(spellRepository.existsByName("Fireball")).thenReturn(false);
+      when(spellMapper.toEntity(request)).thenReturn(fireball);
+      when(spellRepository.saveAll(List.of(fireball))).thenReturn(List.of(fireball));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+
+      List<SpellResponse> result = spellService.createBulk(requests);
+
+      assertThat(result).hasSize(1);
+      assertThat(result.getFirst().getName()).isEqualTo("Fireball");
+    }
+
+    @Test
+    @DisplayName("Should return empty list when bulk create with empty list")
+    void shouldReturnEmptyListWhenBulkCreateWithEmptyList() {
+      List<SpellRequest> requests = List.of();
+
+      when(spellRepository.saveAll(List.of())).thenReturn(List.of());
+
+      List<SpellResponse> result = spellService.createBulk(requests);
+
+      assertThat(result).isEmpty();
+      verify(spellRepository).saveAll(List.of());
     }
   }
 }

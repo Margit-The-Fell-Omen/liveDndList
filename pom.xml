@@ -47,7 +47,8 @@
       **/cache/**,
       **/aop/**,
       **/client/**,
-      **/demo/**
+      **/demo/**,
+      **/mapper/**
     </sonar.coverage.exclusions>
 
     <!-- Exclude from duplication detection -->
