@@ -226,35 +226,6 @@ public class CharacterMapper {
     Optional.ofNullable(value).ifPresent(setter);
   }
 
-  private List<CharacterResponse.CharacterClassResponse> mapClasses(Set<CharacterClass> classes) {
-    if (classes == null) {
-      return List.of();
-    }
-
-    return classes.stream()
-        .sorted(Comparator.comparing(CharacterClass::getLevel).reversed()
-            .thenComparing(c -> c.getDndClass().getName()))
-        .map(this::mapCharacterClass)
-        .toList();
-  }
-
-  private CharacterResponse.CharacterClassResponse mapCharacterClass(
-      CharacterClass characterClass) {
-    return CharacterResponse.CharacterClassResponse.builder()
-        .id(characterClass.getId())
-        .classId(characterClass.getDndClass().getId())
-        .className(characterClass.getDndClass().getName())
-        .classSlug(characterClass.getDndClass().getSlug())
-        .archetypeId(characterClass.getArchetype() != null
-            ? characterClass.getArchetype().getId() : null)
-        .archetypeName(characterClass.getArchetype() != null
-            ? characterClass.getArchetype().getName() : null)
-        .archetypeSlug(characterClass.getArchetype() != null
-            ? characterClass.getArchetype().getSlug() : null)
-        .level(characterClass.getLevel())
-        .build();
-  }
-
   private AbilityScoresResponse mapAbilityScores(AbilityScores scores) {
     if (scores == null) {
       return null;

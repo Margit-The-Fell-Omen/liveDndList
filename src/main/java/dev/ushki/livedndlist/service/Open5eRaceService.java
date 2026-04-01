@@ -91,7 +91,7 @@ public class Open5eRaceService {
     try {
       log.info("Syncing race by slug: {}", slug);
 
-      Open5eRaceDto dto = apiClient.get(API_PATH + slug + "/", Open5eRaceDto.class);
+      Open5eRaceDto dto = apiClient.getBySlug(API_PATH, slug, Open5eRaceDto.class);
       SyncAction action = saveOrUpdate(dto);
 
       long duration = System.currentTimeMillis() - startTime;
@@ -146,7 +146,7 @@ public class Open5eRaceService {
       pageCount++;
       progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
 
-      Open5eRaceResponse response = apiClient.get(currentPath, Open5eRaceResponse.class);
+      Open5eRaceResponse response = apiClient.getByPath(currentPath, Open5eRaceResponse.class);
 
       if (response.getResults() != null) {
         allRaces.addAll(response.getResults());

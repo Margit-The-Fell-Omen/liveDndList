@@ -91,7 +91,7 @@ public class Open5eClassService {
     try {
       log.info("Syncing class by slug: {}", slug);
 
-      Open5eClassDto dto = apiClient.get(API_PATH + slug + "/", Open5eClassDto.class);
+      Open5eClassDto dto = apiClient.getBySlug(API_PATH, slug, Open5eClassDto.class);
       SyncAction action = saveOrUpdate(dto);
 
       long duration = System.currentTimeMillis() - startTime;
@@ -146,7 +146,7 @@ public class Open5eClassService {
       pageCount++;
       progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
 
-      Open5eClassResponse response = apiClient.get(currentPath, Open5eClassResponse.class);
+      Open5eClassResponse response = apiClient.getByPath(currentPath, Open5eClassResponse.class);
 
       if (response.getResults() != null) {
         allClasses.addAll(response.getResults());

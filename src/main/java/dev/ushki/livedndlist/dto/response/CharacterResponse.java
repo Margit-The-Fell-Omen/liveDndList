@@ -1,6 +1,5 @@
 package dev.ushki.livedndlist.dto.response;
 
-import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
