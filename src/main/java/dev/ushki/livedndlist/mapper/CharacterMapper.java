@@ -22,10 +22,6 @@ import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.repository.RaceRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
-import org.springframework.stereotype.Component;
-
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +29,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
