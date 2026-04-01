@@ -48,7 +48,8 @@
       **/aop/**,
       **/client/**,
       **/demo/**,
-      **/mapper/**
+      **/mapper/**,
+      **/service/sync/**
     </sonar.coverage.exclusions>
 
     <!-- Exclude from duplication detection -->

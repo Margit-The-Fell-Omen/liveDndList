@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -131,18 +132,33 @@ class SpellControllerTest {
     }
 
     @Test
-    @DisplayName("Should return spells filtered by exact level")
-    void shouldReturnSpellsFilteredByLevel() throws Exception {
+    @DisplayName("Should return spells filtered by minimum level")
+    void shouldReturnSpellsFilteredByMinLevel() throws Exception {
       when(spellService.getAllSpells(
-          isNull(), isNull(), isNull(), isNull(), isNull(),
+          isNull(), eq(3), isNull(), isNull(), isNull(),
           eq("name"), eq("asc")))
           .thenReturn(List.of(fireballResponse, lightningBoltResponse));
 
       mockMvc.perform(get("/api/v1/spells")
-              .param("level", "3"))
+              .param("minLevel", "3"))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data[0].level").value(3));
+    }
+
+    @Test
+    @DisplayName("Should return spells filtered by maximum level")
+    void shouldReturnSpellsFilteredByMaxLevel() throws Exception {
+      when(spellService.getAllSpells(
+          isNull(), isNull(), eq(1), isNull(), isNull(),
+          eq("name"), eq("asc")))
+          .thenReturn(List.of(shieldResponse));
+
+      mockMvc.perform(get("/api/v1/spells")
+              .param("maxLevel", "1"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data[0].level").value(1));
     }
 
     @Test
@@ -162,8 +178,8 @@ class SpellControllerTest {
     }
 
     @Test
-    @DisplayName("Should return spells filtered by concentration")
-    void shouldReturnSpellsFilteredByConcentration() throws Exception {
+    @DisplayName("Should return spells filtered by concentration true")
+    void shouldReturnSpellsFilteredByConcentrationTrue() throws Exception {
       when(spellService.getAllSpells(
           isNull(), isNull(), isNull(), isNull(), eq(true),
           eq("name"), eq("asc")))
@@ -177,8 +193,23 @@ class SpellControllerTest {
     }
 
     @Test
-    @DisplayName("Should return spells filtered by ritual")
-    void shouldReturnSpellsFilteredByRitual() throws Exception {
+    @DisplayName("Should return spells filtered by concentration false")
+    void shouldReturnSpellsFilteredByConcentrationFalse() throws Exception {
+      when(spellService.getAllSpells(
+          isNull(), isNull(), isNull(), isNull(), eq(false),
+          eq("name"), eq("asc")))
+          .thenReturn(List.of(fireballResponse, lightningBoltResponse, shieldResponse));
+
+      mockMvc.perform(get("/api/v1/spells")
+              .param("concentration", "false"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.length()").value(3));
+    }
+
+    @Test
+    @DisplayName("Should return spells filtered by ritual true")
+    void shouldReturnSpellsFilteredByRitualTrue() throws Exception {
       when(spellService.getAllSpells(
           isNull(), isNull(), isNull(), eq(true), isNull(),
           eq("name"), eq("asc")))
@@ -191,8 +222,37 @@ class SpellControllerTest {
     }
 
     @Test
-    @DisplayName("Should return spells with custom sorting")
-    void shouldReturnSpellsWithCustomSorting() throws Exception {
+    @DisplayName("Should return spells filtered by ritual false")
+    void shouldReturnSpellsFilteredByRitualFalse() throws Exception {
+      when(spellService.getAllSpells(
+          isNull(), isNull(), isNull(), eq(false), isNull(),
+          eq("name"), eq("asc")))
+          .thenReturn(List.of(fireballResponse));
+
+      mockMvc.perform(get("/api/v1/spells")
+              .param("ritual", "false"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("Should return spells with custom sorting ascending")
+    void shouldReturnSpellsWithCustomSortingAscending() throws Exception {
+      when(spellService.getAllSpells(
+          isNull(), isNull(), isNull(), isNull(), isNull(),
+          eq("level"), eq("asc")))
+          .thenReturn(List.of(shieldResponse, fireballResponse, lightningBoltResponse));
+
+      mockMvc.perform(get("/api/v1/spells")
+              .param("sortBy", "level")
+              .param("sortDir", "asc"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true));
+    }
+
+    @Test
+    @DisplayName("Should return spells with custom sorting descending")
+    void shouldReturnSpellsWithCustomSortingDescending() throws Exception {
       when(spellService.getAllSpells(
           isNull(), isNull(), isNull(), isNull(), isNull(),
           eq("level"), eq("desc")))
@@ -222,6 +282,42 @@ class SpellControllerTest {
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data.length()").value(2));
     }
+
+    @Test
+    @DisplayName("Should return spells with all filters applied")
+    void shouldReturnSpellsWithAllFilters() throws Exception {
+      when(spellService.getAllSpells(
+          SpellSchool.EVOCATION, 1, 5, false, false,
+          "level", "desc"))
+          .thenReturn(List.of(fireballResponse));
+
+      mockMvc.perform(get("/api/v1/spells")
+              .param("school", "EVOCATION")
+              .param("minLevel", "1")
+              .param("maxLevel", "5")
+              .param("ritual", "false")
+              .param("concentration", "false")
+              .param("sortBy", "level")
+              .param("sortDir", "desc"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.length()").value(1));
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no spells match")
+    void shouldReturnEmptyListWhenNoSpellsMatch() throws Exception {
+      when(spellService.getAllSpells(
+          eq(SpellSchool.NECROMANCY), isNull(), isNull(), isNull(), isNull(),
+          eq("name"), eq("asc")))
+          .thenReturn(List.of());
+
+      mockMvc.perform(get("/api/v1/spells")
+              .param("school", "NECROMANCY"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.data.length()").value(0));
+    }
   }
 
   @Nested
@@ -239,6 +335,25 @@ class SpellControllerTest {
           .andExpect(jsonPath("$.data.name").value("Fireball"))
           .andExpect(jsonPath("$.data.level").value(3))
           .andExpect(jsonPath("$.data.school").value("EVOCATION"));
+    }
+
+    @Test
+    @DisplayName("Should return spell with all fields")
+    void shouldReturnSpellWithAllFields() throws Exception {
+      when(spellService.getById(1L)).thenReturn(fireballResponse);
+
+      mockMvc.perform(get("/api/v1/spells/1"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.data.id").value(1))
+          .andExpect(jsonPath("$.data.name").value("Fireball"))
+          .andExpect(jsonPath("$.data.level").value(3))
+          .andExpect(jsonPath("$.data.school").value("EVOCATION"))
+          .andExpect(jsonPath("$.data.castingTime").value("1 action"))
+          .andExpect(jsonPath("$.data.range").value("150 feet"))
+          .andExpect(jsonPath("$.data.components").value("V, S, M"))
+          .andExpect(jsonPath("$.data.duration").value("Instantaneous"))
+          .andExpect(jsonPath("$.data.concentration").value(false))
+          .andExpect(jsonPath("$.data.ritual").value(false));
     }
   }
 
@@ -317,6 +432,21 @@ class SpellControllerTest {
           .andExpect(jsonPath("$.success").value(true))
           .andExpect(jsonPath("$.data.length()").value(0));
     }
+
+    @Test
+    @DisplayName("Should search with pagination parameters")
+    void shouldSearchWithPaginationParameters() throws Exception {
+      when(spellService.searchByName(eq("fire"), isNull(), isNull(), any(Pageable.class)))
+          .thenReturn(List.of(fireballResponse));
+
+      mockMvc.perform(get("/api/v1/spells/search")
+              .param("name", "fire")
+              .param("page", "0")
+              .param("size", "10")
+              .param("sort", "name,desc"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.success").value(true));
+    }
   }
 
   @Nested
@@ -344,6 +474,7 @@ class SpellControllerTest {
               .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isCreated())
           .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Spell created"))
           .andExpect(jsonPath("$.data.name").value("Lightning Bolt"));
     }
 
@@ -415,7 +546,23 @@ class SpellControllerTest {
               .content(objectMapper.writeValueAsString(request)))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("Spell updated"))
           .andExpect(jsonPath("$.data.name").value("Fireball"));
+    }
+
+    @Test
+    @DisplayName("Should return 400 when update request is invalid")
+    void shouldReturn400WhenUpdateRequestInvalid() throws Exception {
+      SpellRequest request = SpellRequest.builder()
+          .name("")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .build();
+
+      mockMvc.perform(put("/api/v1/spells/1")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(request)))
+          .andExpect(status().isBadRequest());
     }
   }
 
@@ -430,6 +577,109 @@ class SpellControllerTest {
 
       mockMvc.perform(delete("/api/v1/spells/1"))
           .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("Should delete spell by different ID")
+    void shouldDeleteSpellByDifferentId() throws Exception {
+      doNothing().when(spellService).delete(999L);
+
+      mockMvc.perform(delete("/api/v1/spells/999"))
+          .andExpect(status().isNoContent());
+    }
+  }
+
+  @Nested
+  @DisplayName("POST /api/v1/spells/bulk")
+  class CreateBulkSpellsTests {
+
+    @Test
+    @DisplayName("Should create multiple spells successfully")
+    void shouldCreateMultipleSpellsSuccessfully() throws Exception {
+      SpellRequest request1 = SpellRequest.builder()
+          .name("Fireball")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .description("A bright streak flashes from your pointing finger...")
+          .build();
+      SpellRequest request2 = SpellRequest.builder()
+          .name("Lightning Bolt")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .description("A stroke of lightning forming a line...")
+          .build();
+      List<SpellRequest> requests = List.of(request1, request2);
+
+      when(spellService.createBulk(anyList()))
+          .thenReturn(List.of(fireballResponse, lightningBoltResponse));
+
+      mockMvc.perform(post("/api/v1/spells/bulk")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(requests)))
+          .andExpect(status().isCreated())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("2 spells created successfully"))
+          .andExpect(jsonPath("$.data.length()").value(2))
+          .andExpect(jsonPath("$.data[0].name").value("Fireball"))
+          .andExpect(jsonPath("$.data[1].name").value("Lightning Bolt"));
+    }
+
+    @Test
+    @DisplayName("Should create single spell in bulk")
+    void shouldCreateSingleSpellInBulk() throws Exception {
+      SpellRequest request = SpellRequest.builder()
+          .name("Fireball")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .description("A bright streak flashes from your pointing finger...")
+          .build();
+      List<SpellRequest> requests = List.of(request);
+
+      when(spellService.createBulk(anyList()))
+          .thenReturn(List.of(fireballResponse));
+
+      mockMvc.perform(post("/api/v1/spells/bulk")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(requests)))
+          .andExpect(status().isCreated())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("1 spells created successfully"))
+          .andExpect(jsonPath("$.data.length()").value(1));
+    }
+
+    @Test
+    @DisplayName("Should create three spells in bulk")
+    void shouldCreateThreeSpellsInBulk() throws Exception {
+      SpellRequest request1 = SpellRequest.builder()
+          .name("Fireball")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .description("A bright streak flashes...")
+          .build();
+      SpellRequest request2 = SpellRequest.builder()
+          .name("Lightning Bolt")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .description("A stroke of lightning...")
+          .build();
+      SpellRequest request3 = SpellRequest.builder()
+          .name("Shield")
+          .level(1)
+          .school(SpellSchool.ABJURATION)
+          .description("An invisible barrier of magical force...")
+          .build();
+      List<SpellRequest> requests = List.of(request1, request2, request3);
+
+      when(spellService.createBulk(anyList()))
+          .thenReturn(List.of(fireballResponse, lightningBoltResponse, shieldResponse));
+
+      mockMvc.perform(post("/api/v1/spells/bulk")
+              .contentType(MediaType.APPLICATION_JSON)
+              .content(objectMapper.writeValueAsString(requests)))
+          .andExpect(status().isCreated())
+          .andExpect(jsonPath("$.success").value(true))
+          .andExpect(jsonPath("$.message").value("3 spells created successfully"))
+          .andExpect(jsonPath("$.data.length()").value(3));
     }
   }
 }
