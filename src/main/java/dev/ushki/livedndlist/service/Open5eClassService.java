@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,8 +42,10 @@ public class Open5eClassService {
 
   @Transactional
   public SyncResultDto syncAllClasses() {
+    String taskId = UUID.randomUUID().toString();
+
     if (!progressTracker.tryStart()) {
-      return buildAlreadyInProgressResult();
+      return buildAlreadyInProgressResult(taskId);
     }
 
     long startTime = System.currentTimeMillis();
@@ -71,12 +74,12 @@ public class Open5eClassService {
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
 
-      return buildSuccessResult(result, allClasses.size(), duration);
+      return buildSuccessResult(result, allClasses.size(), duration, taskId);
 
     } catch (Exception e) {
       syncMetrics.recordRequest(System.currentTimeMillis() - startTime, false);
       log.error("Critical sync error: {}", e.getMessage(), e);
-      return buildErrorResult(e);
+      return buildErrorResult(e, taskId);
 
     } finally {
       syncMetrics.endOperation();
@@ -113,7 +116,7 @@ public class Open5eClassService {
 
     } catch (Exception e) {
       log.error("API request error: {}", e.getMessage());
-      return buildErrorResult(e);
+      return buildErrorResult(e, "");
     }
   }
 
@@ -188,16 +191,24 @@ public class Open5eClassService {
     }
   }
 
-  private SyncResultDto buildAlreadyInProgressResult() {
+  private SyncResultDto buildAlreadyInProgressResult(String taskId) {
     return SyncResultDto.builder()
+        .taskId(taskId)
         .success(false)
         .message("Sync already in progress")
         .syncedAt(LocalDateTime.now())
         .build();
   }
 
-  private SyncResultDto buildSuccessResult(SyncResult result, int totalFetched, long duration) {
+  private SyncResultDto buildSuccessResult(SyncResult result, int totalFetched, long duration,
+      String taskId) {
+    return getSyncResultDto(result, totalFetched, duration, taskId);
+  }
+
+  static SyncResultDto getSyncResultDto(SyncResult result, int totalFetched, long duration,
+      String taskId) {
     return SyncResultDto.builder()
+        .taskId(taskId)
         .success(!result.hasErrors())
         .message(result.hasErrors() ? "Sync completed with errors" : "Sync completed successfully")
         .syncedAt(LocalDateTime.now())
@@ -212,8 +223,9 @@ public class Open5eClassService {
         .build();
   }
 
-  private SyncResultDto buildErrorResult(Exception e) {
+  private SyncResultDto buildErrorResult(Exception e, String taskId) {
     return SyncResultDto.builder()
+        .taskId(taskId)
         .success(false)
         .message("Critical error: " + e.getMessage())
         .syncedAt(LocalDateTime.now())

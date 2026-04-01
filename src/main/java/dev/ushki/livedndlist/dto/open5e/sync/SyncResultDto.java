@@ -1,12 +1,11 @@
 package dev.ushki.livedndlist.dto.open5e.sync;
 
-import lombok.Data;
-import lombok.Builder;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
@@ -14,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SyncResultDto {
 
+  private String taskId;
   private boolean success;
   private String message;
   private LocalDateTime syncedAt;

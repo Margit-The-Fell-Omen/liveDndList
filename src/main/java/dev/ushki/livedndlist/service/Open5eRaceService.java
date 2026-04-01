@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.service;
 
+import static dev.ushki.livedndlist.service.Open5eClassService.getSyncResultDto;
+
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5eRaceResponse;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,8 +44,10 @@ public class Open5eRaceService {
 
   @Transactional
   public SyncResultDto syncAllRaces() {
+    String taskId = UUID.randomUUID().toString();
+
     if (!progressTracker.tryStart()) {
-      return buildAlreadyInProgressResult();
+      return buildAlreadyInProgressResult(taskId);
     }
 
     long startTime = System.currentTimeMillis();
@@ -71,12 +76,12 @@ public class Open5eRaceService {
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
 
-      return buildSuccessResult(result, allRaces.size(), duration);
+      return buildSuccessResult(result, allRaces.size(), duration, taskId);
 
     } catch (Exception e) {
       syncMetrics.recordRequest(System.currentTimeMillis() - startTime, false);
       log.error("Critical sync error: {}", e.getMessage(), e);
-      return buildErrorResult(e);
+      return buildErrorResult(e, taskId);
 
     } finally {
       syncMetrics.endOperation();
@@ -113,7 +118,7 @@ public class Open5eRaceService {
 
     } catch (Exception e) {
       log.error("API request error: {}", e.getMessage());
-      return buildErrorResult(e);
+      return buildErrorResult(e, "");
     }
   }
 
@@ -188,32 +193,23 @@ public class Open5eRaceService {
     }
   }
 
-  private SyncResultDto buildAlreadyInProgressResult() {
+  private SyncResultDto buildAlreadyInProgressResult(String taskId) {
     return SyncResultDto.builder()
+        .taskId(taskId)
         .success(false)
         .message("Sync already in progress")
         .syncedAt(LocalDateTime.now())
         .build();
   }
 
-  private SyncResultDto buildSuccessResult(SyncResult result, int totalFetched, long duration) {
-    return SyncResultDto.builder()
-        .success(!result.hasErrors())
-        .message(result.hasErrors() ? "Sync completed with errors" : "Sync completed successfully")
-        .syncedAt(LocalDateTime.now())
-        .statistics(SyncResultDto.SyncStatistics.builder()
-            .totalFetched(totalFetched)
-            .created(result.getCreated())
-            .updated(result.getUpdated())
-            .failed(result.getFailed())
-            .durationMs(duration)
-            .build())
-        .errors(result.hasErrors() ? result.getErrors() : null)
-        .build();
+  private SyncResultDto buildSuccessResult(SyncResult result, int totalFetched, long duration,
+      String taskId) {
+    return getSyncResultDto(result, totalFetched, duration, taskId);
   }
 
-  private SyncResultDto buildErrorResult(Exception e) {
+  private SyncResultDto buildErrorResult(Exception e, String taskId) {
     return SyncResultDto.builder()
+        .taskId(taskId)
         .success(false)
         .message("Critical error: " + e.getMessage())
         .syncedAt(LocalDateTime.now())
