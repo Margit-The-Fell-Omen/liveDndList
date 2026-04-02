@@ -10,6 +10,7 @@ import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
 import dev.ushki.livedndlist.repository.EquipmentRepository;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,11 +52,18 @@ public class EquipmentService {
       if (type != null) {
         stream = stream.filter(e -> e.getType() == type);
       }
-      if (minWeight != null) {
-        stream = stream.filter(e -> e.getWeight() != null && e.getWeight() >= minWeight);
+
+      boolean hasWeightFilter = minWeight != null || maxWeight != null;
+      if (hasWeightFilter) {
+        stream = stream.filter(e -> Objects.nonNull(e.getWeight()));
       }
+
+      if (minWeight != null) {
+        stream = stream.filter(e -> e.getWeight() >= minWeight);
+      }
+
       if (maxWeight != null) {
-        stream = stream.filter(e -> e.getWeight() != null && e.getWeight() <= maxWeight);
+        stream = stream.filter(e -> e.getWeight() <= maxWeight);
       }
 
       return stream
@@ -93,7 +101,6 @@ public class EquipmentService {
     });
   }
 
-  @Transactional
   public EquipmentResponse create(EquipmentRequest request) {
     Equipment equipment = equipmentMapper.toEntity(request);
     Equipment savedEquipment = equipmentRepository.save(equipment);
@@ -104,7 +111,6 @@ public class EquipmentService {
     return equipmentMapper.toResponse(savedEquipment);
   }
 
-  @Transactional
   public EquipmentResponse update(Long id, EquipmentRequest request) {
     Equipment equipment = equipmentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(EQUIPMENT_STRING, "id", id));
@@ -118,7 +124,6 @@ public class EquipmentService {
     return equipmentMapper.toResponse(savedEquipment);
   }
 
-  @Transactional
   public void delete(Long id) {
     if (!equipmentRepository.existsById(id)) {
       throw new ResourceNotFoundException(EQUIPMENT_STRING, "id", id);

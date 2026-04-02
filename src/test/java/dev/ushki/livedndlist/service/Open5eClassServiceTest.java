@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -23,6 +24,11 @@ import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -570,6 +576,290 @@ class Open5eClassServiceTest {
 
       assertThat(result).isNotNull();
       assertThat(result.getStatistics().getTotalFetched()).isEqualTo(1);
+    }
+  }
+
+  @Nested
+  @DisplayName("Concurrent Sync and Already In Progress Tests")
+  class ConcurrentSyncTests {
+
+    @SuppressWarnings("checkstyle:VariableDeclarationUsageDistance")
+    @Test
+    @DisplayName("Should return already in progress when sync is already running")
+    void shouldReturnAlreadyInProgressWhenSyncIsRunning() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<SyncResultDto> firstSync = executor.submit(() -> classService.syncAllClasses());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS), "First sync should start");
+
+      SyncResultDto secondResult = classService.syncAllClasses();
+
+      assertThat(secondResult).isNotNull();
+      assertThat(secondResult.isSuccess()).isFalse();
+      assertThat(secondResult.getMessage()).isEqualTo("Sync already in progress");
+      assertThat(secondResult.getTaskId()).isNotNull();
+      assertThat(secondResult.getSyncedAt()).isNotNull();
+
+      canProceed.countDown();
+      SyncResultDto firstResult = firstSync.get(5, TimeUnit.SECONDS);
+
+      assertThat(firstResult.isSuccess()).isTrue();
+
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should have valid UUID as task ID in already in progress result")
+    void shouldHaveValidUuidInAlreadyInProgressResult() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> classService.syncAllClasses());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncResultDto result = classService.syncAllClasses();
+
+      assertThat(result.getTaskId()).isNotNull();
+      assertThat(result.getTaskId())
+          .matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should not have statistics in already in progress result")
+    void shouldNotHaveStatisticsInAlreadyInProgressResult() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> classService.syncAllClasses());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncResultDto result = classService.syncAllClasses();
+
+      assertThat(result.getStatistics()).isNull();
+      assertThat(result.getErrors()).isNull();
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should allow new sync after previous one completes")
+    void shouldAllowNewSyncAfterPreviousOneCompletes() {
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenReturn(apiResponse);
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      SyncResultDto firstResult = classService.syncAllClasses();
+      assertThat(firstResult.isSuccess()).isTrue();
+
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.of(fighterEntity));
+
+      SyncResultDto secondResult = classService.syncAllClasses();
+      assertThat(secondResult.isSuccess()).isTrue();
+      assertThat(secondResult.getMessage()).isNotEqualTo("Sync already in progress");
+    }
+
+    @Test
+    @DisplayName("Should release progress tracker even when sync fails")
+    void shouldReleaseProgressTrackerEvenWhenSyncFails() {
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenThrow(new RuntimeException("API error"));
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
+
+      SyncResultDto firstResult = classService.syncAllClasses();
+      assertThat(firstResult.isSuccess()).isFalse();
+
+      org.mockito.Mockito.reset(apiClient, dndClassRepository, dndClassMapper, syncMetrics);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenReturn(apiResponse);
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      SyncResultDto secondResult = classService.syncAllClasses();
+      assertThat(secondResult.isSuccess()).isTrue();
+      assertThat(secondResult.getMessage()).isNotEqualTo("Sync already in progress");
+    }
+
+    @Test
+    @DisplayName("Should show in progress status during sync")
+    void shouldShowInProgressStatusDuringSync() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> classService.syncAllClasses());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncStatusDto status = classService.getSyncStatus();
+      assertThat(status.isInProgress()).isTrue();
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+
+      SyncStatusDto finalStatus = classService.getSyncStatus();
+      assertThat(finalStatus.isInProgress()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should not call syncMetrics when sync is already in progress")
+    void shouldNotCallSyncMetricsWhenAlreadyInProgress() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> classService.syncAllClasses());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      org.mockito.Mockito.clearInvocations(syncMetrics);
+
+      classService.syncAllClasses();
+
+      verify(syncMetrics, never()).startOperation();
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should not interact with database when sync is already in progress")
+    void shouldNotInteractWithDatabaseWhenAlreadyInProgress() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/classes/", Open5eClassResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
+      when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> classService.syncAllClasses());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      org.mockito.Mockito.clearInvocations(dndClassRepository);
+      org.mockito.Mockito.clearInvocations(apiClient);
+
+      SyncResultDto result = classService.syncAllClasses();
+
+      assertThat(result.getMessage()).isEqualTo("Sync already in progress");
+
+      verify(dndClassRepository, never()).findBySlug(anyString());
+      verify(dndClassRepository, never()).save(any());
+      verify(apiClient, never()).getByPath(anyString(), any());
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
     }
   }
 }

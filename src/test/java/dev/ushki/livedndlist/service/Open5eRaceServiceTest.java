@@ -1,9 +1,11 @@
 package dev.ushki.livedndlist.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -23,6 +25,11 @@ import dev.ushki.livedndlist.repository.RaceRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -642,6 +649,361 @@ class Open5eRaceServiceTest {
       assertThat(result).isNotNull();
       assertThat(result.isSuccess()).isTrue();
       assertThat(result.getStatistics().getTotalFetched()).isEqualTo(5);
+    }
+  }
+
+  @Nested
+  @DisplayName("Concurrent Sync and Already In Progress Tests")
+  class ConcurrentSyncTests {
+
+    @Test
+    @DisplayName("Should return already in progress when sync is already running")
+    void shouldReturnAlreadyInProgressWhenSyncIsRunning() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<SyncResultDto> firstSync = executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS), "First sync should start");
+
+      SyncResultDto secondResult = raceService.syncAllRaces();
+
+      assertThat(secondResult).isNotNull();
+      assertThat(secondResult.isSuccess()).isFalse();
+      assertThat(secondResult.getMessage()).isEqualTo("Sync already in progress");
+      assertThat(secondResult.getTaskId()).isNotNull();
+      assertThat(secondResult.getSyncedAt()).isNotNull();
+
+      canProceed.countDown();
+      SyncResultDto firstResult = firstSync.get(5, TimeUnit.SECONDS);
+
+      assertThat(firstResult.isSuccess()).isTrue();
+
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should have valid UUID as task ID in already in progress result")
+    void shouldHaveValidUuidInAlreadyInProgressResult() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncResultDto result = raceService.syncAllRaces();
+
+      assertThat(result.getTaskId()).isNotNull();
+      assertThat(result.getTaskId())
+          .matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should not have statistics in already in progress result")
+    void shouldNotHaveStatisticsInAlreadyInProgressResult() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncResultDto result = raceService.syncAllRaces();
+
+      assertThat(result.getStatistics()).isNull();
+      assertThat(result.getErrors()).isNull();
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should allow new sync after previous one completes")
+    void shouldAllowNewSyncAfterPreviousOneCompletes() {
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class)).thenReturn(apiResponse);
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      SyncResultDto firstResult = raceService.syncAllRaces();
+      assertThat(firstResult.isSuccess()).isTrue();
+
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.of(humanEntity));
+
+      SyncResultDto secondResult = raceService.syncAllRaces();
+      assertThat(secondResult.isSuccess()).isTrue();
+      assertThat(secondResult.getMessage()).isNotEqualTo("Sync already in progress");
+    }
+
+    @Test
+    @DisplayName("Should release progress tracker even when sync fails")
+    void shouldReleaseProgressTrackerEvenWhenSyncFails() {
+      java.util.concurrent.atomic.AtomicBoolean firstCall =
+          new java.util.concurrent.atomic.AtomicBoolean(true);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            if (firstCall.getAndSet(false)) {
+              throw new RuntimeException("API error");
+            }
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      SyncResultDto firstResult = raceService.syncAllRaces();
+      assertThat(firstResult.isSuccess()).isFalse();
+
+      SyncResultDto secondResult = raceService.syncAllRaces();
+      assertThat(secondResult.isSuccess()).isTrue();
+      assertThat(secondResult.getMessage()).isNotEqualTo("Sync already in progress");
+    }
+
+    @Test
+    @DisplayName("Should show in progress status during sync")
+    void shouldShowInProgressStatusDuringSync() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncStatusDto status = raceService.getSyncStatus();
+      assertThat(status.isInProgress()).isTrue();
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+
+      SyncStatusDto finalStatus = raceService.getSyncStatus();
+      assertThat(finalStatus.isInProgress()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should not call syncMetrics when sync is already in progress")
+    void shouldNotCallSyncMetricsWhenAlreadyInProgress() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      org.mockito.Mockito.clearInvocations(syncMetrics);
+
+      raceService.syncAllRaces();
+
+      verify(syncMetrics, never()).startOperation();
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should not interact with database when sync is already in progress")
+    void shouldNotInteractWithDatabaseWhenAlreadyInProgress() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      org.mockito.Mockito.clearInvocations(raceRepository);
+      org.mockito.Mockito.clearInvocations(apiClient);
+
+      SyncResultDto result = raceService.syncAllRaces();
+
+      assertThat(result.getMessage()).isEqualTo("Sync already in progress");
+
+      verify(raceRepository, never()).findBySlug(anyString());
+      verify(raceRepository, never()).save(any());
+      verify(apiClient, never()).getByPath(anyString(), any());
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should have syncedAt timestamp in already in progress result")
+    void shouldHaveSyncedAtTimestampInAlreadyInProgressResult() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      java.time.LocalDateTime beforeCall = java.time.LocalDateTime.now();
+      SyncResultDto result = raceService.syncAllRaces();
+      java.time.LocalDateTime afterCall = java.time.LocalDateTime.now();
+
+      assertThat(result.getSyncedAt()).isNotNull();
+      assertThat(result.getSyncedAt()).isAfterOrEqualTo(beforeCall.minusSeconds(1));
+      assertThat(result.getSyncedAt()).isBeforeOrEqualTo(afterCall.plusSeconds(1));
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    @Test
+    @DisplayName("Should generate unique task IDs for each rejected sync attempt")
+    void shouldGenerateUniqueTaskIdsForEachRejectedSyncAttempt() throws Exception {
+      CountDownLatch syncStarted = new CountDownLatch(1);
+      CountDownLatch canProceed = new CountDownLatch(1);
+
+      when(apiClient.getByPath("/races/", Open5eRaceResponse.class))
+          .thenAnswer(invocation -> {
+            syncStarted.countDown();
+            canProceed.await(5, TimeUnit.SECONDS);
+            return apiResponse;
+          });
+      when(apiClient.extractNextPath(null)).thenReturn(null);
+      when(raceRepository.findBySlug(anyString())).thenReturn(Optional.empty());
+      when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
+      when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
+      doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(() -> raceService.syncAllRaces());
+
+      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+
+      SyncResultDto firstRejected = raceService.syncAllRaces();
+      SyncResultDto secondRejected = raceService.syncAllRaces();
+
+      assertThat(firstRejected.getTaskId()).isNotEqualTo(secondRejected.getTaskId());
+
+      canProceed.countDown();
+      executor.shutdown();
+      executor.awaitTermination(5, TimeUnit.SECONDS);
     }
   }
 }

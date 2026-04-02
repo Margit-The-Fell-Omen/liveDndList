@@ -24,7 +24,7 @@
       </elementProp>
     </TestPlan>
     <hashTree>
-      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="Setup - Register and Login" enabled="true">
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="Setup - Register and Login">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">0</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -302,7 +302,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract User ID">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract User ID" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">USER_ID</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -448,7 +448,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Auth Header Manager">
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Auth Header Manager" enabled="true">
           <collectionProp name="HeaderManager.headers">
             <elementProp name="" elementType="Header">
               <stringProp name="Header.name">Content-Type</stringProp>
@@ -461,7 +461,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -499,7 +499,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Character ID">
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract Character ID" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">CHARACTER_ID</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.data.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
@@ -516,7 +516,7 @@ log.info(&quot;Stored SETUP_CHARACTER_ID: &quot; + vars.get(&quot;SETUP_CHARACTE
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
           <hashTree/>
-          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Log Character ID">
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Log Character ID" enabled="true">
             <stringProp name="script">String charId = vars.get(&quot;CHARACTER_ID&quot;);
 String responseCode = prev.getResponseCode();
 log.info(&quot;Character creation response code: &quot; + responseCode + &quot;, CHARACTER_ID: &quot; + charId);
@@ -529,7 +529,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </BeanShellPostProcessor>
           <hashTree/>
         </hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -586,7 +586,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters/{id}">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/characters/{id}" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -783,7 +783,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/{id}/equipment">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/{id}/equipment" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -834,7 +834,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/restore-hp">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST /api/v1/characters/restore-hp" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -848,7 +848,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}/spells/{spellId}">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}/spells/{spellId}" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -862,11 +862,11 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE /api/v1/characters/{id}/equipment/{equipmentId}" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/api/v1/characters/${CHARACTER_ID}</stringProp>
+          <stringProp name="HTTPSampler.path">/api/v1/characters/${CHARACTER_ID}/equipment/${CHAR_EQUIPMENT_ID}</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <stringProp name="HTTPSampler.method">DELETE</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -1041,7 +1041,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/spells/search">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/spells/search" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1173,7 +1173,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
         </ConstantTimer>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Equipment Management Tests">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Equipment Management Tests" enabled="true">
         <intProp name="ThreadGroup.num_threads">15</intProp>
         <intProp name="ThreadGroup.ramp_time">3</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -1197,7 +1197,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
           </collectionProp>
         </HeaderManager>
         <hashTree/>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/equipment">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /api/v1/equipment" enabled="true">
           <stringProp name="HTTPSampler.domain">${BASE_HOST}</stringProp>
           <stringProp name="HTTPSampler.port">${BASE_PORT}</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
@@ -1406,7 +1406,7 @@ if (!&quot;201&quot;.equals(responseCode)) {
         <stringProp name="filename"></stringProp>
       </ResultCollector>
       <hashTree/>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
         <boolProp name="ResultCollector.error_logging">false</boolProp>
         <objProp>
           <name>saveConfig</name>

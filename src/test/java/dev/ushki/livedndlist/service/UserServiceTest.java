@@ -486,6 +486,23 @@ class UserServiceTest {
 
       verify(userRepository, never()).save(any());
     }
+
+    @Test
+    @DisplayName("Should throw exception when updating with existing email")
+    void shouldThrowExceptionWhenUpdatingWithExistingEmail() {
+      UserUpdateRequest request = UserUpdateRequest.builder()
+          .email("existing@test.com")
+          .build();
+
+      when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+      when(userRepository.existsByEmail("existing@test.com")).thenReturn(true);
+
+      assertThatThrownBy(() -> userService.updateUser(1L, request))
+          .isInstanceOf(DuplicateResourceException.class)
+          .hasMessageContaining("Email already exists");
+
+      verify(userRepository, never()).save(any());
+    }
   }
 
   @Nested
