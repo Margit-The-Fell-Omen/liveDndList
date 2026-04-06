@@ -1,0 +1,25 @@
+.wrapper {
+  display: flex;
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-full);
+  padding: 2px;
+}
+
+.option {
+  padding: var(--space-xs) var(--space-sm);
+  border: none;
+  background: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: var(--font-size-sm);
+}
+
+.option:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.option.active {
+  background-color: var(--color-bg-secondary);
+  box-shadow: var(--shadow-sm);
+}

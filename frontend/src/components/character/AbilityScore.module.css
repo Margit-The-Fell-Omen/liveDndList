@@ -1,0 +1,83 @@
+.abilityScore {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.abbr {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-left: var(--space-xs);
+}
+
+.proficiency {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  background: none;
+  color: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.proficiency.proficient {
+  background-color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary);
+  color: white;
+}
+
+.scoreWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--color-border);
+}
+
+.scoreInput {
+  width: 100%;
+}
+
+.scoreInput input {
+  text-align: center;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  padding: var(--space-sm);
+}
+
+.modifier {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  padding: var(--space-xs) var(--space-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  min-width: 60px;
+  text-align: center;
+}
+
+.modifier[data-positive="true"] {
+  color: var(--color-success);
+}
+
+.modifier[data-positive="false"] {
+  color: var(--color-error);
+}

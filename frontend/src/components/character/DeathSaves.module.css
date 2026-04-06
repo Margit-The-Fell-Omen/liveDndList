@@ -1,0 +1,119 @@
+.deathSaves {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border-light);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-lg);
+  margin: 0;
+  color: var(--color-text-primary);
+}
+
+.resetButton {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-tertiary);
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.resetButton:hover {
+  background-color: var(--color-bg-hover);
+  border-color: var(--color-accent-primary);
+}
+
+.saves {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.saveRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  min-width: 80px;
+}
+
+.circles {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.circle {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+}
+
+.circle:hover {
+  transform: scale(1.1);
+}
+
+.circle.success {
+  border-color: var(--color-success);
+}
+
+.circle.success.filled {
+  background-color: var(--color-success);
+}
+
+.circle.failure {
+  border-color: var(--color-error);
+}
+
+.circle.failure.filled {
+  background-color: var(--color-error);
+}
+
+.statusMessage {
+  margin-top: var(--space-md);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 600;
+  animation: pulse 1s ease infinite;
+}
+
+.stable {
+  background-color: rgba(45, 90, 39, 0.2);
+  color: var(--color-success);
+}
+
+.dead {
+  background-color: rgba(139, 0, 0, 0.2);
+  color: var(--color-error);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

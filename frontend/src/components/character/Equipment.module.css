@@ -1,0 +1,128 @@
+.equipment {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  border: 1px solid var(--color-border-light);
+}
+
+.title {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-xl);
+  margin: 0 0 var(--space-md) 0;
+  color: var(--color-text-primary);
+}
+
+.currency {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.coin {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.coinLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.coin:nth-child(1) .coinLabel { color: var(--color-copper); }
+.coin:nth-child(2) .coinLabel { color: var(--color-silver); }
+.coin:nth-child(3) .coinLabel { color: #b0b0b0; }
+.coin:nth-child(4) .coinLabel { color: var(--color-gold); }
+.coin:nth-child(5) .coinLabel { color: #e5e4e2; }
+
+.coin input {
+  text-align: center;
+  width: 100%;
+}
+
+.addItem {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.emptyMessage {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  padding: var(--space-lg);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.itemName {
+  flex: 1;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.itemControls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.quantityInput {
+  width: 60px;
+}
+
+.quantityInput input {
+  text-align: center;
+  padding: var(--space-xs);
+}
+
+.removeButton {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background-color: transparent;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
+@media (max-width: 640px) {
+  .currency {
+    flex-wrap: wrap;
+  }
+
+  .coin {
+    flex: 0 0 calc(33.333% - var(--space-sm));
+  }
+}
