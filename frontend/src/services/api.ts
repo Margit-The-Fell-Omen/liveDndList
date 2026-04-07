@@ -1,23 +1,30 @@
 import type {
-  LoginCredentials,
-  RegisterData,
+  Archetype,
   AuthResponse,
-  User,
   Character,
+  CharacterClass,
+  CharacterCreateRequest,
+  CharacterUpdateRequest,
+  LoginCredentials,
+  Race,
+  RegisterData,
+  User,
 } from '@/types';
 
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
-/**
- * Get stored auth token
- */
 function getToken(): string | null {
   return localStorage.getItem('token');
 }
 
-/**
- * Base fetch wrapper with auth and error handling
- */
+// Wrapped response structure from your backend
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
+}
+
 async function fetchWithAuth<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getToken();
 
@@ -25,14 +32,13 @@ async function fetchWithAuth<T>(endpoint: string, options: RequestInit = {}): Pr
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
+      ...(token && {Authorization: `Bearer ${token}`}),
       ...options.headers,
     },
   };
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
-  // Handle 401 Unauthorized
   if (response.status === 401) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -40,65 +46,127 @@ async function fetchWithAuth<T>(endpoint: string, options: RequestInit = {}): Pr
     throw new Error('Session expired. Please log in again.');
   }
 
-  // Handle non-OK responses
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || `Request failed with status ${response.status}`);
+    const message = errorData.message || `Request failed with status ${response.status}`;
+    throw new Error(message);
   }
 
-  // Handle empty responses
   if (response.status === 204) {
     return null as T;
   }
 
-  return response.json();
+  const jsonResponse = await response.json();
+
+  // Unwrap if response has { success, data, message } structure
+  if (jsonResponse.success !== undefined && jsonResponse.data !== undefined) {
+    if (!jsonResponse.success) {
+      throw new Error(jsonResponse.message || 'Request failed');
+    }
+    return jsonResponse.data as T;
+  }
+
+  return jsonResponse as T;
 }
 
-/**
- * Auth API endpoints
- */
+// ═══════════════════════════════════════════════════════════════
+// AUTH API
+// ═══════════════════════════════════════════════════════════════
+
+interface BackendAuthData {
+  accessToken: string;
+  refreshToken?: string;
+  tokenType?: string;
+  expiresIn?: number;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    roles?: string[];
+    enabled?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+  };
+}
+
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(credentials),
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || 'Login failed');
+      const errorResponse = await response.json().catch(() => ({}));
+      throw new Error(errorResponse.message || 'Login failed');
     }
 
-    return response.json();
+    const jsonResponse: ApiResponse<BackendAuthData> = await response.json();
+
+    if (!jsonResponse.success) {
+      throw new Error(jsonResponse.message || 'Login failed');
+    }
+
+    const authData = jsonResponse.data;
+
+    return {
+      token: authData.accessToken,
+      user: {
+        id: authData.user.id,
+        username: authData.user.username,
+        email: authData.user.email,
+        roles: authData.user.roles,
+        enabled: authData.user.enabled,
+        createdAt: authData.user.createdAt,
+        updatedAt: authData.user.updatedAt,
+      },
+    };
   },
 
   register: async (userData: RegisterData): Promise<AuthResponse> => {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(userData),
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || 'Registration failed');
+      const errorResponse = await response.json().catch(() => ({}));
+      throw new Error(errorResponse.message || 'Registration failed');
     }
 
-    return response.json();
+    const jsonResponse: ApiResponse<BackendAuthData> = await response.json();
+
+    if (!jsonResponse.success) {
+      throw new Error(jsonResponse.message || 'Registration failed');
+    }
+
+    const authData = jsonResponse.data;
+
+    return {
+      token: authData.accessToken,
+      user: {
+        id: authData.user.id,
+        username: authData.user.username,
+        email: authData.user.email,
+        roles: authData.user.roles,
+        enabled: authData.user.enabled,
+        createdAt: authData.user.createdAt,
+        updatedAt: authData.user.updatedAt,
+      },
+    };
   },
 
   logout: async (): Promise<void> => {
     try {
-      await fetchWithAuth<void>('/auth/logout', { method: 'POST' });
+      await fetchWithAuth<void>('/auth/logout', {method: 'POST'});
+    } catch (error) {
+      console.error('Logout API call failed:', error);
     } finally {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
     }
-  },
-
-  refreshToken: async (): Promise<AuthResponse> => {
-    return fetchWithAuth<AuthResponse>('/auth/refresh', { method: 'POST' });
   },
 
   getCurrentUser: async (): Promise<User> => {
@@ -106,9 +174,33 @@ export const authApi = {
   },
 };
 
-/**
- * Characters API endpoints
- */
+// ═══════════════════════════════════════════════════════════════
+// REFERENCE DATA API (Races, Classes, Archetypes)
+// ═══════════════════════════════════════════════════════════════
+
+export const referenceDataApi = {
+  getRaces: async (): Promise<Race[]> => {
+    return fetchWithAuth<Race[]>('/races');
+  },
+
+  getClasses: async (): Promise<CharacterClass[]> => {
+    return fetchWithAuth<CharacterClass[]>('/classes');
+  },
+
+  getArchetypes: async (classId?: number): Promise<Archetype[]> => {
+    const endpoint = classId ? `/archetypes?classId=${classId}` : '/archetypes';
+    return fetchWithAuth<Archetype[]>(endpoint);
+  },
+
+  getArchetypesByClass: async (classId: number): Promise<Archetype[]> => {
+    return fetchWithAuth<Archetype[]>(`/classes/${classId}/archetypes`);
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// CHARACTERS API
+// ═══════════════════════════════════════════════════════════════
+
 export const charactersApi = {
   getAll: async (): Promise<Character[]> => {
     return fetchWithAuth<Character[]>('/characters');
@@ -118,28 +210,25 @@ export const charactersApi = {
     return fetchWithAuth<Character>(`/characters/${id}`);
   },
 
-  getLastEdited: async (): Promise<Character> => {
-    return fetchWithAuth<Character>('/characters/last-edited');
-  },
-
-  create: async (characterData: Partial<Character>): Promise<Character> => {
+  create: async (data: CharacterCreateRequest): Promise<Character> => {
+    console.log('Creating character with data:', data);
     return fetchWithAuth<Character>('/characters', {
       method: 'POST',
-      body: JSON.stringify(characterData),
+      body: JSON.stringify(data),
     });
   },
 
-  update: async (id: number, characterData: Character): Promise<Character> => {
+  update: async (id: number, data: CharacterUpdateRequest): Promise<Character> => {
     return fetchWithAuth<Character>(`/characters/${id}`, {
       method: 'PUT',
-      body: JSON.stringify(characterData),
+      body: JSON.stringify(data),
     });
   },
 
-  patch: async (id: number, partialData: Partial<Character>): Promise<Character> => {
+  patch: async (id: number, data: Partial<CharacterUpdateRequest>): Promise<Character> => {
     return fetchWithAuth<Character>(`/characters/${id}`, {
       method: 'PATCH',
-      body: JSON.stringify(partialData),
+      body: JSON.stringify(data),
     });
   },
 
@@ -148,43 +237,12 @@ export const charactersApi = {
       method: 'DELETE',
     });
   },
-
-  duplicate: async (id: number): Promise<Character> => {
-    return fetchWithAuth<Character>(`/characters/${id}/duplicate`, {
-      method: 'POST',
-    });
-  },
-
-  export: async (id: number, format: string = 'json'): Promise<unknown> => {
-    return fetchWithAuth<unknown>(`/characters/${id}/export?format=${format}`);
-  },
-};
-
-export interface UserPreferences {
-  theme: 'light' | 'dark' | 'system';
-  lastCharacterId?: number;
-}
-
-/**
- * User preferences API
- */
-export const preferencesApi = {
-  get: async (): Promise<UserPreferences> => {
-    return fetchWithAuth<UserPreferences>('/preferences');
-  },
-
-  update: async (preferences: Partial<UserPreferences>): Promise<UserPreferences> => {
-    return fetchWithAuth<UserPreferences>('/preferences', {
-      method: 'PUT',
-      body: JSON.stringify(preferences),
-    });
-  },
 };
 
 const api = {
   auth: authApi,
+  referenceData: referenceDataApi,
   characters: charactersApi,
-  preferences: preferencesApi,
 };
 
 export default api;

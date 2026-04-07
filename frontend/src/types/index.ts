@@ -6,6 +6,8 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  roles?: string[];
+  enabled?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -27,10 +29,60 @@ export interface AuthResponse {
 }
 
 // ═══════════════════════════════════════════════════════════════
+// REFERENCE DATA TYPES (from your backend)
+// ═══════════════════════════════════════════════════════════════
+
+export interface Race {
+  id: number;
+  name: string;
+  description?: string;
+  traits?: string[];
+  speed?: number;
+  // Add other fields your backend returns
+}
+
+export interface CharacterClass {
+  id: number;
+  name: string;
+  description?: string;
+  hitDie?: string;
+  primaryAbility?: string;
+  savingThrows?: string[];
+  // Add other fields your backend returns
+}
+
+export interface Archetype {
+  id: number;
+  name: string;
+  classId: number;
+  description?: string;
+  // Add other fields your backend returns
+}
+
+// ═══════════════════════════════════════════════════════════════
 // CHARACTER TYPES
 // ═══════════════════════════════════════════════════════════════
 
-export interface Abilities {
+export type CharacterAlignment =
+    | 'LAWFUL_GOOD'
+    | 'NEUTRAL_GOOD'
+    | 'CHAOTIC_GOOD'
+    | 'LAWFUL_NEUTRAL'
+    | 'TRUE_NEUTRAL'
+    | 'CHAOTIC_NEUTRAL'
+    | 'LAWFUL_EVIL'
+    | 'NEUTRAL_EVIL'
+    | 'CHAOTIC_EVIL';
+
+export type AbilityName =
+    | 'STRENGTH'
+    | 'DEXTERITY'
+    | 'CONSTITUTION'
+    | 'INTELLIGENCE'
+    | 'WISDOM'
+    | 'CHARISMA';
+
+export interface AbilityScores {
   strength: number;
   dexterity: number;
   constitution: number;
@@ -39,167 +91,106 @@ export interface Abilities {
   charisma: number;
 }
 
-export type AbilityKey = keyof Abilities;
-
-export interface SavingThrows {
-  strength: boolean;
-  dexterity: boolean;
-  constitution: boolean;
-  intelligence: boolean;
-  wisdom: boolean;
-  charisma: boolean;
-}
-
-export interface SkillProficiency {
-  proficient: boolean;
-  expertise: boolean;
-}
-
-export interface Skills {
-  acrobatics: SkillProficiency;
-  animalHandling: SkillProficiency;
-  arcana: SkillProficiency;
-  athletics: SkillProficiency;
-  deception: SkillProficiency;
-  history: SkillProficiency;
-  insight: SkillProficiency;
-  intimidation: SkillProficiency;
-  investigation: SkillProficiency;
-  medicine: SkillProficiency;
-  nature: SkillProficiency;
-  perception: SkillProficiency;
-  performance: SkillProficiency;
-  persuasion: SkillProficiency;
-  religion: SkillProficiency;
-  sleightOfHand: SkillProficiency;
-  stealth: SkillProficiency;
-  survival: SkillProficiency;
-}
-
-export type SkillKey = keyof Skills;
-
-export interface HitPoints {
-  maximum: number;
-  current: number;
-  temporary: number;
-}
-
-export interface HitDice {
-  total: number;
-  current: number;
-}
-
-export interface DeathSaves {
-  successes: number;
-  failures: number;
-}
-
-export interface Personality {
-  traits: string;
-  ideals: string;
-  bonds: string;
-  flaws: string;
-}
-
-export interface Currency {
-  copper: number;
-  silver: number;
-  electrum: number;
-  gold: number;
-  platinum: number;
-}
-
-export interface EquipmentItem {
-  id: number;
+// Request to create a character (matches your DTO)
+export interface CharacterCreateRequest {
   name: string;
-  quantity: number;
-  description?: string;
+  raceId: number;
+  alignment?: CharacterAlignment;
+  background?: string;
+  classId: number;
+  archetypeId?: number;
+  abilityScores: AbilityScores;
+  maxHitPoints: number;
+  portraitUrl?: string;
+  spellcastingAbility?: AbilityName;
 }
 
-export interface Feature {
-  id: number;
-  name: string;
-  description: string;
-  source?: string;
-}
-
-export interface Attack {
-  id: number;
-  name: string;
-  attackBonus: number;
-  damage: string;
-  damageType: string;
-  range?: string;
-  notes?: string;
-}
-
-export interface Spell {
-  id: number;
-  name: string;
-  level: number;
-  description?: string;
-  castingTime?: string;
-  range?: string;
-  components?: string;
-  duration?: string;
-  school?: string;
-  prepared?: boolean;
-}
-
-export interface SpellSlots {
-  1: number;
-  2: number;
-  3: number;
-  4: number;
-  5: number;
-  6: number;
-  7: number;
-  8: number;
-  9: number;
-}
-
-export interface Spells {
-  spellcastingAbility: AbilityKey | '';
-  spellSaveDC: number;
-  spellAttackBonus: number;
-  cantrips: Spell[];
-  slots: SpellSlots;
-  slotsUsed: SpellSlots;
-  known: Spell[];
-}
-
+// Character as returned from the backend (full data)
 export interface Character {
-  id: number | null;
+  id: number;
   name: string;
-  race: string;
-  class: string;
+
+  // References
+  race: Race;
+  characterClass: CharacterClass;
+  archetype?: Archetype;
+
+  // Basic info
   level: number;
-  background: string;
-  alignment: string;
   experiencePoints: number;
+  alignment?: CharacterAlignment;
+  background?: string;
+  portraitUrl?: string;
 
-  abilities: Abilities;
-  savingThrows: SavingThrows;
-  skills: Skills;
+  // Ability scores
+  abilityScores: AbilityScores;
 
+  // Combat stats
+  maxHitPoints: number;
+  currentHitPoints: number;
+  temporaryHitPoints: number;
   armorClass: number;
   initiative: number;
   speed: number;
-
-  hitPoints: HitPoints;
-  hitDice: HitDice;
-  deathSaves: DeathSaves;
-
   proficiencyBonus: number;
-  inspiration: boolean;
 
-  personality: Personality;
-  features: Feature[];
-  equipment: EquipmentItem[];
-  attacks: Attack[];
-  spells: Spells;
-  currency: Currency;
-  notes: string;
+  // Spellcasting
+  spellcastingAbility?: AbilityName;
+
+  // Other
+  inspiration: boolean;
+  notes?: string;
+
+  // Timestamps
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// For updating character (partial)
+export interface CharacterUpdateRequest {
+  name?: string;
+  raceId?: number;
+  alignment?: CharacterAlignment;
+  background?: string;
+  classId?: number;
+  archetypeId?: number;
+  abilityScores?: AbilityScores;
+  maxHitPoints?: number;
+  currentHitPoints?: number;
+  temporaryHitPoints?: number;
+  armorClass?: number;
+  initiative?: number;
+  speed?: number;
+  portraitUrl?: string;
+  spellcastingAbility?: AbilityName;
+  inspiration?: boolean;
+  notes?: string;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FORM STATE TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export interface CharacterFormData {
+  name: string;
+  raceId: number | null;
+  classId: number | null;
+  archetypeId: number | null;
+  alignment: CharacterAlignment | '';
+  background: string;
+  abilityScores: AbilityScores;
+  maxHitPoints: number;
+  portraitUrl: string;
+  spellcastingAbility: AbilityName | '';
+}
+
+export interface CharacterFormErrors {
+  name?: string;
+  raceId?: string;
+  classId?: string;
+  abilityScores?: string;
+  maxHitPoints?: string;
+  general?: string;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -309,15 +300,19 @@ export interface CharacterContextType {
   loading: boolean;
   saving: boolean;
   error: string | null;
-  hasUnsavedChanges: boolean;
+
+  // Reference data
+  races: Race[];
+  classes: CharacterClass[];
+  archetypes: Archetype[];
+
+  // Actions
   fetchCharacters: () => Promise<void>;
+  fetchReferenceData: () => Promise<void>;
   selectCharacter: (id: number) => Promise<void>;
-  createCharacter: (name?: string) => Promise<Character>;
-  updateCharacter: (updates: Partial<Character>) => void;
-  updateNestedCharacter: (path: string, value: unknown) => void;
-  saveCharacter: (character?: Character) => Promise<Character | undefined>;
+  createCharacter: (data: CharacterCreateRequest) => Promise<Character>;
+  updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
   deleteCharacter: (id: number) => Promise<void>;
-  duplicateCharacter: (id: number) => Promise<Character>;
   clearError: () => void;
 }
 
@@ -344,19 +339,3 @@ export interface ParsedDice {
 }
 
 export type ValidatorFn = (value: string) => string | null;
-
-// ═══════════════════════════════════════════════════════════════
-// CONSTANTS TYPES
-// ═══════════════════════════════════════════════════════════════
-
-export interface AbilityInfo {
-  key: AbilityKey;
-  name: string;
-  abbr: string;
-}
-
-export interface SkillInfo {
-  key: SkillKey;
-  name: string;
-  ability: AbilityKey;
-}

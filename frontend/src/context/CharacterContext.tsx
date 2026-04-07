@@ -1,9 +1,15 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import { charactersApi } from '@/services/api';
-import { useAuth } from './AuthContext';
-import { useDebounce } from '@/hooks/useDebounce';
-import { EMPTY_CHARACTER } from '@/utils/constants';
-import type { CharacterContextType, Character } from '@/types';
+import {createContext, type ReactNode, useCallback, useContext, useEffect, useState} from 'react';
+import {charactersApi, referenceDataApi} from '@/services/api';
+import {useAuth} from './AuthContext';
+import type {
+  Archetype,
+  Character,
+  CharacterClass,
+  CharacterContextType,
+  CharacterCreateRequest,
+  CharacterUpdateRequest,
+  Race,
+} from '@/types';
 
 const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
@@ -11,34 +17,59 @@ interface CharacterProviderProps {
   children: ReactNode;
 }
 
-export function CharacterProvider({ children }: CharacterProviderProps) {
-  const { isAuthenticated } = useAuth();
+export function CharacterProvider({children}: CharacterProviderProps) {
+  const {isAuthenticated} = useAuth();
+
+  // Characters
   const [characters, setCharacters] = useState<Character[]>([]);
   const [currentCharacter, setCurrentCharacter] = useState<Character | null>(null);
+
+  // Reference data
+  const [races, setRaces] = useState<Race[]>([]);
+  const [classes, setClasses] = useState<CharacterClass[]>([]);
+  const [archetypes, setArchetypes] = useState<Archetype[]>([]);
+
+  // State
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
 
-  // Debounced character for auto-save
-  const debouncedCharacter = useDebounce(currentCharacter, 2000);
-
-  // Fetch all characters when authenticated
+  // Fetch reference data and characters when authenticated
   useEffect(() => {
     if (isAuthenticated) {
+      fetchReferenceData();
       fetchCharacters();
     } else {
       setCharacters([]);
       setCurrentCharacter(null);
+      setRaces([]);
+      setClasses([]);
+      setArchetypes([]);
     }
   }, [isAuthenticated]);
 
-  // Auto-save when character changes (debounced)
-  useEffect(() => {
-    if (debouncedCharacter?.id && hasUnsavedChanges) {
-      saveCharacter(debouncedCharacter);
+  const fetchReferenceData = useCallback(async (): Promise<void> => {
+    try {
+      const [racesData, classesData, archetypesData] = await Promise.all([
+        referenceDataApi.getRaces(),
+        referenceDataApi.getClasses(),
+        referenceDataApi.getArchetypes(),
+      ]);
+
+      setRaces(racesData);
+      setClasses(classesData);
+      setArchetypes(archetypesData);
+
+      console.log('Reference data loaded:', {
+        races: racesData.length,
+        classes: classesData.length,
+        archetypes: archetypesData.length,
+      });
+    } catch (err) {
+      console.error('Failed to fetch reference data:', err);
+      // Don't set error state for reference data - it's not critical
     }
-  }, [debouncedCharacter, hasUnsavedChanges]);
+  }, []);
 
   const fetchCharacters = useCallback(async (): Promise<void> => {
     setLoading(true);
@@ -47,15 +78,9 @@ export function CharacterProvider({ children }: CharacterProviderProps) {
       const data = await charactersApi.getAll();
       setCharacters(data);
 
-      // Load last edited character if available
-      if (data.length > 0) {
-        try {
-          const lastEdited = await charactersApi.getLastEdited();
-          setCurrentCharacter(lastEdited);
-        } catch {
-          // If no last edited, load first character
-          setCurrentCharacter(data[0]);
-        }
+      // Select first character if available
+      if (data.length > 0 && !currentCharacter) {
+        setCurrentCharacter(data[0]);
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch characters';
@@ -63,7 +88,7 @@ export function CharacterProvider({ children }: CharacterProviderProps) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentCharacter]);
 
   const selectCharacter = useCallback(async (id: number): Promise<void> => {
     setLoading(true);
@@ -71,7 +96,6 @@ export function CharacterProvider({ children }: CharacterProviderProps) {
     try {
       const character = await charactersApi.getById(id);
       setCurrentCharacter(character);
-      setHasUnsavedChanges(false);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to load character';
       setError(message);
@@ -80,117 +104,61 @@ export function CharacterProvider({ children }: CharacterProviderProps) {
     }
   }, []);
 
-  const createCharacter = useCallback(async (name: string = 'New Character'): Promise<Character> => {
-    setLoading(true);
+  const createCharacter = useCallback(async (data: CharacterCreateRequest): Promise<Character> => {
+    setSaving(true);
     setError(null);
     try {
-      const newCharacter = await charactersApi.create({
-        ...EMPTY_CHARACTER,
-        name,
-      });
+      const newCharacter = await charactersApi.create(data);
       setCharacters((prev) => [...prev, newCharacter]);
       setCurrentCharacter(newCharacter);
-      setHasUnsavedChanges(false);
       return newCharacter;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to create character';
       setError(message);
       throw err;
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   }, []);
 
-  const updateCharacter = useCallback((updates: Partial<Character>): void => {
-    setCurrentCharacter((prev) => {
-      if (!prev) return prev;
-      return { ...prev, ...updates };
-    });
-    setHasUnsavedChanges(true);
-  }, []);
-
-  const updateNestedCharacter = useCallback((path: string, value: unknown): void => {
-    setCurrentCharacter((prev) => {
-      if (!prev) return prev;
-
-      const keys = path.split('.');
-      const newCharacter = { ...prev } as Record<string, unknown>;
-      let current: Record<string, unknown> = newCharacter;
-
-      for (let i = 0; i < keys.length - 1; i++) {
-        current[keys[i]] = { ...(current[keys[i]] as Record<string, unknown>) };
-        current = current[keys[i]] as Record<string, unknown>;
+  const updateCharacter = useCallback(async (id: number, data: CharacterUpdateRequest): Promise<Character> => {
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await charactersApi.update(id, data);
+      setCharacters((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      if (currentCharacter?.id === id) {
+        setCurrentCharacter(updated);
       }
+      return updated;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to update character';
+      setError(message);
+      throw err;
+    } finally {
+      setSaving(false);
+    }
+  }, [currentCharacter]);
 
-      current[keys[keys.length - 1]] = value;
-      return newCharacter as Character;
-    });
-    setHasUnsavedChanges(true);
-  }, []);
-
-  const saveCharacter = useCallback(
-    async (characterToSave: Character | null = currentCharacter): Promise<Character | undefined> => {
-      if (!characterToSave?.id) return;
-
-      setSaving(true);
-      setError(null);
-      try {
-        const saved = await charactersApi.update(characterToSave.id, characterToSave);
-        setCharacters((prev) => prev.map((c) => (c.id === saved.id ? saved : c)));
-        setCurrentCharacter(saved);
-        setHasUnsavedChanges(false);
-        return saved;
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to save character';
-        setError(message);
-        throw err;
-      } finally {
-        setSaving(false);
-      }
-    },
-    [currentCharacter]
-  );
-
-  const deleteCharacter = useCallback(
-    async (id: number): Promise<void> => {
-      setLoading(true);
-      setError(null);
-      try {
-        await charactersApi.delete(id);
-        setCharacters((prev) => prev.filter((c) => c.id !== id));
-
-        // If deleted character was current, switch to another or null
-        if (currentCharacter?.id === id) {
-          const remaining = characters.filter((c) => c.id !== id);
-          setCurrentCharacter(remaining.length > 0 ? remaining[0] : null);
-        }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to delete character';
-        setError(message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [currentCharacter, characters]
-  );
-
-  const duplicateCharacter = useCallback(async (id: number): Promise<Character> => {
+  const deleteCharacter = useCallback(async (id: number): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
-      const duplicated = await charactersApi.duplicate(id);
-      setCharacters((prev) => [...prev, duplicated]);
-      setCurrentCharacter(duplicated);
-      return duplicated;
+      await charactersApi.delete(id);
+      setCharacters((prev) => prev.filter((c) => c.id !== id));
+
+      if (currentCharacter?.id === id) {
+        const remaining = characters.filter((c) => c.id !== id);
+        setCurrentCharacter(remaining.length > 0 ? remaining[0] : null);
+      }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to duplicate character';
+      const message = err instanceof Error ? err.message : 'Failed to delete character';
       setError(message);
       throw err;
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentCharacter, characters]);
 
   const value: CharacterContextType = {
     characters,
@@ -198,15 +166,15 @@ export function CharacterProvider({ children }: CharacterProviderProps) {
     loading,
     saving,
     error,
-    hasUnsavedChanges,
+    races,
+    classes,
+    archetypes,
     fetchCharacters,
+    fetchReferenceData,
     selectCharacter,
     createCharacter,
     updateCharacter,
-    updateNestedCharacter,
-    saveCharacter,
     deleteCharacter,
-    duplicateCharacter,
     clearError: () => setError(null),
   };
 
