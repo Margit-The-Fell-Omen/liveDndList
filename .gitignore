@@ -40,7 +40,5 @@ logs/
 jmeter.log
 
 ### NIX ###
-flake.nix
 flake.lock
-.envrc
 .direnv/
