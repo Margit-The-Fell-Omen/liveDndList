@@ -7,6 +7,7 @@ import type {
   CharacterClass,
   CharacterContextType,
   CharacterCreateRequest,
+  CharacterSummary,
   CharacterUpdateRequest,
   Race,
 } from '@/types';
@@ -20,37 +21,22 @@ interface CharacterProviderProps {
 export function CharacterProvider({children}: CharacterProviderProps) {
   const {isAuthenticated} = useAuth();
 
-  // Characters
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const [characters, setCharacters] = useState<CharacterSummary[]>([]);
   const [currentCharacter, setCurrentCharacter] = useState<Character | null>(null);
 
-  // Reference data
   const [races, setRaces] = useState<Race[]>([]);
   const [classes, setClasses] = useState<CharacterClass[]>([]);
   const [archetypes, setArchetypes] = useState<Archetype[]>([]);
 
-  // State
   const [loading, setLoading] = useState<boolean>(false);
   const [saving, setSaving] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch reference data and characters when authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchReferenceData();
-      fetchCharacters();
-    } else {
-      setCharacters([]);
-      setCurrentCharacter(null);
-      setRaces([]);
-      setClasses([]);
-      setArchetypes([]);
-    }
-  }, [isAuthenticated]);
-
+  // FIX: This useCallback has no external dependencies. The array should be empty.
   const fetchReferenceData = useCallback(async (): Promise<void> => {
     try {
-      const [racesData, classesData, archetypesData] = await Promise.all([
+      // FIX: Use explicit tuple typing for the result of Promise.all. This is the most robust way to solve the type error.
+      const [racesData, classesData, archetypesData]: [Race[], CharacterClass[], Archetype[]] = await Promise.all([
         referenceDataApi.getRaces(),
         referenceDataApi.getClasses(),
         referenceDataApi.getArchetypes(),
@@ -59,36 +45,41 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       setRaces(racesData);
       setClasses(classesData);
       setArchetypes(archetypesData);
-
-      console.log('Reference data loaded:', {
-        races: racesData.length,
-        classes: classesData.length,
-        archetypes: archetypesData.length,
-      });
     } catch (err) {
       console.error('Failed to fetch reference data:', err);
-      // Don't set error state for reference data - it's not critical
     }
   }, []);
 
+  // FIX: This useCallback should not depend on `currentCharacter`. Its only job is to fetch the list.
   const fetchCharacters = useCallback(async (): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
-      const data = await charactersApi.getAll();
-      setCharacters(data);
-
-      // Select first character if available
-      if (data.length > 0 && !currentCharacter) {
-        setCurrentCharacter(data[0]);
-      }
+      const page = await charactersApi.getSummaries({sort: 'updatedAt,desc'});
+      setCharacters(page.content);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to fetch characters';
       setError(message);
     } finally {
       setLoading(false);
     }
-  }, [currentCharacter]);
+  }, []);
+
+  // FIX: The main useEffect hook now correctly includes the functions it calls in its dependency array.
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchReferenceData();
+      fetchCharacters();
+    } else {
+      // Clear all state on logout
+      setCharacters([]);
+      setCurrentCharacter(null);
+      setRaces([]);
+      setClasses([]);
+      setArchetypes([]);
+    }
+  }, [isAuthenticated, fetchCharacters, fetchReferenceData]);
+
 
   const selectCharacter = useCallback(async (id: number): Promise<void> => {
     setLoading(true);
@@ -104,12 +95,13 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, []);
 
+  // FIX: `createCharacter` and other mutation functions must depend on `fetchCharacters` since they call it.
   const createCharacter = useCallback(async (data: CharacterCreateRequest): Promise<Character> => {
     setSaving(true);
     setError(null);
     try {
       const newCharacter = await charactersApi.create(data);
-      setCharacters((prev) => [...prev, newCharacter]);
+      await fetchCharacters(); // Re-fetch the list
       setCurrentCharacter(newCharacter);
       return newCharacter;
     } catch (err) {
@@ -119,14 +111,14 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     } finally {
       setSaving(false);
     }
-  }, []);
+  }, [fetchCharacters]);
 
   const updateCharacter = useCallback(async (id: number, data: CharacterUpdateRequest): Promise<Character> => {
     setSaving(true);
     setError(null);
     try {
       const updated = await charactersApi.update(id, data);
-      setCharacters((prev) => prev.map((c) => (c.id === id ? updated : c)));
+      await fetchCharacters();
       if (currentCharacter?.id === id) {
         setCurrentCharacter(updated);
       }
@@ -138,19 +130,17 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     } finally {
       setSaving(false);
     }
-  }, [currentCharacter]);
+  }, [currentCharacter, fetchCharacters]);
 
   const deleteCharacter = useCallback(async (id: number): Promise<void> => {
     setLoading(true);
     setError(null);
     try {
       await charactersApi.delete(id);
-      setCharacters((prev) => prev.filter((c) => c.id !== id));
-
       if (currentCharacter?.id === id) {
-        const remaining = characters.filter((c) => c.id !== id);
-        setCurrentCharacter(remaining.length > 0 ? remaining[0] : null);
+        setCurrentCharacter(null);
       }
+      await fetchCharacters();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to delete character';
       setError(message);
@@ -158,7 +148,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     } finally {
       setLoading(false);
     }
-  }, [currentCharacter, characters]);
+  }, [currentCharacter, fetchCharacters]);
 
   const value: CharacterContextType = {
     characters,

@@ -107,6 +107,25 @@ public class CharacterController {
         characterService.getRecentCharacters(userDetails.getUsername()));
   }
 
+  @GetMapping("/mine")
+  @Operation(summary = "Get all user characters with full details",
+             description = "Retrieve a paginated list of all characters with their full details, owned by the authenticated user.")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Full character list retrieved successfully"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
+  })
+  public ApiResponse<PageResponse<CharacterSummaryResponse>> getMyCharacters(
+      @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails,
+      @Parameter(description = "Pagination and sorting parameters")
+      @PageableDefault(size = 10, sort = "updatedAt", direction = Sort.Direction.DESC)
+      Pageable pageable) {
+
+    PageResponse<CharacterSummaryResponse> page = characterService.getAllByUsername(
+        userDetails.getUsername(), 1, 20, pageable);
+
+    return ApiResponse.success(page);
+  }
+
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @Operation(summary = "Create new character", description = "Create a new D&D character")

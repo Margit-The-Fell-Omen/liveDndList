@@ -111,7 +111,7 @@ public class CharacterMapper {
     return CharacterSummaryResponse.builder()
         .id(character.getId())
         .name(character.getName())
-        .race(character.getRace())
+        .raceName(character.getRace() != null ? character.getRace().getName() : null)
         .classDisplay(classDisplay)
         .totalLevel(Hibernate.isInitialized(character.getClasses())
             ? character.getTotalLevel() : 0)

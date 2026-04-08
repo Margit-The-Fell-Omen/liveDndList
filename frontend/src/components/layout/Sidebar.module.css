@@ -1,5 +1,5 @@
 .sidebar {
-  position: fixed;
+  position: fixed; /* Keep it fixed on the side */
   left: 0;
   top: 0;
   height: 100vh;
@@ -8,40 +8,30 @@
   border-right: 1px solid var(--color-border-light);
   z-index: var(--z-sticky);
   transition: width var(--transition-normal);
-  overflow: hidden;
+  overflow: hidden; /* Hide content when collapsed */
 }
 
-.sidebar.expanded {
-  width: var(--sidebar-width);
-  box-shadow: var(--shadow-lg);
-}
-
-.expandButton {
-  position: absolute;
-  top: var(--space-md);
-  left: 50%;
-  transform: translateX(-50%);
-  background: none;
-  border: none;
-  padding: var(--space-sm);
-  cursor: pointer;
-  transition: transform var(--transition-fast);
-}
-
-.sidebar.expanded .expandButton {
-  transform: translateX(-50%) rotate(45deg);
-}
-
-.expandIcon {
-  font-size: 24px;
+/* On desktop, expanded state is triggered by hover */
+@media (min-width: 1024px) {
+  .sidebar.expanded {
+    width: var(--sidebar-width);
+    box-shadow: var(--shadow-lg);
+  }
 }
 
 .content {
-  width: var(--sidebar-width);
+  width: var(--sidebar-width); /* Always use the full width */
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: var(--space-xl) var(--space-md) var(--space-md);
+  opacity: 0; /* Hidden by default */
+  transition: opacity 0.1s ease-in;
+}
+
+.sidebar.expanded .content {
+  opacity: 1; /* Become visible when expanded */
+  transition: opacity 0.2s ease-in 0.1s; /* Delay opacity transition slightly */
 }
 
 .header {
@@ -161,47 +151,52 @@
   opacity: 1 !important;
 }
 
-.unsavedIndicator {
-  padding: var(--space-sm);
-  background-color: var(--color-warning);
-  color: var(--color-text-inverse);
-  text-align: center;
-  font-size: var(--font-size-sm);
-  border-radius: var(--radius-md);
-  margin-top: auto;
+/* ==================
+   MOBILE STYLES
+   ================== */
+.expandButton {
+  display: none; /* Hidden on desktop */
 }
 
 .overlay {
   display: none;
 }
 
-/* Mobile */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 0;
+    width: 0; /* Collapsed by default on mobile */
   }
 
   .sidebar.expanded {
-    width: 280px;
+    width: 280px; /* Full width when expanded on mobile */
+    box-shadow: var(--shadow-lg);
   }
 
   .expandButton {
-    display: block;
+    display: flex; /* Visible on mobile */
+    position: fixed;
+    top: var(--space-md);
     left: var(--space-md);
-    transform: none;
+    z-index: calc(var(--z-sticky) + 1); /* Above sidebar content */
     background-color: var(--color-accent-primary);
     color: white;
     border-radius: var(--radius-full);
     padding: var(--space-sm);
     width: 44px;
     height: 44px;
-    display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
   }
 
   .sidebar.expanded .expandButton {
-    left: calc(280px - 44px - var(--space-md));
+    transform: translateX(calc(280px - 44px - var(--space-md) - var(--space-md)));
+  }
+
+  .expandIcon {
+    font-size: 24px;
   }
 
   .overlay {
@@ -212,4 +207,13 @@
     z-index: calc(var(--z-sticky) - 1);
     animation: fadeIn 0.2s ease;
   }
-} 
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

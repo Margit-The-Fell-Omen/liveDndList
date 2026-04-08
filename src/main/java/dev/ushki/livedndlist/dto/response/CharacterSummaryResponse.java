@@ -1,6 +1,5 @@
 package dev.ushki.livedndlist.dto.response;
 
-import dev.ushki.livedndlist.entity.character.Race;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -21,8 +20,8 @@ public class CharacterSummaryResponse {
   @Schema(description = "Character name", example = "Aragorn")
   private String name;
 
-  @Schema(description = "Character race", example = "HUMAN")
-  private Race race;
+  @Schema(description = "Character race name", example = "Human")
+  private String raceName;
 
   @Schema(description = "Display string for class and level", example = "Ranger 5")
   private String classDisplay;

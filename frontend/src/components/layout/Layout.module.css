@@ -5,11 +5,10 @@
 
 .main {
   flex: 1;
-  margin-left: var(--sidebar-collapsed-width);
-  transition: margin-left var(--transition-normal);
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  min-width: 0; /* Prevents content from overflowing */
+  transition: margin-left var(--transition-normal); /* Animate the margin change */
 }
 
 .content {
@@ -18,6 +17,23 @@
   overflow-y: auto;
 }
 
+/* ==================
+   THE FIX
+   ================== */
+
+/* On desktop screens, push the main content over */
+@media (min-width: 1024px) {
+  .main {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+}
+
+/* When the sidebar is expanded on desktop, push it further */
+.main.sidebar-expanded {
+  margin-left: var(--sidebar-width);
+}
+
+/* On mobile, main content takes full width */
 @media (max-width: 1024px) {
   .main {
     margin-left: 0;
