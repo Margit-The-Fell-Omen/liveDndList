@@ -5,6 +5,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
   private final String secret;
+  @Getter
   private final long expirationMs;
 
   public JwtTokenProvider(
@@ -53,11 +55,16 @@ public class JwtTokenProvider {
     }
   }
 
-  public long getExpirationMs() {
-    return expirationMs;
-  }
-
   private SecretKey getKey() {
     return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+  }
+
+  public long getExpirationTimeFromToken(String token) {
+    return Jwts.parser()
+        .verifyWith(getKey())
+        .build()
+        .parseSignedClaims(token)
+        .getPayload()
+        .getExpiration().getTime();
   }
 }

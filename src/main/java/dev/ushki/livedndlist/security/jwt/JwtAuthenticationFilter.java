@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.security.jwt;
 
+import dev.ushki.livedndlist.service.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,12 +26,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
   private final JwtTokenProvider jwtTokenProvider;
   private final UserDetailsService userDetailsService;
+  private final TokenBlacklistService tokenBlacklistService;
 
   public JwtAuthenticationFilter(
       JwtTokenProvider jwtTokenProvider,
-      @Lazy UserDetailsService userDetailsService) {
+      @Lazy UserDetailsService userDetailsService,
+      @Lazy TokenBlacklistService tokenBlacklistService) {
     this.jwtTokenProvider = jwtTokenProvider;
     this.userDetailsService = userDetailsService;
+    this.tokenBlacklistService = tokenBlacklistService;
   }
 
   @Override
@@ -44,6 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       String token = header.substring(BEARER_PREFIX_LENGTH);
 
       if (jwtTokenProvider.validate(token)) {
+        if (tokenBlacklistService.isTokenBlacklisted(token)) {
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has been revoked");
+          return;
+        }
+
         String username = jwtTokenProvider.getUsername(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 

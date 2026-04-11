@@ -116,9 +116,8 @@ export const authApi = {
     }
     return {token: jsonResponse.data.accessToken, user: jsonResponse.data.user};
   },
-  // ... other auth methods
+
   register: async (userData: RegisterData): Promise<AuthResponse> => {
-    // implementation...
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -134,6 +133,7 @@ export const authApi = {
     }
     return {token: jsonResponse.data.accessToken, user: jsonResponse.data.user};
   },
+
   logout: async (): Promise<void> => {
     try {
       await fetchWithAuth<void>('/auth/logout', {method: 'POST'});
@@ -145,7 +145,7 @@ export const authApi = {
     }
   },
   getCurrentUser: async (): Promise<User> => {
-    return fetchWithAuth<User>('/auth/me');
+    return fetchWithAuth<User>('/users/me');
   },
 };
 
