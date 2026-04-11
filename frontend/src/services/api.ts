@@ -84,7 +84,7 @@ const buildPageQuery = (params: PageParams): string => {
 
 
 // =================================================================
-// API MODULES (CHANGED: Now using 'export const' for each)
+// API MODULES
 // =================================================================
 
 // ═══════════════════════════════════════════════════════════════
@@ -155,10 +155,10 @@ export const authApi = {
 
 export const referenceDataApi = {
   getRaces: async (): Promise<Race[]> => {
-    return fetchWithAuth<Race[]>('/races');
+    return fetchWithAuth<Race[]>('/sync/races/list');
   },
   getClasses: async (): Promise<CharacterClass[]> => {
-    return fetchWithAuth<CharacterClass[]>('/classes');
+    return fetchWithAuth<CharacterClass[]>('/sync/classes/list');
   },
   getArchetypes: async (classId?: number): Promise<Archetype[]> => {
     const endpoint = classId ? `/archetypes?classId=${classId}` : '/archetypes';

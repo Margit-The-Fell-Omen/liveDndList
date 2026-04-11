@@ -2,6 +2,7 @@ package dev.ushki.livedndlist.controller.sync;
 
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
+import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.entity.character.Race;
 import dev.ushki.livedndlist.repository.RaceRepository;
 import dev.ushki.livedndlist.service.Open5eRaceService;
@@ -33,65 +34,63 @@ public class RaceSyncController {
 
   @GetMapping("/status")
   @Operation(summary = "Get sync status")
-  public ResponseEntity<SyncStatusDto> getSyncStatus() {
-    return ResponseEntity.ok(raceSyncService.getSyncStatus());
+  public ApiResponse<SyncStatusDto> getSyncStatus() {
+    return ApiResponse.success(raceSyncService.getSyncStatus());
   }
 
   @PostMapping
   @Operation(summary = "Start synchronization of all races")
-  public ResponseEntity<SyncResultDto> syncAllRaces() {
+  public ApiResponse<SyncResultDto> syncAllRaces() {
     log.info("Received request to sync all races");
     SyncResultDto result = raceSyncService.syncAllRaces();
-    return ResponseEntity.ok(result);
+    return ApiResponse.success(result);
   }
 
   @PostMapping("/async")
   @Operation(summary = "Start asynchronous synchronization of all races")
-  public ResponseEntity<String> syncAllRacesAsync() {
+  public ApiResponse<String> syncAllRacesAsync() {
     log.info("Received request to async sync all races");
 
     SyncStatusDto status = raceSyncService.getSyncStatus();
     if (status.isInProgress()) {
-      return ResponseEntity.badRequest()
-          .body("Sync already in progress");
+      return ApiResponse.error("Sync already in progress");
     }
 
     CompletableFuture.runAsync(raceSyncService::syncAllRaces);
 
-    return ResponseEntity.accepted()
-        .body("Sync started. Check status at: GET /api/sync/races/status");
+    return ApiResponse.error("Sync started. Check status at: GET /api/sync/races/status");
   }
 
   @PostMapping("/{slug}")
   @Operation(summary = "Sync specific race by slug")
-  public ResponseEntity<SyncResultDto> syncRaceBySlug(@PathVariable String slug) {
+  public ApiResponse<SyncResultDto> syncRaceBySlug(@PathVariable String slug) {
     log.info("Received request to sync race: {}", slug);
     SyncResultDto result = raceSyncService.syncBySlug(slug);
-    return ResponseEntity.ok(result);
+    return ApiResponse.success(result);
   }
 
   @DeleteMapping
   @Operation(summary = "Delete all races from database")
-  public ResponseEntity<SyncResultDto> clearAllRaces() {
+  public ApiResponse<SyncResultDto> clearAllRaces() {
     log.info("Received request to delete all races");
     SyncResultDto result = raceSyncService.clearAll();
-    return ResponseEntity.ok(result);
+    return ApiResponse.success(result);
   }
 
   @GetMapping("/count")
   @Operation(summary = "Get race count in database")
-  public ResponseEntity<Long> getRaceCount() {
-    return ResponseEntity.ok(raceRepository.count());
+  public ApiResponse<Long> getRaceCount() {
+    return ApiResponse.success(raceRepository.count());
   }
 
   @GetMapping("/list")
   @Operation(summary = "Get list of all races from database")
-  public ResponseEntity<List<RaceSummary>> getAllRaces() {
+  public ApiResponse<List<RaceSummary>> getAllRaces() {
     List<Race> races = raceRepository.findAll();
     List<RaceSummary> summaries = races.stream()
         .map(r -> new RaceSummary(r.getId(), r.getName(), r.getSlug(), r.getSizeRaw()))
         .toList();
-    return ResponseEntity.ok(summaries);
+    return ApiResponse.success(summaries);
   }
 
   public record RaceSummary(Long id, String name, String slug, String size) {

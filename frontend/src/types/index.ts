@@ -4,9 +4,6 @@
 // UTILITY & PAGINATION TYPES
 // ═══════════════════════════════════════════════════════════════
 
-/**
- * Represents a paginated response from the backend API.
- */
 export interface Page<T> {
   content: T[];
   pageNumber: number;
