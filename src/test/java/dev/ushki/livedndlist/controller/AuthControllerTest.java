@@ -16,6 +16,7 @@ import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.security.jwt.JwtAuthenticationFilter;
 import dev.ushki.livedndlist.security.jwt.JwtTokenProvider;
 import dev.ushki.livedndlist.service.AuthService;
+import dev.ushki.livedndlist.service.TokenBlacklistService;
 import java.time.LocalDateTime;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,9 @@ class AuthControllerTest {
 
   @MockitoBean
   private AuthService authService;
+
+  @MockitoBean
+  private TokenBlacklistService tokenBlacklistService;
 
   @MockitoBean
   private JwtTokenProvider jwtTokenProvider;

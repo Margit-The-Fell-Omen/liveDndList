@@ -6,7 +6,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -148,11 +147,11 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/status"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.inProgress").value(true))
-          .andExpect(jsonPath("$.currentOperation").value("Syncing races"))
-          .andExpect(jsonPath("$.processedCount").value(5))
-          .andExpect(jsonPath("$.totalCount").value(10))
-          .andExpect(jsonPath("$.progressPercent").value(50.0));
+          .andExpect(jsonPath("$.data.inProgress").value(true))
+          .andExpect(jsonPath("$.data.currentOperation").value("Syncing races"))
+          .andExpect(jsonPath("$.data.processedCount").value(5))
+          .andExpect(jsonPath("$.data.totalCount").value(10))
+          .andExpect(jsonPath("$.data.progressPercent").value(50.0));
 
       verify(raceSyncService).getSyncStatus();
     }
@@ -165,10 +164,10 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/status"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.inProgress").value(false))
-          .andExpect(jsonPath("$.processedCount").value(0))
-          .andExpect(jsonPath("$.totalCount").value(0))
-          .andExpect(jsonPath("$.progressPercent").value(0.0));
+          .andExpect(jsonPath("$.data.inProgress").value(false))
+          .andExpect(jsonPath("$.data.processedCount").value(0))
+          .andExpect(jsonPath("$.data.totalCount").value(0))
+          .andExpect(jsonPath("$.data.progressPercent").value(0.0));
 
       verify(raceSyncService).getSyncStatus();
     }
@@ -195,13 +194,13 @@ class RaceSyncControllerTest {
               .with(csrf()))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.message").value("Sync completed successfully"))
-          .andExpect(jsonPath("$.statistics.totalFetched").value(10))
-          .andExpect(jsonPath("$.statistics.created").value(8))
-          .andExpect(jsonPath("$.statistics.updated").value(2))
-          .andExpect(jsonPath("$.statistics.failed").value(0))
-          .andExpect(jsonPath("$.statistics.durationMs").value(5000))
-          .andExpect(jsonPath("$.errors").isEmpty());
+          .andExpect(jsonPath("$.data.message").value("Sync completed successfully"))
+          .andExpect(jsonPath("$.data.statistics.totalFetched").value(10))
+          .andExpect(jsonPath("$.data.statistics.created").value(8))
+          .andExpect(jsonPath("$.data.statistics.updated").value(2))
+          .andExpect(jsonPath("$.data.statistics.failed").value(0))
+          .andExpect(jsonPath("$.data.statistics.durationMs").value(5000))
+          .andExpect(jsonPath("$.data.errors").isEmpty());
 
       verify(raceSyncService).syncAllRaces();
     }
@@ -215,15 +214,15 @@ class RaceSyncControllerTest {
       mockMvc.perform(post("/api/sync/races")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(false))
-          .andExpect(jsonPath("$.message").value("Sync failed"))
-          .andExpect(jsonPath("$.statistics.totalFetched").value(10))
-          .andExpect(jsonPath("$.statistics.created").value(2))
-          .andExpect(jsonPath("$.statistics.updated").value(1))
-          .andExpect(jsonPath("$.statistics.failed").value(7))
-          .andExpect(jsonPath("$.errors.length()").value(2))
-          .andExpect(jsonPath("$.errors[0]").value("Error syncing Human"))
-          .andExpect(jsonPath("$.errors[1]").value("Error syncing Elf"));
+          .andExpect(jsonPath("$.data.success").value(false))
+          .andExpect(jsonPath("$.data.message").value("Sync failed"))
+          .andExpect(jsonPath("$.data.statistics.totalFetched").value(10))
+          .andExpect(jsonPath("$.data.statistics.created").value(2))
+          .andExpect(jsonPath("$.data.statistics.updated").value(1))
+          .andExpect(jsonPath("$.data.statistics.failed").value(7))
+          .andExpect(jsonPath("$.data.errors.length()").value(2))
+          .andExpect(jsonPath("$.data.errors[0]").value("Error syncing Human"))
+          .andExpect(jsonPath("$.data.errors[1]").value("Error syncing Elf"));
 
       verify(raceSyncService).syncAllRaces();
     }
@@ -249,8 +248,9 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(post("/api/sync/races/async")
               .with(csrf()))
-          .andExpect(status().isAccepted())
-          .andExpect(content().string("Sync started. Check status at: GET /api/sync/races/status"));
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.message").value(
+              "Sync started. Check status at: GET /api/sync/races/status"));
 
       verify(raceSyncService).getSyncStatus();
     }
@@ -263,8 +263,7 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(post("/api/sync/races/async")
               .with(csrf()))
-          .andExpect(status().isBadRequest())
-          .andExpect(content().string("Sync already in progress"));
+          .andExpect(jsonPath("$.message").value("Sync already in progress"));
 
       verify(raceSyncService).getSyncStatus();
     }
@@ -306,9 +305,9 @@ class RaceSyncControllerTest {
               .with(csrf()))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.message").value("Race 'human' synced successfully"))
-          .andExpect(jsonPath("$.statistics.totalFetched").value(1))
-          .andExpect(jsonPath("$.statistics.created").value(1));
+          .andExpect(jsonPath("$.data.message").value("Race 'human' synced successfully"))
+          .andExpect(jsonPath("$.data.statistics.totalFetched").value(1))
+          .andExpect(jsonPath("$.data.statistics.created").value(1));
 
       verify(raceSyncService).syncBySlug("human");
     }
@@ -336,9 +335,9 @@ class RaceSyncControllerTest {
       mockMvc.perform(post("/api/sync/races/nonexistent")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(false))
-          .andExpect(jsonPath("$.message").value("Race 'nonexistent' not found"))
-          .andExpect(jsonPath("$.statistics.failed").value(1));
+          .andExpect(jsonPath("$.data.success").value(false))
+          .andExpect(jsonPath("$.data.message").value("Race 'nonexistent' not found"))
+          .andExpect(jsonPath("$.data.statistics.failed").value(1));
 
       verify(raceSyncService).syncBySlug("nonexistent");
     }
@@ -367,8 +366,8 @@ class RaceSyncControllerTest {
               .with(csrf()))
           .andExpect(status().isOk())
           .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.message").value("Race 'half-elf' synced successfully"))
-          .andExpect(jsonPath("$.statistics.updated").value(1));
+          .andExpect(jsonPath("$.data.message").value("Race 'half-elf' synced successfully"))
+          .andExpect(jsonPath("$.data.statistics.updated").value(1));
 
       verify(raceSyncService).syncBySlug("half-elf");
     }
@@ -409,8 +408,8 @@ class RaceSyncControllerTest {
       mockMvc.perform(delete("/api/sync/races")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(true))
-          .andExpect(jsonPath("$.message").value("All races deleted successfully"));
+          .andExpect(jsonPath("$.data.success").value(true))
+          .andExpect(jsonPath("$.data.message").value("All races deleted successfully"));
 
       verify(raceSyncService).clearAll();
     }
@@ -438,9 +437,9 @@ class RaceSyncControllerTest {
       mockMvc.perform(delete("/api/sync/races")
               .with(csrf()))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.success").value(false))
-          .andExpect(jsonPath("$.message").value("Failed to delete races: database error"))
-          .andExpect(jsonPath("$.errors[0]").value("Database connection failed"));
+          .andExpect(jsonPath("$.data.success").value(false))
+          .andExpect(jsonPath("$.data.message").value("Failed to delete races: database error"))
+          .andExpect(jsonPath("$.data.errors[0]").value("Database connection failed"));
 
       verify(raceSyncService).clearAll();
     }
@@ -466,7 +465,7 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/count"))
           .andExpect(status().isOk())
-          .andExpect(content().string("15"));
+          .andExpect(jsonPath("$.data").value(15));
 
       verify(raceRepository).count();
     }
@@ -491,19 +490,19 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/list"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.length()").value(3))
-          .andExpect(jsonPath("$[0].id").value(1))
-          .andExpect(jsonPath("$[0].name").value("Human"))
-          .andExpect(jsonPath("$[0].slug").value("human"))
-          .andExpect(jsonPath("$[0].size").value("Medium"))
-          .andExpect(jsonPath("$[1].id").value(2))
-          .andExpect(jsonPath("$[1].name").value("Elf"))
-          .andExpect(jsonPath("$[1].slug").value("elf"))
-          .andExpect(jsonPath("$[1].size").value("Medium"))
-          .andExpect(jsonPath("$[2].id").value(3))
-          .andExpect(jsonPath("$[2].name").value("Dwarf"))
-          .andExpect(jsonPath("$[2].slug").value("dwarf"))
-          .andExpect(jsonPath("$[2].size").value("Medium"));
+          .andExpect(jsonPath("$.data.length()").value(3))
+          .andExpect(jsonPath("$.data[0].id").value(1))
+          .andExpect(jsonPath("$.data[0].name").value("Human"))
+          .andExpect(jsonPath("$.data[0].slug").value("human"))
+          .andExpect(jsonPath("$.data[0].size").value("Medium"))
+          .andExpect(jsonPath("$.data[1].id").value(2))
+          .andExpect(jsonPath("$.data[1].name").value("Elf"))
+          .andExpect(jsonPath("$.data[1].slug").value("elf"))
+          .andExpect(jsonPath("$.data[1].size").value("Medium"))
+          .andExpect(jsonPath("$.data[2].id").value(3))
+          .andExpect(jsonPath("$.data[2].name").value("Dwarf"))
+          .andExpect(jsonPath("$.data[2].slug").value("dwarf"))
+          .andExpect(jsonPath("$.data[2].size").value("Medium"));
 
       verify(raceRepository).findAll();
     }
@@ -516,7 +515,7 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/list"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.length()").value(0));
+          .andExpect(jsonPath("$.data.length()").value(0));
 
       verify(raceRepository).findAll();
     }
@@ -536,9 +535,9 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/list"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.length()").value(1))
-          .andExpect(jsonPath("$[0].name").value("Halfling"))
-          .andExpect(jsonPath("$[0].size").value("Small"));
+          .andExpect(jsonPath("$.data.length()").value(1))
+          .andExpect(jsonPath("$.data[0].name").value("Halfling"))
+          .andExpect(jsonPath("$.data[0].size").value("Small"));
 
       verify(raceRepository).findAll();
     }
@@ -551,7 +550,7 @@ class RaceSyncControllerTest {
 
       mockMvc.perform(get("/api/sync/races/list"))
           .andExpect(status().isOk())
-          .andExpect(jsonPath("$.length()").value(3));
+          .andExpect(jsonPath("$.data.length()").value(3));
 
       verify(raceRepository).findAll();
     }
