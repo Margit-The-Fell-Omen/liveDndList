@@ -20,6 +20,7 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.character.DndClass;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
+import dev.ushki.livedndlist.repository.ArchetypeRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.util.List;
@@ -59,6 +60,7 @@ class Open5eClassServiceTest {
   private DndClass fighterEntity;
   private DndClass wizardEntity;
   private Open5eClassResponse apiResponse;
+  private ArchetypeRepository archetypeRepository;
 
   @BeforeEach
   void setUp() {
@@ -66,7 +68,8 @@ class Open5eClassServiceTest {
         dndClassRepository,
         dndClassMapper,
         apiClient,
-        syncMetrics
+        syncMetrics,
+        archetypeRepository
     );
 
     fighterDto = new Open5eClassDto();

@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.controller.sync;
 
+import dev.ushki.livedndlist.dto.open5e.Open5eArchetypeDto;
+import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
@@ -84,8 +86,15 @@ public class ClassSyncController {
 
   @GetMapping("/list")
   @Operation(summary = "Get list of all classes from database")
-  public ApiResponse<List<DndClass>> getAllClasses() {
-    List<DndClass> classes = dndClassRepository.findAll();
+  public ApiResponse<List<Open5eClassDto>> getAllClasses() {
+    List<Open5eClassDto> classes = classSyncService.getAllClasses();
     return ApiResponse.success(classes);
+  }
+
+  @GetMapping("/dndclass/{id}/archetypes")
+  @Operation(summary = "Get all archetypes of class by id")
+  public ApiResponse<List<Open5eArchetypeDto>> getArchetypesByClass(@PathVariable Long id) {
+    List<Open5eArchetypeDto> archetypes = classSyncService.getArchetypesByClass(id);
+    return ApiResponse.success(archetypes);
   }
 }

@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.controller.sync;
 
+import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
@@ -85,15 +86,8 @@ public class RaceSyncController {
 
   @GetMapping("/list")
   @Operation(summary = "Get list of all races from database")
-  public ApiResponse<List<RaceSummary>> getAllRaces() {
-    List<Race> races = raceRepository.findAll();
-    List<RaceSummary> summaries = races.stream()
-        .map(r -> new RaceSummary(r.getId(), r.getName(), r.getSlug(), r.getSizeRaw()))
-        .toList();
-    return ApiResponse.success(summaries);
-  }
-
-  public record RaceSummary(Long id, String name, String slug, String size) {
-
+  public ApiResponse<List<Open5eRaceDto>> getAllRaces() {
+    List<Open5eRaceDto> races = raceSyncService.getAllRaces();
+    return ApiResponse.success(races);
   }
 }

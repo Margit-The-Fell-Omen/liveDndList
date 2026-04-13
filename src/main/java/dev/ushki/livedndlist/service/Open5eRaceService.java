@@ -216,4 +216,10 @@ public class Open5eRaceService {
         .errors(List.of(e.getMessage()))
         .build();
   }
+
+  public List<Open5eRaceDto> getAllRaces() {
+    List<Race> races = raceRepository.findAll();
+    return races.stream()
+        .map(raceMapper::toDto).toList();
+  }
 }

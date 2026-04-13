@@ -1,13 +1,17 @@
 package dev.ushki.livedndlist.service;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
+import dev.ushki.livedndlist.dto.open5e.Open5eArchetypeDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5eClassResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
+import dev.ushki.livedndlist.entity.character.Archetype;
 import dev.ushki.livedndlist.entity.character.DndClass;
 import dev.ushki.livedndlist.enums.SyncAction;
+import dev.ushki.livedndlist.mapper.CharacterMapper;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
+import dev.ushki.livedndlist.repository.ArchetypeRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
@@ -33,6 +37,7 @@ public class Open5eClassService {
   private final DndClassMapper dndClassMapper;
   private final Open5eApiClient apiClient;
   private final SyncMetrics syncMetrics;
+  private final ArchetypeRepository archetypeRepository;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
 
@@ -231,5 +236,16 @@ public class Open5eClassService {
         .syncedAt(LocalDateTime.now())
         .errors(List.of(e.getMessage()))
         .build();
+  }
+
+  public List<Open5eClassDto> getAllClasses() {
+    List<DndClass> classes = dndClassRepository.findAll();
+    return classes.stream()
+        .map(dndClassMapper::toDto).toList();
+  }
+
+  public List<Open5eArchetypeDto> getArchetypesByClass(Long id) {
+    List<Archetype> archetypes = archetypeRepository.findByDndClassId(id);
+    return archetypes.stream().map(dndClassMapper::toArchetypeDto).toList();
   }
 }
