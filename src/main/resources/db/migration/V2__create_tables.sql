@@ -152,19 +152,19 @@ CREATE TABLE IF NOT EXISTS characters (
     updated_at TIMESTAMP WITHOUT TIME ZONE,
 
     -- Embedded AbilityScores
-    strength_score INTEGER NOT NULL DEFAULT 10,
-    dexterity_score INTEGER NOT NULL DEFAULT 10,
-    constitution_score INTEGER NOT NULL DEFAULT 10,
-    intelligence_score INTEGER NOT NULL DEFAULT 10,
-    wisdom_score INTEGER NOT NULL DEFAULT 10,
-    charisma_score INTEGER NOT NULL DEFAULT 10,
+    strength INTEGER NOT NULL DEFAULT 10,
+    dexterity INTEGER NOT NULL DEFAULT 10,
+    constitution INTEGER NOT NULL DEFAULT 10,
+    intelligence INTEGER NOT NULL DEFAULT 10,
+    wisdom INTEGER NOT NULL DEFAULT 10,
+    charisma INTEGER NOT NULL DEFAULT 10,
 
     -- Embedded DndCurrency
-    copper_pieces INTEGER DEFAULT 0,
-    silver_pieces INTEGER DEFAULT 0,
-    electrum_pieces INTEGER DEFAULT 0,
-    gold_pieces INTEGER DEFAULT 0,
-    platinum_pieces INTEGER DEFAULT 0,
+    copper INTEGER DEFAULT 0,
+    silver INTEGER DEFAULT 0,
+    electrum INTEGER DEFAULT 0,
+    gold INTEGER DEFAULT 0,
+    platinum INTEGER DEFAULT 0,
 
     CONSTRAINT fk_character_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_character_race FOREIGN KEY (race_id) REFERENCES races(id) ON DELETE RESTRICT

@@ -145,7 +145,8 @@ public class DndCharacter {
   private Set<Skill> skills = new HashSet<>();
 
   @ElementCollection
-  @CollectionTable(name = "character_saving_throws")
+  @CollectionTable(name = "character_saving_throws",
+      joinColumns = @JoinColumn(name = "character_id"))
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(name = "saving_throw_proficiencies", columnDefinition = "ability_type")

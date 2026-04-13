@@ -160,13 +160,10 @@ export const referenceDataApi = {
   getClasses: async (): Promise<CharacterClass[]> => {
     return fetchWithAuth<CharacterClass[]>('/sync/classes/list');
   },
-  getArchetypes: async (classId?: number): Promise<Archetype[]> => {
-    const endpoint = classId ? `/archetypes?classId=${classId}` : '/archetypes';
-    return fetchWithAuth<Archetype[]>(endpoint);
-  },
   getArchetypesByClass: async (classId: number): Promise<Archetype[]> => {
-    return fetchWithAuth<Archetype[]>(`/classes/${classId}/archetypes`);
-  },
+    const endpoint = `/dndclass/${classId}/archetypes`;
+    return fetchWithAuth<Archetype[]>(endpoint);
+  }
 };
 
 // ═══════════════════════════════════════════════════════════════
