@@ -7,18 +7,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.EqualsAndHashCode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "dnd_classes")
@@ -32,8 +30,7 @@ import java.util.List;
 public class DndClass {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "dnd_class_seq")
-  @SequenceGenerator(name = "dnd_class_seq", sequenceName = "dnd_class_sequence", allocationSize = 50)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
   private Long id;
 

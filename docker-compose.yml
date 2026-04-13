@@ -5,6 +5,12 @@ services:
       POSTGRES_DB: mydb
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
     ports:
       - "5432:5432"
     volumes:
@@ -15,15 +21,30 @@ services:
   app:
     build: .
     ports:
-      - "8080:8888"
+      - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_started
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mydb
       SPRING_DATASOURCE_USERNAME: myuser
       SPRING_DATASOURCE_PASSWORD: mypassword
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     networks:
       - app
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+     - app
 
 volumes:
   pgdata:

@@ -11,13 +11,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import java.util.ArrayList;
 
 @Entity
 @Table(name = "subraces")
@@ -55,23 +54,10 @@ public class Subrace {
   @Column(name = "document_url")
   private String documentUrl;
 
-  // Связь многие-к-одному с Race
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "race_id", nullable = false)
   private Race race;
 
-  // Связь один-ко-многим с ASI
   @OneToMany(mappedBy = "subrace", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<AbilityScoresIncrease> abilityScoreIncreases = new ArrayList<>();
-
-  // Вспомогательные методы
-  public void addAbilityScoreIncrease(AbilityScoresIncrease asi) {
-    abilityScoreIncreases.add(asi);
-    asi.setSubrace(this);
-  }
-
-  public void removeAbilityScoreIncrease(AbilityScoresIncrease asi) {
-    abilityScoreIncreases.remove(asi);
-    asi.setSubrace(null);
-  }
 }

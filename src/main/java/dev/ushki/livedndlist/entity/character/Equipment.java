@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
@@ -32,9 +31,7 @@ import org.hibernate.type.SqlTypes;
 public class Equipment {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "equipment_seq")
-  @SequenceGenerator(name = "equipment_seq", sequenceName = "equipment_sequence",
-      allocationSize = 50)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)

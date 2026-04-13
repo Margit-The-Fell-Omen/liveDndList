@@ -11,7 +11,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,8 +30,7 @@ import org.hibernate.type.SqlTypes;
 public class Skill {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "skill_seq")
-  @SequenceGenerator(name = "skill_seq", sequenceName = "skill_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)

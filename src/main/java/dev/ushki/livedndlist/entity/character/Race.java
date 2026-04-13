@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +25,7 @@ import lombok.NoArgsConstructor;
 public class Race {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "race_seq")
-  @SequenceGenerator(name = "race_seq", sequenceName = "race_sequence", allocationSize = 50)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)

@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -42,8 +41,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-  @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(unique = true, nullable = false)

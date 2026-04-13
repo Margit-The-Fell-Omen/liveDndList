@@ -24,7 +24,6 @@ import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -72,8 +71,7 @@ public class DndCharacter {
   private static final int DEFAULT_PROF_BONUS = 2;
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "character_seq")
-  @SequenceGenerator(name = "character_seq", sequenceName = "character_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
   private Long id;
 

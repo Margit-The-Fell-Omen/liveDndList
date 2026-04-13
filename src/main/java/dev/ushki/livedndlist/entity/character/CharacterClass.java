@@ -7,7 +7,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,8 +28,7 @@ import lombok.ToString;
 public class CharacterClass {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "class_seq")
-  @SequenceGenerator(name = "class_seq", sequenceName = "class_sequence", allocationSize = 50)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
