@@ -1,82 +1,112 @@
-import { type ChangeEvent } from 'react';
-import { useCharacter } from '@/context/CharacterContext';
-import { TextArea } from '@/components/common/Input';
+// src/components/character/Background.tsx
+
+import {type ChangeEvent} from 'react';
+import {useCharacter} from '@/context/CharacterContext';
+import {useDebouncedCallback} from '@/hooks/useDebounce';
+import {TextArea} from '@/components/common/Input';
 import styles from './Background.module.css';
 
+// A type helper for the keys we'll be updating
+type BackgroundField = 'personalityTraits' | 'ideals' | 'bonds' | 'flaws' | 'backstory' | 'notes';
+
 export function Background() {
-  const { currentCharacter, updateNestedCharacter } = useCharacter();
+  const {currentCharacter, updateCharacter} = useCharacter();
 
-  if (!currentCharacter) return null;
+  const debouncedUpdate = useDebouncedCallback(
+      (key: BackgroundField, value: string) => {
+        if (currentCharacter) {
+          updateCharacter(currentCharacter.id, {[key]: value});
+        }
+      },
+      500 // 500ms delay
+  );
 
-  const { personality } = currentCharacter;
+  if (!currentCharacter) {
+    return null;
+  }
+
+  // FIX 1: Destructure the correct top-level properties.
+  const {
+    personalityTraits,
+    ideals,
+    bonds,
+    flaws,
+    backstory,
+    notes
+  } = currentCharacter;
+
+  // Generic change handler for all text areas
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>, key: BackgroundField) => {
+    debouncedUpdate(key, e.target.value);
+  };
 
   return (
-    <div className={styles.background}>
-      <h3 className={styles.title}>Personality</h3>
+      <div className={styles.background}>
+        <h3 className={styles.title}>Personality & Backstory</h3>
 
-      <div className={styles.grid}>
-        <TextArea
-          label="Personality Traits"
-          value={personality.traits}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            updateNestedCharacter('personality.traits', e.target.value)
-          }
-          placeholder="Enter your character's personality traits..."
-          rows={3}
-          autoResize
-          fullWidth
-        />
+        <div className={styles.grid}>
+          {/* FIX 2: Bind each TextArea to its correct top-level property */}
+          <TextArea
+              label="Personality Traits"
+              defaultValue={personalityTraits}
+              onChange={(e) => handleChange(e, 'personalityTraits')}
+              placeholder="Enter your character's personality traits..."
+              rows={3}
+              autoResize
+              fullWidth
+          />
 
-        <TextArea
-          label="Ideals"
-          value={personality.ideals}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            updateNestedCharacter('personality.ideals', e.target.value)
-          }
-          placeholder="What ideals does your character believe in?"
-          rows={3}
-          autoResize
-          fullWidth
-        />
+          <TextArea
+              label="Ideals"
+              defaultValue={ideals}
+              onChange={(e) => handleChange(e, 'ideals')}
+              placeholder="What ideals does your character believe in?"
+              rows={3}
+              autoResize
+              fullWidth
+          />
 
-        <TextArea
-          label="Bonds"
-          value={personality.bonds}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            updateNestedCharacter('personality.bonds', e.target.value)
-          }
-          placeholder="What connections does your character have?"
-          rows={3}
-          autoResize
-          fullWidth
-        />
+          <TextArea
+              label="Bonds"
+              defaultValue={bonds}
+              onChange={(e) => handleChange(e, 'bonds')}
+              placeholder="What connections does your character have?"
+              rows={3}
+              autoResize
+              fullWidth
+          />
 
-        <TextArea
-          label="Flaws"
-          value={personality.flaws}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            updateNestedCharacter('personality.flaws', e.target.value)
-          }
-          placeholder="What are your character's flaws or weaknesses?"
-          rows={3}
-          autoResize
-          fullWidth
-        />
+          <TextArea
+              label="Flaws"
+              defaultValue={flaws}
+              onChange={(e) => handleChange(e, 'flaws')}
+              placeholder="What are your character's flaws or weaknesses?"
+              rows={3}
+              autoResize
+              fullWidth
+          />
+        </div>
+
+        <div className={styles.notes}>
+          <TextArea
+              label="Backstory"
+              defaultValue={backstory}
+              onChange={(e) => handleChange(e, 'backstory')}
+              placeholder="Your character's history..."
+              rows={6}
+              autoResize
+              fullWidth
+          />
+          <TextArea
+              label="Notes"
+              defaultValue={notes}
+              onChange={(e) => handleChange(e, 'notes')}
+              placeholder="Additional notes, session logs, etc."
+              rows={6}
+              autoResize
+              fullWidth
+          />
+        </div>
       </div>
-
-      <div className={styles.notes}>
-        <TextArea
-          label="Notes & Backstory"
-          value={currentCharacter.notes}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            updateNestedCharacter('notes', e.target.value)
-          }
-          placeholder="Additional notes, backstory, and other information..."
-          rows={6}
-          autoResize
-          fullWidth
-        />
-      </div>
-    </div>
   );
 }

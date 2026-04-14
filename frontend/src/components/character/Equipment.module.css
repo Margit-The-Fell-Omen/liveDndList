@@ -35,15 +35,29 @@
   color: var(--color-gold);
 }
 
-.coin:nth-child(1) .coinLabel { color: var(--color-copper); }
-.coin:nth-child(2) .coinLabel { color: var(--color-silver); }
-.coin:nth-child(3) .coinLabel { color: #b0b0b0; }
-.coin:nth-child(4) .coinLabel { color: var(--color-gold); }
-.coin:nth-child(5) .coinLabel { color: #e5e4e2; }
+.coin:nth-child(1) .coinLabel {
+  color: var(--color-copper);
+}
 
-.coin input {
+.coin:nth-child(2) .coinLabel {
+  color: var(--color-silver);
+}
+
+.coin:nth-child(3) .coinLabel {
+  color: #b0b0b0;
+}
+
+.coin:nth-child(4) .coinLabel {
+  color: var(--color-gold);
+}
+
+.coin:nth-child(5) .coinLabel {
+  color: #e5e4e2;
+}
+
+.coinInput input {
   text-align: center;
-  width: 100%;
+  padding: 0.4rem;
 }
 
 .addItem {

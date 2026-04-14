@@ -9,9 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,16 +41,8 @@ public class SecurityConfig {
     return config.getAuthenticationManager();
   }
 
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return web -> web.ignoring().requestMatchers(
-        "/swagger-ui/**",
-        "/swagger-ui.html",
-        "/v3/api-docs/**",
-        "/api-docs/**",       // Added based on your application.properties
-        "/api-docs"           // Added based on your application.properties
-    );
-  }
+  // NOTE: The WebSecurityCustomizer bean has been removed to avoid confusion.
+  // All rules are now centralized in the SecurityFilterChain.
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -62,24 +52,27 @@ public class SecurityConfig {
             .authenticationEntryPoint(jwtAuthenticationEntryPoint))
         .sessionManagement(sm -> sm
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(auth -> auth
+            // FIX: Create one comprehensive list of all public endpoints.
             .requestMatchers(
+                // --- Authentication ---
                 "/api/v1/auth/**",
-                "/api/v1/spells/**",
-                "/api/v1/equipment/**",
-                "/h2-console/**",
+
+                // --- All Swagger/OpenAPI related paths ---
                 "/swagger-ui.html",
                 "/swagger-ui/**",
-                "/api-docs/**",
-                "/api-docs"
+                "/v3/api-docs/**", // The default path for the API specification JSON
+                "/swagger-resources/**", // Another common path for swagger resources
+                "/api-docs/**" // A common custom path, included for safety
             ).permitAll()
-            .anyRequest().authenticated()
-        )
-        .headers(headers -> headers
-            .frameOptions(FrameOptionsConfig::disable))
-        .addFilterBefore(
-            jwtAuthenticationFilter,
-            UsernamePasswordAuthenticationFilter.class);
+
+            // After permitting the public paths, require authentication for all other /api/v1/ endpoints.
+            .requestMatchers("/api/v1/**").authenticated()
+
+            // For any other request not matched above, deny it. This is a secure default.
+            .anyRequest().denyAll()
+        );
 
     return http.build();
   }

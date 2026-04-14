@@ -5,7 +5,6 @@ import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
-import dev.ushki.livedndlist.entity.character.DndClass;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.Open5eClassService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/sync/classes")
+@RequestMapping("/api/v1/sync/classes")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Class Sync", description = "API for syncing classes from Open5e")

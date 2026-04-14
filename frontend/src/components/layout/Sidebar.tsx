@@ -1,3 +1,5 @@
+// src/components/layout/Sidebar.tsx
+
 import {useCharacter} from '@/context/CharacterContext';
 import {Button} from '@/components/common/Button';
 import {ConfirmModal} from '@/components/common/Modal';
@@ -10,7 +12,6 @@ interface DeleteModalState {
   id: number | null;
 }
 
-// Add props for expanded state
 interface SidebarProps {
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
@@ -18,7 +19,7 @@ interface SidebarProps {
 
 export function Sidebar({isExpanded, setIsExpanded}: SidebarProps) {
   const {
-    characters,
+    characters, // This is of type CharacterSummary[]
     currentCharacter,
     loading,
     selectCharacter,
@@ -35,20 +36,17 @@ export function Sidebar({isExpanded, setIsExpanded}: SidebarProps) {
     setDeleteModal({open: false, id: null});
   };
 
-  // Use a variable to decide when to expand on hover (desktop only)
   const isDesktop = window.innerWidth > 1024;
 
   return (
       <>
         <aside
             className={`${styles.sidebar} ${isExpanded ? styles.expanded : ''}`}
-            // Only expand on hover on desktop
             onMouseEnter={() => isDesktop && setIsExpanded(true)}
             onMouseLeave={() => isDesktop && setIsExpanded(false)}
         >
           <button
               className={styles.expandButton}
-              // On any device, this button toggles the state
               onClick={() => setIsExpanded(!isExpanded)}
               aria-label={isExpanded ? 'Collapse sidebar' : 'Expand sidebar'}
           >
@@ -73,16 +71,13 @@ export function Sidebar({isExpanded, setIsExpanded}: SidebarProps) {
             </div>
 
             <nav className={styles.characterList}>
-              {characters.length === 0 ? (
-                  <p className={styles.emptyMessage}>No characters yet. Create your first hero!</p>
+              {characters.length === 0 && !loading ? (
+                  <p className={styles.emptyMessage}>No characters yet.</p>
               ) : (
-                  characters.map((character) => (
+                  characters.map((character) => ( // `character` is a CharacterSummary
                       <div
                           key={character.id}
-                          className={`
-                    ${styles.characterItem}
-                    ${currentCharacter?.id === character.id ? styles.active : ''}
-                  `}
+                          className={`${styles.characterItem} ${currentCharacter?.id === character.id ? styles.active : ''}`}
                       >
                         <button
                             className={styles.characterButton}
@@ -93,8 +88,9 @@ export function Sidebar({isExpanded, setIsExpanded}: SidebarProps) {
                           </div>
                           <div className={styles.characterInfo}>
                             <span className={styles.characterName}>{character.name}</span>
+                            {/* FIX: Use the properties from CharacterSummary */}
                             <span className={styles.characterMeta}>
-                        {character.race?.name} {character.characterClass?.name} Lvl {character.level || 1}
+                        {character.raceName} {character.classDisplay}
                       </span>
                           </div>
                         </button>
@@ -109,13 +105,14 @@ export function Sidebar({isExpanded, setIsExpanded}: SidebarProps) {
                       </div>
                   ))
               )}
+              {loading && <p className={styles.emptyMessage}>Loading...</p>}
             </nav>
           </div>
         </aside>
 
-        {/* Show overlay only on mobile when expanded */}
-        {!isDesktop && isExpanded &&
-            <div className={styles.overlay} onClick={() => setIsExpanded(false)}/>}
+        {!isDesktop && isExpanded && (
+            <div className={styles.overlay} onClick={() => setIsExpanded(false)}/>
+        )}
 
         <ConfirmModal
             isOpen={deleteModal.open}

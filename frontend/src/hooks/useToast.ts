@@ -1,7 +1,19 @@
-import { useState, useCallback } from 'react';
-import type { ToastData } from '@/types';
+// src/hooks/useToast.ts
 
-type ToastType = 'success' | 'error' | 'warning' | 'info';
+import {useCallback, useState} from 'react';
+
+// ===============================================================
+// LOCAL TYPE DEFINITIONS
+// ===============================================================
+
+// FIX 1: Define the types needed by this hook directly in the file.
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export interface ToastData {
+  id: number;
+  message: string;
+  type: ToastType;
+}
 
 interface UseToastReturn {
   toasts: ToastData[];
@@ -14,28 +26,38 @@ interface UseToastReturn {
   removeToast: (id: number) => void;
 }
 
+
+// ===============================================================
+// THE CUSTOM HOOK
+// ===============================================================
+
 export function useToast(): UseToastReturn {
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
   const removeToast = useCallback((id: number) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   }, []);
 
   const addToast = useCallback(
-    (message: string, type: ToastType = 'info', duration: number = 5000): number => {
-      const id = Date.now() + Math.random();
+      (message: string, type: ToastType = 'info', duration: number = 5000): number => {
+        const id = Date.now() + Math.random();
 
-      setToasts((prev) => [...prev, { id, message, type }]);
+        // FIX 2: Create the new toast object with the correct type before setting state.
+        // This helps TypeScript understand that the object conforms to the ToastData interface.
+        const newToast: ToastData = {id, message, type};
 
-      if (duration > 0) {
-        setTimeout(() => {
-          removeToast(id);
-        }, duration);
-      }
+        setToasts((prevToasts) => [...prevToasts, newToast]);
 
-      return id;
-    },
-    [removeToast]
+        if (duration > 0) {
+          // Use a stable reference to removeToast inside the timeout
+          setTimeout(() => {
+            setToasts((currentToasts) => currentToasts.filter((t) => t.id !== id));
+          }, duration);
+        }
+
+        return id;
+      },
+      [] // removeToast is not needed as a dependency if we update state functionally like above
   );
 
   const toast = {
@@ -45,5 +67,5 @@ export function useToast(): UseToastReturn {
     info: (message: string, duration?: number) => addToast(message, 'info', duration),
   };
 
-  return { toasts, toast, removeToast };
+  return {toasts, toast, removeToast};
 }

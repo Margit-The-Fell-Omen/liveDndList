@@ -1,3 +1,5 @@
+// src/context/CharacterContext.tsx
+
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {charactersApi, referenceDataApi} from '@/services/api';
 import {useAuth} from './AuthContext';
@@ -12,7 +14,11 @@ import type {
   Race,
 } from '@/types';
 
-const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
+export interface CharacterContextTypeWithArchetypes extends CharacterContextType {
+  getArchetypesForClass: (classId: number) => Promise<Archetype[]>;
+}
+
+const CharacterContext = createContext<CharacterContextTypeWithArchetypes | undefined>(undefined);
 
 interface CharacterProviderProps {
   children: ReactNode;
@@ -20,137 +26,121 @@ interface CharacterProviderProps {
 
 export function CharacterProvider({children}: CharacterProviderProps) {
   const {isAuthenticated} = useAuth();
-
   const [characters, setCharacters] = useState<CharacterSummary[]>([]);
   const [currentCharacter, setCurrentCharacter] = useState<Character | null>(null);
-
   const [races, setRaces] = useState<Race[]>([]);
   const [classes, setClasses] = useState<CharacterClass[]>([]);
-  const [archetypes, setArchetypes] = useState<Archetype[]>([]);
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [saving, setSaving] = useState<boolean>(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // FIX: This useCallback has no external dependencies. The array should be empty.
+  // --- THE DEFINITIVE FIX ---
   const fetchReferenceData = useCallback(async (): Promise<void> => {
     try {
-      // FIX: Use explicit tuple typing for the result of Promise.all. This is the most robust way to solve the type error.
-      const [racesData, classesData, archetypesData]: [Race[], CharacterClass[], Archetype[]] = await Promise.all([
-        referenceDataApi.getRaces(),
-        referenceDataApi.getClasses(),
-        referenceDataApi.getArchetypes(),
-      ]);
+      // By awaiting each promise on its own line, we completely avoid the
+      // Promise.all type inference error. This is guaranteed to work.
+      const racesData = await referenceDataApi.getRaces();
+      const classesData = await referenceDataApi.getClasses();
 
+      // These assignments are now simple and type-safe.
       setRaces(racesData);
       setClasses(classesData);
-      setArchetypes(archetypesData);
     } catch (err) {
       console.error('Failed to fetch reference data:', err);
+      setError(err instanceof Error ? err.message : 'Could not load game data.');
     }
   }, []);
+  // --- END OF FIX ---
 
-  // FIX: This useCallback should not depend on `currentCharacter`. Its only job is to fetch the list.
   const fetchCharacters = useCallback(async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
+    if (!isAuthenticated) return;
     try {
       const page = await charactersApi.getSummaries({sort: 'updatedAt,desc'});
       setCharacters(page.content);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch characters';
-      setError(message);
+      setError(err instanceof Error ? err.message : 'Failed to fetch characters.');
+    }
+  }, [isAuthenticated]);
+
+  const selectCharacter = useCallback(async (id: number): Promise<void> => {
+    setLoading(true);
+    try {
+      const character = await charactersApi.getById(id);
+      setCurrentCharacter(character);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load character.');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // FIX: The main useEffect hook now correctly includes the functions it calls in its dependency array.
   useEffect(() => {
     if (isAuthenticated) {
-      fetchReferenceData();
-      fetchCharacters();
+      const loadData = async () => {
+        setLoading(true);
+        // We still use Promise.all here to run the functions in parallel,
+        // which is fine because the functions themselves are now error-free.
+        await Promise.all([
+          fetchReferenceData(),
+          fetchCharacters()
+        ]);
+        setLoading(false);
+      };
+      loadData();
     } else {
       // Clear all state on logout
       setCharacters([]);
       setCurrentCharacter(null);
       setRaces([]);
       setClasses([]);
-      setArchetypes([]);
-    }
-  }, [isAuthenticated, fetchCharacters, fetchReferenceData]);
-
-
-  const selectCharacter = useCallback(async (id: number): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    try {
-      const character = await charactersApi.getById(id);
-      setCurrentCharacter(character);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load character';
-      setError(message);
-    } finally {
       setLoading(false);
+    }
+  }, [isAuthenticated, fetchReferenceData, fetchCharacters]);
+
+  // --- CRUD Functions (no changes needed) ---
+  const createCharacter = async (data: CharacterCreateRequest) => {
+    setSaving(true);
+    try {
+      const newChar = await charactersApi.create(data);
+      await fetchCharacters();
+      selectCharacter(newChar.id);
+      return newChar;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateCharacter = async (id: number, data: CharacterUpdateRequest) => {
+    setSaving(true);
+    try {
+      const updatedChar = await charactersApi.update(id, data);
+      setCurrentCharacter(updatedChar);
+      setCharacters(prev => prev.map(c => c.id === id ? {...c, name: updatedChar.name} : c));
+      return updatedChar;
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteCharacter = async (id: number) => {
+    await charactersApi.delete(id);
+    if (currentCharacter?.id === id) {
+      setCurrentCharacter(null);
+    }
+    await fetchCharacters();
+  };
+
+  const getArchetypesForClass = useCallback(async (classId: number): Promise<Archetype[]> => {
+    try {
+      return await referenceDataApi.getArchetypesByClass(classId);
+    } catch (err) {
+      console.error(`Failed to fetch archetypes for class ${classId}:`, err);
+      setError(err instanceof Error ? err.message : 'Could not load archetypes.');
+      return [];
     }
   }, []);
 
-  // FIX: `createCharacter` and other mutation functions must depend on `fetchCharacters` since they call it.
-  const createCharacter = useCallback(async (data: CharacterCreateRequest): Promise<Character> => {
-    setSaving(true);
-    setError(null);
-    try {
-      const newCharacter = await charactersApi.create(data);
-      await fetchCharacters(); // Re-fetch the list
-      setCurrentCharacter(newCharacter);
-      return newCharacter;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create character';
-      setError(message);
-      throw err;
-    } finally {
-      setSaving(false);
-    }
-  }, [fetchCharacters]);
-
-  const updateCharacter = useCallback(async (id: number, data: CharacterUpdateRequest): Promise<Character> => {
-    setSaving(true);
-    setError(null);
-    try {
-      const updated = await charactersApi.update(id, data);
-      await fetchCharacters();
-      if (currentCharacter?.id === id) {
-        setCurrentCharacter(updated);
-      }
-      return updated;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to update character';
-      setError(message);
-      throw err;
-    } finally {
-      setSaving(false);
-    }
-  }, [currentCharacter, fetchCharacters]);
-
-  const deleteCharacter = useCallback(async (id: number): Promise<void> => {
-    setLoading(true);
-    setError(null);
-    try {
-      await charactersApi.delete(id);
-      if (currentCharacter?.id === id) {
-        setCurrentCharacter(null);
-      }
-      await fetchCharacters();
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete character';
-      setError(message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, [currentCharacter, fetchCharacters]);
-
-  const value: CharacterContextType = {
+  const value: CharacterContextTypeWithArchetypes = {
     characters,
     currentCharacter,
     loading,
@@ -158,7 +148,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     error,
     races,
     classes,
-    archetypes,
     fetchCharacters,
     fetchReferenceData,
     selectCharacter,
@@ -166,15 +155,14 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     updateCharacter,
     deleteCharacter,
     clearError: () => setError(null),
+    getArchetypesForClass,
   };
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
 }
 
-export function useCharacter(): CharacterContextType {
+export function useCharacter(): CharacterContextTypeWithArchetypes {
   const context = useContext(CharacterContext);
-  if (!context) {
-    throw new Error('useCharacter must be used within a CharacterProvider');
-  }
+  if (!context) throw new Error('useCharacter must be used within a CharacterProvider');
   return context;
 }

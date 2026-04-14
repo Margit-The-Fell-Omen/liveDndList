@@ -1,68 +1,75 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from '@/context/AuthContext';
-import { ThemeProvider } from '@/context/ThemeContext';
-import { CharacterProvider } from '@/context/CharacterContext';
-import { useToast } from '@/hooks/useToast';
-import { ToastContainer } from '@/components/common/Toast';
-import { Layout } from '@/components/layout/Layout';
-import { AuthPage } from '@/pages/AuthPage';
-import { MainPage } from '@/pages/MainPage';
-import './App.css';
+// src/App.tsx
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
+import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
+import {AuthProvider, useAuth} from './context/AuthContext';
+import {ThemeProvider} from './context/ThemeContext';
+import {CharacterProvider} from './context/CharacterContext';
+import {Layout} from './components/layout/Layout';
+import {MainPage} from './pages/MainPage';
+import {AuthPage} from './pages/AuthPage';
 
-function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+/**
+ * A wrapper component that protects routes requiring authentication.
+ * If the user is not authenticated, it redirects them to the login page.
+ */
+function ProtectedRoute({children}: { children: React.ReactNode }) {
+  const {isAuthenticated, loading} = useAuth();
 
   if (loading) {
-    return <div className="loading-screen">Loading...</div>;
+    // Show a global loader while checking auth status
+    return <div>Loading session...</div>;
   }
 
-  return isAuthenticated ? <>{children}</> : <Navigate to="/auth" replace />;
+  if (!isAuthenticated) {
+    // Redirect to the login page, saving the location they tried to access
+    return <Navigate to="/auth" replace/>;
+  }
+
+  // If authenticated, render the requested component
+  return <>{children}</>;
 }
 
+/**
+ * Defines the application's routes.
+ */
 function AppRoutes() {
-  const { isAuthenticated } = useAuth();
-  const { toasts, removeToast } = useToast();
-
   return (
-    <>
       <Routes>
-        <Route
-          path="/auth"
-          element={isAuthenticated ? <Navigate to="/" replace /> : <AuthPage />}
-        />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <CharacterProvider>
-                <Layout>
-                  <MainPage />
-                </Layout>
-              </CharacterProvider>
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+        {/* Public route for authentication */}
+        <Route path="/auth" element={<AuthPage/>}/>
 
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </>
+        {/* Protected route for the main application */}
+        <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <MainPage/>
+                </Layout>
+              </ProtectedRoute>
+            }
+        />
+
+        {/* Optional: Add a catch-all redirect for any other path */}
+        <Route path="*" element={<Navigate to="/" replace/>}/>
+      </Routes>
   );
 }
 
+/**
+ * The main App component, responsible for setting up providers.
+ */
 function App() {
   return (
-    <BrowserRouter>
-      <ThemeProvider>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </ThemeProvider>
-    </BrowserRouter>
+      <BrowserRouter>
+        <ThemeProvider>
+          <AuthProvider>
+            <CharacterProvider>
+              <AppRoutes/>
+            </CharacterProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </BrowserRouter>
   );
 }
 

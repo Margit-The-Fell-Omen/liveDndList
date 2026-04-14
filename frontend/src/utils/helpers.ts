@@ -1,4 +1,33 @@
-import type { ValidationResult, DiceRoll, ParsedDice } from '@/types';
+// src/utils/helpers.ts
+
+// ===============================================================
+// LOCAL UTILITY TYPES
+// These are defined here because they are only used by the functions in this file.
+// ===============================================================
+
+export interface ValidationResult {
+  valid: boolean;
+  value?: number;
+  message?: string;
+}
+
+export interface DiceRoll {
+  rolls: number[];
+  modifier: number;
+  total: number;
+}
+
+export interface ParsedDice {
+  count: number;
+  sides: number;
+  modifier: number;
+}
+
+
+// ===============================================================
+// HELPER FUNCTIONS
+// No changes needed to the function logic itself.
+// ===============================================================
 
 /**
  * Calculate ability modifier from ability score
@@ -18,6 +47,8 @@ export function formatModifier(modifier: number): string {
  * Calculate proficiency bonus from level
  */
 export function getProficiencyBonus(level: number): number {
+  // As per D&D 5e rules
+  if (level < 1) return 2;
   return Math.ceil(level / 4) + 1;
 }
 
@@ -25,10 +56,10 @@ export function getProficiencyBonus(level: number): number {
  * Calculate skill modifier
  */
 export function getSkillModifier(
-  abilityScore: number,
-  proficiencyBonus: number,
-  isProficient: boolean,
-  hasExpertise: boolean
+    abilityScore: number,
+    proficiencyBonus: number,
+    isProficient: boolean,
+    hasExpertise: boolean
 ): number {
   const abilityMod = getAbilityModifier(abilityScore);
   let bonus = abilityMod;
@@ -37,7 +68,8 @@ export function getSkillModifier(
     bonus += proficiencyBonus;
   }
   if (hasExpertise) {
-    bonus += proficiencyBonus; // Expertise doubles proficiency
+    // Expertise adds the proficiency bonus again (doubling it)
+    bonus += proficiencyBonus;
   }
 
   return bonus;
@@ -47,9 +79,9 @@ export function getSkillModifier(
  * Calculate passive perception
  */
 export function getPassivePerception(
-  wisdomScore: number,
-  proficiencyBonus: number,
-  isProficient: boolean
+    wisdomScore: number,
+    proficiencyBonus: number,
+    isProficient: boolean
 ): number {
   return 10 + getSkillModifier(wisdomScore, proficiencyBonus, isProficient, false);
 }
@@ -73,10 +105,10 @@ export function getSpellAttackBonus(abilityScore: number, proficiencyBonus: numb
  */
 export function validateAbilityScore(value: string): ValidationResult {
   const num = parseInt(value, 10);
-  if (isNaN(num)) return { valid: false, message: 'Must be a number' };
-  if (num < 1) return { valid: false, message: 'Minimum is 1' };
-  if (num > 30) return { valid: false, message: 'Maximum is 30' };
-  return { valid: true, value: num };
+  if (isNaN(num)) return {valid: false, message: 'Must be a number'};
+  if (num < 1) return {valid: false, message: 'Minimum is 1'};
+  if (num > 30) return {valid: false, message: 'Maximum is 30'};
+  return {valid: true, value: num};
 }
 
 /**
@@ -84,16 +116,17 @@ export function validateAbilityScore(value: string): ValidationResult {
  */
 export function validateLevel(value: string): ValidationResult {
   const num = parseInt(value, 10);
-  if (isNaN(num)) return { valid: false, message: 'Must be a number' };
-  if (num < 1) return { valid: false, message: 'Minimum level is 1' };
-  if (num > 20) return { valid: false, message: 'Maximum level is 20' };
-  return { valid: true, value: num };
+  if (isNaN(num)) return {valid: false, message: 'Must be a number'};
+  if (num < 1) return {valid: false, message: 'Minimum level is 1'};
+  if (num > 20) return {valid: false, message: 'Maximum level is 20'};
+  return {valid: true, value: num};
 }
 
 /**
  * Roll a die
  */
 export function rollDie(sides: number): number {
+  if (sides <= 0) return 0;
   return Math.floor(Math.random() * sides) + 1;
 }
 
@@ -106,19 +139,20 @@ export function rollDice(count: number, sides: number, modifier: number = 0): Di
     rolls.push(rollDie(sides));
   }
   const total = rolls.reduce((sum, roll) => sum + roll, 0) + modifier;
-  return { rolls, modifier, total };
+  return {rolls, modifier, total};
 }
 
 /**
  * Parse dice notation (e.g., "2d6+3")
  */
 export function parseDiceNotation(notation: string): ParsedDice | null {
-  const match = notation.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
+  const match = notation.trim().match(/^(\d+)d(\d+)\s*([+-]\s*\d+)?$/i);
   if (!match) return null;
 
   return {
     count: parseInt(match[1], 10),
     sides: parseInt(match[2], 10),
-    modifier: match[3] ? parseInt(match[3], 10) : 0,
+    // Remove spaces from modifier before parsing
+    modifier: match[3] ? parseInt(match[3].replace(/\s/g, ''), 10) : 0,
   };
 }

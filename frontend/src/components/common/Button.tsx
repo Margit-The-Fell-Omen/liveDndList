@@ -1,35 +1,15 @@
-import type { ButtonProps } from '@/types';
-import styles from './Button.module.css';
+// src/components/common/Button.tsx
+import React from 'react';
 
-export function Button({
-  children,
-  variant = 'primary',
-  size = 'medium',
-  disabled = false,
-  loading = false,
-  fullWidth = false,
-  type = 'button',
-  onClick,
-  className = '',
-  ...props
-}: ButtonProps) {
-  return (
-    <button
-      type={type}
-      disabled={disabled || loading}
-      onClick={onClick}
-      className={`
-        ${styles.button}
-        ${styles[variant]}
-        ${styles[size]}
-        ${fullWidth ? styles.fullWidth : ''}
-        ${loading ? styles.loading : ''}
-        ${className}
-      `}
-      {...props}
-    >
-      {loading && <span className={styles.spinner} />}
-      <span className={loading ? styles.hiddenText : ''}>{children}</span>
-    </button>
-  );
+// Define the props for our Button component
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  size?: 'small' | 'medium' | 'large';
+  fullWidth?: boolean;
+}
+
+export function Button({children, ...props}: ButtonProps) {
+  // A basic button implementation for now
+  return <button {...props}>{children}</button>;
 }

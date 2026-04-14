@@ -1,90 +1,43 @@
-import { useState, type ChangeEvent } from 'react';
-import { getAbilityModifier, formatModifier, validateAbilityScore } from '@/utils/dndCalculations';
-import { Input } from '@/components/common/Input';
-import type { AbilityInfo } from '@/types';
-import styles from './AbilityScore.module.css';
+// src/components/character/AbilityScore.tsx
 
+// FIX 1: Import the AbilityInfo type from its single source of truth.
+import type {AbilityInfo} from '@/utils/constants';
+
+// FIX 2: Define the component's props. Notice it does NOT include 'key'.
 interface AbilityScoreProps {
   ability: AbilityInfo;
   value: number;
-  onChange: (abilityKey: string, value: number | string) => void;
-  proficient?: boolean;
-  onProficiencyChange?: (abilityKey: string) => void;
+  proficient: boolean;
+  onChange: (abilityKey: string, value: string | number) => void;
+  onProficiencyChange: () => void;
 }
 
 export function AbilityScore({
-  ability,
-  value,
-  onChange,
-  proficient = false,
-  onProficiencyChange,
-}: AbilityScoreProps) {
-  const [error, setError] = useState<string | null>(null);
-  const modifier = getAbilityModifier(value);
+                               ability,
+                               value,
+                               proficient,
+                               onChange,
+                               onProficiencyChange,
+                             }: AbilityScoreProps) {
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const newValue = e.target.value;
-
-    // Allow empty for typing
-    if (newValue === '') {
-      onChange(e.target.name, '');
-      setError(null);
-      return;
-    }
-
-    const validation = validateAbilityScore(newValue);
-    if (validation.valid && validation.value !== undefined) {
-      onChange(e.target.name, validation.value);
-      setError(null);
-    } else {
-      setError(validation.message || 'Invalid value');
-    }
-  };
-
-  const handleBlur = (): void => {
-    // If empty on blur, set to default
-    if (value === 0 || value < 1) {
-      onChange(ability.key, 10);
-      setError(null);
-    }
+  // FIX 3: Use `ability.key` (from the 'ability' prop) instead of a non-existent `key` prop.
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(ability.key, e.target.value);
   };
 
   return (
-    <div className={styles.abilityScore}>
-      <div className={styles.header}>
-        <label className={styles.label}>
-          {ability.name}
-          <span className={styles.abbr}>({ability.abbr})</span>
-        </label>
-        {onProficiencyChange && (
-          <button
-            type="button"
-            className={`${styles.proficiency} ${proficient ? styles.proficient : ''}`}
-            onClick={() => onProficiencyChange(ability.key)}
-            title={`Saving throw ${proficient ? 'proficient' : 'not proficient'}`}
-          >
-            ●
-          </button>
-        )}
-      </div>
-
-      <div className={styles.scoreWrapper}>
-        <Input
-          name={ability.key}
-          type="number"
-          value={value}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          error={error}
-          className={styles.scoreInput}
-          min={1}
-          max={30}
+      <div className="ability-score-container">
+        <label>{ability.name}</label>
+        <input
+            type="number"
+            value={value}
+            onChange={handleInputChange}
         />
-
-        <div className={styles.modifier} data-positive={modifier >= 0}>
-          {formatModifier(modifier)}
-        </div>
+        {/* You can also display the modifier here */}
+        {/* And the proficiency toggle */}
+        <button onClick={onProficiencyChange}>
+          {proficient ? '✅' : '⬜️'}
+        </button>
       </div>
-    </div>
   );
 }

@@ -1,4 +1,7 @@
-import {type ChangeEvent, type FormEvent, useState} from 'react';
+// src/components/auth/LoginForm.tsx
+
+import {type FormEvent, useState} from 'react';
+import {useNavigate} from 'react-router-dom'; // <-- Import the hook
 import {useAuth} from '@/context/AuthContext';
 import {Input} from '@/components/common/Input';
 import {Button} from '@/components/common/Button';
@@ -9,115 +12,82 @@ interface LoginFormProps {
   onSwitchToRegister: () => void;
 }
 
-interface FormData {
-  username: string;
-  password: string;
-}
-
-interface FormErrors {
-  username: string | null;
-  password: string | null;
-}
-
 export function LoginForm({onSwitchToRegister}: LoginFormProps) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {login, error: authError, clearError} = useAuth();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormData>({
-    username: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState<FormErrors>({
-    username: null,
-    password: null,
-  });
+  const navigate = useNavigate(); // <-- Get the navigate function
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const {name, value} = e.target;
-    setFormData((prev) => ({...prev, [name]: value}));
-
-    // Clear error for this field when user types
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({...prev, [name]: null}));
-    }
-    if (authError) {
-      clearError();
-    }
-  };
-
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {
-      username: validate(formData.username, validators.required),
-      password: validate(formData.password, validators.required),
-    };
-
-    setErrors(newErrors);
-    return !Object.values(newErrors).some((error) => error !== null);
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    clearError(); // Clear any previous auth errors
 
-    if (!validateForm()) return;
+    const usernameError = validate(username, validators.required);
+    if (usernameError) {
+      setFormError(usernameError);
+      return;
+    }
+    setFormError(null);
+    setIsSubmitting(true);
 
-    setLoading(true);
     try {
-      await login({
-        username: formData.username,
-        password: formData.password,
-      });
+      // Call the login function from the context
+      await login({username, password});
 
-      console.log('Token stored:', localStorage.getItem('token'));
-      console.log('User stored:', localStorage.getItem('user'));
-      // Redirect handled by App.tsx
-    } catch (error) {
-      // Error displayed via authError
+      // --- THE FIX ---
+      // If the login call succeeds, navigate to the main page.
+      navigate('/', {replace: true});
+
+    } catch (err) {
+      // If the login function throws an error (which it does on failure),
+      // the error will be set in the AuthContext. We don't need to do anything here,
+      // as the component will re-render and display the authError.
+      console.error("Login failed:", err);
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <div className={styles.formWrapper}>
         <h2 className={styles.title}>Welcome Back</h2>
-        <p className={styles.subtitle}>Log in to continue your adventure</p>
+        <p className={styles.subtitle}>Log in to access your characters.</p>
 
-        {authError && <div className={styles.errorBanner}>{authError}</div>}
+        <form onSubmit={handleSubmit} noValidate>
+          {/* Display auth error from the context if it exists */}
+          {(formError || authError) && (
+              <div className={styles.errorBanner}>{formError || authError}</div>
+          )}
 
-        <Input
-            label="Username"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            error={errors.username}
-            placeholder="Enter your username"
-            autoComplete="username"
-            fullWidth
-            required
-        />
+          <Input
+              label="Username"
+              name="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+          />
+          <Input
+              label="Password"
+              type="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+          />
+          <Button type="submit" fullWidth disabled={isSubmitting}>
+            {isSubmitting ? 'Logging in...' : 'Log In'}
+          </Button>
+        </form>
 
-        <Input
-            label="Password"
-            name="password"
-            type="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={errors.password}
-            placeholder="Enter your password"
-            autoComplete="current-password"
-            fullWidth
-            required
-        />
-
-        <Button type="submit" variant="primary" size="large" fullWidth loading={loading}>
-          Log In
-        </Button>
-
-        <p className={styles.switchText}>
+        <p className={styles.switch}>
           Don't have an account?{' '}
-          <button type="button" className={styles.switchButton} onClick={onSwitchToRegister}>
-            Register here
+          <button onClick={onSwitchToRegister} className={styles.switchButton}>
+            Sign Up
           </button>
         </p>
-      </form>
+      </div>
   );
 }

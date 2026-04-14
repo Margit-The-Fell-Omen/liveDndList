@@ -16,7 +16,7 @@ export interface Page<T> {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// USER & AUTH TYPES
+// USER & AUTH TYPES (Unchanged as requested)
 // ═══════════════════════════════════════════════════════════════
 
 export interface User {
@@ -46,46 +46,110 @@ export interface AuthResponse {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// REFERENCE DATA TYPES
+// REFERENCE DATA TYPES (Matches backend Open5e DTOs)
 // ═══════════════════════════════════════════════════════════════
 
-export interface Race {
-  id: number;
-  name: string;
-  description?: string;
-  traits?: string[];
-  speed?: number;
+interface DocumentInfo {
+  document__slug: string;
+  document__title: string;
+  document__license_url?: string;
+  document__url?: string;
 }
 
-export interface CharacterClass {
-  id: number;
-  name: string;
-  description?: string;
-  hitDie?: string;
-  primaryAbility?: string;
-  savingThrows?: string[];
+export interface Asi {
+  attributes: string[];
+  value: number;
 }
 
-export interface Archetype {
-  id: number;
+export interface Speed {
+  walk?: number;
+  swim?: number;
+  fly?: number;
+}
+
+export interface Subrace extends DocumentInfo {
   name: string;
-  classId: number;
-  description?: string;
+  slug: string;
+  desc: string;
+  asi: Asi[];
+  asi_desc: string;
+  traits: string;
+}
+
+export interface Race extends DocumentInfo {
+  name: string;
+  slug: string;
+  desc: string;
+  asi_desc: string;
+  asi: Asi[];
+  age: string;
+  alignment: string;
+  size: string;
+  size_raw: string;
+  speed: Speed;
+  speed_desc: string;
+  languages: string;
+  vision: string;
+  traits: string;
+  subraces: Subrace[];
+}
+
+export interface Archetype extends DocumentInfo {
+  name: string;
+  slug: string;
+  desc: string;
+}
+
+export interface CharacterClass extends DocumentInfo {
+  name: string;
+  slug: string;
+  desc: string;
+  hit_dice: string;
+  hp_at_1st_level: string;
+  hp_at_higher_levels: string;
+  prof_armor: string;
+  prof_weapons: string;
+  prof_tools: string;
+  prof_saving_throws: string;
+  prof_skills: string;
+  equipment: string;
+  table: string;
+  spellcasting_ability: string;
+  subtypes_name: string;
+  archetypes: Archetype[];
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CHARACTER TYPES
+// CHARACTER & SUB-COMPONENT TYPES (Matches backend DTOs)
 // ═══════════════════════════════════════════════════════════════
 
 export type CharacterAlignment =
     | 'LAWFUL_GOOD' | 'NEUTRAL_GOOD' | 'CHAOTIC_GOOD'
     | 'LAWFUL_NEUTRAL' | 'TRUE_NEUTRAL' | 'CHAOTIC_NEUTRAL'
-    | 'LAWFUL_EVIL' | 'NEUTRAL_EVIL' | 'CHAOTIC_EVIL';
+    | 'LAWFUL_EVIL' | 'NEUTRAL_EVIL' | 'CHAOTIC_EVIL' | 'UNALIGNED';
 
 export type AbilityName =
     | 'STRENGTH' | 'DEXTERITY' | 'CONSTITUTION'
     | 'INTELLIGENCE' | 'WISDOM' | 'CHARISMA';
 
+export type SkillName =
+    | 'ACROBATICS' | 'ANIMAL_HANDLING' | 'ARCANA' | 'ATHLETICS' | 'DECEPTION'
+    | 'HISTORY' | 'INSIGHT' | 'INTIMIDATION' | 'INVESTIGATION' | 'MEDICINE'
+    | 'NATURE' | 'PERCEPTION' | 'PERFORMANCE' | 'PERSUASION' | 'RELIGION'
+    | 'SLIGHT_OF_HAND' | 'STEALTH' | 'SURVIVAL';
+
+export type EquipmentType = 'WEAPON' | 'ARMOR' | 'GEAR' | 'CONSUMABLE' | 'TOOL' | 'OTHER';
+export type SpellSchool =
+    'ABJURATION'
+    | 'CONJURATION'
+    | 'DIVINATION'
+    | 'ENCHANTMENT'
+    | 'EVOCATION'
+    | 'ILLUSION'
+    | 'NECROMANCY'
+    | 'TRANSMUTATION';
+
+// For Character Creation
 export interface AbilityScores {
   strength: number;
   dexterity: number;
@@ -93,6 +157,70 @@ export interface AbilityScores {
   intelligence: number;
   wisdom: number;
   charisma: number;
+}
+
+// From Backend Response
+export interface AbilityScoresResponse {
+  strength: number;
+  strengthModifier: number;
+  dexterity: number;
+  dexterityModifier: number;
+  constitution: number;
+  constitutionModifier: number;
+  intelligence: number;
+  intelligenceModifier: number;
+  wisdom: number;
+  wisdomModifier: number;
+  charisma: number;
+  charismaModifier: number;
+}
+
+export interface SkillResponse {
+  id: number;
+  skillType: SkillName;
+  abilityType: AbilityName;
+  proficient: boolean;
+  expertise: boolean;
+  totalBonus: number;
+}
+
+// UPDATED: Matches EquipmentResponse DTO
+export interface EquipmentResponse {
+  id: number;
+  name: string;
+  description: string;
+  quantity: number;
+  weight: number;
+  equipped: boolean;
+  attuned: boolean;
+  type: EquipmentType;
+  damage?: string;
+  damageType?: string;
+  properties?: string;
+}
+
+export interface DndCurrencyResponse {
+  copper: number;
+  silver: number;
+  electrum: number;
+  gold: number;
+  platinum: number;
+}
+
+// UPDATED: Matches SpellResponse DTO
+export interface SpellResponse {
+  id: number;
+  name: string;
+  level: number;
+  school: SpellSchool;
+  castingTime: string;
+  range: string;
+  components: string;
+  duration: string;
+  concentration: boolean;
+  ritual: boolean;
+  description: string;
+  higherLevels?: string;
 }
 
 export interface CharacterCreateRequest {
@@ -120,6 +248,7 @@ export interface CharacterSummary {
   updatedAt: string;
 }
 
+// This is the main, fully detailed character object from the backend
 export interface Character {
   id: number;
   name: string;
@@ -130,14 +259,7 @@ export interface Character {
   portraitUrl?: string;
   classesInfo: string[];
   totalLevel: number;
-  abilityScores: {
-    strength: number; strengthModifier: number;
-    dexterity: number; dexterityModifier: number;
-    constitution: number; constitutionModifier: number;
-    intelligence: number; intelligenceModifier: number;
-    wisdom: number; wisdomModifier: number;
-    charisma: number; charismaModifier: number;
-  };
+  abilityScores: AbilityScoresResponse;
   maxHitPoints: number;
   currentHitPoints: number;
   temporaryHitPoints: number;
@@ -148,14 +270,11 @@ export interface Character {
   hitDice: string;
   deathSaveSuccesses: number;
   deathSaveFailures: number;
-  skills: {
-    id: number; skillType: string; abilityType: AbilityName;
-    proficient: boolean; expertise: boolean; totalBonus: number;
-  }[];
+  skills: SkillResponse[];
   savingThrowProficiencies: AbilityName[];
-  equipment: { id: number; name: string; type: string; }[];
-  currency: { copper: number; silver: number; electrum: number; gold: number; platinum: number; };
-  spells: { id: number; name: string; level: number; }[];
+  equipment: EquipmentResponse[]; // Finalized
+  currency: DndCurrencyResponse;
+  spells: SpellResponse[]; // Finalized
   spellcastingAbility?: AbilityName;
   featuresAndTraits: string;
   backstory: string;
@@ -187,6 +306,9 @@ export interface CharacterUpdateRequest {
   bonds?: string;
   flaws?: string;
   notes?: string;
+  featuresAndTraits?: string;
+  deathSaveSuccesses?: number;
+  deathSaveFailures?: number;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -194,18 +316,15 @@ export interface CharacterUpdateRequest {
 // ═══════════════════════════════════════════════════════════════
 
 export interface CharacterContextType {
-  characters: CharacterSummary[]; // Use the summary for lists
-  currentCharacter: Character | null; // Use the full object for the selected one
+  characters: CharacterSummary[];
+  currentCharacter: Character | null;
   loading: boolean;
   saving: boolean;
   error: string | null;
 
-  // Reference data
   races: Race[];
   classes: CharacterClass[];
-  archetypes: Archetype[];
 
-  // Actions
   fetchCharacters: () => Promise<void>;
   fetchReferenceData: () => Promise<void>;
   selectCharacter: (id: number) => Promise<void>;

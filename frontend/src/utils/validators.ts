@@ -1,4 +1,9 @@
-import type { ValidatorFn } from '@/types';
+// src/utils/validators.ts
+
+// FIX: Define the ValidatorFn type locally. It represents a function
+// that takes a string and returns either an error string or null.
+export type ValidatorFn = (value: string) => string | null;
+
 
 export const validators = {
   required: (value: string): string | null => {
@@ -62,7 +67,8 @@ export const validators = {
   },
 
   number: (min?: number, max?: number): ValidatorFn => (value: string): string | null => {
-    const num = parseInt(value, 10);
+    if (!value || !value.trim()) return null; // Don't validate empty strings, `required` validator should handle that
+    const num = Number(value);
     if (isNaN(num)) {
       return 'Must be a number';
     }
@@ -83,6 +89,14 @@ export const validators = {
   },
 };
 
+/**
+ * A helper function to run multiple validators on a single value.
+ * Stops and returns the first error found.
+ *
+ * @param value The value to validate.
+ * @param validatorFns An array of validator functions to run.
+ * @returns The first error message string, or null if all validators pass.
+ */
 export function validate(value: string, ...validatorFns: ValidatorFn[]): string | null {
   for (const validator of validatorFns) {
     const error = validator(value);

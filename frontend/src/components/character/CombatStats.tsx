@@ -1,99 +1,94 @@
-import { type ChangeEvent } from 'react';
-import { useCharacter } from '@/context/CharacterContext';
-import { Input } from '@/components/common/Input';
-import { HIT_DICE_BY_CLASS } from '@/utils/constants';
+// src/components/character/CombatStats.tsx
+
+import {type ChangeEvent} from 'react';
+import {useCharacter} from '@/context/CharacterContext';
+import {Input} from '@/components/common/Input';
+import {useDebouncedCallback} from '@/hooks/useDebounce';
 import styles from './CombatStats.module.css';
 
 export function CombatStats() {
-  const { currentCharacter, updateCharacter, updateNestedCharacter } = useCharacter();
+  const {currentCharacter, updateCharacter} = useCharacter();
 
-  if (!currentCharacter) return null;
+  // Create a debounced version of the update function for performance
+  const debouncedUpdate = useDebouncedCallback(
+      (key: 'armorClass' | 'initiative' | 'speed', value: number) => {
+        if (currentCharacter) {
+          updateCharacter(currentCharacter.id, {[key]: value});
+        }
+      },
+      500 // 500ms delay
+  );
 
-  const hitDie = HIT_DICE_BY_CLASS[currentCharacter.class] || 'd8';
+  if (!currentCharacter) {
+    return null;
+  }
+
+  // Destructure the correct properties
+  const {armorClass, initiative, speed, hitDice} = currentCharacter;
+
+  // Generic handler for number inputs
+  const handleChange = (
+      e: ChangeEvent<HTMLInputElement>,
+      key: 'armorClass' | 'initiative' | 'speed'
+  ) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    // We can update the UI immediately if we use local state,
+    // but for simple fields like this, a debounced API call is fine.
+    debouncedUpdate(key, value);
+  };
 
   return (
-    <div className={styles.combatStats}>
-      <h3 className={styles.title}>Combat</h3>
+      <div className={styles.combatStats}>
+        <h3 className={styles.title}>Combat Stats</h3>
 
-      <div className={styles.grid}>
-        <div className={styles.stat}>
-          <label className={styles.label}>Armor Class</label>
-          <Input
-            type="number"
-            value={currentCharacter.armorClass}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateCharacter({
-                armorClass: parseInt(e.target.value, 10) || 10,
-              })
-            }
-            min={0}
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.stat}>
-          <label className={styles.label}>Initiative</label>
-          <Input
-            type="number"
-            value={currentCharacter.initiative}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateCharacter({
-                initiative: parseInt(e.target.value, 10) || 0,
-              })
-            }
-            className={styles.input}
-          />
-        </div>
-
-        <div className={styles.stat}>
-          <label className={styles.label}>Speed</label>
-          <div className={styles.speedInput}>
+        <div className={styles.grid}>
+          {/* Armor Class */}
+          <div className={styles.stat}>
+            <label className={styles.label}>Armor Class</label>
             <Input
-              type="number"
-              value={currentCharacter.speed}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                updateCharacter({
-                  speed: parseInt(e.target.value, 10) || 30,
-                })
-              }
-              min={0}
-              className={styles.input}
+                type="number"
+                defaultValue={armorClass} // Use defaultValue for uncontrolled debounced input
+                onChange={(e) => handleChange(e, 'armorClass')}
+                min={0}
+                className={styles.input}
             />
-            <span className={styles.unit}>ft</span>
+          </div>
+
+          {/* Initiative */}
+          <div className={styles.stat}>
+            <label className={styles.label}>Initiative</label>
+            <Input
+                type="number"
+                defaultValue={initiative} // Use defaultValue
+                onChange={(e) => handleChange(e, 'initiative')}
+                className={styles.input}
+            />
+          </div>
+
+          {/* Speed */}
+          <div className={styles.stat}>
+            <label className={styles.label}>Speed</label>
+            <div className={styles.speedInput}>
+              <Input
+                  type="number"
+                  defaultValue={speed} // Use defaultValue
+                  onChange={(e) => handleChange(e, 'speed')}
+                  min={0}
+                  className={styles.input}
+              />
+              <span className={styles.unit}>ft</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Hit Dice Display */}
+        {/* FIX: This section is now display-only, as the backend provides the full string */}
+        <div className={styles.hitDice}>
+          <div className={styles.stat}>
+            <label className={styles.label}>Hit Dice</label>
+            <span className={styles.hitDiceValue}>{hitDice || 'N/A'}</span>
           </div>
         </div>
       </div>
-
-      <div className={styles.hitDice}>
-        <div className={styles.hitDiceHeader}>
-          <span className={styles.label}>Hit Dice</span>
-          <span className={styles.hitDieType}>{hitDie}</span>
-        </div>
-
-        <div className={styles.hitDiceInputs}>
-          <Input
-            type="number"
-            value={currentCharacter.hitDice.current}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateNestedCharacter(
-                'hitDice.current',
-                Math.min(parseInt(e.target.value, 10) || 0, currentCharacter.hitDice.total)
-              )
-            }
-            min={0}
-            max={currentCharacter.hitDice.total}
-          />
-          <span className={styles.separator}>/</span>
-          <Input
-            type="number"
-            value={currentCharacter.hitDice.total}
-            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-              updateNestedCharacter('hitDice.total', parseInt(e.target.value, 10) || 1)
-            }
-            min={1}
-          />
-        </div>
-      </div>
-    </div>
   );
 }

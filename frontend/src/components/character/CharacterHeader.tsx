@@ -1,135 +1,120 @@
-import { type ChangeEvent } from 'react';
-import { useCharacter } from '@/context/CharacterContext';
-import { Input, Select } from '@/components/common/Input';
-import { CLASSES, RACES, ALIGNMENTS } from '@/utils/constants';
-import { getProficiencyBonus } from '@/utils/dndCalculations';
+// src/components/character/CharacterHeader.tsx
+
+import {type ChangeEvent} from 'react';
+import {useCharacter} from '@/context/CharacterContext';
+import {Input, Select} from '@/components/common/Input';
+import {ALIGNMENTS} from '@/utils/constants';
+import {useDebouncedCallback} from '@/hooks/useDebounce';
 import styles from './CharacterHeader.module.css';
 
 export function CharacterHeader() {
-  const { currentCharacter, updateCharacter } = useCharacter();
+  // FIX: Get `races` and `classes` from the context now
+  const {currentCharacter, updateCharacter, races, classes} = useCharacter();
 
-  if (!currentCharacter) return null;
+  const debouncedUpdate = useDebouncedCallback(
+      (payload: object) => {
+        if (currentCharacter) {
+          updateCharacter(currentCharacter.id, payload);
+        }
+      },
+      500
+  );
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
-    const { name, value } = e.target;
-    updateCharacter({ [name]: value });
-  };
+  if (!currentCharacter) {
+    return null;
+  }
 
-  const handleLevelChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const level = parseInt(e.target.value, 10) || 1;
-    const proficiencyBonus = getProficiencyBonus(level);
-    updateCharacter({
-      level,
-      proficiencyBonus,
-    });
+  // Generic handler for simple text/number field changes
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const {name, value} = e.target;
+    // For numbers, parse them, otherwise use the string value
+    const isNumberField = e.target.type === 'number';
+    const finalValue = isNumberField ? parseInt(value, 10) || 0 : value;
+    debouncedUpdate({[name]: finalValue});
   };
 
   return (
-    <div className={styles.header}>
-      <div className={styles.mainInfo}>
-        <Input
-          name="name"
-          value={currentCharacter.name}
-          onChange={handleChange}
-          placeholder="Character Name"
-          className={styles.nameInput}
-        />
+      <div className={styles.header}>
+        <div className={styles.mainInfo}>
+          <Input
+              name="name"
+              defaultValue={currentCharacter.name}
+              onChange={handleChange}
+              placeholder="Character Name"
+              className={styles.nameInput}
+          />
 
-        <div className={styles.basicInfo}>
+          <div className={styles.basicInfo}>
+            {/* FIX: Race and Class are now display-only based on backend data */}
+            <div className={styles.infoBlock}>
+              <label>Race</label>
+              <span>{currentCharacter.raceName || 'N/A'}</span>
+            </div>
+
+            <div className={styles.infoBlock}>
+              <label>Class & Level</label>
+              {/* Join the array of class strings */}
+              <span>{currentCharacter.classesInfo.join(' / ') || 'N/A'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.secondaryInfo}>
+          <Input
+              name="background"
+              defaultValue={currentCharacter.background}
+              onChange={handleChange}
+              placeholder="Background"
+          />
+
           <Select
-            name="class"
-            value={currentCharacter.class}
-            onChange={handleChange}
-            options={CLASSES}
-            placeholder="Class"
-          />
-
-          <Select
-            name="race"
-            value={currentCharacter.race}
-            onChange={handleChange}
-            options={RACES}
-            placeholder="Race"
+              name="alignment"
+              defaultValue={currentCharacter.alignment}
+              onChange={handleChange}
+              options={ALIGNMENTS}
+              placeholder="Alignment"
           />
 
           <Input
-            name="level"
-            type="number"
-            value={currentCharacter.level}
-            onChange={handleLevelChange}
-            placeholder="Level"
-            min={1}
-            max={20}
+              name="experiencePoints"
+              type="number"
+              defaultValue={currentCharacter.experiencePoints}
+              onChange={handleChange}
+              placeholder="XP"
           />
+        </div>
+
+        <div className={styles.stats}>
+          {/* FIX: This section is now display-only. The stats are calculated or
+            set in other more specific components (like CombatStats.tsx) */}
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Proficiency</span>
+            <span className={styles.statValue}>
+            +{currentCharacter.proficiencyBonus}
+          </span>
+          </div>
+
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Initiative</span>
+            <span className={styles.statValue}>
+            {currentCharacter.initiative >= 0 ? '+' : ''}{currentCharacter.initiative}
+          </span>
+          </div>
+
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Speed</span>
+            <span className={styles.statValue}>
+            {currentCharacter.speed}ft
+          </span>
+          </div>
+
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Armor Class</span>
+            <span className={styles.statValue}>
+            {currentCharacter.armorClass}
+          </span>
+          </div>
         </div>
       </div>
-
-      <div className={styles.secondaryInfo}>
-        <Input
-          name="background"
-          value={currentCharacter.background}
-          onChange={handleChange}
-          placeholder="Background"
-        />
-
-        <Select
-          name="alignment"
-          value={currentCharacter.alignment}
-          onChange={handleChange}
-          options={ALIGNMENTS}
-          placeholder="Alignment"
-        />
-
-        <Input
-          name="experiencePoints"
-          type="number"
-          value={currentCharacter.experiencePoints}
-          onChange={(e) =>
-            updateCharacter({ experiencePoints: parseInt(e.target.value, 10) || 0 })
-          }
-          placeholder="XP"
-        />
-      </div>
-
-      <div className={styles.stats}>
-        <div className={styles.stat}>
-          <span className={styles.statLabel}>Proficiency Bonus</span>
-          <span className={styles.statValue}>+{currentCharacter.proficiencyBonus}</span>
-        </div>
-
-        <div className={styles.stat}>
-          <span className={styles.statLabel}>Initiative</span>
-          <Input
-            name="initiative"
-            type="number"
-            value={currentCharacter.initiative}
-            onChange={(e) => updateCharacter({ initiative: parseInt(e.target.value, 10) || 0 })}
-            className={styles.statInput}
-          />
-        </div>
-
-        <div className={styles.stat}>
-          <span className={styles.statLabel}>Speed</span>
-          <Input
-            name="speed"
-            type="number"
-            value={currentCharacter.speed}
-            onChange={(e) => updateCharacter({ speed: parseInt(e.target.value, 10) || 30 })}
-            className={styles.statInput}
-          />
-        </div>
-
-        <div className={styles.stat}>
-          <span className={styles.statLabel}>Armor Class</span>
-          <Input
-            name="armorClass"
-            type="number"
-            value={currentCharacter.armorClass}
-            onChange={(e) => updateCharacter({ armorClass: parseInt(e.target.value, 10) || 10 })}
-            className={styles.statInput}
-          />
-        </div>
-      </div>
-    </div>
   );
 }

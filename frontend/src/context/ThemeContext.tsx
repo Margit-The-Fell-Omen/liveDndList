@@ -1,8 +1,24 @@
-import { createContext, useContext, useEffect, type ReactNode } from 'react';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import type { ThemeContextType } from '@/types';
+// src/context/ThemeContext.tsx
 
-type Theme = 'light' | 'dark' | 'system';
+import {createContext, type ReactNode, useContext, useEffect} from 'react';
+import {useLocalStorage} from '@/hooks/useLocalStorage';
+
+// ===============================================================
+// LOCAL TYPE DEFINITIONS
+// ===============================================================
+
+export type Theme = 'light' | 'dark' | 'system';
+
+export interface ThemeContextType {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  toggleTheme: () => void;
+}
+
+
+// ===============================================================
+// CONTEXT PROVIDER
+// ===============================================================
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
@@ -10,46 +26,70 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
-export function ThemeProvider({ children }: ThemeProviderProps) {
+export function ThemeProvider({children}: ThemeProviderProps) {
+  // useLocalStorage returns a stateful value and a setter, just like useState
   const [theme, setTheme] = useLocalStorage<Theme>('theme', 'system');
 
   useEffect(() => {
-    const root = document.documentElement;
+    const root = window.document.documentElement;
 
-    if (theme === 'system') {
-      const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      root.setAttribute('data-theme', systemDark ? 'dark' : 'light');
-
-      // Listen for system theme changes
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handler = (e: MediaQueryListEvent) => {
+    const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+      // Only update if the current theme is 'system'
+      if (theme === 'system') {
         root.setAttribute('data-theme', e.matches ? 'dark' : 'light');
-      };
-      mediaQuery.addEventListener('change', handler);
-      return () => mediaQuery.removeEventListener('change', handler);
+      }
+    };
+
+    // Set the initial theme
+    if (theme === 'system') {
+      const systemIsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.setAttribute('data-theme', systemIsDark ? 'dark' : 'light');
     } else {
       root.setAttribute('data-theme', theme);
     }
+
+    // Add a listener for when the user changes their OS theme preference
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
+
+    // Cleanup the listener when the component unmounts or theme changes
+    return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
+    };
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => {
-      if (prev === 'light') return 'dark';
-      if (prev === 'dark') return 'system';
-      return 'light';
+    // Cycle through: light -> dark -> system -> light
+    setTheme((prevTheme) => {
+      if (prevTheme === 'light') return 'dark';
+      if (prevTheme === 'dark') return 'system';
+      return 'light'; // from 'system' or any other state
     });
   };
 
+  const value: ThemeContextType = {
+    theme,
+    // The setter from useLocalStorage might have a complex type, so we wrap it
+    // to ensure it matches our simple ThemeContextType.
+    setTheme: (newTheme: Theme) => setTheme(newTheme),
+    toggleTheme,
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+      <ThemeContext.Provider value={value}>
+        {children}
+      </ThemeContext.Provider>
   );
 }
 
+
+// ===============================================================
+// CUSTOM HOOK
+// ===============================================================
+
 export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   return context;

@@ -1,126 +1,101 @@
-import { useState, type ChangeEvent, type KeyboardEvent } from 'react';
-import { useCharacter } from '@/context/CharacterContext';
-import { Input } from '@/components/common/Input';
-import { Button } from '@/components/common/Button';
-import type { EquipmentItem, Currency } from '@/types';
+// src/components/character/Equipment.tsx
+
+import {type ChangeEvent} from 'react';
+import {useCharacter} from '@/context/CharacterContext';
+import {Input} from '@/components/common/Input';
+import type {DndCurrencyResponse} from '@/types';
 import styles from './Equipment.module.css';
 
-type CurrencyKey = keyof Currency;
+// Define the keys for our currency object for easy mapping
+const CURRENCY_KEYS: (keyof DndCurrencyResponse)[] = ['copper', 'silver', 'electrum', 'gold', 'platinum'];
 
 export function Equipment() {
-  const { currentCharacter, updateCharacter, updateNestedCharacter } = useCharacter();
-  const [newItem, setNewItem] = useState<string>('');
+  const {currentCharacter, updateCharacter} = useCharacter();
 
-  if (!currentCharacter) return null;
+  if (!currentCharacter) {
+    return null;
+  }
 
-  const { equipment, currency } = currentCharacter;
+  // Destructure the correct properties from the character object
+  const {equipment, currency} = currentCharacter;
 
-  const addItem = (): void => {
-    if (!newItem.trim()) return;
+  // --- Event Handlers ---
 
-    const newEquipment: EquipmentItem = {
-      id: Date.now(),
-      name: newItem.trim(),
-      quantity: 1,
+  const handleCurrencyChange = (key: keyof DndCurrencyResponse, value: string) => {
+    const newCurrency = {
+      ...currency,
+      [key]: parseInt(value, 10) || 0,
     };
-
-    updateCharacter({
-      equipment: [...equipment, newEquipment],
-    });
-    setNewItem('');
+    // updateCharacter(currentCharacter.id, { currency: newCurrency });
+    console.log(`Updating currency: ${key} to ${value}`);
+    console.warn("Currency updates require a 'currency' field in the backend's CharacterUpdateRequest DTO.");
   };
 
-  const removeItem = (id: number): void => {
-    updateCharacter({
-      equipment: equipment.filter((item) => item.id !== id),
-    });
+  const handleRemoveItem = (itemId: number) => {
+    // This would eventually call an API endpoint like:
+    // charactersApi.removeEquipment(currentCharacter.id, itemId);
+    // For now, we'll log it.
+    console.log(`Request to remove equipment item with ID: ${itemId}`);
+    console.warn("Removing equipment requires a dedicated API endpoint.");
   };
 
-  const updateItemQuantity = (id: number, quantity: number): void => {
-    updateCharacter({
-      equipment: equipment.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(0, quantity) } : item
-      ),
-    });
-  };
-
-  const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addItem();
-    }
-  };
-
-  const handleCurrencyChange = (key: CurrencyKey, value: string): void => {
-    updateNestedCharacter(`currency.${key}`, parseInt(value, 10) || 0);
-  };
+  // Note: Adding and updating items is now more complex. It would involve a modal
+  // to fill out the full EquipmentRequest DTO and call a dedicated API endpoint.
+  // The simple "add by name" input is removed for now to reflect the new data model.
 
   return (
-    <div className={styles.equipment}>
-      <h3 className={styles.title}>Equipment</h3>
+      <div className={styles.equipment}>
+        <h3 className={styles.title}>Equipment & Currency</h3>
 
-      {/* Currency */}
-      <div className={styles.currency}>
-        {(['copper', 'silver', 'electrum', 'gold', 'platinum'] as CurrencyKey[]).map((key) => (
-          <div key={key} className={styles.coin}>
-            <label className={styles.coinLabel}>{key.charAt(0).toUpperCase()}P</label>
-            <Input
-              type="number"
-              value={currency[key]}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                handleCurrencyChange(key, e.target.value)
-              }
-              min={0}
-            />
-          </div>
-        ))}
-      </div>
-
-      {/* Add Item */}
-      <div className={styles.addItem}>
-        <Input
-          value={newItem}
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setNewItem(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder="Add new item..."
-          fullWidth
-        />
-        <Button onClick={addItem} disabled={!newItem.trim()}>
-          Add
-        </Button>
-      </div>
-
-      {/* Item List */}
-      <div className={styles.itemList}>
-        {equipment.length === 0 ? (
-          <p className={styles.emptyMessage}>No equipment yet</p>
-        ) : (
-          equipment.map((item) => (
-            <div key={item.id} className={styles.item}>
-              <span className={styles.itemName}>{item.name}</span>
-              <div className={styles.itemControls}>
+        {/* Currency */}
+        <div className={styles.currency}>
+          {CURRENCY_KEYS.map((key) => (
+              <div key={key} className={styles.coin}>
+                {/* FIX: Use `key.slice(0, 2).toUpperCase()` for 'CP', 'SP', etc. */}
+                <label className={styles.coinLabel}>{key.slice(0, 2).toUpperCase()}</label>
                 <Input
-                  type="number"
-                  value={item.quantity}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    updateItemQuantity(item.id, parseInt(e.target.value, 10) || 0)
-                  }
-                  min={0}
-                  className={styles.quantityInput}
+                    type="number"
+                    value={currency[key]}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleCurrencyChange(key, e.target.value)
+                    }
+                    min={0}
+                    className={styles.coinInput}
                 />
-                <button
-                  type="button"
-                  className={styles.removeButton}
-                  onClick={() => removeItem(item.id)}
-                  aria-label={`Remove ${item.name}`}
-                >
-                  ✕
-                </button>
               </div>
-            </div>
-          ))
-        )}
+          ))}
+        </div>
+
+        {/* Item List */}
+        <div className={styles.itemList}>
+          {equipment.length === 0 ? (
+              <p className={styles.emptyMessage}>The backpack is empty.</p>
+          ) : (
+              equipment.map((item) => (
+                  <div key={item.id} className={styles.item}>
+              <span className={styles.itemName}>
+                {item.name}
+                {item.quantity > 1 && ` (x${item.quantity})`}
+              </span>
+                    <div className={styles.itemControls}>
+                      {/* For now, we just display the quantity. Editing would require a more complex handler. */}
+                      <button
+                          type="button"
+                          className={styles.removeButton}
+                          onClick={() => handleRemoveItem(item.id)}
+                          aria-label={`Remove ${item.name}`}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+              ))
+          )}
+        </div>
+
+        {/* The simple text input for adding items is removed.
+          This should be replaced by a more robust "Add Equipment" button
+          that opens a modal to search/create a full equipment item. */}
       </div>
-    </div>
   );
 }

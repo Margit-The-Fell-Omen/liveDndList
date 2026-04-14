@@ -108,3 +108,16 @@
   outline: none;
   border-color: var(--color-accent-primary);
 }
+
+.savingIndicator {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.featureTextarea {
+  /* You can use the styles from your global Input.module.css,
+     or add specific styles here if needed. */
+  resize: vertical;
+  min-height: 150px;
+}

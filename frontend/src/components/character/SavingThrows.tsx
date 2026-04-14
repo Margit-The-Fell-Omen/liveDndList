@@ -1,48 +1,51 @@
-import { ABILITIES } from '@/utils/constants';
-import { getAbilityModifier, formatModifier } from '@/utils/dndCalculations';
-import { useCharacter } from '@/context/CharacterContext';
-import type { AbilityKey } from '@/types';
+// src/components/character/SavingThrows.tsx
+
+import {ABILITIES} from '@/utils/constants';
+import {formatModifier, getAbilityModifier} from '@/utils/helpers';
+import {useCharacter} from '@/context/CharacterContext';
+import type {AbilityName} from '@/types';
 import styles from './SavingThrows.module.css';
 
 export function SavingThrows() {
-  const { currentCharacter, updateNestedCharacter } = useCharacter();
+  const {currentCharacter} = useCharacter();
 
-  if (!currentCharacter) return null;
+  if (!currentCharacter) {
+    return null;
+  }
 
-  const toggleProficiency = (abilityKey: AbilityKey): void => {
-    const current = currentCharacter.savingThrows[abilityKey];
-    updateNestedCharacter(`savingThrows.${abilityKey}`, !current);
-  };
+  // CORRECT: Destructure the correct properties from the character
+  const {abilityScores, savingThrowProficiencies, proficiencyBonus} = currentCharacter;
 
   return (
-    <div className={styles.savingThrows}>
-      <h3 className={styles.title}>Saving Throws</h3>
+      <div className={styles.savingThrows}>
+        <h3 className={styles.title}>Saving Throws</h3>
 
-      <div className={styles.list}>
-        {ABILITIES.map((ability) => {
-          const score = currentCharacter.abilities[ability.key];
-          const isProficient = currentCharacter.savingThrows[ability.key];
-          const modifier =
-            getAbilityModifier(score) + (isProficient ? currentCharacter.proficiencyBonus : 0);
+        <div className={styles.list}>
+          {ABILITIES.map((abilityInfo) => {
+            // CORRECT: Access properties using the new data structure
+            const score = abilityScores[abilityInfo.key];
+            const abilityName = abilityInfo.key.toUpperCase() as AbilityName;
+            const isProficient = savingThrowProficiencies.includes(abilityName);
 
-          return (
-            <div key={ability.key} className={styles.row}>
-              <button
-                type="button"
-                className={`${styles.checkbox} ${isProficient ? styles.checked : ''}`}
-                onClick={() => toggleProficiency(ability.key)}
-                aria-label={`${ability.name} saving throw ${isProficient ? 'proficient' : 'not proficient'}`}
-              >
-                ●
-              </button>
+            const baseModifier = getAbilityModifier(score);
+            const totalModifier = baseModifier + (isProficient ? proficiencyBonus : 0);
 
-              <span className={styles.modifier}>{formatModifier(modifier)}</span>
+            return (
+                <div key={abilityInfo.key} className={styles.row}>
+                  <button
+                      type="button"
+                      className={`${styles.checkbox} ${isProficient ? styles.checked : ''}`}
+                      // onClick logic needs to be added later with a proper update function
+                  >
+                    {isProficient ? '●' : '○'}
+                  </button>
 
-              <span className={styles.name}>{ability.name}</span>
-            </div>
-          );
-        })}
+                  <span className={styles.modifier}>{formatModifier(totalModifier)}</span>
+                  <span className={styles.name}>{abilityInfo.name}</span>
+                </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
   );
 }
