@@ -5,8 +5,9 @@ import {useCharacter} from '@/context/CharacterContext';
 import {Input} from '@/components/common/Input';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
 import styles from './CombatStats.module.css';
+import {Card} from '@/components/common/Card';
 
-export function CombatStats() {
+export function CombatStats({className}: { className?: string }) {
   const {currentCharacter, updateCharacter} = useCharacter();
 
   // Create a debounced version of the update function for performance
@@ -38,8 +39,7 @@ export function CombatStats() {
   };
 
   return (
-      <div className={styles.combatStats}>
-        <h3 className={styles.title}>Combat Stats</h3>
+      <Card title="Combat Stats" className={className}>
 
         <div className={styles.grid}>
           {/* Armor Class */}
@@ -89,6 +89,6 @@ export function CombatStats() {
             <span className={styles.hitDiceValue}>{hitDice || 'N/A'}</span>
           </div>
         </div>
-      </div>
+      </Card>
   );
 }

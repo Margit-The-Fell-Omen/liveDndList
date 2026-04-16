@@ -7,6 +7,7 @@ import {ABILITIES} from '@/utils/constants';
 import {getSpellAttackBonus, getSpellSaveDC} from '@/utils/helpers';
 import type {AbilityName, SpellResponse} from '@/types';
 import styles from './Spells.module.css';
+import {Card} from '@/components/common/Card';
 
 // Helper function to group spells by level
 const groupSpellsByLevel = (spells: SpellResponse[]) => {
@@ -20,7 +21,7 @@ const groupSpellsByLevel = (spells: SpellResponse[]) => {
   }, {} as Record<number, SpellResponse[]>);
 };
 
-export function Spells() {
+export function Spells({className}: { className?: string }) {
   const {currentCharacter, updateCharacter} = useCharacter();
 
   // Guard clause: If there's no character, don't render anything.
@@ -63,11 +64,7 @@ export function Spells() {
   };
 
   return (
-      <div className={styles.spells}>
-        <div className={styles.header}>
-          <h3 className={styles.title}>Spellcasting</h3>
-          {/* We can add a "Find/Add Spell" button later */}
-        </div>
+      <Card title="Spellcasting" className={className}>
 
         {/* Spellcasting Stats */}
         <div className={styles.spellcastingStats}>
@@ -122,6 +119,6 @@ export function Spells() {
         {/* Note: The old modal for adding custom spells and managing slots has been removed
           as it doesn't match the new data structure. Functionality for adding/removing
           spells should be handled by a different UI, likely one that searches a master spell list. */}
-      </div>
+      </Card>
   );
 }

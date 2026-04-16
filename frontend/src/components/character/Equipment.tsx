@@ -5,10 +5,11 @@ import {useCharacter} from '@/context/CharacterContext';
 import {Input} from '@/components/common/Input';
 import type {DndCurrencyResponse} from '@/types';
 import styles from './Equipment.module.css';
+import {Card} from '@/components/common/Card';
 
 const CURRENCY_KEYS: (keyof DndCurrencyResponse)[] = ['copper', 'silver', 'electrum', 'gold', 'platinum'];
 
-export function Equipment() {
+export function Equipment({className}: { className?: string }) {
   const {currentCharacter} = useCharacter();
 
   if (!currentCharacter) {
@@ -36,9 +37,7 @@ export function Equipment() {
   };
 
   return (
-      <div className={styles.equipment}>
-        <h3 className={styles.title}>Equipment & Currency</h3>
-
+      <Card title="Equipment" className={className}>
         <div className={styles.currency}>
           {CURRENCY_KEYS.map((key) => (
               <div key={key} className={styles.coin}>
@@ -81,6 +80,6 @@ export function Equipment() {
               ))
           )}
         </div>
-      </div>
+      </Card>
   );
 }

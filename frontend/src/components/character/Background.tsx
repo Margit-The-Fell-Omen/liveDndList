@@ -4,12 +4,14 @@ import {type ChangeEvent} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
 import {TextArea} from '@/components/common/Input';
+import {Card} from '@/components/common/Card';
 import styles from './Background.module.css';
 
 // A type helper for the keys we'll be updating
 type BackgroundField = 'personalityTraits' | 'ideals' | 'bonds' | 'flaws' | 'backstory' | 'notes';
 
-export function Background() {
+export function Background({className}: { className?: string }) {
+
   const {currentCharacter, updateCharacter} = useCharacter();
 
   const debouncedUpdate = useDebouncedCallback(
@@ -41,9 +43,7 @@ export function Background() {
   };
 
   return (
-      <div className={styles.background}>
-        <h3 className={styles.title}>Personality & Backstory</h3>
-
+      <Card title="Personality & Backstory" className={className}>
         <div className={styles.grid}>
           {/* FIX 2: Bind each TextArea to its correct top-level property */}
           <TextArea
@@ -107,6 +107,6 @@ export function Background() {
               fullWidth
           />
         </div>
-      </div>
+      </Card>
   );
 }

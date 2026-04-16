@@ -114,8 +114,27 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     setSaving(true);
     try {
       const updatedChar = await charactersApi.update(id, data);
-      setCurrentCharacter(updatedChar);
-      setCharacters(prev => prev.map(c => c.id === id ? {...c, name: updatedChar.name} : c));
+
+      setCurrentCharacter(prevCharacter => {
+        if (!prevCharacter) return updatedChar;
+
+        const newCharacterState = {
+          ...prevCharacter,
+          ...updatedChar,
+          skills: updatedChar.skills ?? prevCharacter.skills,
+          equipment: updatedChar.equipment ?? prevCharacter.equipment,
+          spells: updatedChar.spells ?? prevCharacter.spells,
+          savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prevCharacter.savingThrowProficiencies,
+          classesInfo: updatedChar.classesInfo ?? prevCharacter.classesInfo,
+        };
+
+        return newCharacterState;
+      });
+
+      setCharacters(prev => prev.map(c =>
+          c.id === id ? {...c, name: updatedChar.name || c.name} : c
+      ));
+
       return updatedChar;
     } finally {
       setSaving(false);

@@ -5,29 +5,23 @@ import {formatModifier, getAbilityModifier} from '@/utils/helpers';
 import {useCharacter} from '@/context/CharacterContext';
 import type {AbilityName} from '@/types';
 import styles from './SavingThrows.module.css';
+import {Card} from "@components/common/Card.tsx";
 
-export function SavingThrows() {
+export function SavingThrows({className}: { className?: string }) {
   const {currentCharacter} = useCharacter();
 
-  if (!currentCharacter) {
-    return null;
-  }
+  if (!currentCharacter) return null;
 
-  // CORRECT: Destructure the correct properties from the character
-  const {abilityScores, savingThrowProficiencies, proficiencyBonus} = currentCharacter;
+  const {proficiencyBonus} = currentCharacter;
 
   return (
-      <div className={styles.savingThrows}>
-        <h3 className={styles.title}>Saving Throws</h3>
-
+      // Use the Card component and pass the className
+      <Card title="Saving Throws" className={className}>
         <div className={styles.list}>
           {ABILITIES.map((abilityInfo) => {
-            // CORRECT: Access properties using the new data structure
-            const score = abilityScores[abilityInfo.key];
+            const score = currentCharacter.abilityScores[abilityInfo.key as keyof typeof currentCharacter.abilityScores];
             const abilityName = abilityInfo.key.toUpperCase() as AbilityName;
-            const savingThrowProficiencies = currentCharacter.savingThrowProficiencies || [];
-            const isProficient = savingThrowProficiencies.includes(abilityName);
-
+            const isProficient = (currentCharacter.savingThrowProficiencies || []).includes(abilityName);
             const baseModifier = getAbilityModifier(score);
             const totalModifier = baseModifier + (isProficient ? proficiencyBonus : 0);
 
@@ -36,17 +30,15 @@ export function SavingThrows() {
                   <button
                       type="button"
                       className={`${styles.checkbox} ${isProficient ? styles.checked : ''}`}
-                      // onClick logic needs to be added later with a proper update function
                   >
                     {isProficient ? '●' : '○'}
                   </button>
-
                   <span className={styles.modifier}>{formatModifier(totalModifier)}</span>
                   <span className={styles.name}>{abilityInfo.name}</span>
                 </div>
             );
           })}
         </div>
-      </div>
+      </Card>
   );
 }

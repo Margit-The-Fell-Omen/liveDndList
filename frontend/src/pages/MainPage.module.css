@@ -13,17 +13,22 @@
   color: var(--color-text-secondary);
 }
 
-/* --- NEW: The Main Character Sheet Grid --- */
+/* --- NEW GRID BASED ON YOUR WIREFRAME --- */
 .sheetGrid {
   display: grid;
   gap: var(--space-lg);
   grid-template-columns: 280px 1fr 340px;
+  /* 8 rows provide granular control for vertical spanning */
+  grid-template-rows: repeat(8, auto);
   grid-template-areas:
     "header      header      header"
-    "abilities   combat      equipment"
-    "saves       hp          personality"
-    "skills      features    personality"
-    "skills      features    spells";
+    "abilities   combat      skills"
+    "abilities   hp          skills"
+    "saves       hp          skills"
+    "features    spells      equipment"
+    "features    spells      equipment"
+    "features    notes       equipment"
+    "features    notes       equipment";
 }
 
 /* Area assignments */
@@ -35,68 +40,73 @@
   grid-area: abilities;
 }
 
+/* "Stats" from wireframe */
 .saves {
   grid-area: saves;
-}
-
-.skills {
-  grid-area: skills;
-}
-
-.combat {
-  grid-area: combat;
-}
-
-.hp {
-  grid-area: hp;
 }
 
 .features {
   grid-area: features;
 }
 
-.equipment {
-  grid-area: equipment;
+/* "Traits & features" from wireframe */
+.combat {
+  grid-area: combat;
 }
 
-.personality {
-  grid-area: personality;
+/* "Battle stats" */
+.hp {
+  grid-area: hp;
 }
 
 .spells {
   grid-area: spells;
 }
 
-/* --- RESPONSIVE BREAKPOINTS --- */
+.notes {
+  grid-area: notes;
+}
 
-/* Tablet Layout */
-@media (max-width: 1200px) {
+.skills {
+  grid-area: skills;
+}
+
+.equipment {
+  grid-area: equipment;
+}
+
+
+/* --- RESPONSIVE BREAKPOINTS --- */
+/* This maintains a reasonable layout for tablets */
+@media (max-width: 1280px) {
   .sheetGrid {
     grid-template-columns: 260px 1fr;
     grid-template-areas:
       "header      header"
       "abilities   combat"
-      "saves       hp"
-      "skills      features"
-      "equipment   personality"
-      "spells      personality";
+      "abilities   hp"
+      "saves       skills"
+      "features    skills"
+      "spells      equipment"
+      "notes       equipment";
   }
 }
 
-/* Mobile Layout */
+/* On mobile, everything stacks vertically */
 @media (max-width: 768px) {
   .sheetGrid {
     grid-template-columns: 1fr;
+    /* Reset all spans and stack */
     grid-template-areas:
       "header"
+      "abilities"
       "combat"
       "hp"
-      "abilities"
       "saves"
       "skills"
-      "personality"
       "features"
-      "equipment"
-      "spells";
+      "spells"
+      "notes"
+      "equipment";
   }
 }

@@ -1,6 +1,6 @@
 // src/pages/MainPage.tsx
 import {useCharacter} from '@/context/CharacterContext';
-import {Card} from '@/components/common/Card'; // <-- Import the new Card
+import {Card} from '@/components/common/Card';
 import {CharacterHeader} from '@/components/character/CharacterHeader';
 import {AbilityScore} from '@/components/character/AbilityScore';
 import {SavingThrows} from '@/components/character/SavingThrows';
@@ -23,10 +23,10 @@ export function MainPage() {
 
   return (
       <div className={styles.page}>
-        {/* The grid now orchestrates the entire layout */}
         <div className={styles.sheetGrid}>
           <CharacterHeader className={styles.header}/>
 
+          {/* "Stats" from wireframe */}
           <Card title="Ability Scores" className={styles.abilities}>
             {ABILITIES.map((abilityInfo) => (
                 <AbilityScore
@@ -38,18 +38,22 @@ export function MainPage() {
             ))}
           </Card>
 
+          {/* Components mapped to their new grid areas */}
           <SavingThrows className={styles.saves}/>
-          <Skills className={styles.skills}/>
 
-          {/* We assume CombatStats will be a Card internally */}
+          {/* "Traits & features" from wireframe */}
+          <Background className={styles.features}/>
+
+          {/* "Battle stats" from wireframe */}
           <CombatStats className={styles.combat}/>
           <HitPoints className={styles.hp}/>
-          <Features className={styles.features}/> {/* We assume Features will be a Card */}
+          <Spells className={styles.spells}/>
 
-          <Equipment className={styles.equipment}/> {/* We assume Equipment will be a Card */}
-          <Background className={styles.personality}/>
-          <Spells className={styles.spells}/> {/* We assume Spells will be a Card */}
+          {/* "Notes" from wireframe */}
+          <Features className={styles.notes}/>
 
+          <Skills className={styles.skills}/>
+          <Equipment className={styles.equipment}/>
         </div>
       </div>
   );

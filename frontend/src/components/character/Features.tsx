@@ -5,8 +5,9 @@ import {useCharacter} from '@/context/CharacterContext';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
 import {TextArea} from '@/components/common/Input';
 import styles from './Features.module.css';
+import {Card} from '@/components/common/Card';
 
-export function Features() {
+export function Features({className}: { className?: string }) {
   const {currentCharacter, updateCharacter, saving} = useCharacter();
 
   // Use local state to manage the text area's content for a responsive UI.
@@ -42,12 +43,7 @@ export function Features() {
   }
 
   return (
-      <div className={styles.features}>
-        <div className={styles.header}>
-          <h3 className={styles.title}>Features & Traits</h3>
-          {/* A subtle saving indicator */}
-          {saving && <span className={styles.savingIndicator}>Saving...</span>}
-        </div>
+      <Card title="Features" className={className}>
 
         <TextArea
             value={localFeatures}
@@ -58,6 +54,6 @@ export function Features() {
             autoResize
             className={styles.featureTextarea}
         />
-      </div>
+      </Card>
   );
 }
