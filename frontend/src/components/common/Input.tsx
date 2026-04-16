@@ -1,14 +1,11 @@
 // src/components/common/Input.tsx
 
-import React, {type ChangeEvent, useState} from 'react';
+import React, {useState, type ChangeEvent} from 'react';
 import styles from './Input.module.css';
 
-// ===============================================================
-// LOCAL TYPE DEFINITIONS
-// ===============================================================
+// --- TYPE DEFINITIONS (No changes needed here) ---
 
-// FIX 1: Define the prop types for each component locally.
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   error?: string | null;
   hint?: string;
@@ -37,10 +34,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
   fullWidth?: boolean;
 }
 
-
-// ===============================================================
-// INPUT COMPONENT
-// ===============================================================
+// --- INPUT COMPONENT (DEFINITIVELY FIXED) ---
 
 export function Input({
                         label,
@@ -48,16 +42,25 @@ export function Input({
                         error,
                         hint,
                         icon,
-                        fullWidth = false,
+                        fullWidth,
                         className = '',
                         required,
-                        ...props
+                        // --- THE FIX ---
+                        // Explicitly destructure `value` and `defaultValue`.
+                        // This makes them known to the component's scope and satisfies TypeScript.
+                        value,
+                        defaultValue,
+                        ...props // All other standard input props
                       }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const inputType = type === 'password' && showPassword ? 'text' : type;
+  const wrapperClassName = `${styles.wrapper} ${fullWidth ? styles.fullWidth : ''} ${className}`;
+
+  // Decide which prop to pass to the input element to avoid the controlled/uncontrolled warning.
+  const inputProps = value !== undefined ? {value} : {defaultValue};
 
   return (
-      <div className={`${styles.wrapper} ${fullWidth ? styles.fullWidth : ''} ${className}`}>
+      <div className={wrapperClassName}>
         {label && (
             <label htmlFor={props.id || props.name} className={styles.label}>
               {label}
@@ -70,7 +73,8 @@ export function Input({
               type={inputType}
               className={`${styles.input} ${error ? styles.error : ''} ${icon ? styles.withIcon : ''}`}
               required={required}
-              {...props}
+              {...props} // Spread the rest of the props first
+              {...inputProps} // Then spread our determined value/defaultValue prop
           />
           {type === 'password' && (
               <button
@@ -80,7 +84,6 @@ export function Input({
                   tabIndex={-1}
                   aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {/* Using text for better accessibility and consistency */}
                 {showPassword ? 'Hide' : 'Show'}
               </button>
           )}
@@ -91,33 +94,32 @@ export function Input({
   );
 }
 
-
-// ===============================================================
-// TEXTAREA COMPONENT
-// ===============================================================
+// --- TEXTAREA COMPONENT ---
+// This component should follow the same pattern for value/defaultValue.
 
 export function TextArea({
                            label,
                            error,
                            hint,
-                           fullWidth = false,
-                           autoResize = false,
+                           fullWidth,
+                           autoResize,
                            className = '',
                            required,
+                           value,
+                           defaultValue,
                            ...props
                          }: TextAreaProps) {
-
-  // FIX 2: Rename `onInput` to avoid conflict with the standard prop.
   const handleAutoResize = (e: ChangeEvent<HTMLTextAreaElement>) => {
     if (autoResize) {
       e.target.style.height = 'auto';
       e.target.style.height = `${e.target.scrollHeight}px`;
     }
-    // If the original component passed an onInput function, call it.
     if (props.onInput) {
       props.onInput(e);
     }
   };
+
+  const textAreaProps = value !== undefined ? {value} : {defaultValue};
 
   return (
       <div className={`${styles.wrapper} ${fullWidth ? styles.fullWidth : ''} ${className}`}>
@@ -132,6 +134,7 @@ export function TextArea({
             onInput={handleAutoResize}
             required={required}
             {...props}
+            {...textAreaProps}
         />
         {error && <span className={styles.errorMessage}>{error}</span>}
         {hint && !error && <span className={styles.hint}>{hint}</span>}
@@ -139,21 +142,22 @@ export function TextArea({
   );
 }
 
-
-// ===============================================================
-// SELECT COMPONENT
-// ===============================================================
+// --- SELECT COMPONENT ---
 
 export function Select({
                          label,
                          error,
                          options = [],
                          placeholder,
-                         fullWidth = false,
+                         fullWidth,
                          className = '',
                          required,
+                         value,
+                         defaultValue,
                          ...props
                        }: SelectProps) {
+  const selectProps = value !== undefined ? {value} : {defaultValue};
+
   const getOptionValue = (option: SelectOption | string): string | number => {
     return typeof option === 'string' ? option : option.value;
   };
@@ -173,12 +177,10 @@ export function Select({
         <select
             className={`${styles.select} ${error ? styles.error : ''}`}
             required={required}
-            defaultValue="" // Use defaultValue for uncontrolled components
             {...props}
+            {...selectProps}
         >
-          {/* The placeholder is an option that is disabled and hidden once a selection is made */}
           {placeholder && <option value="" disabled>{placeholder}</option>}
-
           {options.map((option, index) => (
               <option key={`${getOptionValue(option)}-${index}`} value={getOptionValue(option)}>
                 {getOptionLabel(option)}

@@ -1,43 +1,35 @@
 // src/components/character/AbilityScore.tsx
+import {AbilityInfo} from '@/utils/constants';
+import {formatModifier} from '@/utils/helpers';
+import {Input} from '@/components/common/Input';
+import styles from './AbilityScore.module.css';
 
-// FIX 1: Import the AbilityInfo type from its single source of truth.
-import type {AbilityInfo} from '@/utils/constants';
-
-// FIX 2: Define the component's props. Notice it does NOT include 'key'.
 interface AbilityScoreProps {
   ability: AbilityInfo;
-  value: number;
-  proficient: boolean;
-  onChange: (abilityKey: string, value: string | number) => void;
-  onProficiencyChange: () => void;
+  score: number;
+  modifier: number;
 }
 
-export function AbilityScore({
-                               ability,
-                               value,
-                               proficient,
-                               onChange,
-                               onProficiencyChange,
-                             }: AbilityScoreProps) {
-
-  // FIX 3: Use `ability.key` (from the 'ability' prop) instead of a non-existent `key` prop.
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(ability.key, e.target.value);
+export function AbilityScore({ability, score, modifier}: AbilityScoreProps) {
+  // A debounced update function would go here
+  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(`Updating ${ability.name} to ${e.target.value}`);
+    // Call debounced updateCharacter here
   };
 
   return (
-      <div className="ability-score-container">
-        <label>{ability.name}</label>
-        <input
-            type="number"
-            value={value}
-            onChange={handleInputChange}
-        />
-        {/* You can also display the modifier here */}
-        {/* And the proficiency toggle */}
-        <button onClick={onProficiencyChange}>
-          {proficient ? '✅' : '⬜️'}
-        </button>
+      <div className={styles.abilityScore}>
+        <label className={styles.label}>{ability.name}</label>
+        <div className={styles.modifier}>{formatModifier(modifier)}</div>
+        <div className={styles.scoreInputWrapper}>
+          <Input
+              type="number"
+              defaultValue={score}
+              onChange={handleScoreChange}
+              className={styles.scoreInput}
+              aria-label={`${ability.name} score`}
+          />
+        </div>
       </div>
   );
 }

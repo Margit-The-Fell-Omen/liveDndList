@@ -1,15 +1,14 @@
 .button {
-  width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-sm);
-  font-family: var(--font-family-secondary);
+  gap: 8px; /* Use a fixed value for gap */
+  font-family: inherit; /* Use var(--font-family-secondary) from global scope */
   font-weight: 500;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 8px; /* Use var(--radius-md) from global scope */
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 150ms ease; /* Use var(--transition-fast) */
   position: relative;
   white-space: nowrap;
 }
@@ -17,6 +16,10 @@
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.fullWidth {
+  width: 100%;
 }
 
 /* Variants */
@@ -80,6 +83,7 @@
 }
 
 .spinner {
+  position: absolute;
   width: 16px;
   height: 16px;
   border: 2px solid transparent;

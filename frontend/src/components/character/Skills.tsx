@@ -7,25 +7,31 @@ import type {SkillName} from '@/types';
 import styles from './Skills.module.css';
 
 export function Skills() {
-  const {currentCharacter, updateCharacter} = useCharacter();
+  const {currentCharacter} = useCharacter();
 
   if (!currentCharacter) {
     return null;
   }
 
-  // Destructure the correct properties
-  const {skills: characterSkills, abilityScores} = currentCharacter;
+  // --- THE FIX ---
+  // Use fallback empty arrays and default objects to prevent crashes if data is null.
+  const characterSkills = currentCharacter.skills || [];
+  const abilityScores = currentCharacter.abilityScores || {
+    strength: 10, strengthModifier: 0, dexterity: 10, dexterityModifier: 0,
+    constitution: 10, constitutionModifier: 0, intelligence: 10, intelligenceModifier: 0,
+    wisdom: 10, wisdomModifier: 0, charisma: 10, charismaModifier: 0,
+  };
+  // --- END OF FIX ---
 
-  // These update functions need to be implemented if you want to allow
-  // users to change proficiency/expertise from the UI.
+
   const toggleProficiency = (skillName: SkillName) => {
     console.log(`Toggling proficiency for ${skillName}`);
-    console.warn("Updating skills requires a 'skills' array in the backend's CharacterUpdateRequest DTO.");
+    console.warn("Updating skills requires backend implementation.");
   };
 
   const toggleExpertise = (skillName: SkillName) => {
     console.log(`Toggling expertise for ${skillName}`);
-    console.warn("Updating skills requires a 'skills' array in the backend's CharacterUpdateRequest DTO.");
+    console.warn("Updating skills requires backend implementation.");
   };
 
   return (
@@ -33,19 +39,16 @@ export function Skills() {
         <h3 className={styles.title}>Skills</h3>
 
         <div className={styles.skillList}>
-          {/* We map over the master list of ALL skills from constants */}
           {SKILLS.map((skillInfo) => {
-            // FIX 1: Find this skill's data within the character's skills array
+            // This line is now safe because `characterSkills` is guaranteed to be an array.
             const skillData = characterSkills.find(s => s.skillType === skillInfo.key);
 
-            // Get the base ability modifier for display, but use the backend's totalBonus for the main number
-            const abilityKey = skillInfo.ability.toLowerCase() as keyof typeof abilityScores;
-            const baseModifier = abilityScores[abilityKey.replace('Modifier', '')] ? getAbilityModifier(abilityScores[abilityKey.replace('Modifier', '')]) : 0;
+            const abilityKeyForScore = skillInfo.ability.toLowerCase() as keyof typeof abilityScores;
+            const scoreValue = abilityScores[abilityKeyForScore] ?? 10;
+            const baseModifier = getAbilityModifier(scoreValue);
 
-            // Use the data from the backend if it exists, otherwise provide defaults
             const isProficient = skillData?.proficient ?? false;
             const hasExpertise = skillData?.expertise ?? false;
-            // Use the pre-calculated bonus from the backend for accuracy
             const totalBonus = skillData?.totalBonus ?? baseModifier;
 
             return (
@@ -63,14 +66,13 @@ export function Skills() {
                         type="button"
                         className={`${styles.checkbox} ${hasExpertise ? styles.checked : ''}`}
                         onClick={() => toggleExpertise(skillInfo.key)}
-                        disabled={!isProficient} // Can't have expertise without proficiency
+                        disabled={!isProficient}
                         title="Expertise"
                     >
                       ◆
                     </button>
                   </div>
 
-                  {/* FIX 2: Display the totalBonus calculated by the backend */}
                   <div className={styles.modifier}>{formatModifier(totalBonus)}</div>
 
                   <div className={styles.skillInfo}>

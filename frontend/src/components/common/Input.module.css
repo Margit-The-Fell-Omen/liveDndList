@@ -83,12 +83,22 @@
   border: none;
   cursor: pointer;
   padding: var(--space-xs);
-  opacity: 0.6;
-  transition: opacity var(--transition-fast);
+  transition: color var(--transition-fast); /* Transition the color instead of opacity */
+
+  /* Set an explicit, visible color from your theme */
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
 }
 
 .passwordToggle:hover {
-  opacity: 1;
+  /* Use the accent hover color for better interactivity */
+  color: var(--color-accent-hover);
+}
+
+.passwordToggle:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 1px;
 }
 
 .textarea {
@@ -119,7 +129,13 @@
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
 }

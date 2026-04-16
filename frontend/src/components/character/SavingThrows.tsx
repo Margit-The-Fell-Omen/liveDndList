@@ -25,6 +25,7 @@ export function SavingThrows() {
             // CORRECT: Access properties using the new data structure
             const score = abilityScores[abilityInfo.key];
             const abilityName = abilityInfo.key.toUpperCase() as AbilityName;
+            const savingThrowProficiencies = currentCharacter.savingThrowProficiencies || [];
             const isProficient = savingThrowProficiencies.includes(abilityName);
 
             const baseModifier = getAbilityModifier(score);

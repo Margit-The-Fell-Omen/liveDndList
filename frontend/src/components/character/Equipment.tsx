@@ -6,56 +6,46 @@ import {Input} from '@/components/common/Input';
 import type {DndCurrencyResponse} from '@/types';
 import styles from './Equipment.module.css';
 
-// Define the keys for our currency object for easy mapping
 const CURRENCY_KEYS: (keyof DndCurrencyResponse)[] = ['copper', 'silver', 'electrum', 'gold', 'platinum'];
 
 export function Equipment() {
-  const {currentCharacter, updateCharacter} = useCharacter();
+  const {currentCharacter} = useCharacter();
 
   if (!currentCharacter) {
     return null;
   }
 
-  // Destructure the correct properties from the character object
-  const {equipment, currency} = currentCharacter;
-
-  // --- Event Handlers ---
+  // --- THE FIX ---
+  // Use a fallback empty array for equipment and a default object for currency.
+  const equipment = currentCharacter.equipment || [];
+  const currency = currentCharacter.currency || {
+    copper: 0,
+    silver: 0,
+    electrum: 0,
+    gold: 0,
+    platinum: 0
+  };
+  // --- END OF FIX ---
 
   const handleCurrencyChange = (key: keyof DndCurrencyResponse, value: string) => {
-    const newCurrency = {
-      ...currency,
-      [key]: parseInt(value, 10) || 0,
-    };
-    // updateCharacter(currentCharacter.id, { currency: newCurrency });
-    console.log(`Updating currency: ${key} to ${value}`);
     console.warn("Currency updates require a 'currency' field in the backend's CharacterUpdateRequest DTO.");
   };
 
   const handleRemoveItem = (itemId: number) => {
-    // This would eventually call an API endpoint like:
-    // charactersApi.removeEquipment(currentCharacter.id, itemId);
-    // For now, we'll log it.
-    console.log(`Request to remove equipment item with ID: ${itemId}`);
     console.warn("Removing equipment requires a dedicated API endpoint.");
   };
-
-  // Note: Adding and updating items is now more complex. It would involve a modal
-  // to fill out the full EquipmentRequest DTO and call a dedicated API endpoint.
-  // The simple "add by name" input is removed for now to reflect the new data model.
 
   return (
       <div className={styles.equipment}>
         <h3 className={styles.title}>Equipment & Currency</h3>
 
-        {/* Currency */}
         <div className={styles.currency}>
           {CURRENCY_KEYS.map((key) => (
               <div key={key} className={styles.coin}>
-                {/* FIX: Use `key.slice(0, 2).toUpperCase()` for 'CP', 'SP', etc. */}
                 <label className={styles.coinLabel}>{key.slice(0, 2).toUpperCase()}</label>
                 <Input
                     type="number"
-                    value={currency[key]}
+                    defaultValue={currency[key]} // This will now safely access the property
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                         handleCurrencyChange(key, e.target.value)
                     }
@@ -66,8 +56,8 @@ export function Equipment() {
           ))}
         </div>
 
-        {/* Item List */}
         <div className={styles.itemList}>
+          {/* This `equipment.length` check is now safe */}
           {equipment.length === 0 ? (
               <p className={styles.emptyMessage}>The backpack is empty.</p>
           ) : (
@@ -78,7 +68,6 @@ export function Equipment() {
                 {item.quantity > 1 && ` (x${item.quantity})`}
               </span>
                     <div className={styles.itemControls}>
-                      {/* For now, we just display the quantity. Editing would require a more complex handler. */}
                       <button
                           type="button"
                           className={styles.removeButton}
@@ -92,10 +81,6 @@ export function Equipment() {
               ))
           )}
         </div>
-
-        {/* The simple text input for adding items is removed.
-          This should be replaced by a more robust "Add Equipment" button
-          that opens a modal to search/create a full equipment item. */}
       </div>
   );
 }

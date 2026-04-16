@@ -1,8 +1,22 @@
 .page {
-  min-height: 100vh;
   display: flex;
-  position: relative;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--color-bg-primary);
+  padding: var(--space-xl);
 }
+
+.formContainer {
+  width: 100%;
+  max-width: 400px;
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-2xl);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
 
 .hero {
   flex: 1;
@@ -22,20 +36,11 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    135deg,
-    var(--color-accent-primary) 0%,
-    var(--color-accent-secondary) 100%
+      135deg,
+      var(--color-accent-primary) 0%,
+      var(--color-accent-secondary) 100%
   );
   opacity: 0.3;
-}
-
-.formContainer {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-2xl);
-  background-color: var(--color-bg-secondary);
 }
 
 .formWrapper {

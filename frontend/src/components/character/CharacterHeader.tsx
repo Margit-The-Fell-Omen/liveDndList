@@ -7,7 +7,8 @@ import {ALIGNMENTS} from '@/utils/constants';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
 import styles from './CharacterHeader.module.css';
 
-export function CharacterHeader() {
+export function CharacterHeader({className}: { className?: string }) {
+
   // FIX: Get `races` and `classes` from the context now
   const {currentCharacter, updateCharacter, races, classes} = useCharacter();
 
@@ -33,8 +34,11 @@ export function CharacterHeader() {
     debouncedUpdate({[name]: finalValue});
   };
 
+  if (!currentCharacter) return null;
+
   return (
-      <div className={styles.header}>
+      // Pass className for grid placement
+      <div className={`${styles.header} ${className}`}>
         <div className={styles.mainInfo}>
           <Input
               name="name"
@@ -43,78 +47,43 @@ export function CharacterHeader() {
               placeholder="Character Name"
               className={styles.nameInput}
           />
-
-          <div className={styles.basicInfo}>
-            {/* FIX: Race and Class are now display-only based on backend data */}
-            <div className={styles.infoBlock}>
-              <label>Race</label>
-              <span>{currentCharacter.raceName || 'N/A'}</span>
-            </div>
-
-            <div className={styles.infoBlock}>
-              <label>Class & Level</label>
-              {/* Join the array of class strings */}
-              <span>{currentCharacter.classesInfo.join(' / ') || 'N/A'}</span>
-            </div>
-          </div>
         </div>
 
         <div className={styles.secondaryInfo}>
+          {/* Race and Class Info */}
+          <div className={styles.infoBlock}>
+            <label>Race</label>
+            <span>{currentCharacter.raceName || 'N/A'}</span>
+          </div>
+          <div className={styles.infoBlock}>
+            <label>Class & Level</label>
+            <span>{currentCharacter.classesInfo.join(' / ') || 'N/A'}</span>
+          </div>
+
+          {/* Background, Alignment, XP */}
           <Input
+              label="Background"
               name="background"
               defaultValue={currentCharacter.background}
               onChange={handleChange}
-              placeholder="Background"
           />
-
           <Select
+              label="Alignment"
               name="alignment"
               defaultValue={currentCharacter.alignment}
               onChange={handleChange}
               options={ALIGNMENTS}
-              placeholder="Alignment"
           />
-
           <Input
+              label="Experience"
               name="experiencePoints"
               type="number"
               defaultValue={currentCharacter.experiencePoints}
               onChange={handleChange}
-              placeholder="XP"
           />
         </div>
 
-        <div className={styles.stats}>
-          {/* FIX: This section is now display-only. The stats are calculated or
-            set in other more specific components (like CombatStats.tsx) */}
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Proficiency</span>
-            <span className={styles.statValue}>
-            +{currentCharacter.proficiencyBonus}
-          </span>
-          </div>
-
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Initiative</span>
-            <span className={styles.statValue}>
-            {currentCharacter.initiative >= 0 ? '+' : ''}{currentCharacter.initiative}
-          </span>
-          </div>
-
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Speed</span>
-            <span className={styles.statValue}>
-            {currentCharacter.speed}ft
-          </span>
-          </div>
-
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Armor Class</span>
-            <span className={styles.statValue}>
-            {currentCharacter.armorClass}
-          </span>
-          </div>
-        </div>
+        {/* --- FIX: REMOVED the entire 'stats' div section --- */}
       </div>
   );
 }

@@ -3,39 +3,63 @@
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-xl);
 }
 
 .formWrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem; /* FIX: Adds consistent space between all direct children (inputs, buttons) */
   width: 100%;
-  max-width: 400px;
 }
 
 .title {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-3xl);
+  font-size: 1.75rem;
+  font-weight: bold;
   color: var(--color-text-primary);
   text-align: center;
-  margin: 0;
+  margin-bottom: -0.5rem; /* Reduce space below title */
 }
 
 .subtitle {
+  font-size: 1rem;
   color: var(--color-text-secondary);
   text-align: center;
-  margin: 0 0 var(--space-md) 0;
+  margin-bottom: 1rem;
 }
 
 .errorBanner {
-  padding: var(--space-md);
-  background-color: rgba(139, 0, 0, 0.1);
-  border: 1px solid var(--color-error);
+  background-color: var(--color-danger-background);
+  color: var(--color-danger-text);
+  padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  animation: shake 0.4s ease;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid var(--color-error);
+}
+
+.switch {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.5rem;
+}
+
+.switchButton {
+  background: none;
+  border: none;
+  /* FIX: Use the primary accent color to make it visible and interactive */
+  color: var(--color-accent-primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  font-size: inherit;
+}
+
+.switchButton:hover {
+  /* FIX: Use the accent hover color */
+  color: var(--color-accent-hover);
 }
 
 .switchText {
@@ -43,26 +67,3 @@
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
 }
-
-.switch {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-  margin-top: 1rem;
-}
-
-.switchButton {
-  background: none;
-  border: none;
-  color: var(--color-bg-primary);
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-  font-size: inherit; /* Make it the same size as the surrounding text */
-}
-
-.switchButton:hover {
-  color: var(--color-bg-hover);
-}
-
