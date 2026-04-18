@@ -225,11 +225,11 @@ export interface SpellResponse {
 
 export interface CharacterCreateRequest {
   name: string;
-  raceId: number;
+  raceSlug: string;
   alignment?: CharacterAlignment;
   background?: string;
-  classId: number;
-  archetypeId?: number;
+  classSlug: string;
+  archetypeSlug?: string;
   abilityScores: AbilityScores;
   maxHitPoints: number;
   portraitUrl?: string;
@@ -332,4 +332,32 @@ export interface CharacterContextType {
   updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
   deleteCharacter: (id: number) => Promise<void>;
   clearError: () => void;
+}
+
+export interface EquipmentData {
+  name: string;
+  description?: string;
+  quantity: number;
+  weight?: number;
+  type: EquipmentType;
+  damage?: string;
+  damageType?: string;
+  properties?: string;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CONTEXT TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export interface CharacterContextType {
+  // ... keep existing fields ...
+  createCharacter: (data: CharacterCreateRequest) => Promise<Character>;
+  updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
+  deleteCharacter: (id: number) => Promise<void>;
+  clearError: () => void;
+
+  // ADD THESE NEW METHODS
+  addEquipment: (data: EquipmentData) => Promise<void>;
+  updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
+  removeEquipment: (itemId: number) => Promise<void>;
 }

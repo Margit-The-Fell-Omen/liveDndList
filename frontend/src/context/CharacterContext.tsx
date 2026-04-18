@@ -11,6 +11,7 @@ import type {
   CharacterCreateRequest,
   CharacterSummary,
   CharacterUpdateRequest,
+  EquipmentData,
   Race,
 } from '@/types';
 
@@ -149,6 +150,43 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     await fetchCharacters();
   };
 
+  const addEquipment = async (data: EquipmentData): Promise<void> => {
+    if (!currentCharacter) throw new Error("No character selected.");
+    setSaving(true);
+    try {
+      const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
+      setCurrentCharacter(updatedChar); // Update state with the full response
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeEquipment = async (itemId: number): Promise<void> => {
+    if (!currentCharacter) throw new Error("No character selected.");
+    setSaving(true);
+    try {
+      const updatedChar = await charactersApi.removeEquipment(currentCharacter.id, itemId);
+      setCurrentCharacter(updatedChar); // Update state
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateEquipment = async (itemId: number, data: EquipmentData): Promise<void> => {
+    if (!currentCharacter) throw new Error("No character selected.");
+    setSaving(true);
+    // This implements the "delete-then-add" strategy required by the backend
+    try {
+      // Step 1: Remove the old item
+      await charactersApi.removeEquipment(currentCharacter.id, itemId);
+      // Step 2: Add the new item with updated data
+      const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
+      setCurrentCharacter(updatedChar); // Final state update
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getArchetypesForClass = useCallback(async (classId: number): Promise<Archetype[]> => {
     try {
       return await referenceDataApi.getArchetypesByClass(classId);
@@ -174,6 +212,9 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     updateCharacter,
     deleteCharacter,
     clearError: () => setError(null),
+    addEquipment,
+    updateEquipment,
+    removeEquipment,
     getArchetypesForClass,
   };
 

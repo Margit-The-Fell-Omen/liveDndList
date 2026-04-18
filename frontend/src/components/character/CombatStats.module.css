@@ -1,5 +1,6 @@
 /* src/components/character/CombatStats.module.css */
 
+/* Unchanged Styles */
 .combatStats {
   background-color: var(--color-1);
   border-radius: var(--radius-lg);
@@ -22,11 +23,11 @@
 }
 
 .stat {
+  /* This outer box for AC/Init/Speed doesn't have a separate background */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-1);
   padding: 0.75rem;
   border-radius: var(--radius-sm);
   text-align: center;
@@ -44,11 +45,13 @@
   width: 100%;
 }
 
+/* This is the style we need to replicate */
 .input input {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
   padding: 0.25rem;
+  /* The browser default styles the background/border for inputs */
 }
 
 .speedInput {
@@ -60,15 +63,84 @@
 .unit {
   font-size: 0.9rem;
   color: var(--color-text-secondary);
-  padding-top: 0.25rem; /* Align with number */
+  padding-top: 0.25rem;
 }
 
-.hitDice {
-  margin-top: 0.5rem;
+/* --- REVISED STYLES FOR ATTACKS --- */
+
+.attacksContainer {
+  margin-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs); /* Tighter row spacing */
 }
 
-.hitDiceValue {
-  font-size: 1.5rem;
-  font-weight: bold;
+.attacksHeader {
+  display: grid;
+  grid-template-columns: 3fr 1.2fr 2fr;
+  gap: var(--space-sm);
+  padding: 0 var(--space-sm);
+  margin-bottom: 2px;
+}
+
+.attacksHeader span {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.attacksHeader span:nth-child(2) {
+  text-align: center;
+}
+
+.attackRow {
+  display: grid;
+  grid-template-columns: 3fr 1.2fr 2fr;
+  gap: var(--space-sm);
+}
+
+.attackCell {
+  /* Replicating the style of the AC/Initiative/Speed inputs */
+  background-color: var(--color-bg-primary); /* This is the darker background matching the inputs */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); /* Increased rounding */
+  padding: var(--space-sm) var(--space-md);
+  min-height: 48px; /* Give cells more height */
+  font-size: var(--font-size-md);
+  font-weight: 500; /* Make text bolder */
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.centerText {
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  font-weight: 700; /* Boldest weight for the bonus */
+}
+
+.propertiesBox {
+  margin-top: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  /* Match the new cell style */
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.propertiesBox p {
+  margin: 0;
+}
+
+.propertiesBox strong {
   color: var(--color-text-primary);
 }

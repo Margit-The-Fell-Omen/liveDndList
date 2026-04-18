@@ -9,6 +9,7 @@ import type {
   CharacterSummary,
   CharacterUpdateRequest,
   LoginCredentials,
+  EquipmentData,
   Page,
   Race,
   RegisterData,
@@ -196,6 +197,19 @@ export const charactersApi = {
   },
   delete: async (id: number): Promise<void> => {
     return fetchWithAuth<void>(`/characters/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  addEquipment: async (characterId: number, data: EquipmentData): Promise<Character> => {
+    return fetchWithAuth<Character>(`/characters/${characterId}/equipment`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  removeEquipment: async (characterId: number, equipmentId: number): Promise<Character> => {
+    return fetchWithAuth<Character>(`/characters/${characterId}/equipment/${equipmentId}`, {
       method: 'DELETE',
     });
   },

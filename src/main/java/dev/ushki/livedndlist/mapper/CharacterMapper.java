@@ -133,19 +133,19 @@ public class CharacterMapper {
       return null;
     }
 
-    Race race = raceRepository.findById(request.getRaceId())
+    Race race = raceRepository.findBySlug(request.getRaceSlug())
         .orElseThrow(() -> new EntityNotFoundException(
-            "Race not found with id: " + request.getRaceId()));
+            "Race not found with id: " + request.getRaceSlug()));
 
-    DndClass dndClass = dndClassRepository.findById(request.getClassId())
+    DndClass dndClass = dndClassRepository.findBySlug(request.getClassSlug())
         .orElseThrow(() -> new EntityNotFoundException(
-            "Class not found with id: " + request.getClassId()));
+            "Class not found with id: " + request.getClassSlug()));
 
     Archetype archetype = null;
-    if (request.getArchetypeId() != null) {
-      archetype = archetypeRepository.findById(request.getArchetypeId())
+    if (request.getArchetypeSlug() != null) {
+      archetype = archetypeRepository.findBySlug(request.getArchetypeSlug())
           .orElseThrow(() -> new EntityNotFoundException(
-              "Archetype not found with id: " + request.getArchetypeId()));
+              "Archetype not found with id: " + request.getArchetypeSlug()));
 
       if (!archetype.getDndClass().getId().equals(dndClass.getId())) {
         throw new IllegalArgumentException(

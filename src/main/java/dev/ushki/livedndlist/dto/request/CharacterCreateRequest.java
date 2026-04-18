@@ -21,12 +21,12 @@ import lombok.NoArgsConstructor;
     example =
         """
         {
-          "name": "Gandalf the Grey",
-          "raceId": 1,
+          "name": "Arthas",
+          "raceSlug": "human",
           "alignment": "NEUTRAL_GOOD",
           "background": "Sage",
-          "classId": 3,
-          "archetypeId": 5,
+          "classSlug": "cleric",
+          "archetypeSlug": "life_domain",
           "abilityScores": {
             "strength": 10,
             "dexterity": 14,
@@ -52,9 +52,9 @@ public class CharacterCreateRequest {
   @Schema(description = "Name of the character", example = "Gandalf the Grey")
   private String name;
 
-  @NotNull(message = "Race ID is required")
-  @Schema(description = "ID of the character race", example = "1")
-  private Long raceId;
+  @NotNull(message = "Race slug is required")
+  @Schema(description = "Slug of the character race", example = "human")
+  private String raceSlug;
 
   @Schema(
       description = "Character alignment",
@@ -70,12 +70,12 @@ public class CharacterCreateRequest {
   @Schema(description = "Character background story", example = "Sage")
   private String background;
 
-  @NotNull(message = "Class ID is required")
-  @Schema(description = "ID of the character class", example = "3")
-  private Long classId;
+  @NotNull(message = "Class slug is required")
+  @Schema(description = "Slug of the character class", example = "cleric")
+  private String classSlug;
 
-  @Schema(description = "ID of the character class archetype (optional)", example = "5")
-  private Long archetypeId;
+  @Schema(description = "Slug of the character class archetype", example = "life_domain")
+  private String archetypeSlug;
 
   @Valid
   @Schema(description = "Base ability scores for the character")
