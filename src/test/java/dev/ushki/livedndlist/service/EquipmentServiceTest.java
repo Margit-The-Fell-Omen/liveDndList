@@ -13,11 +13,16 @@ import static org.mockito.Mockito.when;
 import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
+import dev.ushki.livedndlist.entity.User;
+import dev.ushki.livedndlist.entity.character.DndCharacter;
+import dev.ushki.livedndlist.entity.character.DndCurrency;
 import dev.ushki.livedndlist.entity.character.Equipment;
 import dev.ushki.livedndlist.enums.EquipmentType;
+import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
 import dev.ushki.livedndlist.repository.EquipmentRepository;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,6 +46,8 @@ class EquipmentServiceTest {
 
   private EquipmentService equipmentService;
 
+  private User testUser;
+  private DndCharacter testCharacter;
   private Equipment testWeapon;
   private Equipment testArmor;
   private Equipment heavyWeapon;
@@ -54,9 +61,32 @@ class EquipmentServiceTest {
     CacheManager cacheManager = new CacheManager();
     equipmentService = new EquipmentService(equipmentRepository, equipmentMapper, cacheManager);
 
+    testUser = User.builder()
+        .id(1L)
+        .username("testuser")
+        .email("test@test.com")
+        .password("encoded_password")
+        .role(Role.ROLE_USER)
+        .enabled(true)
+        .build();
+
+    testCharacter = DndCharacter.builder()
+        .id(1L)
+        .owner(testUser)
+        .name("Gandalf")
+        .maxHitPoints(45)
+        .currentHitPoints(45)
+        .classes(new HashSet<>())
+        .skills(new HashSet<>())
+        .equipment(new HashSet<>())
+        .spells(new HashSet<>())
+        .currency(new DndCurrency())
+        .build();
+
     testWeapon = Equipment.builder()
         .id(1L)
         .name("Longsword")
+        .character(testCharacter)
         .type(EquipmentType.WEAPON)
         .damage("1d8")
         .damageType("slashing")

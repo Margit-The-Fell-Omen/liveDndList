@@ -30,6 +30,8 @@ public class EquipmentService {
   private final CacheManager cacheManager;
 
   private static final String EQUIPMENT_STRING = "Equipment";
+  private static final String USER_RESOURCE = "User:";
+  private static final String CHARACTER_ID_SUFFIX = ":Character:";
 
   public List<EquipmentResponse> getAll(
       EquipmentType type,
@@ -115,11 +117,16 @@ public class EquipmentService {
     Equipment equipment = equipmentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(EQUIPMENT_STRING, "id", id));
 
+    String username = equipment.getCharacter().getOwner().getUsername();
+    Long characterId = equipment.getCharacter().getId();
+    String characterCacheNamespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + characterId;
+
     equipmentMapper.updateEntity(equipment, request);
     Equipment savedEquipment = equipmentRepository.save(equipment);
     log.info("Equipment '{}' updated", savedEquipment.getName());
 
     cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
+    cacheManager.invalidate(characterCacheNamespace);
 
     return equipmentMapper.toResponse(savedEquipment);
   }

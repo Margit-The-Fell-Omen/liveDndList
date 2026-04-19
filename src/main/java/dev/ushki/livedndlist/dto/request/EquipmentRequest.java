@@ -23,6 +23,9 @@ public class EquipmentRequest {
   @Schema(description = "Description of the item", example = "A versatile sword")
   private String description;
 
+  @Schema(description = "Is the item equipped", example = "false")
+  private boolean equipped;
+
   @Positive
   @Builder.Default
   @Schema(description = "Quantity of the item", example = "1")

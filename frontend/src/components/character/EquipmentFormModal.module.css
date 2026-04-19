@@ -17,6 +17,10 @@
   margin-bottom: -8px; /* Reduce space after label */
 }
 
+.equipButton {
+  margin-right: auto; /* Pushes this button to the far left of the footer */
+}
+
 .select,
 .textarea {
   width: 100%;

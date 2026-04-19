@@ -62,6 +62,7 @@ public class EquipmentMapper {
         .damage(request.getDamage())
         .damageType(request.getDamageType())
         .properties(request.getProperties())
+        .equipped(request.isEquipped())
         .build();
   }
 
@@ -74,6 +75,7 @@ public class EquipmentMapper {
     updateIfPresent(request.getDamage(), equipment::setDamage);
     updateIfPresent(request.getDamageType(), equipment::setDamageType);
     updateIfPresent(request.getProperties(), equipment::setProperties);
+    updateIfPresent(request.isEquipped(), equipment::setEquipped);
   }
 
   private <T> void updateIfPresent(T value, Consumer<T> setter) {

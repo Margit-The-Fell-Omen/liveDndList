@@ -81,35 +81,63 @@
   padding: var(--space-lg);
 }
 
+/* UPDATED .item STYLES */
 .item {
+  /* Reset button defaults */
+  background: none;
+  border: none;
+  margin: 0;
+  font: inherit;
+  text-align: left;
+
+  /* Apply card-like styling */
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-sm);
-  padding: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   background-color: var(--color-bg-tertiary);
   border-radius: var(--radius-md);
+  width: 100%;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.item:hover {
+  background-color: var(--color-bg-hover);
+  box-shadow: var(--shadow-inner);
+}
+
+/* NEW CONTAINER FOR NAME AND TYPE */
+.itemNameContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+  overflow: hidden;
 }
 
 .itemName {
-  flex: 1;
   font-size: var(--font-size-sm);
+  font-weight: 500;
   color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* NEW STYLE FOR ITEM TYPE */
+.itemType {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 .itemControls {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-}
-
-.quantityInput {
-  width: 60px;
-}
-
-.quantityInput input {
-  text-align: center;
-  padding: var(--space-xs);
 }
 
 .removeButton {
@@ -124,11 +152,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 .removeButton:hover {
   background-color: var(--color-error);
   color: white;
+}
+
+.quantityInput {
+  width: 60px;
+}
+
+.quantityInput input {
+  text-align: center;
+  padding: var(--space-xs);
 }
 
 @media (max-width: 640px) {

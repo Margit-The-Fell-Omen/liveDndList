@@ -1,7 +1,7 @@
 // src/context/CharacterContext.tsx
 
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useState} from 'react';
-import {charactersApi, referenceDataApi} from '@/services/api';
+import {charactersApi, equipmentApi, referenceDataApi} from '@/services/api';
 import {useAuth} from './AuthContext';
 import type {
   Archetype,
@@ -35,15 +35,11 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // --- THE DEFINITIVE FIX ---
+  // --- Data Fetching (No Changes) ---
   const fetchReferenceData = useCallback(async (): Promise<void> => {
     try {
-      // By awaiting each promise on its own line, we completely avoid the
-      // Promise.all type inference error. This is guaranteed to work.
       const racesData = await referenceDataApi.getRaces();
       const classesData = await referenceDataApi.getClasses();
-
-      // These assignments are now simple and type-safe.
       setRaces(racesData);
       setClasses(classesData);
     } catch (err) {
@@ -51,7 +47,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       setError(err instanceof Error ? err.message : 'Could not load game data.');
     }
   }, []);
-  // --- END OF FIX ---
 
   const fetchCharacters = useCallback(async (): Promise<void> => {
     if (!isAuthenticated) return;
@@ -79,8 +74,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (isAuthenticated) {
       const loadData = async () => {
         setLoading(true);
-        // We still use Promise.all here to run the functions in parallel,
-        // which is fine because the functions themselves are now error-free.
         await Promise.all([
           fetchReferenceData(),
           fetchCharacters()
@@ -89,7 +82,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       };
       loadData();
     } else {
-      // Clear all state on logout
       setCharacters([]);
       setCurrentCharacter(null);
       setRaces([]);
@@ -98,13 +90,13 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, [isAuthenticated, fetchReferenceData, fetchCharacters]);
 
-  // --- CRUD Functions (no changes needed) ---
+  // --- CRUD Functions ---
   const createCharacter = async (data: CharacterCreateRequest) => {
     setSaving(true);
     try {
       const newChar = await charactersApi.create(data);
       await fetchCharacters();
-      selectCharacter(newChar.id);
+      await selectCharacter(newChar.id);
       return newChar;
     } finally {
       setSaving(false);
@@ -116,10 +108,10 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     try {
       const updatedChar = await charactersApi.update(id, data);
 
+      // Correctly merge state for the currently open character
       setCurrentCharacter(prevCharacter => {
         if (!prevCharacter) return updatedChar;
-
-        const newCharacterState = {
+        return {
           ...prevCharacter,
           ...updatedChar,
           skills: updatedChar.skills ?? prevCharacter.skills,
@@ -128,13 +120,24 @@ export function CharacterProvider({children}: CharacterProviderProps) {
           savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prevCharacter.savingThrowProficiencies,
           classesInfo: updatedChar.classesInfo ?? prevCharacter.classesInfo,
         };
-
-        return newCharacterState;
       });
 
-      setCharacters(prev => prev.map(c =>
-          c.id === id ? {...c, name: updatedChar.name || c.name} : c
-      ));
+      setCharacters(prev =>
+          prev.map(summary => {
+            if (summary.id === id) {
+              return {
+                ...summary,
+                name: updatedChar.name,
+                totalLevel: updatedChar.totalLevel,
+                currentHitPoints: updatedChar.currentHitPoints,
+                maxHitPoints: updatedChar.maxHitPoints,
+                portraitUrl: updatedChar.portraitUrl,
+                updatedAt: updatedChar.updatedAt,
+              };
+            }
+            return summary;
+          })
+      );
 
       return updatedChar;
     } finally {
@@ -150,12 +153,13 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     await fetchCharacters();
   };
 
+  // --- Equipment CRUD ---
   const addEquipment = async (data: EquipmentData): Promise<void> => {
     if (!currentCharacter) throw new Error("No character selected.");
     setSaving(true);
     try {
       const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
-      setCurrentCharacter(updatedChar); // Update state with the full response
+      setCurrentCharacter(updatedChar);
     } finally {
       setSaving(false);
     }
@@ -166,7 +170,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     setSaving(true);
     try {
       const updatedChar = await charactersApi.removeEquipment(currentCharacter.id, itemId);
-      setCurrentCharacter(updatedChar); // Update state
+      setCurrentCharacter(updatedChar);
     } finally {
       setSaving(false);
     }
@@ -175,16 +179,49 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   const updateEquipment = async (itemId: number, data: EquipmentData): Promise<void> => {
     if (!currentCharacter) throw new Error("No character selected.");
     setSaving(true);
-    // This implements the "delete-then-add" strategy required by the backend
     try {
-      // Step 1: Remove the old item
-      await charactersApi.removeEquipment(currentCharacter.id, itemId);
-      // Step 2: Add the new item with updated data
-      const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
-      setCurrentCharacter(updatedChar); // Final state update
+      // Step 1: Call the correct generic endpoint to update the item in the DB
+      const updatedItem = await equipmentApi.update(itemId, data);
+
+      const freshCharacter = await charactersApi.getById(currentCharacter.id);
+      setCurrentCharacter(prevChar => {
+        if (!prevChar) return null;
+
+        // Find and replace the updated item in the equipment array
+        const newEquipmentList = prevChar.equipment.map(item =>
+            item.id === itemId ? updatedItem : item
+        );
+
+        // Return a new character object with the updated equipment list
+        return {...prevChar, equipment: newEquipmentList};
+      });
     } finally {
       setSaving(false);
     }
+  };
+
+
+  const toggleEquipmentEquipped = async (itemId: number): Promise<void> => {
+    if (!currentCharacter) throw new Error("No character selected.");
+
+    const itemToToggle = currentCharacter.equipment.find(item => item.id === itemId);
+    if (!itemToToggle) throw new Error("Equipment item not found.");
+
+    // Create a data object representing the updated item
+    const updatedItemData: EquipmentData = {
+      name: itemToToggle.name,
+      description: itemToToggle.description,
+      quantity: itemToToggle.quantity,
+      weight: itemToToggle.weight,
+      type: itemToToggle.type,
+      equipped: !itemToToggle.equipped, // The only change is flipping this boolean
+      damage: itemToToggle.damage,
+      damageType: itemToToggle.damageType,
+      properties: itemToToggle.properties,
+    };
+
+    // Reuse the existing update logic
+    await updateEquipment(itemId, updatedItemData);
   };
 
   const getArchetypesForClass = useCallback(async (classId: number): Promise<Archetype[]> => {
@@ -212,10 +249,11 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     updateCharacter,
     deleteCharacter,
     clearError: () => setError(null),
+    getArchetypesForClass,
     addEquipment,
     updateEquipment,
+    toggleEquipmentEquipped,
     removeEquipment,
-    getArchetypesForClass,
   };
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;

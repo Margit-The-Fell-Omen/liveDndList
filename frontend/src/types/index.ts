@@ -340,6 +340,7 @@ export interface EquipmentData {
   quantity: number;
   weight?: number;
   type: EquipmentType;
+  equipped?: boolean;
   damage?: string;
   damageType?: string;
   properties?: string;
@@ -356,8 +357,8 @@ export interface CharacterContextType {
   deleteCharacter: (id: number) => Promise<void>;
   clearError: () => void;
 
-  // ADD THESE NEW METHODS
   addEquipment: (data: EquipmentData) => Promise<void>;
   updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
   removeEquipment: (itemId: number) => Promise<void>;
+  toggleEquipmentEquipped: (itemId: number) => Promise<void>;
 }
