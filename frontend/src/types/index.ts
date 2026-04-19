@@ -346,9 +346,19 @@ export interface EquipmentData {
   properties?: string;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// CONTEXT TYPES
-// ═══════════════════════════════════════════════════════════════
+export interface SpellData {
+  name: string;
+  level: number;
+  school: SpellSchool;
+  castingTime: string;
+  range: string;
+  components: string;
+  duration: string;
+  concentration: boolean;
+  ritual: boolean;
+  description: string;
+  higherLevels?: string;
+}
 
 export interface CharacterContextType {
   // ... keep existing fields ...
@@ -361,4 +371,7 @@ export interface CharacterContextType {
   updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
   removeEquipment: (itemId: number) => Promise<void>;
   toggleEquipmentEquipped: (itemId: number) => Promise<void>;
+
+  addSpellToCharacter: (spellId: number) => Promise<void>;
+  removeSpellFromCharacter: (spellId: number) => Promise<void>;
 }

@@ -214,6 +214,18 @@ export const charactersApi = {
       method: 'DELETE',
     });
   },
+
+  addSpell: async (characterId: number, spellId: number): Promise<Character> => {
+    return fetchWithAuth<Character>(`/characters/${characterId}/spells/${spellId}`, {
+      method: 'POST',
+    });
+  },
+
+  removeSpell: async (characterId: number, spellId: number): Promise<Character> => {
+    return fetchWithAuth<Character>(`/characters/${characterId}/spells/${spellId}`, {
+      method: 'DELETE',
+    });
+  },
 };
 
 export const equipmentApi = {
@@ -222,5 +234,13 @@ export const equipmentApi = {
       method: 'PUT',
       body: JSON.stringify(data),
     });
+  },
+};
+
+export const spellsApi = {
+  search: async (name: string): Promise<SpellResponse[]> => {
+    if (!name.trim()) return [];
+    const query = new URLSearchParams({name});
+    return fetchWithAuth<SpellResponse[]>(`/spells/search?${query}`);
   },
 };

@@ -1,3 +1,5 @@
+/* src/components/character/Equipment.module.css */
+
 .equipment {
   background-color: var(--color-bg-secondary);
   border-radius: var(--radius-lg);
@@ -60,12 +62,6 @@
   padding: 0.4rem;
 }
 
-.addItem {
-  display: flex;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
 .itemList {
   display: flex;
   flex-direction: column;
@@ -81,16 +77,12 @@
   padding: var(--space-lg);
 }
 
-/* UPDATED .item STYLES */
+/* --- THE FIX IS HERE --- */
 .item {
-  /* Reset button defaults */
-  background: none;
-  border: none;
+  /* Resets and base styles */
   margin: 0;
   font: inherit;
   text-align: left;
-
-  /* Apply card-like styling */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -100,15 +92,23 @@
   border-radius: var(--radius-md);
   width: 100%;
   cursor: pointer;
-  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
+
+  /* 1. Add transparent border to prevent layout jump */
+  border: 1px solid transparent;
+
+  /* 2. Update transition to include border-color and remove box-shadow */
+  transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .item:hover {
   background-color: var(--color-bg-hover);
-  box-shadow: var(--shadow-inner);
+
+  /* 3. Add the accent border color on hover */
+  border-color: var(--color-accent-primary);
 }
 
-/* NEW CONTAINER FOR NAME AND TYPE */
+/* --- END OF FIX --- */
+
 .itemNameContainer {
   display: flex;
   flex-direction: column;
@@ -126,7 +126,6 @@
   text-overflow: ellipsis;
 }
 
-/* NEW STYLE FOR ITEM TYPE */
 .itemType {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
@@ -161,25 +160,6 @@
   color: white;
 }
 
-.quantityInput {
-  width: 60px;
-}
-
-.quantityInput input {
-  text-align: center;
-  padding: var(--space-xs);
-}
-
-@media (max-width: 640px) {
-  .currency {
-    flex-wrap: wrap;
-  }
-
-  .coin {
-    flex: 0 0 calc(33.333% - var(--space-sm));
-  }
-}
-
 .itemListHeader {
   display: flex;
   justify-content: space-between;
@@ -196,6 +176,21 @@
 }
 
 .itemControls .removeButton {
-  font-size: 1.25rem; /* Make the 'x' a bit bigger */
+  font-size: 1.25rem;
   line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .currency {
+    flex-wrap: wrap;
+  }
+
+  .coin {
+    flex: 0 0 calc(33.333% - var(--space-sm));
+  }
+}
+
+/* These classes are no longer used or have been superseded */
+.addItem, .quantityInput {
+  /* No styles needed */
 }

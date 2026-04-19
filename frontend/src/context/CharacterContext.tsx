@@ -183,7 +183,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       // Step 1: Call the correct generic endpoint to update the item in the DB
       const updatedItem = await equipmentApi.update(itemId, data);
 
-      const freshCharacter = await charactersApi.getById(currentCharacter.id);
       setCurrentCharacter(prevChar => {
         if (!prevChar) return null;
 
@@ -224,6 +223,46 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     await updateEquipment(itemId, updatedItemData);
   };
 
+  const addSpellToCharacter = async (spellId: number): Promise<void> => {
+    if (!currentCharacter) throw new Error("No character selected.");
+    setSaving(true);
+    try {
+      // We call the API to update the backend, but we will IGNORE its response.
+      await charactersApi.addSpell(currentCharacter.id, spellId);
+
+      // To ensure we have the full spell data, we must fetch it.
+      // (Assuming you have a getById in your spellsApi)
+      // If not, we can construct a placeholder, but fetching is better.
+
+      // Let's assume you'll add this to your spellsApi:
+      // const newSpell = await spellsApi.getById(spellId);
+      // For now, let's just refetch the whole character as a guaranteed fix.
+
+      // THE GUARANTEED FIX: Re-fetch the entire character object from the DB.
+      // This ensures we have the 100% correct, complete, and up-to-date state.
+      const freshCharacter = await charactersApi.getById(currentCharacter.id);
+      setCurrentCharacter(freshCharacter);
+
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeSpellFromCharacter = async (spellId: number): Promise<void> => {
+    if (!currentCharacter) throw new Error("No character selected.");
+    setSaving(true);
+    try {
+      // Call the API to update the backend, but ignore the response.
+      await charactersApi.removeSpell(currentCharacter.id, spellId);
+
+      // THE GUARANTEED FIX: Re-fetch the entire character.
+      const freshCharacter = await charactersApi.getById(currentCharacter.id);
+      setCurrentCharacter(freshCharacter);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const getArchetypesForClass = useCallback(async (classId: number): Promise<Archetype[]> => {
     try {
       return await referenceDataApi.getArchetypesByClass(classId);
@@ -254,6 +293,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     updateEquipment,
     toggleEquipmentEquipped,
     removeEquipment,
+    addSpellToCharacter,
+    removeSpellFromCharacter,
   };
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
