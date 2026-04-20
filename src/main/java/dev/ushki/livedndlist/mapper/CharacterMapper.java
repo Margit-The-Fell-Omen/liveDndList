@@ -203,6 +203,8 @@ public class CharacterMapper {
     updateIfPresent(request.getBonds(), character::setBonds);
     updateIfPresent(request.getFlaws(), character::setFlaws);
     updateIfPresent(request.getNotes(), character::setNotes);
+    updateIfPresent(request.getDeathSavesFailures(), character::setDeathSaveFailures);
+    updateIfPresent(request.getDeathSavesSuccesses(), character::setDeathSaveSuccesses);
 
     if (request.getRaceId() != null) {
       Race race = raceRepository.findById(request.getRaceId())

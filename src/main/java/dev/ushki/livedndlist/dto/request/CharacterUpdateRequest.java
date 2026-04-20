@@ -3,6 +3,7 @@ package dev.ushki.livedndlist.dto.request;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -77,4 +78,14 @@ public class CharacterUpdateRequest {
 
   @Schema(description = "Spellcasting ability", example = "INTELLIGENCE")
   private String spellcastingAbility;
+
+  @Min(0)
+  @Max(3)
+  @Schema(description = "Death saves successes", example = "0")
+  private Integer deathSavesSuccesses;
+
+  @Min(0)
+  @Max(3)
+  @Schema(description = "Death saves failures", example = "0")
+  private Integer deathSavesFailures;
 }
