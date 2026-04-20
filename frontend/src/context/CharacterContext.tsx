@@ -4,6 +4,7 @@ import {createContext, type ReactNode, useCallback, useContext, useEffect, useSt
 import {charactersApi, equipmentApi, referenceDataApi} from '@/services/api';
 import {useAuth} from './AuthContext';
 import type {
+  AbilityName,
   Archetype,
   Character,
   CharacterClass,
@@ -273,6 +274,32 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, []);
 
+  const toggleSavingThrowProficiency = async (ability: AbilityName) => {
+    if (!currentCharacter) return;
+
+    const currentProfs = currentCharacter.savingThrowProficiencies || [];
+    const newProfs = currentProfs.includes(ability)
+        ? currentProfs.filter(p => p !== ability) // Remove it
+        : [...currentProfs, ability]; // Add it
+
+    // Use the optimistic updateCharacter function
+    await updateCharacter(currentCharacter.id, {savingThrowProficiencies: newProfs});
+  };
+
+  const toggleSkillProficiency = async (skillId: number, isNowProficient: boolean) => {
+    if (!currentCharacter) return;
+    await updateCharacter(currentCharacter.id, {
+      skills: [{id: skillId, proficient: isNowProficient}],
+    });
+  };
+
+  const toggleSkillExpertise = async (skillId: number, isNowExpert: boolean) => {
+    if (!currentCharacter) return;
+    await updateCharacter(currentCharacter.id, {
+      skills: [{id: skillId, expertise: isNowExpert}],
+    });
+  };
+
   const value: CharacterContextTypeWithArchetypes = {
     characters,
     currentCharacter,
@@ -295,6 +322,9 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     removeEquipment,
     addSpellToCharacter,
     removeSpellFromCharacter,
+    toggleSavingThrowProficiency,
+    toggleSkillProficiency,
+    toggleSkillExpertise,
   };
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;

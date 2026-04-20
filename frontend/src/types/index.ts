@@ -309,6 +309,15 @@ export interface CharacterUpdateRequest {
   featuresAndTraits?: string;
   deathSaveSuccesses?: number;
   deathSaveFailures?: number;
+  experiencePoints?: number;
+  savingThrowProficiencies?: AbilityName[];
+  skills?: SkillUpdateRequest[];
+}
+
+export interface SkillUpdateRequest {
+  id: number;
+  proficient?: boolean;
+  expertise?: boolean;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -374,4 +383,8 @@ export interface CharacterContextType {
 
   addSpellToCharacter: (spellId: number) => Promise<void>;
   removeSpellFromCharacter: (spellId: number) => Promise<void>;
+
+  toggleSavingThrowProficiency: (ability: AbilityName) => Promise<void>;
+  toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
+  toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
 }

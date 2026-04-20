@@ -6,10 +6,8 @@ import {Card} from '@/components/common/Card';
 import styles from './Skills.module.css';
 
 export function Skills({className}: { className?: string }) {
-  const {currentCharacter} = useCharacter();
+  const {currentCharacter, toggleSkillProficiency, toggleSkillExpertise} = useCharacter();
 
-  // --- THE FIX: A more robust guard ---
-  // This ensures we don't proceed until the character and its nested data are fully loaded.
   if (!currentCharacter || !currentCharacter.skills || !currentCharacter.abilityScores) {
     return (
         <Card title="Skills" className={className}>
@@ -18,14 +16,6 @@ export function Skills({className}: { className?: string }) {
   }
 
   const {skills: characterSkills, abilityScores, proficiencyBonus} = currentCharacter;
-
-  const toggleProficiency = (skillName: SkillName) => {
-    // ... (your logic)
-  };
-
-  const toggleExpertise = (skillName: SkillName) => {
-    // ... (your logic)
-  };
 
   return (
       <Card title="Skills" className={className}>
@@ -39,6 +29,7 @@ export function Skills({className}: { className?: string }) {
             let totalBonus = baseModifier;
             const isProficient = skillData?.proficient ?? false;
             const hasExpertise = skillData?.expertise ?? false;
+            const skillId = skillData?.id;
 
             if (isProficient) {
               totalBonus += proficiencyBonus;
@@ -53,7 +44,8 @@ export function Skills({className}: { className?: string }) {
                     <button
                         type="button"
                         className={`${styles.checkbox} ${isProficient ? styles.checked : ''}`}
-                        onClick={() => toggleProficiency(skillInfo.key)}
+                        onClick={() => skillId && toggleSkillProficiency(skillId, !isProficient)}
+                        disabled={!skillId} // Disable if we don't have an ID
                         title="Proficient"
                     >
                       {isProficient && '●'}
@@ -61,14 +53,13 @@ export function Skills({className}: { className?: string }) {
                     <button
                         type="button"
                         className={`${styles.checkbox} ${hasExpertise ? styles.checked : ''}`}
-                        onClick={() => toggleExpertise(skillInfo.key)}
-                        disabled={!isProficient}
+                        onClick={() => skillId && toggleSkillExpertise(skillId, !hasExpertise)}
+                        disabled={!isProficient || !skillId} // Also disable if not proficient
                         title="Expertise"
                     >
                       {hasExpertise && '◆'}
                     </button>
                   </div>
-
                   <div className={styles.modifier}>{formatModifier(totalBonus)}</div>
 
                   <div className={styles.skillInfo}>

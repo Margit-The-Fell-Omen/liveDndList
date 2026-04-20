@@ -1,46 +1,33 @@
+/* src/pages/AuthPage.module.css */
+
 .page {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   width: 100%;
-  background-color: var(--color-bg-primary);
   padding: var(--space-xl);
+
+  /* Wallpaper styles */
+  background-color: var(--color-bg-primary); /* Fallback color */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.5s ease-in-out; /* Smooth transition when image loads */
 }
 
 .formContainer {
   width: 100%;
   max-width: 400px;
-  background-color: var(--color-bg-secondary);
   padding: var(--space-2xl);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
-}
 
-
-.hero {
-  flex: 1;
-  position: relative;
-  background-color: var(--color-bg-tertiary);
-  overflow: hidden;
-}
-
-.heroImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.6;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-      135deg,
-      var(--color-accent-primary) 0%,
-      var(--color-accent-secondary) 100%
-  );
-  opacity: 0.3;
+  /* Make the form pop against the wallpaper */
+  background-color: rgba(var(--color-bg-secondary-rgb), 0.9); /* Use RGB value for transparency */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  border: 1px solid rgba(var(--color-border-rgb), 0.1);
 }
 
 .formWrapper {
@@ -48,13 +35,23 @@
   animation: slideInUp 0.5s ease;
 }
 
+/*
+  Your original hero classes are no longer needed for this page,
+  so we can remove them or keep them for other uses. The media query is fine.
+*/
 @media (max-width: 1024px) {
-  .hero {
-    display: none;
+  .page {
+    /* On mobile, a full background image might be too distracting.
+       We can choose to just show the background color. */
+    background-image: none !important;
   }
 
   .formContainer {
     flex: none;
     width: 100%;
+    /* Reset backdrop filter on mobile for performance if needed */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: var(--color-bg-secondary);
   }
 }

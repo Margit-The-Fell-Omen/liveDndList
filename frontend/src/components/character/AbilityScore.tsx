@@ -1,4 +1,6 @@
 // src/components/character/AbilityScore.tsx
+import {useCharacter} from '@/context/CharacterContext';
+import {useDebouncedCallback} from '@/hooks/useDebounce';
 import {AbilityInfo} from '@/utils/constants';
 import {formatModifier} from '@/utils/helpers';
 import {Input} from '@/components/common/Input';
@@ -11,10 +13,25 @@ interface AbilityScoreProps {
 }
 
 export function AbilityScore({ability, score, modifier}: AbilityScoreProps) {
-  // A debounced update function would go here
+  const {currentCharacter, updateCharacter} = useCharacter();
+
+  const debouncedUpdate = useDebouncedCallback((newScore: number) => {
+    if (currentCharacter) {
+      const abilityKey = ability.key as keyof typeof currentCharacter.abilityScores;
+      // Construct the payload for the nested abilityScores object
+      const payload = {
+        abilityScores: {
+          ...currentCharacter.abilityScores,
+          [abilityKey]: newScore,
+        },
+      };
+      updateCharacter(currentCharacter.id, payload);
+    }
+  }, 500);
+
   const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(`Updating ${ability.name} to ${e.target.value}`);
-    // Call debounced updateCharacter here
+    const newScore = parseInt(e.target.value, 10) || 0;
+    debouncedUpdate(newScore);
   };
 
   return (

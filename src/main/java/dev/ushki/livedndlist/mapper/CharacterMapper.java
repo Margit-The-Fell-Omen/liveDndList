@@ -3,6 +3,7 @@ package dev.ushki.livedndlist.mapper;
 import dev.ushki.livedndlist.dto.request.AbilityScoresRequest;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
+import dev.ushki.livedndlist.dto.request.SkillUpdateRequest;
 import dev.ushki.livedndlist.dto.response.AbilityScoresResponse;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
@@ -25,6 +26,7 @@ import jakarta.validation.Valid;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -203,8 +205,29 @@ public class CharacterMapper {
     updateIfPresent(request.getBonds(), character::setBonds);
     updateIfPresent(request.getFlaws(), character::setFlaws);
     updateIfPresent(request.getNotes(), character::setNotes);
-    updateIfPresent(request.getDeathSavesFailures(), character::setDeathSaveFailures);
-    updateIfPresent(request.getDeathSavesSuccesses(), character::setDeathSaveSuccesses);
+    updateIfPresent(request.getDeathSaveFailures(), character::setDeathSaveFailures);
+    updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
+    updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
+
+    if (request.getSavingThrowProficiencies() != null) {
+      Set<AbilityType> proficiencies = request.getSavingThrowProficiencies().stream()
+          .map(AbilityType::valueOf)
+          .collect(Collectors.toSet());
+      character.setSavingThrowProficiencies(proficiencies);
+    }
+
+    if (request.getSkills() != null && character.getSkills() != null) {
+      Map<Long, Skill> skillMap = character.getSkills().stream()
+          .collect(Collectors.toMap(Skill::getId, s -> s));
+
+      for (SkillUpdateRequest skillUpdate : request.getSkills()) {
+        Skill skillToUpdate = skillMap.get(skillUpdate.getId());
+        if (skillToUpdate != null) {
+          updateIfPresent(skillUpdate.getProficient(), skillToUpdate::setProficiency);
+          updateIfPresent(skillUpdate.getExpertise(), skillToUpdate::setExpertise);
+        }
+      }
+    }
 
     if (request.getRaceId() != null) {
       Race race = raceRepository.findById(request.getRaceId())

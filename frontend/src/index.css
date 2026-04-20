@@ -6,6 +6,8 @@
 
 :root {
   /* Light theme ("White") */
+  --color-bg-secondary-rgb: 31, 41, 55; /* Example for a dark gray */
+  --color-border-rgb: 75, 85, 99;
   --color-bg-primary: #ffffff;
   --color-bg-secondary: #f4f4f5; /* A very light gray */
   --color-bg-tertiary: #e4e4e7; /* A slightly darker gray */

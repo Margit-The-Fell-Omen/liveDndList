@@ -8,7 +8,7 @@ import styles from './SavingThrows.module.css';
 import {Card} from "@components/common/Card.tsx";
 
 export function SavingThrows({className}: { className?: string }) {
-  const {currentCharacter} = useCharacter();
+  const {currentCharacter, toggleSavingThrowProficiency} = useCharacter();
 
   if (!currentCharacter) return null;
 
@@ -30,6 +30,7 @@ export function SavingThrows({className}: { className?: string }) {
                   <button
                       type="button"
                       className={`${styles.checkbox} ${isProficient ? styles.checked : ''}`}
+                      onClick={() => toggleSavingThrowProficiency(abilityName)}
                   >
                     {isProficient ? '●' : '○'}
                   </button>

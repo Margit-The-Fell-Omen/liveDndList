@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -82,10 +83,19 @@ public class CharacterUpdateRequest {
   @Min(0)
   @Max(3)
   @Schema(description = "Death saves successes", example = "0")
-  private Integer deathSavesSuccesses;
+  private Integer deathSaveSuccesses;
 
   @Min(0)
   @Max(3)
   @Schema(description = "Death saves failures", example = "0")
-  private Integer deathSavesFailures;
+  private Integer deathSaveFailures;
+
+  @Schema(description = "Total character experience", example = "0")
+  private Integer experiencePoints;
+
+  @Schema(description = "List of proficient saving throws")
+  private List<String> savingThrowProficiencies;
+
+  @Schema(description = "List of skill updates")
+  private List<SkillUpdateRequest> skills;
 }
