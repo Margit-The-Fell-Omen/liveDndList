@@ -18,7 +18,7 @@ import type {
   User,
 } from '@/types';
 
-const API_BASE_URL = '/';
+const API_BASE_URL = '';
 
 // =================================================================
 // HELPER FUNCTIONS (No changes here)
