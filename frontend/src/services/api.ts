@@ -14,10 +14,11 @@ import type {
   Page,
   Race,
   RegisterData,
+  SpellResponse,
   User,
 } from '@/types';
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+const API_BASE_URL = '/';
 
 // =================================================================
 // HELPER FUNCTIONS (No changes here)
