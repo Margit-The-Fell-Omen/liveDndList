@@ -35,6 +35,9 @@ build/
 ### notes ###
 notes.txt
 
+### secrets ###
+.env
+
 ### Logs ###
 logs/
 jmeter.log

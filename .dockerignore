@@ -1,0 +1,22 @@
+# Ignore Maven build output
+target/
+
+# Ignore Docker files
+.dockerignore
+Dockerfile
+
+# Ignore git files
+.git/
+.gitignore
+
+# Ignore IDE files
+.idea/
+*.iml
+.DS_Store
+
+# Ignore log files
+logs/
+*.log
+
+# Ignore local environment files
+.env
