@@ -17,6 +17,7 @@ services:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app
+    restart: always
 
   backend:
     build: .
@@ -41,6 +42,7 @@ services:
       APP_JWT_SECRET: ${APP_JWT_SECRET}
     networks:
       - app
+    restart: always
 
   redis:
     image: redis
@@ -49,6 +51,7 @@ services:
       - "6379:6379"
     networks:
      - app
+    restart: always
 
   frontend:
     build: ./frontend/
@@ -64,6 +67,7 @@ services:
       BACKEND_PORT: 8080
     networks: 
       - app
+    restart: always
 
 volumes:
   pgdata:
