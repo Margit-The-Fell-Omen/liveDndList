@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,36 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class CharacterMapper {
+
+  private static final TreeMap<Integer, Integer> LEVEL_THRESHOLDS = new TreeMap<>();
+
+  static {
+    LEVEL_THRESHOLDS.put(0, 1);
+    LEVEL_THRESHOLDS.put(300, 2);
+    LEVEL_THRESHOLDS.put(900, 3);
+    LEVEL_THRESHOLDS.put(2700, 4);
+    LEVEL_THRESHOLDS.put(6500, 5);
+    LEVEL_THRESHOLDS.put(14000, 6);
+    LEVEL_THRESHOLDS.put(23000, 7);
+    LEVEL_THRESHOLDS.put(34000, 8);
+    LEVEL_THRESHOLDS.put(48000, 9);
+    LEVEL_THRESHOLDS.put(64000, 10);
+    LEVEL_THRESHOLDS.put(85000, 11);
+    LEVEL_THRESHOLDS.put(100000, 12);
+    LEVEL_THRESHOLDS.put(120000, 13);
+    LEVEL_THRESHOLDS.put(140000, 14);
+    LEVEL_THRESHOLDS.put(165000, 15);
+    LEVEL_THRESHOLDS.put(195000, 16);
+    LEVEL_THRESHOLDS.put(225000, 17);
+    LEVEL_THRESHOLDS.put(265000, 18);
+    LEVEL_THRESHOLDS.put(305000, 19);
+    LEVEL_THRESHOLDS.put(355000, 20);
+  }
+
+  private int getLevelFromExperience(int experiencePoints) {
+    Map.Entry<Integer, Integer> entry = LEVEL_THRESHOLDS.floorEntry(experiencePoints);
+    return (entry != null) ? entry.getValue() : 1;
+  }
 
   private final RaceRepository raceRepository;
   private final DndClassRepository dndClassRepository;
@@ -208,6 +239,25 @@ public class CharacterMapper {
     updateIfPresent(request.getDeathSaveFailures(), character::setDeathSaveFailures);
     updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
     updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
+
+    if (request.getExperiencePoints() != null) {
+      int oldTotalLevel = character.getTotalLevel();
+      int newExperience = request.getExperiencePoints();
+      character.setExperiencePoints(newExperience);
+
+      int newTotalLevel = getLevelFromExperience(newExperience);
+
+      if (newTotalLevel > oldTotalLevel) {
+        int levelsToAdd = newTotalLevel - oldTotalLevel;
+
+        Optional<CharacterClass> classToLevelUp = character.getClasses().stream()
+            .max(Comparator.comparing(CharacterClass::getLevel));
+
+        classToLevelUp.ifPresent(primaryClass ->
+            primaryClass.setLevel(primaryClass.getLevel() + levelsToAdd)
+        );
+      }
+    }
 
     if (request.getSavingThrowProficiencies() != null) {
       Set<AbilityType> proficiencies = request.getSavingThrowProficiencies().stream()
