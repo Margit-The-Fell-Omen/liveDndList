@@ -33,7 +33,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_IP }} '
           echo "✅ Connection works!"
           '
-            cd /home/wartim9494/liveDndList
+            cd /home/${{ secrets.GCP_VM_USER }}/liveDndList
             git pull
             docker-compose up -d --build
             docker image prune -f
