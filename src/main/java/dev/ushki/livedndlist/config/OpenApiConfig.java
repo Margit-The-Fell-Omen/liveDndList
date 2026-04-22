@@ -38,7 +38,7 @@ public class OpenApiConfig {
                 .url("https://unlicense.org/")))
         .servers(List.of(
             new Server().url("http://localhost:8080").description("Dev сервер"),
-            new Server().url("http://localhost:8080").description("Prod сервер")
+            new Server().url("http://live-dnd-list.duckdns.org").description("Prod сервер")
         ));
   }
 }
