@@ -31,8 +31,9 @@ jobs:
 
       - name: Deploy via SSH
         run: |
-          ssh ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_IP }} '
-            set -e 
+          ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_IP }} '
+          echo "✅ Connection works!"
+          '
             cd /liveDndList
             git pull
             docker-compose up -d --build
