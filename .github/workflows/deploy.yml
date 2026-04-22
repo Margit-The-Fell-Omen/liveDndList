@@ -20,6 +20,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           echo "${{ secrets.GCP_VM_HOST_KEY }}" > ~/.ssh/known_hosts
 
+
       - name: Debug Secrets
         run: |
           echo "VM User: ${{ secrets.GCP_VM_USER }}"
