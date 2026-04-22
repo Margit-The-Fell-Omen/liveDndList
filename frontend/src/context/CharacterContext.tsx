@@ -36,7 +36,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // --- Data Fetching (No Changes) ---
   const fetchReferenceData = useCallback(async (): Promise<void> => {
     try {
       const racesData = await referenceDataApi.getRaces();
@@ -91,7 +90,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, [isAuthenticated, fetchReferenceData, fetchCharacters]);
 
-  // --- CRUD Functions ---
   const createCharacter = async (data: CharacterCreateRequest) => {
     setSaving(true);
     try {
@@ -109,7 +107,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     try {
       const updatedChar = await charactersApi.update(id, data);
 
-      // Correctly merge state for the currently open character
       setCurrentCharacter(prevCharacter => {
         if (!prevCharacter) return updatedChar;
         return {
@@ -154,7 +151,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     await fetchCharacters();
   };
 
-  // --- Equipment CRUD ---
   const addEquipment = async (data: EquipmentData): Promise<void> => {
     if (!currentCharacter) throw new Error("No character selected.");
     setSaving(true);
@@ -181,18 +177,15 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error("No character selected.");
     setSaving(true);
     try {
-      // Step 1: Call the correct generic endpoint to update the item in the DB
       const updatedItem = await equipmentApi.update(itemId, data);
 
       setCurrentCharacter(prevChar => {
         if (!prevChar) return null;
 
-        // Find and replace the updated item in the equipment array
         const newEquipmentList = prevChar.equipment.map(item =>
             item.id === itemId ? updatedItem : item
         );
 
-        // Return a new character object with the updated equipment list
         return {...prevChar, equipment: newEquipmentList};
       });
     } finally {
@@ -207,20 +200,18 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     const itemToToggle = currentCharacter.equipment.find(item => item.id === itemId);
     if (!itemToToggle) throw new Error("Equipment item not found.");
 
-    // Create a data object representing the updated item
     const updatedItemData: EquipmentData = {
       name: itemToToggle.name,
       description: itemToToggle.description,
       quantity: itemToToggle.quantity,
       weight: itemToToggle.weight,
       type: itemToToggle.type,
-      equipped: !itemToToggle.equipped, // The only change is flipping this boolean
+      equipped: !itemToToggle.equipped,
       damage: itemToToggle.damage,
       damageType: itemToToggle.damageType,
       properties: itemToToggle.properties,
     };
 
-    // Reuse the existing update logic
     await updateEquipment(itemId, updatedItemData);
   };
 
@@ -228,19 +219,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error("No character selected.");
     setSaving(true);
     try {
-      // We call the API to update the backend, but we will IGNORE its response.
       await charactersApi.addSpell(currentCharacter.id, spellId);
 
-      // To ensure we have the full spell data, we must fetch it.
-      // (Assuming you have a getById in your spellsApi)
-      // If not, we can construct a placeholder, but fetching is better.
-
-      // Let's assume you'll add this to your spellsApi:
-      // const newSpell = await spellsApi.getById(spellId);
-      // For now, let's just refetch the whole character as a guaranteed fix.
-
-      // THE GUARANTEED FIX: Re-fetch the entire character object from the DB.
-      // This ensures we have the 100% correct, complete, and up-to-date state.
       const freshCharacter = await charactersApi.getById(currentCharacter.id);
       setCurrentCharacter(freshCharacter);
 
@@ -253,10 +233,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error("No character selected.");
     setSaving(true);
     try {
-      // Call the API to update the backend, but ignore the response.
       await charactersApi.removeSpell(currentCharacter.id, spellId);
 
-      // THE GUARANTEED FIX: Re-fetch the entire character.
       const freshCharacter = await charactersApi.getById(currentCharacter.id);
       setCurrentCharacter(freshCharacter);
     } finally {
@@ -282,7 +260,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
         ? currentProfs.filter(p => p !== ability) // Remove it
         : [...currentProfs, ability]; // Add it
 
-    // Use the optimistic updateCharacter function
     await updateCharacter(currentCharacter.id, {savingThrowProficiencies: newProfs});
   };
 

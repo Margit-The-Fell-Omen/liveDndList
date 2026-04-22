@@ -1,0 +1,32 @@
+# .github/workflows/deploy.yml
+
+name: Build, Test and Deploy to VM
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.GCP_VM_HOST_KEY }}" > ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        run: |
+          ssh ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_IP }} '
+            set -e 
+            cd /liveDndList
+            git pull
+            docker-compose up -d --build
+            docker image prune -f
+            echo "--- Deployment successful! ---"
+          '

@@ -149,7 +149,6 @@ export type SpellSchool =
     | 'NECROMANCY'
     | 'TRANSMUTATION';
 
-// For Character Creation
 export interface AbilityScores {
   strength: number;
   dexterity: number;
@@ -159,7 +158,6 @@ export interface AbilityScores {
   charisma: number;
 }
 
-// From Backend Response
 export interface AbilityScoresResponse {
   strength: number;
   strengthModifier: number;
@@ -184,7 +182,6 @@ export interface SkillResponse {
   totalBonus: number;
 }
 
-// UPDATED: Matches EquipmentResponse DTO
 export interface EquipmentResponse {
   id: number;
   name: string;
@@ -207,7 +204,6 @@ export interface DndCurrencyResponse {
   platinum: number;
 }
 
-// UPDATED: Matches SpellResponse DTO
 export interface SpellResponse {
   id: number;
   name: string;
@@ -248,7 +244,6 @@ export interface CharacterSummary {
   updatedAt: string;
 }
 
-// This is the main, fully detailed character object from the backend
 export interface Character {
   id: number;
   name: string;
@@ -370,7 +365,6 @@ export interface SpellData {
 }
 
 export interface CharacterContextType {
-  // ... keep existing fields ...
   createCharacter: (data: CharacterCreateRequest) => Promise<Character>;
   updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
   deleteCharacter: (id: number) => Promise<void>;

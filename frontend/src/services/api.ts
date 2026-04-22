@@ -158,9 +158,15 @@ export const authApi = {
 
 export const referenceDataApi = {
   getRaces: async (): Promise<Race[]> => {
+    await fetchWithAuth<void>('/sync/races', {
+      method: 'POST',
+    });
     return fetchWithAuth<Race[]>('/sync/races/list');
   },
   getClasses: async (): Promise<CharacterClass[]> => {
+    await fetchWithAuth<void>('/sync/classes', {
+      method: 'POST',
+    });
     return fetchWithAuth<CharacterClass[]>('/sync/classes/list');
   },
   getArchetypesByClass: async (classId: number): Promise<Archetype[]> => {
