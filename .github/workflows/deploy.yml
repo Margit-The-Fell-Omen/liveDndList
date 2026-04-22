@@ -13,17 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}" > ~/.ssh/ed_25519
-          chmod 600 ~/.ssh/ed_25519
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_VM_USER }}
+          key: ${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}
           script: |
             set -euo pipefail 
             
