@@ -16,27 +16,22 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh/
-          echo "${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "${{ secrets.GCP_VM_HOST_KEY }}" > ~/.ssh/known_hosts
-
-      - name: Debug Secrets
-        run: |
-          echo "VM User: ${{ secrets.GCP_VM_USER }}"
-          echo "VM IP is set: ${{ secrets.GCP_VM_IP != '' }}"
-          echo "VM IP Length: ${{ env.IP_LENGTH }}"
-        env:
-          IP_LENGTH: ${{ secrets.GCP_VM_IP }}
+          echo "${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}" > ~/.ssh/ed_25519
+          chmod 600 ~/.ssh/ed_25519
 
       - name: Deploy via SSH
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_IP }} '
-          echo "✅ Connection works!"
-          '
-            ls /home/ -la
-            cd /home/${{ secrets.GCP_VM_USER }}/liveDndList
-            git pull
-            docker-compose up -d --build
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.GCP_VM_IP }}
+          username: ${{ secrets.GCP_VM_USER }}
+          script: |
+            set -euo pipefail 
+            
+            mkdir liveDndList || true
+            
+            pushd liveDndList
+            git clone https://github.com/Margit-The-Fell-Omen/liveDndList.git . || git pull
+            docker compose up --build -d
+            popd
+            
             docker image prune -f
-            echo "--- Deployment successful! ---"
-          '
