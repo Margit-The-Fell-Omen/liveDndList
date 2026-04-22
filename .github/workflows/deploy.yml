@@ -20,6 +20,14 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           echo "${{ secrets.GCP_VM_HOST_KEY }}" > ~/.ssh/known_hosts
 
+      - name: Debug Secrets
+        run: |
+          echo "VM User: ${{ secrets.GCP_VM_USER }}"
+          echo "VM IP is set: ${{ secrets.GCP_VM_IP != '' }}"
+          echo "VM IP Length: ${{ env.IP_LENGTH }}"
+        env:
+          IP_LENGTH: ${{ secrets.GCP_VM_IP }}
+
       - name: Deploy via SSH
         run: |
           ssh ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_IP }} '
