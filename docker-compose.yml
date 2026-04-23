@@ -2,11 +2,11 @@ services:
   db:
     image: postgres:18-alpine
     environment:
-      POSTGRES_DB: ${POSTGRES_DB} 
-      POSTGRES_USER: ${POSTGRES_USER} 
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
       interval: 10s
       retries: 5
       start_period: 30s
@@ -14,7 +14,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
     networks:
       - app
     restart: always
@@ -30,9 +30,9 @@ services:
       redis:
         condition: service_started
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB} 
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER} 
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD} 
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
@@ -50,12 +50,12 @@ services:
     ports:
       - "6379:6379"
     networks:
-     - app
+      - app
     restart: always
 
   frontend:
     build: ./frontend/
-    depends_on: 
+    depends_on:
       - backend
     ports:
       - "80:80"
@@ -65,7 +65,7 @@ services:
     environment:
       BACKEND_HOST: backend
       BACKEND_PORT: 8080
-    networks: 
+    networks:
       - app
     restart: always
 
