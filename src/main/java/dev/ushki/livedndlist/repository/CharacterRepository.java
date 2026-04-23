@@ -105,7 +105,7 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   void deleteAllEquipmentByCharacterId(@Param("id") Long id);
 
   @Modifying
-  @Query(value = "DELETE FROM character_saving_throws WHERE dnd_character_id = :id",
+  @Query(value = "DELETE FROM character_saving_throws WHERE character_id = :id",
          nativeQuery = true)
   void deleteAllSavingThrowsByCharacterId(@Param("id") Long id);
 

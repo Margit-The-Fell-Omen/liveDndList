@@ -167,6 +167,7 @@ public class CharacterService {
     return characterMapper.toResponse(savedCharacter);
   }
 
+  @Transactional
   public void delete(Long id, String username) {
 
     characterRepository.deleteAllSkillsByCharacterId(id);
