@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class Open5eClassService {
 
-  private static final String API_PATH = "/classes/";
+  private static final String API_PATH = "/v1/classes/";
 
   private final DndClassRepository dndClassRepository;
   private final DndClassMapper dndClassMapper;

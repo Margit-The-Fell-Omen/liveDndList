@@ -34,6 +34,14 @@ public class Open5eApiConfig {
         .requestFactory(requestFactory)
         .defaultHeader("User-Agent", "LiveDndList/1.0 (Spring Boot; Open5e Consumer)")
         .defaultHeader("Accept", "application/json")
+        .requestInterceptor((request, body, execution) -> {
+          System.out.println("OPEN5E REQUEST: " + request.getMethod() + " " + request.getURI());
+          var response = execution.execute(request, body);
+          System.out.println("OPEN5E RESPONSE: " + response.getStatusCode());
+          System.out.println("OPEN5E SERVER: " + response.getHeaders().getFirst("Server"));
+          System.out.println("OPEN5E CONTENT-TYPE: " + response.getHeaders().getContentType());
+          return response;
+        })
         .build();
   }
 }

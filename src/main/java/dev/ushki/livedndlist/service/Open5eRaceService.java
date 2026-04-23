@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class Open5eRaceService {
 
-  private static final String API_PATH = "/races/";
+  private static final String API_PATH = "/v1/races/";
 
   private final RaceRepository raceRepository;
   private final RaceMapper raceMapper;
