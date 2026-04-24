@@ -12,14 +12,16 @@ Latest release version - [Live D&D List 0.0.1](http://live-dnd-list.duckdns.org/
 - Redis (latest)
 ## Building and running
 To run this app locally you should install Docker and Docker Compose.
-If you want to run this app locally use this commands:
-    'cd <your project root folder>
-    git clone https://github.com/Margit-The-Fell-Omen/liveDndList.git
-    docker compose up --build'
-Then frontend will run on port 80 and backend will run on post 8080.
-**IMPORTANT:** if you experience infinite startup loop of docker services - remove 'restart: always' lines from all containers in 'dacker-compose.yml' file.
+If you want to run this app locally use this commands:<br>
+```bash
+cd _your-project-root-folder_
+git clone https://github.com/Margit-The-Fell-Omen/liveDndList.git
+docker compose up --build
+```
+Then frontend will run on port 80 and backend will run on post 8080.<br>
+**IMPORTANT:** if you experience infinite startup loop of docker services - remove `restart: always` lines from all containers in `docker-compose.yml` file.
 ## Contributing
-'CONTRIBUTING.md' will be created in the future.
+`CONTRIBUTING.md` will be created in the future.
 ## Versioning scheme
 Will be decided in the future.
 ## Sonar Cloud
