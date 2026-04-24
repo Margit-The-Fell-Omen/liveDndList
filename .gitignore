@@ -33,9 +33,6 @@ build/
 ### VS Code ###
 .vscode/
 
-### notes ###
-notes.txt
-
 ### secrets ###
 .env
 

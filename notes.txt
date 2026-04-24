@@ -1,0 +1,28 @@
+Plan for live-dnd-list:
+
+(later plans)
+- migrate to open5e/v2
+- add export to pdf via async method
+- get the rest of info fetched from open5e
+- add sharing feature?
+- add likes to lists feature?
+- add homebrew functionality/validation
+- split endpoints for admin and user
+- enhance design (animations, cool backgrounds, etc.) // half-way done
+
+(to fix frontend)
+- make background a list of choices (as race or class)
+- add overall field validation
+- add current hits validation (not higher than max hits)
+- refactor spell search
+- add auto-login when registered
+- fix  class/race/archetype change
+- add UI to change character logo
+- fix bug: experience not being updated when character is rendered or is set to all characters (weird stuff)
+- fix initiative setting
+- add race and class pop-up windows with desc
+- add theme change based on base-16 color scheme (or another type of choice)
+
+(afterwards)
+- determine the next system
+- implement sysmet choise
