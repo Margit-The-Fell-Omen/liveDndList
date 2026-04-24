@@ -1,7 +1,10 @@
+
+THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be done)
+
 Plan for live-dnd-list:
 
 (later plans)
-- migrate to open5e/v2
+- migrate to api.open5e/v2
 - add export to pdf via async method
 - get the rest of info fetched from open5e
 - add sharing feature?
@@ -11,6 +14,7 @@ Plan for live-dnd-list:
 - enhance design (animations, cool backgrounds, etc.) // half-way done
 
 (to fix frontend)
+- add adaptive UI
 - make background a list of choices (as race or class)
 - add overall field validation
 - add current hits validation (not higher than max hits)
