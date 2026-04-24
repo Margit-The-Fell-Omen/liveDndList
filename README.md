@@ -21,7 +21,7 @@ docker compose up --build
 Then frontend will run on port 80 and backend will run on post 8080.<br>
 **IMPORTANT:** if you experience infinite startup loop of docker services - remove `restart: always` lines from all containers in `docker-compose.yml` file.
 ## Contributing
-`CONTRIBUTING.md` will be created in the future.
+For guidelines see `CONTRIBUTING.md`.
 ## Versioning scheme
 Will be decided in the future.
 ## Sonar Cloud
