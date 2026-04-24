@@ -1,5 +1,6 @@
+/* MODIFIED: Added transform for smoother mobile slide-in */
 .sidebar {
-  position: fixed; /* Keep it fixed on the side */
+  position: fixed;
   left: 0;
   top: 0;
   height: 100vh;
@@ -7,8 +8,8 @@
   background-color: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border-light);
   z-index: var(--z-sticky);
-  transition: width var(--transition-normal);
-  overflow: hidden; /* Hide content when collapsed */
+  transition: width var(--transition-normal), transform var(--transition-normal); /* MODIFIED */
+  overflow-x: hidden; /* MODIFIED: Changed to x-only */
 }
 
 /* On desktop, expanded state is triggered by hover */
@@ -20,18 +21,18 @@
 }
 
 .content {
-  width: var(--sidebar-width); /* Always use the full width */
+  width: var(--sidebar-width);
   height: 100%;
   display: flex;
   flex-direction: column;
   padding: var(--space-xl) var(--space-md) var(--space-md);
-  opacity: 0; /* Hidden by default */
+  opacity: 0;
   transition: opacity 0.1s ease-in;
 }
 
 .sidebar.expanded .content {
-  opacity: 1; /* Become visible when expanded */
-  transition: opacity 0.2s ease-in 0.1s; /* Delay opacity transition slightly */
+  opacity: 1;
+  transition: opacity 0.2s ease-in 0.1s;
 }
 
 .header {
@@ -47,6 +48,12 @@
   margin: 0;
 }
 
+.actions, .characterList, .emptyMessage, .characterItem, .characterButton, .characterAvatar, .characterInfo, .characterName, .characterMeta, .deleteButton {
+  /* All these styles are fine and remain unchanged */
+  /* ... */
+}
+
+/* This part of your CSS for character items is perfect, no changes needed */
 .actions {
   display: flex;
   flex-direction: column;
@@ -151,52 +158,34 @@
   opacity: 1 !important;
 }
 
+
 /* ==================
-   MOBILE STYLES
+   MODIFIED: MOBILE STYLES
    ================== */
-.expandButton {
-  display: none; /* Hidden on desktop */
-}
 
 .overlay {
-  display: none;
+  display: none; /* Hidden by default */
 }
 
-@media (max-width: 1024px) {
+/* REMOVED: .expandButton and its styles are no longer needed here */
+
+@media (max-width: 1023px) {
+  /* MODIFIED: Use transform to slide the menu in and out from off-screen */
   .sidebar {
-    width: 0; /* Collapsed by default on mobile */
+    width: var(--sidebar-width); /* Fixed width for the content */
+    transform: translateX(-100%); /* Start off-screen */
+    transition: transform var(--transition-normal);
   }
 
   .sidebar.expanded {
-    width: 280px; /* Full width when expanded on mobile */
+    transform: translateX(0); /* Slide into view */
     box-shadow: var(--shadow-lg);
   }
 
-  .expandButton {
-    display: flex; /* Visible on mobile */
-    position: fixed;
-    top: var(--space-md);
-    left: var(--space-md);
-    z-index: calc(var(--z-sticky) + 1); /* Above sidebar content */
-    background-color: var(--color-accent-primary);
-    color: white;
-    border-radius: var(--radius-full);
-    padding: var(--space-sm);
-    width: 44px;
-    height: 44px;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-  }
-
-  .sidebar.expanded .expandButton {
-    transform: translateX(calc(280px - 44px - var(--space-md) - var(--space-md)));
-  }
-
-  .expandIcon {
-    font-size: 24px;
+  /* MODIFIED: Make content visible immediately on mobile when expanded */
+  .sidebar.expanded .content {
+    opacity: 1;
+    transition: opacity 0.1s ease-in;
   }
 
   .overlay {
@@ -205,7 +194,7 @@
     inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: calc(var(--z-sticky) - 1);
-    animation: fadeIn 0.2s ease;
+    animation: fadeIn 0.3s ease;
   }
 }
 

@@ -18,23 +18,24 @@
 }
 
 /* ==================
-   THE FIX
+   MODIFIED: Simplified Responsive Logic
    ================== */
 
-/* On desktop screens, push the main content over */
+/* On desktop screens, push the main content over by the width of the collapsed sidebar */
 @media (min-width: 1024px) {
   .main {
     margin-left: var(--sidebar-collapsed-width);
   }
 }
 
-/* When the sidebar is expanded on desktop, push it further */
-.main.sidebar-expanded {
+/* When the sidebar is expanded ON DESKTOP, push it further */
+.main.desktopSidebarExpanded { /* MODIFIED: More specific class name */
   margin-left: var(--sidebar-width);
 }
 
-/* On mobile, main content takes full width */
-@media (max-width: 1024px) {
+/* On mobile, main content takes full width and has slightly less padding */
+@media (max-width: 1023px) {
+  /* MODIFIED: Using 1023px to avoid overlap */
   .main {
     margin-left: 0;
   }

@@ -4,6 +4,7 @@ THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be
 Plan for live-dnd-list:
 
 (later plans)
+- rewrite my Cache Manager -> Redis
 - migrate to api.open5e/v2
 - add export to pdf via async method
 - get the rest of info fetched from open5e
