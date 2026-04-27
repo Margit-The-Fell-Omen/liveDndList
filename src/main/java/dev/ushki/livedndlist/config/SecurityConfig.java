@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.config;
 
+import dev.ushki.livedndlist.exceptions.SecurityFilterException;
 import dev.ushki.livedndlist.security.jwt.JwtAuthenticationEntryPoint;
 import dev.ushki.livedndlist.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -37,15 +38,12 @@ public class SecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-      throws Exception {
+      throws SecurityFilterException {
     return config.getAuthenticationManager();
   }
 
-  // NOTE: The WebSecurityCustomizer bean has been removed to avoid confusion.
-  // All rules are now centralized in the SecurityFilterChain.
-
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http) throws SecurityFilterException {
     http
         .csrf(AbstractHttpConfigurer::disable)
         .exceptionHandling(ex -> ex
@@ -54,7 +52,6 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(auth -> auth
-            // FIX: Create one comprehensive list of all public endpoints.
             .requestMatchers(
                 // --- Authentication ---
                 "/api/v1/auth/**",
