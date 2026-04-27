@@ -1,6 +1,6 @@
 # .github/workflows/deploy.yml
 
-name: Build, Test and Deploy to VM
+name: Deploy to VM
 
 on:
   push:
@@ -8,6 +8,12 @@ on:
       - master
 
 jobs:
+  call-build-and-test:
+    name: Build and Test
+    uses: ./.github/workflows/build-and-test.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   deploy:
     name: Deploy Application
     runs-on: ubuntu-latest
