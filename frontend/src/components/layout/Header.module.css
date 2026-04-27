@@ -99,7 +99,7 @@
 }
 
 @media (max-width: 420px) {
-  .logoText {
+  .logoIcon {
     display: none;
   }
 }

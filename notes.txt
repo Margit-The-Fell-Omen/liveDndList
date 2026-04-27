@@ -3,19 +3,13 @@ THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be
 
 Plan for live-dnd-list:
 
-(later plans)
-- rewrite my Cache Manager -> Redis
-- migrate to api.open5e/v2
-- add export to pdf via async method
-- get the rest of info fetched from open5e
-- add sharing feature?
-- add likes to lists feature?
-- add homebrew functionality/validation
-- split endpoints for admin and user
-- enhance design (animations, cool backgrounds, etc.) // half-way done
-
 (to fix frontend)
-- add adaptive UI
+- make active weapons a scrollable horisontally
+- fix header laber/icon on mobile
+- fix feature saving
+- fix equipment adding (UI crash)
+- fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
+- fix that after initial loading of character on main page you traverse to the character sheet instantly
 - make background a list of choices (as race or class)
 - add overall field validation
 - add current hits validation (not higher than max hits)
@@ -27,6 +21,23 @@ Plan for live-dnd-list:
 - fix initiative setting
 - add race and class pop-up windows with desc
 - add theme change based on base-16 color scheme (or another type of choice)
+
+(Quality of life)
+- add icons on unexpanded sidebar
+- when logged in - open last opened character
+- add (remember device) functionality
+- auto-remember latest login
+
+(later plans)
+- rewrite my Cache Manager -> Redis
+- migrate to api.open5e/v2
+- add export to pdf via async method
+- get the rest of info fetched from open5e
+- add sharing feature?
+- add likes to lists feature?
+- add homebrew functionality/validation
+- split endpoints for admin and user
+- enhance design (animations, cool backgrounds, etc.) // half-way done
 
 (afterwards)
 - determine the next system
