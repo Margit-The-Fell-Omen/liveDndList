@@ -4,7 +4,7 @@ THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be
 Plan for live-dnd-list:
 
 (to fix frontend)
-- make active weapons a scrollable horisontally
+- make active weapons a scrollable horizontally on mobile
 - fix header laber/icon on mobile
 - fix feature saving
 - fix equipment adding (UI crash)

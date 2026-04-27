@@ -102,41 +102,45 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   };
 
+
+  const setAndMergeCurrentCharacter = (updatedChar: Partial<Character>) => {
+    setCurrentCharacter(prevCharacter => {
+      if (!prevCharacter) return updatedChar as Character;
+      const newCharacterState = {
+        ...prevCharacter,
+        ...updatedChar,
+        skills: updatedChar.skills ?? prevCharacter.skills,
+        equipment: updatedChar.equipment ?? prevCharacter.equipment,
+        spells: updatedChar.spells ?? prevCharacter.spells,
+        savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prevCharacter.savingThrowProficiencies,
+        classesInfo: updatedChar.classesInfo ?? prevCharacter.classesInfo,
+      };
+      return newCharacterState;
+    });
+
+    setCharacters(prevSummaries =>
+        prevSummaries.map(summary => {
+          if (summary.id === updatedChar.id) {
+            return {
+              ...summary,
+              name: updatedChar.name ?? summary.name,
+              totalLevel: updatedChar.totalLevel ?? summary.totalLevel,
+              currentHitPoints: updatedChar.currentHitPoints ?? summary.currentHitPoints,
+              maxHitPoints: updatedChar.maxHitPoints ?? summary.maxHitPoints,
+              portraitUrl: updatedChar.portraitUrl ?? summary.portraitUrl,
+              updatedAt: updatedChar.updatedAt ?? summary.updatedAt,
+            };
+          }
+          return summary;
+        })
+    );
+  };
+
   const updateCharacter = async (id: number, data: CharacterUpdateRequest) => {
     setSaving(true);
     try {
       const updatedChar = await charactersApi.update(id, data);
-
-      setCurrentCharacter(prevCharacter => {
-        if (!prevCharacter) return updatedChar;
-        return {
-          ...prevCharacter,
-          ...updatedChar,
-          skills: updatedChar.skills ?? prevCharacter.skills,
-          equipment: updatedChar.equipment ?? prevCharacter.equipment,
-          spells: updatedChar.spells ?? prevCharacter.spells,
-          savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prevCharacter.savingThrowProficiencies,
-          classesInfo: updatedChar.classesInfo ?? prevCharacter.classesInfo,
-        };
-      });
-
-      setCharacters(prev =>
-          prev.map(summary => {
-            if (summary.id === id) {
-              return {
-                ...summary,
-                name: updatedChar.name,
-                totalLevel: updatedChar.totalLevel,
-                currentHitPoints: updatedChar.currentHitPoints,
-                maxHitPoints: updatedChar.maxHitPoints,
-                portraitUrl: updatedChar.portraitUrl,
-                updatedAt: updatedChar.updatedAt,
-              };
-            }
-            return summary;
-          })
-      );
-
+      setAndMergeCurrentCharacter(updatedChar);
       return updatedChar;
     } finally {
       setSaving(false);
@@ -156,7 +160,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     setSaving(true);
     try {
       const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
-      setCurrentCharacter(updatedChar);
+      setAndMergeCurrentCharacter(updatedChar);
     } finally {
       setSaving(false);
     }
@@ -167,7 +171,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     setSaving(true);
     try {
       const updatedChar = await charactersApi.removeEquipment(currentCharacter.id, itemId);
-      setCurrentCharacter(updatedChar);
+      setAndMergeCurrentCharacter(updatedChar);
     } finally {
       setSaving(false);
     }
@@ -222,7 +226,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       await charactersApi.addSpell(currentCharacter.id, spellId);
 
       const freshCharacter = await charactersApi.getById(currentCharacter.id);
-      setCurrentCharacter(freshCharacter);
+      setAndMergeCurrentCharacter(freshCharacter);
 
     } finally {
       setSaving(false);
@@ -236,7 +240,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       await charactersApi.removeSpell(currentCharacter.id, spellId);
 
       const freshCharacter = await charactersApi.getById(currentCharacter.id);
-      setCurrentCharacter(freshCharacter);
+      setAndMergeCurrentCharacter(freshCharacter);
     } finally {
       setSaving(false);
     }
