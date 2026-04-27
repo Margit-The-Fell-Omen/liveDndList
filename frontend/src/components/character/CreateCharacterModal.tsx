@@ -39,7 +39,6 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
     const selectedClass = classes.find(c => c.slug === String(classSlug));
     const constitutionModifier = Math.floor((abilityScores.constitution - 10) / 2);
 
-    // Default to 10 if hit_dice isn't in the expected format e.g. "1d10"
     const hitDieValue = selectedClass ? parseInt(selectedClass.hit_dice.split('d')[1], 10) : 10;
 
     const payload: CharacterCreateRequest = {
@@ -52,14 +51,12 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
 
     try {
       await createCharacter(payload);
-      onClose(); // Close modal on success
+      onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create character.");
     }
   };
 
-  // --- THE FIX IS HERE ---
-  // We now map the numeric `id` to the option's value, not the string `slug`.
   const raceOptions = races.map(r => ({value: r.slug, label: r.name}));
   const classOptions = classes.map(c => ({value: c.slug, label: c.name}));
 
@@ -85,7 +82,6 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
                  required fullWidth/>
 
           <div className={styles.grid}>
-            {/* This `onChange` handler now correctly receives a stringified number and converts it back */}
             <Select label="Race" value={raceSlug}
                     onChange={(e) => setRaceSlug(String(e.target.value))}
                     options={raceOptions} placeholder="-- Select a Race --" required/>

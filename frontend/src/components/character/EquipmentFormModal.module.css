@@ -14,11 +14,11 @@
   font-size: var(--font-size-sm);
   font-weight: 500;
   color: var(--color-text-primary);
-  margin-bottom: -8px; /* Reduce space after label */
+  margin-bottom: -8px;
 }
 
 .equipButton {
-  margin-right: auto; /* Pushes this button to the far left of the footer */
+  margin-right: auto;
 }
 
 .select,

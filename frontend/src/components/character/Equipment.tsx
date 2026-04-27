@@ -41,7 +41,7 @@ export function Equipment({className}: { className?: string }) {
   };
 
   const handleOpenDeleteConfirm = (e: React.MouseEvent, itemId: number) => {
-    e.stopPropagation(); // Prevent the edit modal from opening
+    e.stopPropagation();
     setItemToDeleteId(itemId);
     setIsConfirmOpen(true);
   };
@@ -60,7 +60,6 @@ export function Equipment({className}: { className?: string }) {
   return (
       <>
         <Card title="Equipment" className={className}>
-          {/* Currency section unchanged */}
           <div className={styles.currency}>{/* ... */}</div>
 
           <div className={styles.itemListHeader}>
@@ -73,7 +72,6 @@ export function Equipment({className}: { className?: string }) {
                 <p className={styles.emptyMessage}>The backpack is empty.</p>
             ) : (
                 equipment.map((item) => (
-                    // FIX: This is now a div to prevent button-in-button nesting
                     <div
                         key={item.id}
                         className={styles.item}

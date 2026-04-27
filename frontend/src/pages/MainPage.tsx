@@ -26,7 +26,6 @@ export function MainPage() {
         <div className={styles.sheetGrid}>
           <CharacterHeader className={styles.header}/>
 
-          {/* "Stats" from wireframe */}
           <Card title="Ability Scores" className={styles.abilities}>
             {ABILITIES.map((abilityInfo) => (
                 <AbilityScore
@@ -38,18 +37,14 @@ export function MainPage() {
             ))}
           </Card>
 
-          {/* Components mapped to their new grid areas */}
           <SavingThrows className={styles.saves}/>
 
-          {/* "Traits & features" from wireframe */}
           <Background className={styles.features}/>
 
-          {/* "Battle stats" from wireframe */}
           <CombatStats className={styles.combat}/>
           <HitPoints className={styles.hp}/>
           <Spells className={styles.spells}/>
 
-          {/* "Notes" from wireframe */}
           <Features className={styles.notes}/>
 
           <Skills className={styles.skills}/>

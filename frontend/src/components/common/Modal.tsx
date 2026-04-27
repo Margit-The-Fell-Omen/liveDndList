@@ -2,9 +2,8 @@
 
 import React from 'react';
 import {Button} from './Button';
-import styles from './Modal.module.css'; // <-- Import the CSS module
+import styles from './Modal.module.css';
 
-// --- NEW GENERIC MODAL COMPONENT ---
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,7 +28,6 @@ export function Modal({
   };
 
   const handleModalClick = (e: React.MouseEvent) => {
-    // Prevent clicks inside the modal from closing it
     e.stopPropagation();
   };
 
@@ -56,7 +54,6 @@ export function Modal({
 }
 
 
-// --- Your existing ConfirmModal (with CSS module classes) ---
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;

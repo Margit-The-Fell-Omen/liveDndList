@@ -257,8 +257,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
 
     const currentProfs = currentCharacter.savingThrowProficiencies || [];
     const newProfs = currentProfs.includes(ability)
-        ? currentProfs.filter(p => p !== ability) // Remove it
-        : [...currentProfs, ability]; // Add it
+        ? currentProfs.filter(p => p !== ability)
+        : [...currentProfs, ability];
 
     await updateCharacter(currentCharacter.id, {savingThrowProficiencies: newProfs});
   };

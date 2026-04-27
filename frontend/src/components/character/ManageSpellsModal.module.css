@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  min-height: 50vh; /* Ensure modal has some height */
+  min-height: 50vh;
 }
 
 .resultsContainer {

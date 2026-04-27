@@ -1,9 +1,7 @@
 // src/components/common/Button.tsx
 import React from 'react';
-// Assuming your button styles are in a CSS module
 import styles from './Button.module.css';
 
-// Define the props for our Button component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -14,15 +12,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 export function Button({
                          children,
-                         variant = 'primary', // Default variant
-                         size = 'medium',   // Default size
+                         variant = 'primary',
+                         size = 'medium',
                          fullWidth = false,
                          loading = false,
                          className = '',
-                         ...props // All other standard button props (like onClick, disabled, etc.)
+                         ...props
                        }: ButtonProps) {
 
-  // FIX: Combine CSS module classes based on props
   const buttonClassName = `
     ${styles.button}
     ${styles[variant]}

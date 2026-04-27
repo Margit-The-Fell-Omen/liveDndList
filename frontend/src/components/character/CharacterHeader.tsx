@@ -8,7 +8,6 @@ import styles from './CharacterHeader.module.css';
 export function CharacterHeader({className}: { className?: string }) {
   const {currentCharacter, updateCharacter} = useCharacter();
 
-  // --- FIX 1: Local state for the controlled name input ---
   const [characterName, setCharacterName] = useState('');
 
   const debouncedUpdate = useDebouncedCallback(
@@ -20,18 +19,16 @@ export function CharacterHeader({className}: { className?: string }) {
       500
   );
 
-  // --- FIX 2: Sync local state when the character from context changes ---
   useEffect(() => {
     if (currentCharacter) {
       setCharacterName(currentCharacter.name);
     }
-  }, [currentCharacter]); // This effect runs whenever `currentCharacter` changes
+  }, [currentCharacter]);
 
   if (!currentCharacter) {
-    return null; // Or a loading/placeholder component
+    return null;
   }
 
-  // This handler is now only for the other, simpler inputs
   const handleDebouncedChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
     const isNumberField = e.target.type === 'number';
@@ -39,22 +36,18 @@ export function CharacterHeader({className}: { className?: string }) {
     debouncedUpdate({[name]: finalValue});
   };
 
-  // --- FIX 3: A new handler specifically for the name input ---
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    // Update local state instantly for a responsive UI
     setCharacterName(e.target.value);
-    // Debounce the call to the backend
     debouncedUpdate({name: e.target.value});
   };
 
   return (
       <div className={`${styles.header} ${className}`}>
         <div className={styles.mainInfo}>
-          {/* --- FIX 4: Use `value` and the new handler --- */}
           <Input
               name="name"
-              value={characterName} // Use the controlled 'value' prop
-              onChange={handleNameChange} // Use the new handler
+              value={characterName}
+              onChange={handleNameChange}
               placeholder="Character Name"
               className={styles.nameInput}
           />
@@ -67,7 +60,6 @@ export function CharacterHeader({className}: { className?: string }) {
           </div>
           <div className={styles.infoBlock}>
             <label>Class & Level</label>
-            {/* --- FIX 5: Display the level --- */}
             <span>
             {currentCharacter.classesInfo.join(' / ') || 'N/A'}
               {` - Level ${currentCharacter.totalLevel}`}

@@ -25,10 +25,8 @@ function ProtectedRoute({children}: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
       <Routes>
-        {/* Public route for authentication */}
         <Route path="/auth" element={<AuthPage/>}/>
 
-        {/* Protected route for the main application */}
         <Route
             path="/"
             element={
@@ -40,7 +38,6 @@ function AppRoutes() {
             }
         />
 
-        {/* Optional: Add a catch-all redirect for any other path */}
         <Route path="*" element={<Navigate to="/" replace/>}/>
       </Routes>
   );

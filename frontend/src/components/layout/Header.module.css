@@ -9,12 +9,11 @@
   background-color: var(--color-bg-secondary);
   border-bottom: 1px solid var(--color-border-light);
   box-shadow: var(--shadow-sm);
-  gap: var(--space-md); /* NEW: Add gap for spacing */
+  gap: var(--space-md);
 }
 
-/* NEW: Hamburger Menu Styles */
 .hamburger {
-  display: none; /* Hidden on desktop by default */
+  display: none;
   flex-direction: column;
   justify-content: space-around;
   width: 24px;
@@ -24,7 +23,7 @@
   cursor: pointer;
   padding: 0;
   z-index: 10;
-  order: -1; /* NEW: Place it at the start of the flex container */
+  order: -1;
 }
 
 .hamburgerLine {
@@ -39,7 +38,6 @@
 .left {
   display: flex;
   align-items: center;
-  /* NEW: Allow left side to shrink on small screens */
   min-width: 0;
   flex: 1;
 }
@@ -53,7 +51,6 @@
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0;
-  /* NEW: Prevent text from wrapping */
   white-space: nowrap;
 }
 
@@ -73,7 +70,6 @@
   font-weight: 500;
 }
 
-/* MODIFIED: Breakpoint adjusted to match sidebar logic */
 @media (max-width: 1023px) {
   .header {
     padding: var(--space-sm) var(--space-md);
@@ -81,11 +77,11 @@
   }
 
   .hamburger {
-    display: flex; /* Show hamburger on mobile */
+    display: flex;
   }
 
   .left {
-    justify-content: center; /* Center the logo when hamburger is present */
+    justify-content: center;
   }
 
   .logo {
@@ -93,16 +89,14 @@
   }
 
   .logoText {
-    /* Hide text on very small screens */
     display: none;
   }
 
   .username {
-    display: none; /* Hides username on smaller screens */
+    display: none;
   }
 }
 
-/* NEW: Add a slightly larger breakpoint for showing logo text again */
 @media (min-width: 480px) and (max-width: 1023px) {
   .logoText {
     display: inline;

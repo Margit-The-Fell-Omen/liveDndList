@@ -9,8 +9,6 @@ import styles from './HitPoints.module.css';
 
 type HpStatus = 'healthy' | 'injured' | 'critical';
 
-// --- THE FIX IS HERE ---
-// Destructure className from the props object.
 export function HitPoints({className}: { className?: string }) {
   const {currentCharacter, updateCharacter} = useCharacter();
 
@@ -37,7 +35,6 @@ export function HitPoints({className}: { className?: string }) {
   };
 
   return (
-      // The `className` variable is now correctly defined and can be used here.
       <Card title="Hit Points" className={className}>
         <div className={styles.hpBar}>
           <div

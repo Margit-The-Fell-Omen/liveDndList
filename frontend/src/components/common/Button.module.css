@@ -2,13 +2,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px; /* Use a fixed value for gap */
-  font-family: inherit; /* Use var(--font-family-secondary) from global scope */
+  gap: 8px;
+  font-family: inherit;
   font-weight: 500;
   border: none;
-  border-radius: 8px; /* Use var(--radius-md) from global scope */
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 150ms ease; /* Use var(--transition-fast) */
+  transition: all 150ms ease;
   position: relative;
   white-space: nowrap;
 }
@@ -22,7 +22,6 @@
   width: 100%;
 }
 
-/* Variants */
 .primary {
   background-color: var(--color-accent-primary);
   color: var(--color-text-inverse);
@@ -62,7 +61,6 @@
   filter: brightness(1.1);
 }
 
-/* Sizes */
 .small {
   padding: var(--space-xs) var(--space-sm);
   font-size: var(--font-size-sm);

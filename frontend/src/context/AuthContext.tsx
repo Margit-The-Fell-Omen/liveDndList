@@ -6,12 +6,6 @@ import {authApi} from '@/services/api';
 
 import type {AuthResponse, LoginCredentials, RegisterData, User} from '@/types';
 
-
-// ===============================================================
-// CONTEXT TYPE DEFINITION
-// We define the context type here to ensure it matches the hook's return value.
-// ===============================================================
-
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -22,11 +16,6 @@ export interface AuthContextType {
   logout: () => Promise<void>;
   clearError: () => void;
 }
-
-
-// ===============================================================
-// CONTEXT PROVIDER
-// ===============================================================
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -44,18 +33,18 @@ export function AuthProvider({children}: AuthProviderProps) {
 
     if (token) {
       authApi.getCurrentUser()
-          .then((freshUserData) => {
-            setUser(freshUserData);
-            localStorage.setItem('user', JSON.stringify(freshUserData));
-          })
-          .catch(() => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            setUser(null);
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+      .then((freshUserData) => {
+        setUser(freshUserData);
+        localStorage.setItem('user', JSON.stringify(freshUserData));
+      })
+      .catch(() => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
     } else {
       setLoading(false);
     }
@@ -117,11 +106,6 @@ export function AuthProvider({children}: AuthProviderProps) {
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
-
-
-// ===============================================================
-// CUSTOM HOOK
-// ===============================================================
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);

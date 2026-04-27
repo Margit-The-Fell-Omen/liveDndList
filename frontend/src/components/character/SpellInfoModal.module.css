@@ -37,7 +37,7 @@
 
 .descriptionBlock p {
   margin: 0;
-  white-space: pre-wrap; /* Respects newlines in the description text */
+  white-space: pre-wrap;
   line-height: 1.6;
 }
 

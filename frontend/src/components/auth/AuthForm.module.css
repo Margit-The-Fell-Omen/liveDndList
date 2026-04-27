@@ -9,7 +9,7 @@
 .formWrapper {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* FIX: Adds consistent space between all direct children (inputs, buttons) */
+  gap: 1.25rem;
   width: 100%;
 }
 
@@ -18,7 +18,7 @@
   font-weight: bold;
   color: var(--color-text-primary);
   text-align: center;
-  margin-bottom: -0.5rem; /* Reduce space below title */
+  margin-bottom: -0.5rem;
 }
 
 .subtitle {
@@ -48,7 +48,6 @@
 .switchButton {
   background: none;
   border: none;
-  /* FIX: Use the primary accent color to make it visible and interactive */
   color: var(--color-accent-primary);
   font-weight: 600;
   cursor: pointer;
@@ -58,7 +57,6 @@
 }
 
 .switchButton:hover {
-  /* FIX: Use the accent hover color */
   color: var(--color-accent-hover);
 }
 

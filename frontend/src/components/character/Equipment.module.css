@@ -77,9 +77,7 @@
   padding: var(--space-lg);
 }
 
-/* --- THE FIX IS HERE --- */
 .item {
-  /* Resets and base styles */
   margin: 0;
   font: inherit;
   text-align: left;
@@ -93,21 +91,15 @@
   width: 100%;
   cursor: pointer;
 
-  /* 1. Add transparent border to prevent layout jump */
   border: 1px solid transparent;
 
-  /* 2. Update transition to include border-color and remove box-shadow */
   transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .item:hover {
   background-color: var(--color-bg-hover);
-
-  /* 3. Add the accent border color on hover */
   border-color: var(--color-accent-primary);
 }
-
-/* --- END OF FIX --- */
 
 .itemNameContainer {
   display: flex;
@@ -190,7 +182,5 @@
   }
 }
 
-/* These classes are no longer used or have been superseded */
 .addItem, .quantityInput {
-  /* No styles needed */
 }

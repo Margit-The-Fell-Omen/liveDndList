@@ -79,9 +79,7 @@ export function RegisterForm({onSwitchToLogin}: RegisterFormProps) {
         email: formData.email,
         password: formData.password,
       });
-      // Redirect handled by App.tsx
     } catch (error) {
-      // Error displayed via authError
     } finally {
       setLoading(false);
     }

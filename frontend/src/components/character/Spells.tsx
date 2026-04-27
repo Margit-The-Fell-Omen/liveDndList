@@ -13,7 +13,6 @@ import styles from './Spells.module.css';
 import {Card} from '@/components/common/Card';
 import {SpellInfoModal} from "@components/character/SpellInfoModal.tsx";
 
-// THE FIX: Provide the implementation for this helper function
 const groupSpellsByLevel = (spells: SpellResponse[]) => {
   return spells.reduce((acc, spell) => {
     const level = spell.level;
@@ -62,7 +61,6 @@ export function Spells({className}: { className?: string }) {
   return (
       <>
         <Card title="Spellcasting" className={className}>
-          {/* THE FIX: Removed the outer header div and duplicate h3 */}
           <div className={styles.spellcastingStats}>
             <Select
                 label="Spellcasting Ability"
@@ -85,7 +83,6 @@ export function Spells({className}: { className?: string }) {
             </div>
           </div>
 
-          {/* This header is now for the list itself */}
           <div className={styles.listHeader}>
             <h4>Known Spells</h4>
             <Button size="small" onClick={() => setIsManageModalOpen(true)}>
@@ -99,11 +96,10 @@ export function Spells({className}: { className?: string }) {
                     <div key={level} className={styles.spellLevelGroup}>
                       <h4 className={styles.sectionTitle}>{level === 0 ? 'Cantrips' : `Level ${level}`}</h4>
                       {spellsByLevel[level].map((spell) => (
-                          // THIS IS NOW A CLICKABLE DIV
                           <div
                               key={spell.id}
                               className={styles.spell}
-                              onClick={() => setSpellToView(spell)} // Set the spell to view on click
+                              onClick={() => setSpellToView(spell)}
                               role="button"
                               tabIndex={0}
                               onKeyDown={(e) => {
@@ -130,14 +126,12 @@ export function Spells({className}: { className?: string }) {
 
         <ManageSpellsModal isOpen={isManageModalOpen} onClose={() => setIsManageModalOpen(false)}/>
 
-        {/* NEW: Spell Info Modal */}
         <SpellInfoModal
             isOpen={spellToView !== null}
             onClose={() => setSpellToView(null)}
             spell={spellToView}
         />
 
-        {/* Confirmation Modal (logic slightly changed) */}
         <ConfirmModal
             isOpen={spellToRemove !== null}
             onClose={() => setSpellToRemove(null)}

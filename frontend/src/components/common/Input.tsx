@@ -3,8 +3,6 @@
 import React, {useState, type ChangeEvent} from 'react';
 import styles from './Input.module.css';
 
-// --- TYPE DEFINITIONS (No changes needed here) ---
-
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
   error?: string | null;
@@ -34,8 +32,6 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
   fullWidth?: boolean;
 }
 
-// --- INPUT COMPONENT (DEFINITIVELY FIXED) ---
-
 export function Input({
                         label,
                         type = 'text',
@@ -45,18 +41,14 @@ export function Input({
                         fullWidth,
                         className = '',
                         required,
-                        // --- THE FIX ---
-                        // Explicitly destructure `value` and `defaultValue`.
-                        // This makes them known to the component's scope and satisfies TypeScript.
                         value,
                         defaultValue,
-                        ...props // All other standard input props
+                        ...props
                       }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const inputType = type === 'password' && showPassword ? 'text' : type;
   const wrapperClassName = `${styles.wrapper} ${fullWidth ? styles.fullWidth : ''} ${className}`;
 
-  // Decide which prop to pass to the input element to avoid the controlled/uncontrolled warning.
   const inputProps = value !== undefined ? {value} : {defaultValue};
 
   return (
@@ -73,8 +65,8 @@ export function Input({
               type={inputType}
               className={`${styles.input} ${error ? styles.error : ''} ${icon ? styles.withIcon : ''}`}
               required={required}
-              {...props} // Spread the rest of the props first
-              {...inputProps} // Then spread our determined value/defaultValue prop
+              {...props}
+              {...inputProps}
           />
           {type === 'password' && (
               <button
@@ -93,9 +85,6 @@ export function Input({
       </div>
   );
 }
-
-// --- TEXTAREA COMPONENT ---
-// This component should follow the same pattern for value/defaultValue.
 
 export function TextArea({
                            label,
@@ -141,8 +130,6 @@ export function TextArea({
       </div>
   );
 }
-
-// --- SELECT COMPONENT ---
 
 export function Select({
                          label,

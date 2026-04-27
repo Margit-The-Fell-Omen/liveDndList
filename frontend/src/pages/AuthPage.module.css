@@ -8,12 +8,11 @@
   width: 100%;
   padding: var(--space-xl);
 
-  /* Wallpaper styles */
-  background-color: var(--color-bg-primary); /* Fallback color */
+  background-color: var(--color-bg-primary);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  transition: background-image 0.5s ease-in-out; /* Smooth transition when image loads */
+  transition: background-image 0.5s ease-in-out;
 }
 
 .formContainer {
@@ -23,10 +22,9 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
 
-  /* Make the form pop against the wallpaper */
-  background-color: rgba(var(--color-bg-secondary-rgb), 0.9); /* Use RGB value for transparency */
+  background-color: rgba(var(--color-bg-secondary-rgb), 0.9);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px); /* For Safari support */
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(var(--color-border-rgb), 0.1);
 }
 
@@ -35,21 +33,14 @@
   animation: slideInUp 0.5s ease;
 }
 
-/*
-  Your original hero classes are no longer needed for this page,
-  so we can remove them or keep them for other uses. The media query is fine.
-*/
 @media (max-width: 1024px) {
   .page {
-    /* On mobile, a full background image might be too distracting.
-       We can choose to just show the background color. */
     background-image: none !important;
   }
 
   .formContainer {
     flex: none;
     width: 100%;
-    /* Reset backdrop filter on mobile for performance if needed */
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     background-color: var(--color-bg-secondary);

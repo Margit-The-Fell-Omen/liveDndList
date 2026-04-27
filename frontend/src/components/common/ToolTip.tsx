@@ -4,11 +4,6 @@ import {type ReactNode, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import styles from './Tooltip.module.css';
 
-// ===============================================================
-// LOCAL TYPE DEFINITIONS
-// ===============================================================
-
-// FIX 1: Define the props interface locally for this component.
 export interface TooltipProps {
   children: ReactNode;
   content: ReactNode; // Allow React nodes for more flexible content
@@ -21,26 +16,18 @@ interface Coords {
   left: number;
 }
 
-
-// ===============================================================
-// THE TOOLTIP COMPONENT
-// ===============================================================
-
 export function Tooltip({children, content, position = 'top', delay = 300}: TooltipProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [coords, setCoords] = useState<Coords>({top: 0, left: 0});
 
-  // FIX 2: Correctly type the ref. It starts as `null` but will hold an HTMLSpanElement.
   const triggerRef = useRef<HTMLSpanElement | null>(null);
   const timeoutRef = useRef<number | null>(null);
 
   const showTooltip = () => {
-    // Clear any existing hide timer
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Set a new timer to show the tooltip
     timeoutRef.current = window.setTimeout(() => {
       if (triggerRef.current) {
         const rect = triggerRef.current.getBoundingClientRect();
@@ -82,7 +69,6 @@ export function Tooltip({children, content, position = 'top', delay = 300}: Tool
     setIsVisible(false);
   };
 
-  // Cleanup effect to clear any running timer when the component unmounts
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -100,7 +86,6 @@ export function Tooltip({children, content, position = 'top', delay = 300}: Tool
           onFocus={showTooltip}
           onBlur={hideTooltip}
           className={styles.trigger}
-          // Add tabIndex to make it focusable for accessibility
           tabIndex={0}
       >
         {children}

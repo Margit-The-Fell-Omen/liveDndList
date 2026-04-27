@@ -8,11 +8,10 @@
   background-color: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border-light);
   z-index: var(--z-sticky);
-  transition: width var(--transition-normal), transform var(--transition-normal); /* MODIFIED */
-  overflow-x: hidden; /* MODIFIED: Changed to x-only */
+  transition: width var(--transition-normal), transform var(--transition-normal);
+  overflow-x: hidden;
 }
 
-/* On desktop, expanded state is triggered by hover */
 @media (min-width: 1024px) {
   .sidebar.expanded {
     width: var(--sidebar-width);
@@ -49,11 +48,8 @@
 }
 
 .actions, .characterList, .emptyMessage, .characterItem, .characterButton, .characterAvatar, .characterInfo, .characterName, .characterMeta, .deleteButton {
-  /* All these styles are fine and remain unchanged */
-  /* ... */
 }
 
-/* This part of your CSS for character items is perfect, no changes needed */
 .actions {
   display: flex;
   flex-direction: column;
@@ -159,30 +155,22 @@
 }
 
 
-/* ==================
-   MODIFIED: MOBILE STYLES
-   ================== */
-
 .overlay {
-  display: none; /* Hidden by default */
+  display: none;
 }
 
-/* REMOVED: .expandButton and its styles are no longer needed here */
-
 @media (max-width: 1023px) {
-  /* MODIFIED: Use transform to slide the menu in and out from off-screen */
   .sidebar {
-    width: var(--sidebar-width); /* Fixed width for the content */
-    transform: translateX(-100%); /* Start off-screen */
+    width: var(--sidebar-width);
+    transform: translateX(-100%);
     transition: transform var(--transition-normal);
   }
 
   .sidebar.expanded {
-    transform: translateX(0); /* Slide into view */
+    transform: translateX(0);
     box-shadow: var(--shadow-lg);
   }
 
-  /* MODIFIED: Make content visible immediately on mobile when expanded */
   .sidebar.expanded .content {
     opacity: 1;
     transition: opacity 0.1s ease-in;

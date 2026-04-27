@@ -7,7 +7,6 @@ import {TextArea} from '@/components/common/Input';
 import {Card} from '@/components/common/Card';
 import styles from './Background.module.css';
 
-// A type helper for the keys we'll be updating
 type BackgroundField = 'personalityTraits' | 'ideals' | 'bonds' | 'flaws' | 'backstory' | 'notes';
 
 export function Background({className}: { className?: string }) {
@@ -20,14 +19,13 @@ export function Background({className}: { className?: string }) {
           updateCharacter(currentCharacter.id, {[key]: value});
         }
       },
-      500 // 500ms delay
+      500
   );
 
   if (!currentCharacter) {
     return null;
   }
 
-  // FIX 1: Destructure the correct top-level properties.
   const {
     personalityTraits,
     ideals,
@@ -37,7 +35,6 @@ export function Background({className}: { className?: string }) {
     notes
   } = currentCharacter;
 
-  // Generic change handler for all text areas
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>, key: BackgroundField) => {
     debouncedUpdate(key, e.target.value);
   };
@@ -45,7 +42,6 @@ export function Background({className}: { className?: string }) {
   return (
       <Card title="Personality & Backstory" className={className}>
         <div className={styles.grid}>
-          {/* FIX 2: Bind each TextArea to its correct top-level property */}
           <TextArea
               label="Personality Traits"
               defaultValue={personalityTraits}

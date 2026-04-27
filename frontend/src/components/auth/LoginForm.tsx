@@ -24,7 +24,6 @@ export function LoginForm({onSwitchToRegister}: LoginFormProps) {
     e.preventDefault();
     clearError();
 
-    // Basic validation can remain simple for this example
     if (!username || !password) {
       setFormError('Username and password are required.');
       return;
@@ -37,7 +36,6 @@ export function LoginForm({onSwitchToRegister}: LoginFormProps) {
       await login({username, password});
       navigate('/', {replace: true});
     } catch (err) {
-      // Error is handled by the AuthContext
       console.error("Login failed:", err);
     } finally {
       setIsSubmitting(false);
@@ -49,7 +47,6 @@ export function LoginForm({onSwitchToRegister}: LoginFormProps) {
         <h2 className={styles.title}>Welcome Back</h2>
         <p className={styles.subtitle}>Log in to access your characters.</p>
 
-        {/* The form now has a gap between its children */}
         <form onSubmit={handleSubmit} noValidate className={styles.form}>
           {(formError || authError) && (
               <div className={styles.errorBanner}>{formError || authError}</div>

@@ -21,7 +21,7 @@ import type {
 const API_BASE_URL = '/api/v1';
 
 // =================================================================
-// HELPER FUNCTIONS (No changes here)
+// HELPER FUNCTIONS
 // =================================================================
 
 function getToken(): string | null {
@@ -170,7 +170,7 @@ export const referenceDataApi = {
 };
 
 // ═══════════════════════════════════════════════════════════════
-// CHARACTERS API
+// D&D CHARACTERS API
 // ═══════════════════════════════════════════════════════════════
 
 export const charactersApi = {

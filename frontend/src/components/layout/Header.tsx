@@ -3,7 +3,6 @@ import {ThemeToggle} from '@/components/common/ThemeToggle';
 import {Button} from '@/components/common/Button';
 import styles from './Header.module.css';
 
-// NEW: Props for sidebar toggle functionality
 interface HeaderProps {
   isSidebarExpanded: boolean;
   onToggleSidebar: () => void;
@@ -14,7 +13,6 @@ export function Header({isSidebarExpanded, onToggleSidebar}: HeaderProps) {
 
   return (
       <header className={styles.header}>
-        {/* NEW: Hamburger menu for mobile */}
         <button
             className={styles.hamburger}
             onClick={onToggleSidebar}
@@ -30,7 +28,7 @@ export function Header({isSidebarExpanded, onToggleSidebar}: HeaderProps) {
           <h1 className={styles.logo}>
             <span className={styles.logoIcon}>🎲</span>
             <span
-                className={styles.logoText}>D&D Sheet</span> {/* MODIFIED: Shorter text for mobile */}
+                className={styles.logoText}>D&D Sheet</span>
           </h1>
         </div>
 

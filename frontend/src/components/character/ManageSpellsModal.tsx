@@ -21,7 +21,6 @@ export function ManageSpellsModal({isOpen, onClose}: ManageSpellsModalProps) {
 
   const debouncedQuery = useDebounce(searchQuery, 300);
 
-  // THE FIX: Wrap the fetch logic in useCallback
   const fetchSpells = useCallback(async () => {
     if (debouncedQuery.length < 2) {
       setResults([]);
@@ -36,17 +35,16 @@ export function ManageSpellsModal({isOpen, onClose}: ManageSpellsModalProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [debouncedQuery]); // Dependency on the debounced query
+  }, [debouncedQuery]);
 
   useEffect(() => {
     if (isOpen) {
       fetchSpells();
     } else {
-      // Reset state when modal closes
       setSearchQuery('');
       setResults([]);
     }
-  }, [isOpen, fetchSpells]); // Depend on isOpen and the stable fetchSpells function
+  }, [isOpen, fetchSpells]);
 
   const knownSpellIds = new Set(currentCharacter?.spells.map(s => s.id));
 

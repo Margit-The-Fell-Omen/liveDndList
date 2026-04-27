@@ -2,11 +2,6 @@
 
 import {useCallback, useState} from 'react';
 
-// ===============================================================
-// LOCAL TYPE DEFINITIONS
-// ===============================================================
-
-// FIX 1: Define the types needed by this hook directly in the file.
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 export interface ToastData {
@@ -26,11 +21,6 @@ interface UseToastReturn {
   removeToast: (id: number) => void;
 }
 
-
-// ===============================================================
-// THE CUSTOM HOOK
-// ===============================================================
-
 export function useToast(): UseToastReturn {
   const [toasts, setToasts] = useState<ToastData[]>([]);
 
@@ -42,14 +32,11 @@ export function useToast(): UseToastReturn {
       (message: string, type: ToastType = 'info', duration: number = 5000): number => {
         const id = Date.now() + Math.random();
 
-        // FIX 2: Create the new toast object with the correct type before setting state.
-        // This helps TypeScript understand that the object conforms to the ToastData interface.
         const newToast: ToastData = {id, message, type};
 
         setToasts((prevToasts) => [...prevToasts, newToast]);
 
         if (duration > 0) {
-          // Use a stable reference to removeToast inside the timeout
           setTimeout(() => {
             setToasts((currentToasts) => currentToasts.filter((t) => t.id !== id));
           }, duration);
@@ -57,7 +44,7 @@ export function useToast(): UseToastReturn {
 
         return id;
       },
-      [] // removeToast is not needed as a dependency if we update state functionally like above
+      []
   );
 
   const toast = {

@@ -18,7 +18,6 @@ export function AbilityScore({ability, score, modifier}: AbilityScoreProps) {
   const debouncedUpdate = useDebouncedCallback((newScore: number) => {
     if (currentCharacter) {
       const abilityKey = ability.key as keyof typeof currentCharacter.abilityScores;
-      // Construct the payload for the nested abilityScores object
       const payload = {
         abilityScores: {
           ...currentCharacter.abilityScores,

@@ -69,7 +69,6 @@
   padding: var(--space-sm);
 }
 
-/* --- THE FIX IS HERE --- */
 .spell {
   display: flex;
   align-items: center;
@@ -79,22 +78,15 @@
   border-radius: var(--radius-md);
   margin-bottom: var(--space-xs);
   cursor: pointer;
-
-  /* 1. Add a transparent border to prevent layout shift on hover */
   border: 1px solid transparent;
-
-  /* 2. Update transition to include border-color for a smooth effect */
   transition: background-color var(--transition-fast), border-color var(--transition-fast);
 }
 
 .spell:hover {
   background-color: var(--color-bg-hover);
 
-  /* 3. Set the border color to your theme's red on hover */
   border-color: var(--color-accent-primary);
 }
-
-/* --- END OF FIX --- */
 
 .spellName {
   flex: 1;

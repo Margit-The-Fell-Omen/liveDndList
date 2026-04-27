@@ -24,7 +24,6 @@ export function CombatStats({className}: { className?: string }) {
     return null;
   }
 
-  // Destructure all necessary properties for display and calculations
   const {
     armorClass,
     initiative,
@@ -34,34 +33,28 @@ export function CombatStats({className}: { className?: string }) {
     abilityScores,
   } = currentCharacter;
 
-  // --- WEAPON LOGIC ---
   const getAttackBonus = (weapon: EquipmentResponse): string => {
-    // A simplified calculation for STR/DEX (finesse) weapons.
-    // This makes the sheet feel more alive!
     try {
       const isFinesse = weapon.properties?.toLowerCase().includes('finesse');
       const strMod = abilityScores.strengthModifier;
       const dexMod = abilityScores.dexterityModifier;
 
-      // Use the higher of STR/DEX for finesse, otherwise STR
       const relevantModifier = isFinesse ? Math.max(strMod, dexMod) : strMod;
       const bonus = proficiencyBonus + relevantModifier;
 
       return bonus >= 0 ? `+${bonus}` : `${bonus}`;
     } catch {
-      return 'N/A'; // Failsafe
+      return 'N/A';
     }
   };
 
   const activeWeapons = equipment
   .filter((item) => item.type === 'WEAPON' && item.equipped)
-  .slice(0, 3); // Get up to 3 equipped weapons
+  .slice(0, 3);
 
-  // Create an array of exactly 3 items for consistent rendering
   const displayWeapons: (EquipmentResponse | null)[] = Array(3)
   .fill(null)
   .map((_, index) => activeWeapons[index] || null);
-  // --- END WEAPON LOGIC ---
 
   const handleChange = (
       e: ChangeEvent<HTMLInputElement>,
@@ -73,7 +66,6 @@ export function CombatStats({className}: { className?: string }) {
 
   return (
       <Card title="Combat Stats" className={className}>
-        {/* Top section: AC, Initiative, Speed (Unchanged) */}
         <div className={styles.grid}>
           <div className={styles.stat}>
             <label className={styles.label}>Armor Class</label>
@@ -109,16 +101,13 @@ export function CombatStats({className}: { className?: string }) {
           </div>
         </div>
 
-        {/* --- REVISED "Attacks" Section --- */}
         <div className={styles.attacksContainer}>
-          {/* Header Row */}
           <div className={styles.attacksHeader}>
             <span>Name</span>
             <span>Atk Bonus</span>
             <span>Damage / Type</span>
           </div>
 
-          {/* Data Rows */}
           {displayWeapons.map((weapon, index) => (
               <div key={index} className={styles.attackRow}>
                 <div className={styles.attackCell}>
@@ -133,7 +122,6 @@ export function CombatStats({className}: { className?: string }) {
               </div>
           ))}
 
-          {/* Optional: A box to show weapon properties cleanly */}
           <div className={styles.propertiesBox}>
             <p>
               <strong>Equipped Weapon Properties:</strong>{' '}

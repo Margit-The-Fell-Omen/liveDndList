@@ -1,6 +1,5 @@
 /* src/components/character/CombatStats.module.css */
 
-/* Unchanged Styles */
 .combatStats {
   background-color: var(--color-1);
   border-radius: var(--radius-lg);
@@ -23,7 +22,6 @@
 }
 
 .stat {
-  /* This outer box for AC/Init/Speed doesn't have a separate background */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -45,13 +43,11 @@
   width: 100%;
 }
 
-/* This is the style we need to replicate */
 .input input {
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
   padding: 0.25rem;
-  /* The browser default styles the background/border for inputs */
 }
 
 .speedInput {
@@ -66,7 +62,6 @@
   padding-top: 0.25rem;
 }
 
-/* --- REVISED STYLES FOR ATTACKS --- */
 
 .attacksContainer {
   margin-top: var(--space-md);
@@ -74,7 +69,7 @@
   padding-top: var(--space-md);
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs); /* Tighter row spacing */
+  gap: var(--space-xs);
 }
 
 .attacksHeader {
@@ -103,14 +98,13 @@
 }
 
 .attackCell {
-  /* Replicating the style of the AC/Initiative/Speed inputs */
-  background-color: var(--color-bg-primary); /* This is the darker background matching the inputs */
+  background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md); /* Increased rounding */
+  border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
-  min-height: 48px; /* Give cells more height */
+  min-height: 48px;
   font-size: var(--font-size-md);
-  font-weight: 500; /* Make text bolder */
+  font-weight: 500;
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
@@ -122,13 +116,12 @@
 .centerText {
   justify-content: center;
   font-size: var(--font-size-lg);
-  font-weight: 700; /* Boldest weight for the bonus */
+  font-weight: 700;
 }
 
 .propertiesBox {
   margin-top: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
-  /* Match the new cell style */
   background-color: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);

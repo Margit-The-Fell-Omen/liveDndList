@@ -13,7 +13,7 @@ interface DeleteModalState {
 interface SidebarProps {
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
-  isDesktop: boolean; // NEW: Receive isDesktop prop
+  isDesktop: boolean;
 }
 
 export function Sidebar({isExpanded, setIsExpanded, isDesktop}: SidebarProps) {
@@ -35,7 +35,6 @@ export function Sidebar({isExpanded, setIsExpanded, isDesktop}: SidebarProps) {
     setDeleteModal({open: false, id: null});
   };
 
-  // MODIFIED: Simplified hover logic using the isDesktop prop
   const handleMouseEnter = () => {
     if (isDesktop) {
       setIsExpanded(true);
@@ -52,10 +51,9 @@ export function Sidebar({isExpanded, setIsExpanded, isDesktop}: SidebarProps) {
       <>
         <aside
             className={`${styles.sidebar} ${isExpanded ? styles.expanded : ''}`}
-            onMouseEnter={handleMouseEnter} // MODIFIED
-            onMouseLeave={handleMouseLeave} // MODIFIED
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
         >
-          {/* REMOVED: The old expand button (⚔️) is gone */}
 
           <div className={styles.content}>
             <div className={styles.header}>
@@ -110,12 +108,10 @@ export function Sidebar({isExpanded, setIsExpanded, isDesktop}: SidebarProps) {
           </div>
         </aside>
 
-        {/* MODIFIED: Overlay is now only for mobile (when isDesktop is false) */}
         {!isDesktop && isExpanded && (
             <div className={styles.overlay} onClick={() => setIsExpanded(false)}/>
         )}
 
-        {/* These modals remain unchanged */}
         <ConfirmModal
             isOpen={deleteModal.open}
             onClose={() => setDeleteModal({open: false, id: null})}

@@ -22,7 +22,7 @@ const initialState: EquipmentData = {
   quantity: 1,
   weight: 0,
   type: 'GEAR',
-  equipped: false, // Add equipped to initial state
+  equipped: false,
   damage: '',
   damageType: '',
   properties: '',
@@ -40,7 +40,7 @@ export function EquipmentFormModal({isOpen, onClose, itemToEdit}: EquipmentFormM
         quantity: itemToEdit.quantity,
         weight: itemToEdit.weight || 0,
         type: itemToEdit.type,
-        equipped: itemToEdit.equipped, // Set from item
+        equipped: itemToEdit.equipped,
         damage: itemToEdit.damage || '',
         damageType: itemToEdit.damageType || '',
         properties: itemToEdit.properties || '',
@@ -63,8 +63,6 @@ export function EquipmentFormModal({isOpen, onClose, itemToEdit}: EquipmentFormM
     e.preventDefault();
     try {
       if (itemToEdit) {
-        // The 'equipped' status is handled by the dedicated button now,
-        // so we pass it along but don't change it here.
         await updateEquipment(itemToEdit.id, formData);
       } else {
         await addEquipment(formData);
@@ -78,8 +76,6 @@ export function EquipmentFormModal({isOpen, onClose, itemToEdit}: EquipmentFormM
   const handleToggleEquipped = async () => {
     if (!itemToEdit) return;
     await toggleEquipmentEquipped(itemToEdit.id);
-    // The context update will trigger a re-render of the parent,
-    // which will pass down a new `itemToEdit` prop and update this form.
   };
 
   const isWeapon = formData.type === 'WEAPON';
@@ -102,7 +98,6 @@ export function EquipmentFormModal({isOpen, onClose, itemToEdit}: EquipmentFormM
                   </Button>
               )}
               <div style={{flex: 1}}/>
-              {/* Spacer */}
               <Button variant="secondary" onClick={onClose}>Cancel</Button>
               <Button onClick={handleSubmit} loading={saving}>
                 {itemToEdit ? 'Save Changes' : 'Add Item'}
@@ -111,7 +106,6 @@ export function EquipmentFormModal({isOpen, onClose, itemToEdit}: EquipmentFormM
           }
       >
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* ... form fields are unchanged ... */}
           <Input label="Item Name" name="name" value={formData.name} onChange={handleChange}
                  required/>
           <div className={styles.gridTwo}>

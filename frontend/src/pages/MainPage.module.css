@@ -13,12 +13,10 @@
   color: var(--color-text-secondary);
 }
 
-/* --- NEW GRID BASED ON YOUR WIREFRAME --- */
 .sheetGrid {
   display: grid;
   gap: var(--space-lg);
   grid-template-columns: 280px 1fr 340px;
-  /* 8 rows provide granular control for vertical spanning */
   grid-template-rows: repeat(8, auto);
   grid-template-areas:
     "header      header      header"
@@ -31,7 +29,6 @@
     "features    notes       equipment";
 }
 
-/* Area assignments */
 .header {
   grid-area: header;
 }
@@ -40,7 +37,6 @@
   grid-area: abilities;
 }
 
-/* "Stats" from wireframe */
 .saves {
   grid-area: saves;
 }
@@ -49,12 +45,10 @@
   grid-area: features;
 }
 
-/* "Traits & features" from wireframe */
 .combat {
   grid-area: combat;
 }
 
-/* "Battle stats" */
 .hp {
   grid-area: hp;
 }
@@ -76,8 +70,6 @@
 }
 
 
-/* --- RESPONSIVE BREAKPOINTS --- */
-/* This maintains a reasonable layout for tablets */
 @media (max-width: 1280px) {
   .sheetGrid {
     grid-template-columns: 260px 1fr;
@@ -92,11 +84,9 @@
   }
 }
 
-/* On mobile, everything stacks vertically */
 @media (max-width: 768px) {
   .sheetGrid {
     grid-template-columns: 1fr;
-    /* Reset all spans and stack */
     grid-template-areas:
       "header"
       "abilities"

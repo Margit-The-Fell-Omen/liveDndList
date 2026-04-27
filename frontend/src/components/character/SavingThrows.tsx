@@ -15,7 +15,6 @@ export function SavingThrows({className}: { className?: string }) {
   const {proficiencyBonus} = currentCharacter;
 
   return (
-      // Use the Card component and pass the className
       <Card title="Saving Throws" className={className}>
         <div className={styles.list}>
           {ABILITIES.map((abilityInfo) => {
