@@ -1,5 +1,5 @@
 name: Deploy to Dev Environment
-
+# NOTE: DO NOT FORGET ABOUT SECRETS IF MIGRATING TO OTHER SERVERS
 on:
   push:
     branches:
