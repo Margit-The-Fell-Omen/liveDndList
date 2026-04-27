@@ -23,7 +23,6 @@
   cursor: pointer;
   padding: 0;
   z-index: 10;
-  order: -1;
 }
 
 .hamburgerLine {
@@ -39,7 +38,7 @@
   display: flex;
   align-items: center;
   min-width: 0;
-  flex: 1;
+  flex-shrink: 1;
 }
 
 .logo {
@@ -58,10 +57,15 @@
   font-size: var(--font-size-2xl);
 }
 
+.logoText {
+  display: inline;
+}
+
 .right {
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  flex-shrink: 0;
 }
 
 .username {
@@ -74,22 +78,19 @@
   .header {
     padding: var(--space-sm) var(--space-md);
     justify-content: space-between;
+    gap: var(--space-md);
   }
 
   .hamburger {
     display: flex;
+    order: -1;
   }
 
   .left {
-    justify-content: center;
   }
 
   .logo {
     font-size: var(--font-size-lg);
-  }
-
-  .logoText {
-    display: none;
   }
 
   .username {
@@ -97,8 +98,8 @@
   }
 }
 
-@media (min-width: 480px) and (max-width: 1023px) {
+@media (max-width: 420px) {
   .logoText {
-    display: inline;
+    display: none;
   }
 }

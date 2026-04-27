@@ -2,7 +2,7 @@ import {useState, type ReactNode} from 'react';
 import {Sidebar} from './Sidebar';
 import {Header} from './Header';
 import styles from './Layout.module.css';
-import {useMediaQuery} from '@/hooks/useMediaQuery'; // NEW
+import {useMediaQuery} from '@/hooks/useMediaQuery';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,14 +12,6 @@ export function Layout({children}: LayoutProps) {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
-  if (!isDesktop && isSidebarExpanded) {
-    const isHoveringSidebar = document.querySelector(`.${styles.sidebar}:hover`);
-    if (!isHoveringSidebar) {
-      setIsSidebarExpanded(false);
-    }
-  }
-
-
   return (
       <div className={styles.layout}>
         <Sidebar
@@ -27,7 +19,6 @@ export function Layout({children}: LayoutProps) {
             setIsExpanded={setIsSidebarExpanded}
             isDesktop={isDesktop}
         />
-
         <div
             className={`${styles.main} ${isSidebarExpanded && isDesktop ? styles.desktopSidebarExpanded : ''}`}>
           <Header
