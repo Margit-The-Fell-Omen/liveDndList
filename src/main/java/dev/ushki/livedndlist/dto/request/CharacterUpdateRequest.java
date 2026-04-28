@@ -101,4 +101,7 @@ public class CharacterUpdateRequest {
 
   @Schema(description = "Features")
   private String featuresAndTraits;
+
+  @Schema(description = "Initiative")
+  private Integer initiative;
 }

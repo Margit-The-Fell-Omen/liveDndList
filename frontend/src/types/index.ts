@@ -307,6 +307,7 @@ export interface CharacterUpdateRequest {
   experiencePoints?: number;
   savingThrowProficiencies?: AbilityName[];
   skills?: SkillUpdateRequest[];
+  initiative?: number;
 }
 
 export interface SkillUpdateRequest {
