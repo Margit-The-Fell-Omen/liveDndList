@@ -5,7 +5,7 @@ WORKDIR /app
 
 COPY pom.xml .
 
-RUN apk add --no-cache curl
+RUN apt install --no-cache curl
 
 RUN mvn dependency:go-offline
 
