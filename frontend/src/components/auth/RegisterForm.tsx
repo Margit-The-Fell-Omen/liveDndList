@@ -4,6 +4,7 @@ import {Input} from '@/components/common/Input';
 import {Button} from '@/components/common/Button';
 import {validate, validators} from '@/utils/validators';
 import styles from './AuthForm.module.css';
+import {useNavigate} from "react-router-dom";
 
 interface RegisterFormProps {
   onSwitchToLogin: () => void;
@@ -26,6 +27,7 @@ interface FormErrors {
 export function RegisterForm({onSwitchToLogin}: RegisterFormProps) {
   const {register, error: authError, clearError} = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     username: '',
     email: '',
@@ -79,6 +81,7 @@ export function RegisterForm({onSwitchToLogin}: RegisterFormProps) {
         email: formData.email,
         password: formData.password,
       });
+      navigate('/', {replace: true});
     } catch (error) {
     } finally {
       setLoading(false);
