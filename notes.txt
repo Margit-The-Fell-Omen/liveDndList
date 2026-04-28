@@ -5,9 +5,6 @@ Plan for live-dnd-list:
 
 (to fix frontend)
 - make active weapons a scrollable horizontally on mobile
-- fix header laber/icon on mobile
-- fix feature saving
-- fix equipment adding (UI crash)
 - fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
 - fix that after initial loading of character on main page you traverse to the character sheet instantly
 - make background a list of choices (as race or class)
@@ -23,12 +20,14 @@ Plan for live-dnd-list:
 - add theme change based on base-16 color scheme (or another type of choice)
 
 (Quality of life)
+- add swipe (left <- right) to open side-menu with labels for fast sheet traverse on mobile
 - add icons on unexpanded sidebar
 - when logged in - open last opened character
 - add (remember device) functionality
 - auto-remember latest login
 
 (later plans)
+- remove not used endpoints and repo methods
 - rewrite my Cache Manager -> Redis
 - migrate to api.open5e/v2
 - add export to pdf via async method
