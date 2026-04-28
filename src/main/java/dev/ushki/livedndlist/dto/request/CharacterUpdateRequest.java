@@ -98,4 +98,7 @@ public class CharacterUpdateRequest {
 
   @Schema(description = "List of skill updates")
   private List<SkillUpdateRequest> skills;
+
+  @Schema(description = "Features")
+  private String featuresAndTraits;
 }

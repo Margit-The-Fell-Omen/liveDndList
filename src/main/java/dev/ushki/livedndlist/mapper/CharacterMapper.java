@@ -239,6 +239,7 @@ public class CharacterMapper {
     updateIfPresent(request.getDeathSaveFailures(), character::setDeathSaveFailures);
     updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
     updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
+    updateIfPresent(request.getFeaturesAndTraits(), character::setFeaturesAndTraits);
 
     if (request.getExperiencePoints() != null) {
       int oldTotalLevel = character.getTotalLevel();
