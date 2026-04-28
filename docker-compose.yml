@@ -29,6 +29,12 @@ services:
         restart: true
       redis:
         condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
