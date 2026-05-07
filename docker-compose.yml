@@ -43,6 +43,7 @@ services:
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
       APP_JWT_SECRET: ${APP_JWT_SECRET}
+      SERVER_FORWARD_HEADERS_STRATEGY: FRAMEWORK
     networks:
       - app
     restart: always
