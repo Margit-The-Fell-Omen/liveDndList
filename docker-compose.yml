@@ -74,12 +74,12 @@ services:
     image: certbot/certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
-      - ./certbot-www:/var/www/certbot
+      - ./certbot/www:/var/www/certbot
       - ./certbot-hook.sh:/certbot-hook.sh:ro
     environment:
       - DUCKDNS_TOKEN=${DUCKDNS_TOKEN}
     entrypoint: >
-      /bin/sh -c "certbot certonly --manual --manual-auth-hook /certbot-hook.sh 
+      /bin/sh -c "apk add --no-cache curl && certbot certonly --manual --manual-auth-hook /certbot-hook.sh 
       --preferred-challenges dns --non-interactive --agree-tos 
       --email timtk.work@gmail.com -d live-dnd-list.duckdns.org 
       && trap exit TERM; while :; do certbot renew --manual-auth-hook /certbot-hook.sh; sleep 12h & wait $${!}; done;"
