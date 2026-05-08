@@ -46,6 +46,7 @@ services:
       SERVER_FORWARD_HEADERS_STRATEGY: FRAMEWORK
       SERVER_SERVLET_SESSION_COOKIE_SECURE: "true"
       SERVER_SERVLET_SESSION_COOKIE_SAME_SITE: "lax"
+      SERVER_TOMCAT_PROTOCOL_HEADER: x-forwarded-proto
       MANAGEMENT_ENDPOINTS_WEB_CORS_ALLOWED_ORIGINS: "https://live-dnd-list.duckdns.org"
     networks:
       - app
