@@ -53,7 +53,7 @@ public class SecurityConfig {
     configuration.setAllowedOrigins(Arrays.asList("https://live-dnd-list.duckdns.org"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(
-        Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Origin", "Accept"));
     configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
