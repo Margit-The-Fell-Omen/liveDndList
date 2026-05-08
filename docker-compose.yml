@@ -28,7 +28,7 @@ services:
         condition: service_healthy
         restart: true
       redis:
-        condition: service_started
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "--fail", "http://localhost:8080/actuator/health" ]
       interval: 30s
@@ -41,6 +41,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
       SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
       APP_JWT_SECRET: ${APP_JWT_SECRET}
       SERVER_FORWARD_HEADERS_STRATEGY: NATIVE
@@ -56,6 +57,11 @@ services:
   redis:
     image: redis
     command: redis-server --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     ports:
       - "6379:6379"
     networks:
