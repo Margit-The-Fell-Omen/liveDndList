@@ -73,9 +73,11 @@ public class SecurityConfig {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         .authorizeHttpRequests(auth -> auth
+            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
             .requestMatchers(
                 // --- Authentication ---
                 "/api/v1/auth/**",
+                "/api/v1/sync",
 
                 // --- All Swagger/OpenAPI related paths ---
                 "/swagger-ui.html",
