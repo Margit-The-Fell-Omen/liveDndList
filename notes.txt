@@ -29,7 +29,7 @@ Plan for live-dnd-list:
 (later plans)
 - remove not used endpoints and repo methods
 - rewrite my Cache Manager -> Redis
-- migrate to api.open5e/v2
+----> migrate to api.open5e/v2
 - add export to pdf via async method
 - get the rest of info fetched from open5e
 - add sharing feature?
