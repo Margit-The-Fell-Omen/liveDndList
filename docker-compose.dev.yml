@@ -48,6 +48,7 @@ services:
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
       APP_JWT_SECRET: ${APP_JWT_SECRET}
+      SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
     networks:
       - app-dev
     restart: always
@@ -67,8 +68,8 @@ services:
       - backend
     ports:
       - "81:80"
-      - "8443:443"
     volumes:
+      - ./frontend/nginx.dev.conf:/etc/nginx/nginx.conf:ro
       - ./frontend:/app
       - /app/node_modules
     environment:
