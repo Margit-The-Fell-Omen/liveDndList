@@ -2,11 +2,17 @@ package dev.ushki.livedndlist.entity.character;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Embeddable
 @Data
-class Publisher {
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
+public class Publisher {
 
   @Column(name = "publisher_name")
   private String name;

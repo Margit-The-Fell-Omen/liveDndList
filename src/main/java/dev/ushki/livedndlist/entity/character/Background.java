@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,6 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "backgrounds")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Background {
 
   @Id
@@ -41,4 +45,12 @@ public class Background {
   private Document document;
 
   private String desc;
+
+  public void addBenefit(BackgroundBenefit benefit) {
+    benefits.add(benefit);
+  }
+
+  public void removeBenefit(BackgroundBenefit benefit) {
+    benefits.remove(benefit);
+  }
 }
