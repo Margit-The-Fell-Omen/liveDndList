@@ -1,5 +1,8 @@
 package dev.ushki.livedndlist.controller.sync;
 
+import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundBenefitDto;
+import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundDto;
+import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
@@ -7,9 +10,14 @@ import dev.ushki.livedndlist.service.Open5eBackgroundService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,6 +36,67 @@ public class BackgroundSyncController {
   @Operation(summary = "Get sync status")
   public ApiResponse<SyncStatusDto> getSyncStatus() {
     return ApiResponse.success(backgroundService.getSyncStatus());
+  }
+
+  @PostMapping
+  @Operation(summary = "Start synchronization of all classes")
+  public ApiResponse<SyncResultDto> syncAllClasses() {
+    log.info("Received request to sync all classes");
+    SyncResultDto result = backgroundService.syncAllBackgrounds();
+    return ApiResponse.success(result);
+  }
+
+  @PostMapping("/async")
+  @Operation(summary = "Start asynchronous synchronization of all classes")
+  public ApiResponse<String> syncAllClassesAsync() {
+    log.info("Received request to async sync all classes");
+
+    SyncStatusDto status = backgroundService.getSyncStatus();
+    if (status.isInProgress()) {
+      return ApiResponse.error("Sync already in progress");
+    }
+
+    CompletableFuture.runAsync(backgroundService::syncAllBackgrounds);
+
+    return ApiResponse.success("Sync started. Check status at: GET /api/sync/backgrounds/status");
+  }
+
+  // In v2 of Open5e key effectively works as slug so no need for method name change
+  @PostMapping("/{slug}")
+  @Operation(summary = "Sync specific class by slug")
+  public ApiResponse<SyncResultDto> syncClassBySlug(@PathVariable String slug) {
+    log.info("Received request to sync class: {}", slug);
+    SyncResultDto result = backgroundService.syncBySlug(slug);
+    return ApiResponse.success(result);
+  }
+
+  @DeleteMapping
+  @Operation(summary = "Delete all classes from database")
+  public ApiResponse<SyncResultDto> clearAllClasses() {
+    log.info("Received request to delete all classes");
+    SyncResultDto result = backgroundService.clearAll();
+    return ApiResponse.success(result);
+  }
+
+  @GetMapping("/count")
+  @Operation(summary = "Get class count in database")
+  public ApiResponse<Long> getClassCount() {
+    return ApiResponse.success(backgroundRepository.count());
+  }
+
+  @GetMapping("/list")
+  @Operation(summary = "Get list of all classes from database")
+  public ApiResponse<List<Open5eBackgroundDto>> getAllClasses() {
+    List<Open5eBackgroundDto> classes = backgroundService.getAllBackgrounds();
+    return ApiResponse.success(classes);
+  }
+
+  @GetMapping("/{key}/benefits")
+  @Operation(summary = "Get all archetypes of class by id")
+  public ApiResponse<List<Open5eBackgroundBenefitDto>> getArchetypesByClass(
+      @PathVariable String key) {
+    List<Open5eBackgroundBenefitDto> archetypes = backgroundService.getBenefitsByBackground(key);
+    return ApiResponse.success(archetypes);
   }
 
 }
