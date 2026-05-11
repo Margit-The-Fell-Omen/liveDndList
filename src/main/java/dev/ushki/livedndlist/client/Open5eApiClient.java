@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -39,45 +39,31 @@ public class Open5eApiClient {
     while (attempt < rateLimitConfig.getMaxRetries()) {
       try {
         rateLimitDelay();
-
         URI finalUri = UriComponentsBuilder.fromPath(uriTemplate).build(uriVariables);
-        log.debug("API request (attempt {}/{}): {}", attempt + 1, rateLimitConfig.getMaxRetries(),
-            finalUri);
 
-        T response = open5eRestClient.get()
+        return open5eRestClient.get()
             .uri(finalUri)
             .retrieve()
             .body(responseType);
 
-        if (response != null) {
-          return response;
-        }
-        log.warn("Null response from API for URI: {}", finalUri);
-
-      } catch (ResourceAccessException e) {
-        lastException = e;
-        attempt++;
-        log.warn("API connection error (attempt {}/{}): {} - {}",
-            attempt, rateLimitConfig.getMaxRetries(), uriTemplate, e.getMessage());
-        if (attempt < rateLimitConfig.getMaxRetries()) {
-          long backoffDelay = rateLimitConfig.getRetryDelayMs() * attempt * 2L;
-          log.info("Waiting {}ms before retry...", backoffDelay);
-          sleep(backoffDelay);
-        }
+      } catch (HttpClientErrorException.NotFound e) {
+        log.warn("Resource not found (404): {}", uriTemplate);
+        throw e;
+      } catch (HttpClientErrorException e) {
+        log.error("Client error ({}): {}", e.getStatusCode(), e.getMessage());
+        throw new Open5eApiException("Client error during API request", e);
       } catch (Exception e) {
         lastException = e;
         attempt++;
-        log.warn("API request failed (attempt {}/{}): {} - {}",
-            attempt, rateLimitConfig.getMaxRetries(), uriTemplate, e.getMessage());
+        log.warn("Transient API error (attempt {}/{}): {}",
+            attempt, rateLimitConfig.getMaxRetries(), e.getMessage());
+
         if (attempt < rateLimitConfig.getMaxRetries()) {
           sleep(rateLimitConfig.getRetryDelayMs() * attempt);
         }
       }
     }
-
-    throw new Open5eApiException(
-        "Request failed after " + rateLimitConfig.getMaxRetries() + " attempts: " + uriTemplate,
-        lastException);
+    throw new Open5eApiException("Request failed after retries", lastException);
   }
 
   public String extractNextPath(String nextFullUrl) {

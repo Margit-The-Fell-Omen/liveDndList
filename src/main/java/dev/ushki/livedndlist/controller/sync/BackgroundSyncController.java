@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/backgrounds")
+@RequestMapping("/api/v1/sync/backgrounds")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Background Sync", description = "API for syncing backgrounds from Open5e")

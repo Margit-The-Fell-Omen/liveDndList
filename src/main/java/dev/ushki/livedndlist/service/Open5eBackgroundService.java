@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @Slf4j
@@ -148,16 +149,21 @@ public class Open5eBackgroundService {
     int pageCount = 0;
 
     while (currentPath != null) {
-      pageCount++;
-      progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
+      try {
+        pageCount++;
+        progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
 
-      Open5eBackgroundResponse response = apiClient.getByPath(currentPath,
-          Open5eBackgroundResponse.class);
+        Open5eBackgroundResponse response = apiClient.getByPath(currentPath,
+            Open5eBackgroundResponse.class);
 
-      if (response.getResults() != null) {
-        allBackgrounds.addAll(response.getResults());
-        currentPath = apiClient.extractNextPath(response.getNext());
-      } else {
+        if (response != null && response.getResults() != null) {
+          allBackgrounds.addAll(response.getResults());
+          currentPath = apiClient.extractNextPath(response.getNext());
+        } else {
+          break;
+        }
+      } catch (HttpClientErrorException.NotFound e) {
+        log.info("Reached end of pages at page {} (API returned 404)", pageCount);
         break;
       }
     }
