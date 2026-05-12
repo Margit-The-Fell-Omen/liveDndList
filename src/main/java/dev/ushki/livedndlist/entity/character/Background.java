@@ -44,6 +44,7 @@ public class Background {
   @JoinColumn(name = "document_id")
   private Document document;
 
+  @Column(name = "description", columnDefinition = "TEXT")
   private String desc;
 
   public void addBenefit(BackgroundBenefit benefit) {

@@ -16,7 +16,7 @@ public class BackgroundBenefit {
 
   private String name;
 
-  @Column(columnDefinition = "TEXT")
+  @Column(name = "description", columnDefinition = "TEXT")
   private String desc;
 
   private String type;

@@ -41,3 +41,10 @@ Plan for live-dnd-list:
 (afterwards)
 - determine the next system
 - implement sysmet choise
+
+
+
+IMPORTANT NOTES:
+
+- in character update there is raceID (shall be changed to Name)
+- in BackgroundRepository findByName shall not be used when custom background feature will be implemented (or will be prohibited sane naming idk)
