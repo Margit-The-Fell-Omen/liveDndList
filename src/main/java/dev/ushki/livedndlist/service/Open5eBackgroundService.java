@@ -43,7 +43,6 @@ public class Open5eBackgroundService {
     return progressTracker.getStatus();
   }
 
-  @Transactional
   public SyncResultDto syncAllBackgrounds() {
     String taskId = UUID.randomUUID().toString();
 
@@ -90,7 +89,6 @@ public class Open5eBackgroundService {
     }
   }
 
-  @Transactional
   public SyncResultDto syncBySlug(String slug) {
     long startTime = System.currentTimeMillis();
 
@@ -181,7 +179,7 @@ public class Open5eBackgroundService {
       }
     } catch (Exception e) {
       result.recordError(dto.getName(), e);
-      log.error("Error processing class '{}': {}", dto.getName(), e.getMessage(), e);
+      log.error("Error processing background '{}': {}", dto.getName(), e.getMessage(), e);
     }
   }
 
