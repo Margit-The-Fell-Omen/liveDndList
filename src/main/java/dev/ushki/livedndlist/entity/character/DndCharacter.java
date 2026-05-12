@@ -93,7 +93,9 @@ public class DndCharacter {
   @Column(columnDefinition = "character_alignment_type")
   private CharacterAlignment alignment;
 
-  private String background;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "background_id")
+  private Background background;
 
   @Builder.Default
   private Integer experiencePoints = DEFAULT_XP;

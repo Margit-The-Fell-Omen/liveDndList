@@ -10,6 +10,7 @@ import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.SkillResponse;
 import dev.ushki.livedndlist.entity.character.AbilityScores;
 import dev.ushki.livedndlist.entity.character.Archetype;
+import dev.ushki.livedndlist.entity.character.Background;
 import dev.ushki.livedndlist.entity.character.CharacterClass;
 import dev.ushki.livedndlist.entity.character.DndCharacter;
 import dev.ushki.livedndlist.entity.character.DndClass;
@@ -19,6 +20,7 @@ import dev.ushki.livedndlist.entity.character.Skill;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.SkillType;
 import dev.ushki.livedndlist.repository.ArchetypeRepository;
+import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.repository.RaceRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -71,6 +73,7 @@ public class CharacterMapper {
   }
 
   private final RaceRepository raceRepository;
+  private final BackgroundRepository backgroundRepository;
   private final DndClassRepository dndClassRepository;
   private final ArchetypeRepository archetypeRepository;
   private final SpellMapper spellMapper;
@@ -86,7 +89,7 @@ public class CharacterMapper {
         .name(character.getName())
         .raceName(character.getRace().getName())
         .alignment(character.getAlignment())
-        .background(character.getBackground())
+        .backgroundName(character.getBackground().getName())
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
         .classesInfo(Hibernate.isInitialized(character.getClasses())
@@ -190,7 +193,6 @@ public class CharacterMapper {
         .name(request.getName())
         .race(race)
         .alignment(request.getAlignment())
-        .background(request.getBackground())
         .portraitUrl(request.getPortraitUrl())
         .build();
 
@@ -223,7 +225,6 @@ public class CharacterMapper {
   public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {
     updateIfPresent(request.getName(), character::setName);
     updateIfPresent(request.getAlignment(), character::setAlignment);
-    updateIfPresent(request.getBackground(), character::setBackground);
     updateIfPresent(request.getMaxHitPoints(), character::setMaxHitPoints);
     updateIfPresent(request.getCurrentHitPoints(), character::setCurrentHitPoints);
     updateIfPresent(request.getTemporaryHitPoints(), character::setTemporaryHitPoints);
@@ -279,6 +280,13 @@ public class CharacterMapper {
           updateIfPresent(skillUpdate.getExpertise(), skillToUpdate::setExpertise);
         }
       }
+    }
+
+    if (request.getBackgroundName() != null) {
+      Background background = backgroundRepository.findByName(request.getBackgroundName())
+          .orElseThrow(() -> new EntityNotFoundException(
+              "Background not found with name: " + request.getBackgroundName()));
+      character.setBackground(background);
     }
 
     if (request.getRaceId() != null) {

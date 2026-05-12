@@ -32,9 +32,8 @@ public class BackgroundMapper {
         .build();
 
     if (dto.getBenefits() != null) {
-      dto.getBenefits().forEach(benefitDto -> {
-        background.addBenefit(toBenefitEntity(benefitDto));
-      });
+      dto.getBenefits().forEach(benefitDto ->
+          background.addBenefit(toBenefitEntity(benefitDto)));
     }
 
     return background;
@@ -190,9 +189,8 @@ public class BackgroundMapper {
       return;
     }
 
-    dto.getBenefits().forEach(benefitDto -> {
-      entity.addBenefit(toBenefitEntity(benefitDto));
-    });
+    dto.getBenefits().forEach(benefitDto ->
+        entity.addBenefit(toBenefitEntity(benefitDto)));
   }
 
   private <T> void updateIfPresent(T value, Consumer<T> setter) {

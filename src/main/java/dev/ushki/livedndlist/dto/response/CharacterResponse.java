@@ -31,7 +31,7 @@ public class CharacterResponse {
   private CharacterAlignment alignment;
 
   @Schema(description = "Character background", example = "Outlander")
-  private String background;
+  private String backgroundName;
 
   @Schema(description = "Total experience points", example = "3500")
   private Integer experiencePoints;

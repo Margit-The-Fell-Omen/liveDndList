@@ -30,7 +30,7 @@ public class CharacterUpdateRequest {
   private CharacterAlignment alignment;
 
   @Schema(description = "Character background", example = "Sage")
-  private String background;
+  private String backgroundName;
 
   @Valid
   @Schema(description = "Ability scores")

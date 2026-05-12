@@ -9,7 +9,6 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.character.Archetype;
 import dev.ushki.livedndlist.entity.character.DndClass;
 import dev.ushki.livedndlist.enums.SyncAction;
-import dev.ushki.livedndlist.mapper.CharacterMapper;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
 import dev.ushki.livedndlist.repository.ArchetypeRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
