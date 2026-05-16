@@ -190,9 +190,14 @@ public class CharacterMapper {
       }
     }
 
+    // FIXME: here by default I set sage as a background. I should come up with other solution later
+    Background background = backgroundRepository.findByName("Sage")
+        .orElseThrow(() -> new EntityNotFoundException("Background not found with name: Sage"));
+
     DndCharacter character = DndCharacter.builder()
         .name(request.getName())
         .race(race)
+        .background(background)
         .alignment(request.getAlignment())
         .portraitUrl(request.getPortraitUrl())
         .build();
