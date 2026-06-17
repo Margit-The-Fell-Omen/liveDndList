@@ -90,7 +90,7 @@ public class CharacterMapper {
         .raceName(character.getRace().getName())
         .alignment(character.getAlignment())
         .backgroundKey(Hibernate.isInitialized(character.getBackground())
-            ? character.getBackground().getKey() : "Not chosen")
+            ? character.getBackground().getKey() : null)
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
         .classesInfo(Hibernate.isInitialized(character.getClasses())

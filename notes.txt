@@ -51,6 +51,6 @@ IMPORTANT NOTES:
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
 (current fix: background integration for frontend)
-- !!! CHANGE NAME TO KEY IN BACKGROUND INTEGRATION !!!
+- error with updating background
 - add setting background on creation
 - add setting background for existing
