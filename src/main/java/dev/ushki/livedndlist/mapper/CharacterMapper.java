@@ -190,8 +190,7 @@ public class CharacterMapper {
       }
     }
 
-    // FIXME: here by default I set sage 2024 as a background. I should come up with other solution for default behaviour later
-    Background background = backgroundRepository.findByKey("srd-2024_sage")
+    Background background = backgroundRepository.findByKey(request.getBackgroundKey())
         .orElseThrow(
             () -> new EntityNotFoundException("Background not found with key: srd-2024_sage"));
 

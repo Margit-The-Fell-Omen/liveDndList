@@ -1,4 +1,4 @@
-import {useState, type FormEvent} from 'react';
+import {type FormEvent, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Modal} from '@/components/common/Modal';
 import {Input, Select} from '@/components/common/Input';
@@ -17,9 +17,10 @@ const initialScores: AbilityScores = {
 };
 
 export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProps) {
-  const {createCharacter, races, classes, saving} = useCharacter();
+  const {createCharacter, races, classes, backgrounds, saving} = useCharacter();
   const [name, setName] = useState('');
   const [raceSlug, setRaceSlug] = useState<string | ''>('');
+  const [backgroundKey, setBackgroundKey] = useState<string | ''>('');
   const [classSlug, setClassSlug] = useState<string | ''>('');
   const [abilityScores, setAbilityScores] = useState<AbilityScores>(initialScores);
   const [error, setError] = useState<string | null>(null);
@@ -45,6 +46,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
       name,
       raceSlug: String(raceSlug),
       classSlug: String(classSlug),
+      backgroundKey: String(backgroundKey),
       abilityScores,
       maxHitPoints: hitDieValue + constitutionModifier,
     };
@@ -59,6 +61,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
 
   const raceOptions = races.map(r => ({value: r.slug, label: r.name}));
   const classOptions = classes.map(c => ({value: c.slug, label: c.name}));
+  const backgroundOptions = backgrounds.map(b => ({value: b.key, label: b.name}));
 
   return (
       <Modal
@@ -88,6 +91,10 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
             <Select label="Class" value={classSlug}
                     onChange={(e) => setClassSlug(String(e.target.value))} options={classOptions}
                     placeholder="-- Select a Class --" required/>
+            <Select label="Background" value={backgroundKey}
+                    onChange={(e) => setBackgroundKey(String(e.target.value))}
+                    options={backgroundOptions}
+                    placeholder="-- Select a Background --" required/>
           </div>
 
           <h3 className={styles.sectionTitle}>Ability Scores</h3>

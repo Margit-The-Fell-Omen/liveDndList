@@ -20,26 +20,26 @@ import lombok.NoArgsConstructor;
     description = "Request object to create a new character",
     example =
         """
-        {
-          "name": "Arthas",
-          "raceSlug": "human",
-          "alignment": "NEUTRAL_GOOD",
-          "background": "Sage",
-          "classSlug": "cleric",
-          "archetypeSlug": "life_domain",
-          "abilityScores": {
-            "strength": 10,
-            "dexterity": 14,
-            "constitution": 12,
-            "intelligence": 18,
-            "wisdom": 16,
-            "charisma": 14
-          },
-          "maxHitPoints": 12,
-          "portraitUrl": "https://example.com/gandalf.jpg",
-          "spellcastingAbility": "INTELLIGENCE"
-        }
-        """
+            {
+              "name": "Arthas",
+              "raceSlug": "human",
+              "alignment": "NEUTRAL_GOOD",
+              "background": "Sage",
+              "classSlug": "cleric",
+              "archetypeSlug": "life_domain",
+              "abilityScores": {
+                "strength": 10,
+                "dexterity": 14,
+                "constitution": 12,
+                "intelligence": 18,
+                "wisdom": 16,
+                "charisma": 14
+              },
+              "maxHitPoints": 12,
+              "portraitUrl": "https://example.com/gandalf.jpg",
+              "spellcastingAbility": "INTELLIGENCE"
+            }
+            """
 )
 public class CharacterCreateRequest {
 
@@ -48,7 +48,7 @@ public class CharacterCreateRequest {
 
   @NotBlank(message = "Character name is required")
   @Size(min = NAME_MIN_LENGTH, max = NAME_MAX_LENGTH,
-        message = "Name must be between 2 and 100 characters")
+      message = "Name must be between 2 and 100 characters")
   @Schema(description = "Name of the character", example = "Gandalf the Grey")
   private String name;
 
@@ -67,8 +67,8 @@ public class CharacterCreateRequest {
   )
   private CharacterAlignment alignment;
 
-  @Schema(description = "Character background story", example = "Sage")
-  private String background;
+  @Schema(description = "Character background key", example = "srg_2014_sage")
+  private String backgroundKey;
 
   @NotNull(message = "Class slug is required")
   @Schema(description = "Slug of the character class", example = "cleric")

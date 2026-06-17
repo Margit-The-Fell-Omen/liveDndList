@@ -235,6 +235,7 @@ export interface SpellResponse {
 export interface CharacterCreateRequest {
   name: string;
   raceSlug: string;
+  backgroundKey: string;
   alignment?: CharacterAlignment;
   background?: string;
   classSlug: string;
