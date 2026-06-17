@@ -191,8 +191,9 @@ public class CharacterMapper {
     }
 
     // FIXME: here by default I set sage as a background. I should come up with other solution later
-    Background background = backgroundRepository.findByName("Sage")
-        .orElseThrow(() -> new EntityNotFoundException("Background not found with name: Sage"));
+    Background background = backgroundRepository.findByKey("srd-2024_sage")
+        .orElseThrow(
+            () -> new EntityNotFoundException("Background not found with key: srd-2024_sage"));
 
     DndCharacter character = DndCharacter.builder()
         .name(request.getName())
