@@ -119,6 +119,19 @@ export interface CharacterClass extends DocumentInfo {
   archetypes: Archetype[];
 }
 
+export interface BackgroundBenefit {
+  name: string;
+  type: string;
+  desc: string;
+}
+
+export interface Background extends DocumentInfo {
+  name: string;
+  key: string;
+  desc: string;
+  backgroundBenefits: BackgroundBenefit[];
+}
+
 // ═══════════════════════════════════════════════════════════════
 // CHARACTER & SUB-COMPONENT TYPES (Matches backend DTOs)
 // ═══════════════════════════════════════════════════════════════
@@ -249,7 +262,7 @@ export interface Character {
   name: string;
   raceName: string;
   alignment: CharacterAlignment;
-  background: string;
+  background: string; // backgroundKey
   experiencePoints: number;
   portraitUrl?: string;
   classesInfo: string[];
@@ -329,6 +342,7 @@ export interface CharacterContextType {
 
   races: Race[];
   classes: CharacterClass[];
+  backgrounds: Background[];
 
   fetchCharacters: () => Promise<void>;
   fetchReferenceData: () => Promise<void>;

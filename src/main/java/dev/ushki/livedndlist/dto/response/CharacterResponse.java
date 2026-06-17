@@ -30,8 +30,8 @@ public class CharacterResponse {
   @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
   private CharacterAlignment alignment;
 
-  @Schema(description = "Character background", example = "Outlander")
-  private String backgroundName;
+  @Schema(description = "Character background", example = "srg_2014_outlander")
+  private String backgroundKey;
 
   @Schema(description = "Total experience points", example = "3500")
   private Integer experiencePoints;

@@ -1,4 +1,4 @@
-import {useState, useEffect, type ChangeEvent} from 'react'; // Import useState and useEffect
+import {type ChangeEvent, useEffect, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Input, Select} from '@/components/common/Input';
 import {ALIGNMENTS} from '@/utils/constants';
@@ -6,9 +6,10 @@ import {useDebouncedCallback} from '@/hooks/useDebounce';
 import styles from './CharacterHeader.module.css';
 
 export function CharacterHeader({className}: { className?: string }) {
-  const {currentCharacter, updateCharacter} = useCharacter();
+  const {currentCharacter, backgrounds, updateCharacter} = useCharacter();
 
   const [characterName, setCharacterName] = useState('');
+  const [backgroundKey, setBackgroundKey] = useState<string>('');
 
   const debouncedUpdate = useDebouncedCallback(
       (payload: object) => {
@@ -22,12 +23,15 @@ export function CharacterHeader({className}: { className?: string }) {
   useEffect(() => {
     if (currentCharacter) {
       setCharacterName(currentCharacter.name);
+      setBackgroundKey(currentCharacter.background ?? '');
     }
   }, [currentCharacter]);
 
   if (!currentCharacter) {
     return null;
   }
+
+  const backgroundOptions = backgrounds.map(b => ({value: b.key, label: b.name}));
 
   const handleDebouncedChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
@@ -39,6 +43,12 @@ export function CharacterHeader({className}: { className?: string }) {
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCharacterName(e.target.value);
     debouncedUpdate({name: e.target.value});
+  };
+
+  const handleBackgroundChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newKey = e.target.value;
+    setBackgroundKey(newKey);
+    debouncedUpdate({background: newKey});
   };
 
   return (
@@ -66,11 +76,12 @@ export function CharacterHeader({className}: { className?: string }) {
           </span>
           </div>
 
-          <Input
+          <Select
               label="Background"
               name="background"
-              defaultValue={currentCharacter.background}
-              onChange={handleDebouncedChange}
+              value={backgroundKey}
+              onChange={handleBackgroundChange}
+              options={backgroundOptions}
           />
           <Select
               label="Alignment"

@@ -29,8 +29,8 @@ public class CharacterUpdateRequest {
   @Schema(description = "Character alignment", example = "LAWFUL_GOOD")
   private CharacterAlignment alignment;
 
-  @Schema(description = "Character background", example = "Sage")
-  private String backgroundName;
+  @Schema(description = "Character background", example = "srg_2024_sage")
+  private String backgroundKey;
 
   @Valid
   @Schema(description = "Ability scores")

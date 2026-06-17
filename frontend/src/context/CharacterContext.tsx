@@ -6,6 +6,7 @@ import {useAuth} from './AuthContext';
 import type {
   AbilityName,
   Archetype,
+  Background,
   Character,
   CharacterClass,
   CharacterContextType,
@@ -32,6 +33,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   const [currentCharacter, setCurrentCharacter] = useState<Character | null>(null);
   const [races, setRaces] = useState<Race[]>([]);
   const [classes, setClasses] = useState<CharacterClass[]>([]);
+  const [backgrounds, setBackgrounds] = useState<Background[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,8 +42,10 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     try {
       const racesData = await referenceDataApi.getRaces();
       const classesData = await referenceDataApi.getClasses();
+      const backgroundsData = await referenceDataApi.getBackgrounds();
       setRaces(racesData);
       setClasses(classesData);
+      setBackgrounds(backgroundsData);
     } catch (err) {
       console.error('Failed to fetch reference data:', err);
       setError(err instanceof Error ? err.message : 'Could not load game data.');
@@ -86,6 +90,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       setCurrentCharacter(null);
       setRaces([]);
       setClasses([]);
+      setBackgrounds([]);
       setLoading(false);
     }
   }, [isAuthenticated, fetchReferenceData, fetchCharacters]);
@@ -197,7 +202,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   };
 
-
   const toggleEquipmentEquipped = async (itemId: number): Promise<void> => {
     if (!currentCharacter) throw new Error("No character selected.");
 
@@ -281,7 +285,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     });
   };
 
-  const value: CharacterContextTypeWithArchetypes = {
+  const value: CharacterContextTypeWithArchetypes = { // FIXME: this naming stinks
     characters,
     currentCharacter,
     loading,
@@ -289,6 +293,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     error,
     races,
     classes,
+    backgrounds,
     fetchCharacters,
     fetchReferenceData,
     selectCharacter,

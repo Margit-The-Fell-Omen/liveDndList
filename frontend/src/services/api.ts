@@ -3,6 +3,7 @@
 import type {
   Archetype,
   AuthResponse,
+  Background,
   Character,
   CharacterClass,
   CharacterCreateRequest,
@@ -166,6 +167,9 @@ export const referenceDataApi = {
   getArchetypesByClass: async (classId: number): Promise<Archetype[]> => {
     const endpoint = `/dndclass/${classId}/archetypes`;
     return fetchWithAuth<Archetype[]>(endpoint);
+  },
+  getBackgrounds: async (): Promise<Background[]> => {
+    return fetchWithAuth<Background[]>('/backgrounds/list');
   }
 };
 

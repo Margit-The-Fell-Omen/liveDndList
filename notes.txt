@@ -4,6 +4,7 @@ THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be
 Plan for live-dnd-list:
 
 (to fix frontend)
+- change icons to pretty
 - make active weapons a scrollable horizontally on mobile
 - fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
 - fix that after initial loading of character on main page you traverse to the character sheet instantly
@@ -47,10 +48,9 @@ Plan for live-dnd-list:
 IMPORTANT NOTES:
 
 - in character update there is raceID (shall be changed to Name)
-- in BackgroundRepository findByName shall not be used when custom background feature will be implemented (or will be prohibited sane naming idk)
+- in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
-(current fix: background integration for backend)
-- the issue is in null fields in current characters - I need to handle background choice on creation of character.
-- simple default does not seem to work...
-- WHY THIS ERROR??? An unexpected error occurred: Query did not return a unique result: 2 results were returned
-- GLHF
+(current fix: background integration for frontend)
+- !!! CHANGE NAME TO KEY IN BACKGROUND INTEGRATION !!!
+- add setting background on creation
+- add setting background for existing

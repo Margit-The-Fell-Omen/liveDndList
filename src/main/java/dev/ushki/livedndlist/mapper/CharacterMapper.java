@@ -89,8 +89,8 @@ public class CharacterMapper {
         .name(character.getName())
         .raceName(character.getRace().getName())
         .alignment(character.getAlignment())
-        .backgroundName(Hibernate.isInitialized(character.getBackground())
-            ? character.getBackground().getName() : "Not chosen")
+        .backgroundKey(Hibernate.isInitialized(character.getBackground())
+            ? character.getBackground().getKey() : "Not chosen")
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
         .classesInfo(Hibernate.isInitialized(character.getClasses())
@@ -190,7 +190,7 @@ public class CharacterMapper {
       }
     }
 
-    // FIXME: here by default I set sage as a background. I should come up with other solution later
+    // FIXME: here by default I set sage 2024 as a background. I should come up with other solution for default behaviour later
     Background background = backgroundRepository.findByKey("srd-2024_sage")
         .orElseThrow(
             () -> new EntityNotFoundException("Background not found with key: srd-2024_sage"));
@@ -289,10 +289,10 @@ public class CharacterMapper {
       }
     }
 
-    if (request.getBackgroundName() != null) {
-      Background background = backgroundRepository.findByName(request.getBackgroundName())
+    if (request.getBackgroundKey() != null) {
+      Background background = backgroundRepository.findByKey(request.getBackgroundKey())
           .orElseThrow(() -> new EntityNotFoundException(
-              "Background not found with name: " + request.getBackgroundName()));
+              "Background not found with key: " + request.getBackgroundKey()));
       character.setBackground(background);
     }
 
