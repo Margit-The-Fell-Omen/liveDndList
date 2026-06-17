@@ -79,7 +79,7 @@ export function CharacterHeader({className}: { className?: string }) {
           <Select
               label="Background"
               name="background"
-              value={backgroundKey}
+              defaultValue={currentCharacter.background}
               onChange={handleBackgroundChange}
               options={backgroundOptions}
           />

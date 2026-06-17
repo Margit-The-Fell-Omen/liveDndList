@@ -299,7 +299,7 @@ export interface CharacterUpdateRequest {
   name?: string;
   raceId?: number;
   alignment?: CharacterAlignment;
-  background?: string;
+  backgroundKey?: string;
   abilityScores?: AbilityScores;
   maxHitPoints?: number;
   currentHitPoints?: number;
