@@ -35,11 +35,13 @@ import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class CharacterMapper {
 
   private static final TreeMap<Integer, Integer> LEVEL_THRESHOLDS = new TreeMap<>();
@@ -192,7 +194,9 @@ public class CharacterMapper {
 
     Background background = backgroundRepository.findByKey(request.getBackgroundKey())
         .orElseThrow(
-            () -> new EntityNotFoundException("Background not found with key: srd-2024_sage"));
+            () -> new EntityNotFoundException(
+                "Background not found with key: " + request.getBackgroundKey()));
+    log.info("Character creation: background found: {}", background);
 
     DndCharacter character = DndCharacter.builder()
         .name(request.getName())
@@ -293,6 +297,7 @@ public class CharacterMapper {
           .orElseThrow(() -> new EntityNotFoundException(
               "Background not found with key: " + request.getBackgroundKey()));
       character.setBackground(background);
+      log.info("Character update: background found: {}", background);
     }
 
     if (request.getRaceId() != null) {

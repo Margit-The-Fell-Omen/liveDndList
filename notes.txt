@@ -51,6 +51,6 @@ IMPORTANT NOTES:
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
 (current fix: background integration for frontend)
-- error with updating background
+- so when creating character background does not set properly thus -> null value -> can't set to existing (I need to fix both in order to work properly)
 - add setting background on creation
 - add setting background for existing
