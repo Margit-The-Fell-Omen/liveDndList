@@ -263,7 +263,7 @@ export interface Character {
   name: string;
   raceName: string;
   alignment: CharacterAlignment;
-  background: string; // backgroundKey
+  backgroundKey: string;
   experiencePoints: number;
   portraitUrl?: string;
   classesInfo: string[];

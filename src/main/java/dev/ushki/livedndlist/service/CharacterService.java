@@ -138,6 +138,7 @@ public class CharacterService {
       DndCharacter character = characterRepository.findByIdFull(id)
           .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
       verifyOwnership(character, username);
+      log.info("Character GET ById: {}", character);
       return characterMapper.toResponse(character);
     });
   }
@@ -157,8 +158,9 @@ public class CharacterService {
 
   public CharacterResponse update(Long id, CharacterUpdateRequest request, String username) {
     DndCharacter character = findCharacterWithOwnershipCheck(id, username);
-
+    log.info("Found character: {}", character);
     characterMapper.updateEntity(character, request);
+    log.info("Found request: {}", request);
 
     DndCharacter savedCharacter = characterRepository.save(character);
 

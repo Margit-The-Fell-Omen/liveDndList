@@ -94,7 +94,9 @@ public class DndCharacter {
   private CharacterAlignment alignment;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "background_id")
+  @JoinColumn(name = "background_id", nullable = false)
+  @ToString.Exclude
+  @EqualsAndHashCode.Exclude
   private Background background;
 
   @Builder.Default

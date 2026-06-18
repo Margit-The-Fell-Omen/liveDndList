@@ -23,7 +23,7 @@ export function CharacterHeader({className}: { className?: string }) {
   useEffect(() => {
     if (currentCharacter) {
       setCharacterName(currentCharacter.name);
-      setBackgroundKey(currentCharacter.background ?? '');
+      setBackgroundKey(currentCharacter.backgroundKey ?? '');
     }
   }, [currentCharacter]);
 
@@ -48,7 +48,7 @@ export function CharacterHeader({className}: { className?: string }) {
   const handleBackgroundChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newKey = e.target.value;
     setBackgroundKey(newKey);
-    debouncedUpdate({background: newKey});
+    debouncedUpdate({backgroundKey: newKey});
   };
 
   return (
@@ -79,7 +79,7 @@ export function CharacterHeader({className}: { className?: string }) {
           <Select
               label="Background"
               name="background"
-              defaultValue={currentCharacter.background}
+              defaultValue={currentCharacter.backgroundKey}
               onChange={handleBackgroundChange}
               options={backgroundOptions}
           />

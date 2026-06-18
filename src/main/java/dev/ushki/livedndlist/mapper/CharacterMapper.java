@@ -91,8 +91,7 @@ public class CharacterMapper {
         .name(character.getName())
         .raceName(character.getRace().getName())
         .alignment(character.getAlignment())
-        .backgroundKey(Hibernate.isInitialized(character.getBackground())
-            ? character.getBackground().getKey() : null)
+        .backgroundKey(character.getBackground().getKey())
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
         .classesInfo(Hibernate.isInitialized(character.getClasses())
@@ -253,6 +252,17 @@ public class CharacterMapper {
     updateIfPresent(request.getFeaturesAndTraits(), character::setFeaturesAndTraits);
     updateIfPresent(request.getInitiative(), character::setInitiative);
 
+    log.info("Character update: ");
+    if (request.getBackgroundKey() != null) {
+      Background background = backgroundRepository.findByKey(request.getBackgroundKey())
+          .orElseThrow(() -> new EntityNotFoundException(
+              "Background not found with key: " + request.getBackgroundKey()));
+      character.setBackground(background);
+      log.info("Character update: background found: {}", background);
+    } else {
+      log.info("Character update: background key is null");
+    }
+
     if (request.getExperiencePoints() != null) {
       int oldTotalLevel = character.getTotalLevel();
       int newExperience = request.getExperiencePoints();
@@ -290,14 +300,6 @@ public class CharacterMapper {
           updateIfPresent(skillUpdate.getExpertise(), skillToUpdate::setExpertise);
         }
       }
-    }
-
-    if (request.getBackgroundKey() != null) {
-      Background background = backgroundRepository.findByKey(request.getBackgroundKey())
-          .orElseThrow(() -> new EntityNotFoundException(
-              "Background not found with key: " + request.getBackgroundKey()));
-      character.setBackground(background);
-      log.info("Character update: background found: {}", background);
     }
 
     if (request.getRaceId() != null) {

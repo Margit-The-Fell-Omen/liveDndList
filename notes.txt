@@ -1,6 +1,9 @@
 
 THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be done)
 
+Build dev env:
+docker compose -f docker-compose.dev.yml --project-name livednd-dev up --build -d
+
 Plan for live-dnd-list:
 
 (to fix frontend)
@@ -50,7 +53,4 @@ IMPORTANT NOTES:
 - in character update there is raceID (shall be changed to Name)
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
-(current fix: background integration for frontend)
-- so when creating character background does not set properly thus -> null value -> can't set to existing (I need to fix both in order to work properly)
-- add setting background on creation
-- add setting background for existing
+(current fix: background, alignment and exp updating when changing chars)
