@@ -53,4 +53,4 @@ IMPORTANT NOTES:
 - in character update there is raceID (shall be changed to Name)
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
-(current fix: background, alignment and exp updating when changing chars)
+(current fix: initiative computing)

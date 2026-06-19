@@ -67,10 +67,17 @@ export const SKILLS: readonly SkillInfo[] = [
 // OTHER UI CONSTANTS
 // ===============================================================
 
-export const ALIGNMENTS: readonly CharacterAlignment[] = [
-  'LAWFUL_GOOD', 'NEUTRAL_GOOD', 'CHAOTIC_GOOD',
-  'LAWFUL_NEUTRAL', 'TRUE_NEUTRAL', 'CHAOTIC_NEUTRAL',
-  'LAWFUL_EVIL', 'NEUTRAL_EVIL', 'CHAOTIC_EVIL',
+export const ALIGNMENT_OPTIONS: readonly { value: CharacterAlignment; label: string }[] = [
+  {value: 'LAWFUL_GOOD', label: 'Lawful Good'},
+  {value: 'NEUTRAL_GOOD', label: 'Neutral Good'},
+  {value: 'CHAOTIC_GOOD', label: 'Chaotic Good'},
+  {value: 'LAWFUL_NEUTRAL', label: 'Lawful Neutral'},
+  {value: 'TRUE_NEUTRAL', label: 'True Neutral'},
+  {value: 'CHAOTIC_NEUTRAL', label: 'Chaotic Neutral'},
+  {value: 'LAWFUL_EVIL', label: 'Lawful Evil'},
+  {value: 'NEUTRAL_EVIL', label: 'Neutral Evil'},
+  {value: 'CHAOTIC_EVIL', label: 'Chaotic Evil'},
+  {value: 'UNALIGNED', label: 'Unaligned'},
 ];
 
 export const DICE: readonly string[] = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'];
@@ -86,7 +93,7 @@ export const EMPTY_CHARACTER: Character = {
   name: 'New Character',
   raceName: '',
   alignment: 'TRUE_NEUTRAL',
-  background: '',
+  backgroundKey: '',
   experiencePoints: 0,
   portraitUrl: '',
   classesInfo: [],
@@ -129,5 +136,5 @@ export const EMPTY_CHARACTER: Character = {
   flaws: '',
   notes: '',
   createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString()
 };

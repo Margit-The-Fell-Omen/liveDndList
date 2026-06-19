@@ -1,7 +1,7 @@
 import {type ChangeEvent, useEffect, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Input, Select} from '@/components/common/Input';
-import {ALIGNMENTS} from '@/utils/constants';
+import {ALIGNMENT_OPTIONS} from '@/utils/constants';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
 import styles from './CharacterHeader.module.css';
 
@@ -10,6 +10,8 @@ export function CharacterHeader({className}: { className?: string }) {
 
   const [characterName, setCharacterName] = useState('');
   const [backgroundKey, setBackgroundKey] = useState<string>('');
+  const [alignment, setAlignment] = useState<string>('');
+  const [experience, setExperience] = useState(0);
 
   const debouncedUpdate = useDebouncedCallback(
       (payload: object) => {
@@ -23,7 +25,9 @@ export function CharacterHeader({className}: { className?: string }) {
   useEffect(() => {
     if (currentCharacter) {
       setCharacterName(currentCharacter.name);
-      setBackgroundKey(currentCharacter.backgroundKey ?? '');
+      setBackgroundKey(currentCharacter.backgroundKey);
+      setAlignment(currentCharacter.alignment);
+      setExperience(currentCharacter.experiencePoints);
     }
   }, [currentCharacter]);
 
@@ -32,13 +36,6 @@ export function CharacterHeader({className}: { className?: string }) {
   }
 
   const backgroundOptions = backgrounds.map(b => ({value: b.key, label: b.name}));
-
-  const handleDebouncedChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const {name, value} = e.target;
-    const isNumberField = e.target.type === 'number';
-    const finalValue = isNumberField ? parseInt(value, 10) || 0 : value;
-    debouncedUpdate({[name]: finalValue});
-  };
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCharacterName(e.target.value);
@@ -49,6 +46,18 @@ export function CharacterHeader({className}: { className?: string }) {
     const newKey = e.target.value;
     setBackgroundKey(newKey);
     debouncedUpdate({backgroundKey: newKey});
+  };
+
+  const handleAlignmentChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const newAlignment = e.target.value;
+    setAlignment(newAlignment);
+    debouncedUpdate({alignment: newAlignment});
+  };
+
+  const handleExperienceChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10) || 0;
+    setExperience(value);
+    debouncedUpdate({experiencePoints: value});
   };
 
   return (
@@ -79,23 +88,23 @@ export function CharacterHeader({className}: { className?: string }) {
           <Select
               label="Background"
               name="background"
-              defaultValue={currentCharacter.backgroundKey}
+              value={backgroundKey}
               onChange={handleBackgroundChange}
               options={backgroundOptions}
           />
           <Select
               label="Alignment"
               name="alignment"
-              defaultValue={currentCharacter.alignment}
-              onChange={handleDebouncedChange}
-              options={ALIGNMENTS}
+              value={alignment}
+              onChange={handleAlignmentChange}
+              options={ALIGNMENT_OPTIONS}
           />
           <Input
               label="Experience"
               name="experiencePoints"
               type="number"
-              defaultValue={currentCharacter.experiencePoints}
-              onChange={handleDebouncedChange}
+              value={experience}
+              onChange={handleExperienceChange}
           />
         </div>
       </div>
