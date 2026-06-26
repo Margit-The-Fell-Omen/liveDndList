@@ -8,11 +8,13 @@ import styles from './CombatStats.module.css';
 import {Card} from '@/components/common/Card';
 import type {EquipmentResponse} from '@/types';
 
+type EditableCombatKey = 'armorClass' | 'speed';
+
 export function CombatStats({className}: { className?: string }) {
   const {currentCharacter, updateCharacter} = useCharacter();
 
   const debouncedUpdate = useDebouncedCallback(
-      (key: 'armorClass' | 'initiative' | 'speed', value: number) => {
+      (key: EditableCombatKey, value: number) => {
         if (currentCharacter) {
           updateCharacter(currentCharacter.id, {[key]: value});
         }
@@ -26,12 +28,17 @@ export function CombatStats({className}: { className?: string }) {
 
   const {
     armorClass,
-    initiative,
     speed,
     equipment,
     proficiencyBonus,
     abilityScores,
+    initiative
   } = currentCharacter;
+
+  const currentInitiative = initiative;
+
+  const formatModifier = (value: number): string =>
+      value >= 0 ? `+${value}` : `${value}`;
 
   const getAttackBonus = (weapon: EquipmentResponse): string => {
     try {
@@ -42,23 +49,23 @@ export function CombatStats({className}: { className?: string }) {
       const relevantModifier = isFinesse ? Math.max(strMod, dexMod) : strMod;
       const bonus = proficiencyBonus + relevantModifier;
 
-      return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+      return formatModifier(bonus);
     } catch {
       return 'N/A';
     }
   };
 
   const activeWeapons = equipment
-  .filter((item) => item.type === 'WEAPON' && item.equipped)
-  .slice(0, 3);
+      .filter((item) => item.type === 'WEAPON' && item.equipped)
+      .slice(0, 3);
 
   const displayWeapons: (EquipmentResponse | null)[] = Array(3)
-  .fill(null)
-  .map((_, index) => activeWeapons[index] || null);
+      .fill(null)
+      .map((_, index) => activeWeapons[index] || null);
 
   const handleChange = (
       e: ChangeEvent<HTMLInputElement>,
-      key: 'armorClass' | 'initiative' | 'speed'
+      key: EditableCombatKey
   ) => {
     const value = parseInt(e.target.value, 10) || 0;
     debouncedUpdate(key, value);
@@ -79,12 +86,9 @@ export function CombatStats({className}: { className?: string }) {
           </div>
           <div className={styles.stat}>
             <label className={styles.label}>Initiative</label>
-            <Input
-                type="number"
-                defaultValue={initiative}
-                onChange={(e) => handleChange(e, 'initiative')}
-                className={styles.input}
-            />
+            <span className={styles.value} aria-live="polite">
+              {formatModifier(currentInitiative)}
+            </span>
           </div>
           <div className={styles.stat}>
             <label className={styles.label}>Speed</label>

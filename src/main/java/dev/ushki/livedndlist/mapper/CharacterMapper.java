@@ -195,7 +195,6 @@ public class CharacterMapper {
         .orElseThrow(
             () -> new EntityNotFoundException(
                 "Background not found with key: " + request.getBackgroundKey()));
-    log.info("Character creation: background found: {}", background);
 
     DndCharacter character = DndCharacter.builder()
         .name(request.getName())
@@ -250,9 +249,7 @@ public class CharacterMapper {
     updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
     updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
     updateIfPresent(request.getFeaturesAndTraits(), character::setFeaturesAndTraits);
-    updateIfPresent(request.getInitiative(), character::setInitiative);
 
-    log.info("Character update: ");
     if (request.getBackgroundKey() != null) {
       Background background = backgroundRepository.findByKey(request.getBackgroundKey())
           .orElseThrow(() -> new EntityNotFoundException(
@@ -311,6 +308,7 @@ public class CharacterMapper {
 
     if (request.getAbilityScores() != null) {
       character.setAbilityScores(mapAbilityScoresRequest(request.getAbilityScores()));
+      character.setInitiative(character.getAbilityScores().getModifier(AbilityType.DEXTERITY));
     }
 
     if (request.getSpellcastingAbility() != null) {
