@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.controller;
 
+import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
+import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
@@ -14,7 +16,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -35,20 +39,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "Spells", description = "Spell catalog management endpoints")
 @SecurityRequirement(name = "bearerAuth")
+@Slf4j
 public class SpellController {
 
   private final SpellService spellService;
 
   @GetMapping
   @Operation(summary = "Get all spells",
-             description = "Retrieve all spells with optional filters and sorting")
+      description = "Retrieve all spells with optional filters and sorting")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description =
-                                                               "Spell list retrieved successfully"),
+          description =
+              "Spell list retrieved successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description =
-                                                               "Unauthorized", content = @Content)
+          description =
+              "Unauthorized", content = @Content)
   })
   public ApiResponse<List<SpellResponse>> getAllSpells(
       @Parameter(description = "Filter by spell school", example = "EVOCATION")
@@ -75,14 +80,14 @@ public class SpellController {
   @Operation(summary = "Get spell by ID", description = "Retrieve spell details by its identifier")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description =
-                                                               "Spell retrieved successfully"),
+          description =
+              "Spell retrieved successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-                                                           description = "Spell not found",
-                                                           content = @Content),
+          description = "Spell not found",
+          content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description =
-                                                               "Unauthorized", content = @Content)
+          description =
+              "Unauthorized", content = @Content)
   })
   public ApiResponse<SpellResponse> getSpellById(
       @Parameter(description = "Spell ID", example = "1", required = true)
@@ -90,15 +95,54 @@ public class SpellController {
     return ApiResponse.success(spellService.getById(id));
   }
 
-  @GetMapping("/search")
-  @Operation(summary = "Search spells",
-             description = "Search spells by name with optional filters and paging")
+  @PostMapping("/sync")
+  @Operation(summary = "Sync all spells with Open5e",
+      description = "Get all spells from Open5e API")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description = "Search results returned"),
+          description = "Search results returned"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized",
-                                                           content = @Content)
+          description = "Unauthorized",
+          content = @Content)
+  })
+  public ApiResponse<SyncResultDto> syncAll() {
+    log.info("Received request to sync all classes");
+    SyncResultDto result = spellService.syncAllSpells();
+    return ApiResponse.success(result);
+  }
+
+  @PostMapping("/sync/async")
+  @Operation(summary = "Sync all spells with Open5e async",
+      description = "Get all spells async from Open5e API")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+          description = "Search results returned"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized",
+          content = @Content)
+  })
+  public ApiResponse<SyncResultDto> syncAllAsync() {
+    log.info("Received request to async sync all classes");
+
+    SyncStatusDto status = spellService.getSyncStatus();
+    if (status.isInProgress()) {
+      return ApiResponse.error("Sync already in progress");
+    }
+
+    CompletableFuture.runAsync(spellService::syncAllSpells);
+
+    return ApiResponse.success("Sync started. Check status at: GET /api/sync/classes/status");
+  }
+
+  @GetMapping("/search")
+  @Operation(summary = "Search spells",
+      description = "Search spells by name with optional filters and paging")
+  @ApiResponses(value = {
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+          description = "Search results returned"),
+      @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
+          description = "Unauthorized",
+          content = @Content)
   })
   public ApiResponse<List<SpellResponse>> searchSpells(
       @Parameter(description = "Name query", example = "Fire", required = true)
@@ -117,14 +161,14 @@ public class SpellController {
   @Operation(summary = "Create spell", description = "Create a new spell in the catalog")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
-                                                           description =
-                                                               "Spell created successfully"),
+          description =
+              "Spell created successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input",
-                                                           content = @Content),
+          description = "Invalid input",
+          content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized",
-                                                           content = @Content)
+          description = "Unauthorized",
+          content = @Content)
   })
   public ApiResponse<SpellResponse> createSpell(
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -141,17 +185,17 @@ public class SpellController {
   @Operation(summary = "Update spell", description = "Update an existing spell")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
-                                                           description =
-                                                               "Spell updated successfully"),
+          description =
+              "Spell updated successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input",
-                                                           content = @Content),
+          description = "Invalid input",
+          content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-                                                           description = "Spell not found",
-                                                           content = @Content),
+          description = "Spell not found",
+          content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized",
-                                                           content = @Content)
+          description = "Unauthorized",
+          content = @Content)
   })
   public ApiResponse<SpellResponse> updateSpell(
       @Parameter(description = "Spell ID", example = "1", required = true)
@@ -171,14 +215,14 @@ public class SpellController {
   @Operation(summary = "Delete spell", description = "Delete a spell by ID")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204",
-                                                           description =
-                                                               "Spell deleted successfully"),
+          description =
+              "Spell deleted successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404",
-                                                           description = "Spell not found",
-                                                           content = @Content),
+          description = "Spell not found",
+          content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized",
-                                                           content = @Content)
+          description = "Unauthorized",
+          content = @Content)
   })
   public void deleteSpell(
       @Parameter(description = "Spell ID", example = "1", required = true)
@@ -192,15 +236,15 @@ public class SpellController {
       "Bulk create multiple spells at once")
   @ApiResponses(value = {
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
-                                                           description =
-                                                               "Spells created successfully"),
+          description =
+              "Spells created successfully"),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400",
-                                                           description = "Invalid input or "
-                                                               + "duplicate spell name",
-                                                           content = @Content),
+          description = "Invalid input or "
+              + "duplicate spell name",
+          content = @Content),
       @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401",
-                                                           description = "Unauthorized",
-                                                           content = @Content)
+          description = "Unauthorized",
+          content = @Content)
   })
   public ApiResponse<List<SpellResponse>> createSpellsBulk(
       @Valid @RequestBody List<SpellRequest> requests) {

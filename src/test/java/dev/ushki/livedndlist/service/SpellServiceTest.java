@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dev.ushki.livedndlist.cache.CacheManager;
+import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.entity.character.Spell;
@@ -18,6 +19,7 @@ import dev.ushki.livedndlist.exceptions.DuplicateResourceException;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.SpellMapper;
 import dev.ushki.livedndlist.repository.SpellRepository;
+import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +41,12 @@ class SpellServiceTest {
   @Mock
   private SpellMapper spellMapper;
 
+  @Mock
+  private Open5eApiClient open5eApiClient;
+
+  @Mock
+  private SyncMetrics syncMetrics;
+
   private SpellService spellService;
 
   private Spell fireball;
@@ -57,7 +65,8 @@ class SpellServiceTest {
   void setUp() {
     CacheManager cacheManager = new CacheManager();
 
-    spellService = new SpellService(spellRepository, spellMapper, cacheManager);
+    spellService = new SpellService(spellRepository, spellMapper, cacheManager, open5eApiClient,
+        syncMetrics);
 
     fireball = Spell.builder()
         .id(1L)

@@ -53,4 +53,5 @@ IMPORTANT NOTES:
 - in character update there is raceID (shall be changed to Name)
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
-(current fix: spells table initialization)
+(current fix: spells sync)
+so I need to rewrite my spells to match Open5e entities. OR I can just map their spells to mine. Stopped at spell controller
