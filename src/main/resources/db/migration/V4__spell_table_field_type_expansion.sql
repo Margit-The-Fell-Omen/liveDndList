@@ -1,0 +1,6 @@
+ALTER TABLE spells
+    ALTER COLUMN name TYPE TEXT,
+    ALTER COLUMN casting_time TYPE TEXT,
+    ALTER COLUMN range TYPE TEXT,
+    ALTER COLUMN components TYPE TEXT,
+    ALTER COLUMN duration TYPE TEXT;

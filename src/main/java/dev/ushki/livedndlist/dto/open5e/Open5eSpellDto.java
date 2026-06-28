@@ -1,18 +1,33 @@
 package dev.ushki.livedndlist.dto.open5e;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Open5eSpellDto {
 
   private String key;
 
+  private Open5eDocumentDto document;
+
+  @JsonProperty("casting_options")
+  private List<Open5eSpellCastingOptionDto> castingOptions;
+
+  private Open5eReferenceDto school;
+
+  private List<Open5eReferenceDto> classes;
+
+  @JsonProperty("range_unit")
+  private String rangeUnit;
+
+  @JsonProperty("shape_size_unit")
+  private String shapeSizeUnit;
+
   private String name;
-
   private String desc;
-
   private Integer level;
 
   @JsonProperty("higher_level")
@@ -25,10 +40,6 @@ public class Open5eSpellDto {
   private String rangeText;
 
   private Integer range;
-
-  @JsonProperty("range_unit")
-  private String rangeUnit;
-
   private Boolean ritual;
 
   @JsonProperty("casting_time")
@@ -38,9 +49,7 @@ public class Open5eSpellDto {
   private String reactionCondition;
 
   private Boolean verbal;
-
   private Boolean somatic;
-
   private Boolean material;
 
   @JsonProperty("material_specified")
@@ -75,19 +84,7 @@ public class Open5eSpellDto {
   @JsonProperty("shape_size")
   private Integer shapeSize;
 
-  @JsonProperty("shape_size_unit")
-  private String shapeSizeUnit;
-
   private Boolean concentration;
-
-  private Open5eSpellSchoolDto school;
-
-  private List<String> classes;
-
-  @JsonProperty("casting_options")
-  private List<Open5eSpellCastingOptionDto> castingOptions;
-
-  private Open5eDocumentDto document;
 
   private Open5eSpellCrossReferencesDto crossreferences;
 }

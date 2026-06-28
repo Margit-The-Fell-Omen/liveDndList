@@ -2,7 +2,7 @@ package dev.ushki.livedndlist.mapper;
 
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
-import dev.ushki.livedndlist.entity.character.Equipment;
+import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;

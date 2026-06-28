@@ -4,12 +4,12 @@ import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eSpellDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eSpellResponse;
+import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
-import dev.ushki.livedndlist.entity.character.Spell;
+import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.exceptions.DuplicateResourceException;
@@ -20,13 +20,13 @@ import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class SpellService {
 
-  private static final String API_PATH = "/v2/backgrounds/";
+  private static final String API_PATH = "/v2/spells/";
 
   private final SpellRepository spellRepository;
   private final SpellMapper spellMapper;
@@ -252,37 +252,23 @@ public class SpellService {
   }
 
   private List<Open5eSpellDto> fetchAllFromApi() {
-    List<Open5eSpellDto> allClasses = new ArrayList<>();
-    String currentPath = API_PATH;
-    int pageCount = 0;
-
-    while (currentPath != null) {
-      pageCount++;
-      progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
-
-      Open5eSpellResponse response = apiClient.getByPath(currentPath, Open5eSpellResponse.class);
-
-      if (response.getResults() != null) {
-        allClasses.addAll(response.getResults());
-        currentPath = apiClient.extractNextPath(response.getNext());
-      } else {
-        break;
-      }
-    }
-
-    return allClasses;
+    return apiClient.fetchAll(
+        API_PATH,
+        new ParameterizedTypeReference<Open5ePaginatedResponse<Open5eSpellDto>>() {
+        }
+    );
   }
 
   private SyncAction saveOrUpdate(Open5eSpellDto dto) {
-    Optional<Spell> existing = spellRepository.findByKey(dto.getKey());
+    Optional<Spell> existing = spellRepository.findByName(dto.getName());
 
     if (existing.isPresent()) {
       Spell spell = existing.get();
-      spellMapper.updateEntity(spell, dto);
+      spellMapper.updateEntityFromOpen5eDto(spell, dto);
       spellRepository.save(spell);
       return SyncAction.UPDATED;
     } else {
-      Spell spell = spellMapper.toEntity(dto);
+      Spell spell = spellMapper.fromOpen5eDto(dto);
       spellRepository.save(spell);
       return SyncAction.CREATED;
     }

@@ -3,13 +3,12 @@ package dev.ushki.livedndlist.mapper;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundBenefitDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eDocumentDto;
-import dev.ushki.livedndlist.dto.open5e.Open5eGameSystemDto;
-import dev.ushki.livedndlist.dto.open5e.Open5ePublisherDto;
-import dev.ushki.livedndlist.entity.character.Background;
-import dev.ushki.livedndlist.entity.character.BackgroundBenefit;
-import dev.ushki.livedndlist.entity.character.Document;
-import dev.ushki.livedndlist.entity.character.GameSystem;
-import dev.ushki.livedndlist.entity.character.Publisher;
+import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
+import dev.ushki.livedndlist.entity.dndCharacter.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.BackgroundBenefit;
+import dev.ushki.livedndlist.entity.dndCharacter.Document;
+import dev.ushki.livedndlist.entity.dndCharacter.GameSystem;
+import dev.ushki.livedndlist.entity.dndCharacter.Publisher;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -67,7 +66,7 @@ public class BackgroundMapper {
         .build();
   }
 
-  private Publisher toPublisherEntity(Open5ePublisherDto dto) {
+  private Publisher toPublisherEntity(Open5eReferenceDto dto) {
     if (dto == null) {
       return null;
     }
@@ -77,7 +76,7 @@ public class BackgroundMapper {
         .build();
   }
 
-  private GameSystem toGameSystemEntity(Open5eGameSystemDto dto) {
+  private GameSystem toGameSystemEntity(Open5eReferenceDto dto) {
     if (dto == null) {
       return null;
     }
@@ -130,26 +129,26 @@ public class BackgroundMapper {
     dto.setType(entity.getType());
     dto.setDisplayName(entity.getDisplayName());
     dto.setPermalink(entity.getPermalink());
-    dto.setPublisher(toPublisherDto(entity.getPublisher()));
-    dto.setGameSystem(toGameSystemDto(entity.getGamesystem()));
+    dto.setPublisher(toReferenceDto(entity.getPublisher()));
+    dto.setGameSystem(toReferenceDto(entity.getGamesystem()));
     return dto;
   }
 
-  private Open5ePublisherDto toPublisherDto(Publisher entity) {
+  private Open5eReferenceDto toReferenceDto(Publisher entity) {
     if (entity == null) {
       return null;
     }
-    Open5ePublisherDto dto = new Open5ePublisherDto();
+    Open5eReferenceDto dto = new Open5eReferenceDto();
     dto.setName(entity.getName());
     dto.setKey(entity.getKey());
     return dto;
   }
 
-  private Open5eGameSystemDto toGameSystemDto(GameSystem entity) {
+  private Open5eReferenceDto toReferenceDto(GameSystem entity) {
     if (entity == null) {
       return null;
     }
-    Open5eGameSystemDto dto = new Open5eGameSystemDto();
+    Open5eReferenceDto dto = new Open5eReferenceDto();
     dto.setName(entity.getName());
     dto.setKey(entity.getKey());
     return dto;

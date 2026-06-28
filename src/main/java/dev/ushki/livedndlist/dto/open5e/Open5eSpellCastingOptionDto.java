@@ -1,9 +1,11 @@
 package dev.ushki.livedndlist.dto.open5e;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Open5eSpellCastingOptionDto {
 
   private String type;
@@ -16,12 +18,12 @@ public class Open5eSpellCastingOptionDto {
 
   private String duration;
 
-  private Integer range;
+  private String range;
 
   private Boolean concentration;
 
   @JsonProperty("shape_size")
-  private Integer shapeSize;
+  private String shapeSize;
 
   private String desc;
 }

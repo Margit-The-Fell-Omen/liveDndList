@@ -4,7 +4,7 @@ import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
-import dev.ushki.livedndlist.entity.character.Equipment;
+import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;

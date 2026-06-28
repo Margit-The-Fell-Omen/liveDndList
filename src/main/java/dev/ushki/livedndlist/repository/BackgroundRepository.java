@@ -1,6 +1,6 @@
 package dev.ushki.livedndlist.repository;
 
-import dev.ushki.livedndlist.entity.character.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.Background;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

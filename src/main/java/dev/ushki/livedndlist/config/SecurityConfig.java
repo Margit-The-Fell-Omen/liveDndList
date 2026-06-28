@@ -50,7 +50,7 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(Arrays.asList("https://live-dnd-list.duckdns.org"));
+    configuration.setAllowedOrigins(List.of("https://live-dnd-list.duckdns.org"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(
         Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Origin", "Accept"));
@@ -75,7 +75,6 @@ public class SecurityConfig {
             .requestMatchers(
                 // --- Authentication ---
                 "/api/v1/auth/**",
-                "/api/v1/sync/**",
 
                 // --- All Swagger/OpenAPI related paths ---
                 "/swagger-ui.html",

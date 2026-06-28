@@ -1,13 +1,12 @@
 package dev.ushki.livedndlist.repository;
 
-import dev.ushki.livedndlist.entity.character.Archetype;
+import dev.ushki.livedndlist.entity.dndCharacter.Archetype;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ArchetypeRepository extends JpaRepository<Archetype, Long> {

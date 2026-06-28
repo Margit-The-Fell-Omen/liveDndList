@@ -19,7 +19,7 @@
             maven
             
             # Frontend
-            nodejs_20
+            nodejs_26
             
             # Database
             postgresql_16

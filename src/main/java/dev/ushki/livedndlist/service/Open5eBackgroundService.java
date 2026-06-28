@@ -3,11 +3,11 @@ package dev.ushki.livedndlist.service;
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundBenefitDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eBackgroundResponse;
+import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.character.Background;
-import dev.ushki.livedndlist.entity.character.BackgroundBenefit;
+import dev.ushki.livedndlist.entity.dndCharacter.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.BackgroundBenefit;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.BackgroundMapper;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
@@ -15,15 +15,14 @@ import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @Slf4j
@@ -142,31 +141,11 @@ public class Open5eBackgroundService {
   }
 
   private List<Open5eBackgroundDto> fetchAllFromApi() {
-    List<Open5eBackgroundDto> allBackgrounds = new ArrayList<>();
-    String currentPath = API_PATH;
-    int pageCount = 0;
-
-    while (currentPath != null) {
-      try {
-        pageCount++;
-        progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
-
-        Open5eBackgroundResponse response = apiClient.getByPath(currentPath,
-            Open5eBackgroundResponse.class);
-
-        if (response != null && response.getResults() != null) {
-          allBackgrounds.addAll(response.getResults());
-          currentPath = apiClient.extractNextPath(response.getNext());
-        } else {
-          break;
+    return apiClient.fetchAll(
+        API_PATH,
+        new ParameterizedTypeReference<Open5ePaginatedResponse<Open5eBackgroundDto>>() {
         }
-      } catch (HttpClientErrorException.NotFound e) {
-        log.info("Reached end of pages at page {} (API returned 404)", pageCount);
-        break;
-      }
-    }
-
-    return allBackgrounds;
+    );
   }
 
   private void processBackground(Open5eBackgroundDto dto, SyncResult result) {

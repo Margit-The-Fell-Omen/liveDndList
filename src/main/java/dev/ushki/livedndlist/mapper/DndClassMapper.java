@@ -2,8 +2,8 @@ package dev.ushki.livedndlist.mapper;
 
 import dev.ushki.livedndlist.dto.open5e.Open5eArchetypeDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
-import dev.ushki.livedndlist.entity.character.Archetype;
-import dev.ushki.livedndlist.entity.character.DndClass;
+import dev.ushki.livedndlist.entity.dndCharacter.Archetype;
+import dev.ushki.livedndlist.entity.dndCharacter.DndClass;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;

@@ -1,8 +1,8 @@
 package dev.ushki.livedndlist.repository;
 
 import dev.ushki.livedndlist.entity.User;
-import dev.ushki.livedndlist.entity.character.DndCharacter;
-import dev.ushki.livedndlist.entity.character.Race;
+import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
+import dev.ushki.livedndlist.entity.dndCharacter.Race;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -89,7 +89,7 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
   @Transactional
   @Query(value = "UPDATE characters SET current_hit_points = max_hit_points "
       + "WHERE user_id = :userId",
-         nativeQuery = true)
+      nativeQuery = true)
   int restoreAllCharactersHitPointsNative(@Param("userId") Long userId);
 
   @Modifying
@@ -106,7 +106,7 @@ public interface CharacterRepository extends JpaRepository<DndCharacter, Long> {
 
   @Modifying
   @Query(value = "DELETE FROM character_saving_throws WHERE character_id = :id",
-         nativeQuery = true)
+      nativeQuery = true)
   void deleteAllSavingThrowsByCharacterId(@Param("id") Long id);
 
   @Modifying

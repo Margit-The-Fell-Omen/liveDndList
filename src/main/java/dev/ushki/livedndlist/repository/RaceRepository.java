@@ -1,12 +1,11 @@
 package dev.ushki.livedndlist.repository;
 
-import dev.ushki.livedndlist.entity.character.Race;
+import dev.ushki.livedndlist.entity.dndCharacter.Race;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
-import java.util.List;
 
 @Repository
 public interface RaceRepository extends JpaRepository<Race, Long> {

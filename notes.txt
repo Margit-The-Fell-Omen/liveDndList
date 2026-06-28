@@ -2,11 +2,13 @@
 THESE ARE MY PERSONAL NOTES (can be used by contributors to see what needs to be done)
 
 Build dev env:
-docker compose -f docker-compose.dev.yml --project-name livednd-dev up --build -d
+docker compose -f docker-compose.dev.yml --project-name livednd-dev up --build 
 
 Plan for live-dnd-list:
 
 (to fix frontend)
+- fix ApiResponse success field
+- caching added to new parts and rewritten to redis
 - change icons to pretty
 - make active weapons a scrollable horizontally on mobile
 - fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
@@ -47,11 +49,9 @@ Plan for live-dnd-list:
 - implement sysmet choise
 
 
-
 IMPORTANT NOTES:
 
 - in character update there is raceID (shall be changed to Name)
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
-(current fix: spells sync)
-so I need to rewrite my spells to match Open5e entities. OR I can just map their spells to mine. Stopped at spell controller
+(current fix: ApiResponse)

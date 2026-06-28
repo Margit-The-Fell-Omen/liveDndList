@@ -1,12 +1,12 @@
 package dev.ushki.livedndlist.dto.open5e;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import java.util.List;
 import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Open5eSpellCrossReferencesDto {
+public class Open5eReferenceDto {
 
-  private List<Object> to;
+  private String name;
+  private String key;
 }

@@ -3,11 +3,11 @@ package dev.ushki.livedndlist.service;
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eArchetypeDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eClassResponse;
+import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.character.Archetype;
-import dev.ushki.livedndlist.entity.character.DndClass;
+import dev.ushki.livedndlist.entity.dndCharacter.Archetype;
+import dev.ushki.livedndlist.entity.dndCharacter.DndClass;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
 import dev.ushki.livedndlist.repository.ArchetypeRepository;
@@ -16,12 +16,12 @@ import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,25 +145,11 @@ public class Open5eClassService {
   }
 
   private List<Open5eClassDto> fetchAllFromApi() {
-    List<Open5eClassDto> allClasses = new ArrayList<>();
-    String currentPath = API_PATH;
-    int pageCount = 0;
-
-    while (currentPath != null) {
-      pageCount++;
-      progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
-
-      Open5eClassResponse response = apiClient.getByPath(currentPath, Open5eClassResponse.class);
-
-      if (response.getResults() != null) {
-        allClasses.addAll(response.getResults());
-        currentPath = apiClient.extractNextPath(response.getNext());
-      } else {
-        break;
-      }
-    }
-
-    return allClasses;
+    return apiClient.fetchAll(
+        API_PATH,
+        new ParameterizedTypeReference<Open5ePaginatedResponse<Open5eClassDto>>() {
+        }
+    );
   }
 
   private void processClass(Open5eClassDto dto, SyncResult result) {

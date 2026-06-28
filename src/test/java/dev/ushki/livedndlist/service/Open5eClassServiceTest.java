@@ -15,10 +15,9 @@ import static org.mockito.Mockito.when;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eClassResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.character.DndClass;
+import dev.ushki.livedndlist.entity.dndCharacter.DndClass;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
 import dev.ushki.livedndlist.repository.ArchetypeRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
@@ -37,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.ParameterizedTypeReference;
 
 @ExtendWith(MockitoExtension.class)
 class Open5eClassServiceTest {
@@ -53,14 +53,15 @@ class Open5eClassServiceTest {
   @Mock
   private SyncMetrics syncMetrics;
 
+  @Mock
+  private ArchetypeRepository archetypeRepository;
+
   private Open5eClassService classService;
 
   private Open5eClassDto fighterDto;
   private Open5eClassDto wizardDto;
   private DndClass fighterEntity;
   private DndClass wizardEntity;
-  private Open5eClassResponse apiResponse;
-  private ArchetypeRepository archetypeRepository;
 
   @BeforeEach
   void setUp() {
@@ -95,10 +96,51 @@ class Open5eClassServiceTest {
         .slug("wizard")
         .hitDice("1d6")
         .build();
+  }
 
-    apiResponse = new Open5eClassResponse();
-    apiResponse.setResults(List.of(fighterDto, wizardDto));
-    apiResponse.setNext(null);
+  // ---------------------------------------------------------------
+  // Helper: mock apiClient.fetchAll to return the given DTOs.
+  // Uses any() for the ParameterizedTypeReference argument because
+  // Mockito cannot match generic type-ref instances by value.
+  // ---------------------------------------------------------------
+  private void mockFetchAll(List<Open5eClassDto> results) {
+    when(apiClient.fetchAll(
+        eq("/v1/classes/"),
+        any(ParameterizedTypeReference.class))
+    ).thenReturn(results);
+  }
+
+  private void mockFetchAllThrows(RuntimeException ex) {
+    when(apiClient.fetchAll(
+        eq("/v1/classes/"),
+        any(ParameterizedTypeReference.class))
+    ).thenThrow(ex);
+  }
+
+  // Blocks inside fetchAll until the latch is released — used for concurrency tests
+  private void mockFetchAllBlocking(List<Open5eClassDto> results,
+      CountDownLatch started,
+      CountDownLatch canProceed) {
+    when(apiClient.fetchAll(
+        eq("/v1/classes/"),
+        any(ParameterizedTypeReference.class))
+    ).thenAnswer(invocation -> {
+      started.countDown();
+      canProceed.await(5, TimeUnit.SECONDS);
+      return results;
+    });
+  }
+
+  private void stubSyncMetricsHappyPath() {
+    doNothing().when(syncMetrics).startOperation();
+    doNothing().when(syncMetrics).endOperation();
+    doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+  }
+
+  private void stubSyncMetricsErrorPath() {
+    doNothing().when(syncMetrics).startOperation();
+    doNothing().when(syncMetrics).endOperation();
+    doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
   }
 
   @Nested
@@ -122,17 +164,13 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should sync all classes successfully when creating new classes")
     void shouldSyncAllClassesSuccessfullyWhenCreating() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug("fighter")).thenReturn(Optional.empty());
       when(dndClassRepository.findBySlug("wizard")).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(fighterDto)).thenReturn(fighterEntity);
       when(dndClassMapper.toEntity(wizardDto)).thenReturn(wizardEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenAnswer(i -> i.getArgument(0));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -153,15 +191,11 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should sync all classes successfully when updating existing classes")
     void shouldSyncAllClassesSuccessfullyWhenUpdating() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug("fighter")).thenReturn(Optional.of(fighterEntity));
       when(dndClassRepository.findBySlug("wizard")).thenReturn(Optional.of(wizardEntity));
       when(dndClassRepository.save(any(DndClass.class))).thenAnswer(i -> i.getArgument(0));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -170,23 +204,20 @@ class Open5eClassServiceTest {
       assertThat(result.getStatistics().getCreated()).isZero();
       assertThat(result.getStatistics().getUpdated()).isEqualTo(2);
 
-      verify(dndClassMapper, times(2)).updateEntity(any(DndClass.class), any(Open5eClassDto.class));
+      verify(dndClassMapper, times(2))
+          .updateEntity(any(DndClass.class), any(Open5eClassDto.class));
       verify(dndClassRepository, times(2)).save(any(DndClass.class));
     }
 
     @Test
     @DisplayName("Should handle mixed create and update operations")
     void shouldHandleMixedCreateAndUpdate() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug("fighter")).thenReturn(Optional.of(fighterEntity));
       when(dndClassRepository.findBySlug("wizard")).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(wizardDto)).thenReturn(wizardEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenAnswer(i -> i.getArgument(0));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -199,11 +230,8 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should handle API error during sync")
     void shouldHandleApiErrorDuringSync() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenThrow(new RuntimeException("API connection failed"));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
+      mockFetchAllThrows(new RuntimeException("API connection failed"));
+      stubSyncMetricsErrorPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -217,29 +245,15 @@ class Open5eClassServiceTest {
     }
 
     @Test
-    @DisplayName("Should handle pagination with multiple pages")
-    void shouldHandlePaginationWithMultiplePages() {
-      Open5eClassResponse firstPage = new Open5eClassResponse();
-      firstPage.setResults(List.of(fighterDto));
-      firstPage.setNext("https://api.open5e.com/classes/?page=2");
-
-      Open5eClassResponse secondPage = new Open5eClassResponse();
-      secondPage.setResults(List.of(wizardDto));
-      secondPage.setNext(null);
-
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(firstPage);
-      when(apiClient.extractNextPath("https://api.open5e.com/classes/?page=2"))
-          .thenReturn("/classes/?page=2");
-      when(apiClient.getByPath("/classes/?page=2", Open5eClassResponse.class))
-          .thenReturn(secondPage);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+    @DisplayName("Should handle pagination transparently (client returns combined results)")
+    void shouldHandlePaginationTransparently() {
+      // The client now handles pagination internally and returns all results at once.
+      // We simply verify that all returned items are processed.
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenAnswer(i -> i.getArgument(0));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -247,21 +261,18 @@ class Open5eClassServiceTest {
       assertThat(result.isSuccess()).isTrue();
       assertThat(result.getStatistics().getTotalFetched()).isEqualTo(2);
 
-      verify(apiClient, times(2)).getByPath(anyString(), eq(Open5eClassResponse.class));
+      // fetchAll is called exactly once — pagination is handled inside the client
+      verify(apiClient, times(1))
+          .fetchAll(eq("/v1/classes/"), any(ParameterizedTypeReference.class));
     }
 
     @Test
     @DisplayName("Should handle empty API response")
     void shouldHandleEmptyApiResponse() {
-      Open5eClassResponse emptyResponse = new Open5eClassResponse();
-      emptyResponse.setResults(List.of());
-      emptyResponse.setNext(null);
-
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(emptyResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
+      mockFetchAll(List.of());
+      stubSyncMetricsHappyPath();
+      doNothing().when(syncMetrics)
+          .recordRequest(anyLong(), eq(true)); // won't be called but lenient
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -276,17 +287,14 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should record sync completed with errors when some classes fail")
     void shouldRecordSyncCompletedWithErrors() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug("fighter")).thenReturn(Optional.empty());
       when(dndClassRepository.findBySlug("wizard")).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(fighterDto)).thenReturn(fighterEntity);
-      when(dndClassMapper.toEntity(wizardDto)).thenThrow(new RuntimeException("Mapping error"));
+      when(dndClassMapper.toEntity(wizardDto))
+          .thenThrow(new RuntimeException("Mapping error"));
       when(dndClassRepository.save(fighterEntity)).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -468,15 +476,11 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should call start and end operation on sync")
     void shouldCallStartAndEndOperationOnSync() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       classService.syncAllClasses();
 
@@ -487,15 +491,11 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should record request for each class")
     void shouldRecordRequestForEachClass() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       classService.syncAllClasses();
 
@@ -505,11 +505,8 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should record failure metric on API error")
     void shouldRecordFailureMetricOnApiError() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenThrow(new RuntimeException("API error"));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
+      mockFetchAllThrows(new RuntimeException("API error"));
+      stubSyncMetricsErrorPath();
 
       classService.syncAllClasses();
 
@@ -519,11 +516,8 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should call endOperation even on error")
     void shouldCallEndOperationEvenOnError() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenThrow(new RuntimeException("API error"));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
+      mockFetchAllThrows(new RuntimeException("API error"));
+      stubSyncMetricsErrorPath();
 
       classService.syncAllClasses();
 
@@ -536,14 +530,9 @@ class Open5eClassServiceTest {
   class EdgeCaseTests {
 
     @Test
-    @DisplayName("Should handle null results in API response")
-    void shouldHandleNullResultsInApiResponse() {
-      Open5eClassResponse nullResultsResponse = new Open5eClassResponse();
-      nullResultsResponse.setResults(null);
-      nullResultsResponse.setNext(null);
-
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(nullResultsResponse);
+    @DisplayName("Should handle empty results from fetchAll")
+    void shouldHandleEmptyResultsFromFetchAll() {
+      mockFetchAll(List.of());
       doNothing().when(syncMetrics).startOperation();
       doNothing().when(syncMetrics).endOperation();
 
@@ -561,19 +550,11 @@ class Open5eClassServiceTest {
       nullNameDto.setName(null);
       nullNameDto.setSlug("null-class");
 
-      Open5eClassResponse response = new Open5eClassResponse();
-      response.setResults(List.of(nullNameDto));
-      response.setNext(null);
-
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(response);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(nullNameDto));
       when(dndClassRepository.findBySlug("null-class")).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(nullNameDto)).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -593,19 +574,11 @@ class Open5eClassServiceTest {
       CountDownLatch syncStarted = new CountDownLatch(1);
       CountDownLatch canProceed = new CountDownLatch(1);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenAnswer(invocation -> {
-            syncStarted.countDown();
-            canProceed.await(5, TimeUnit.SECONDS);
-            return apiResponse;
-          });
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAllBlocking(List.of(fighterDto, wizardDto), syncStarted, canProceed);
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
       Future<SyncResultDto> firstSync = executor.submit(() -> classService.syncAllClasses());
@@ -635,19 +608,11 @@ class Open5eClassServiceTest {
       CountDownLatch syncStarted = new CountDownLatch(1);
       CountDownLatch canProceed = new CountDownLatch(1);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenAnswer(invocation -> {
-            syncStarted.countDown();
-            canProceed.await(5, TimeUnit.SECONDS);
-            return apiResponse;
-          });
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAllBlocking(List.of(fighterDto, wizardDto), syncStarted, canProceed);
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(() -> classService.syncAllClasses());
@@ -671,19 +636,11 @@ class Open5eClassServiceTest {
       CountDownLatch syncStarted = new CountDownLatch(1);
       CountDownLatch canProceed = new CountDownLatch(1);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenAnswer(invocation -> {
-            syncStarted.countDown();
-            canProceed.await(5, TimeUnit.SECONDS);
-            return apiResponse;
-          });
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAllBlocking(List.of(fighterDto, wizardDto), syncStarted, canProceed);
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(() -> classService.syncAllClasses());
@@ -703,15 +660,11 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should allow new sync after previous one completes")
     void shouldAllowNewSyncAfterPreviousOneCompletes() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto firstResult = classService.syncAllClasses();
       assertThat(firstResult.isSuccess()).isTrue();
@@ -726,26 +679,19 @@ class Open5eClassServiceTest {
     @Test
     @DisplayName("Should release progress tracker even when sync fails")
     void shouldReleaseProgressTrackerEvenWhenSyncFails() {
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenThrow(new RuntimeException("API error"));
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
+      mockFetchAllThrows(new RuntimeException("API error"));
+      stubSyncMetricsErrorPath();
 
       SyncResultDto firstResult = classService.syncAllClasses();
       assertThat(firstResult.isSuccess()).isFalse();
 
       org.mockito.Mockito.reset(apiClient, dndClassRepository, dndClassMapper, syncMetrics);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenReturn(apiResponse);
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAll(List.of(fighterDto, wizardDto));
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       SyncResultDto secondResult = classService.syncAllClasses();
       assertThat(secondResult.isSuccess()).isTrue();
@@ -758,19 +704,11 @@ class Open5eClassServiceTest {
       CountDownLatch syncStarted = new CountDownLatch(1);
       CountDownLatch canProceed = new CountDownLatch(1);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenAnswer(invocation -> {
-            syncStarted.countDown();
-            canProceed.await(5, TimeUnit.SECONDS);
-            return apiResponse;
-          });
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAllBlocking(List.of(fighterDto, wizardDto), syncStarted, canProceed);
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(() -> classService.syncAllClasses());
@@ -794,19 +732,11 @@ class Open5eClassServiceTest {
       CountDownLatch syncStarted = new CountDownLatch(1);
       CountDownLatch canProceed = new CountDownLatch(1);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenAnswer(invocation -> {
-            syncStarted.countDown();
-            canProceed.await(5, TimeUnit.SECONDS);
-            return apiResponse;
-          });
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAllBlocking(List.of(fighterDto, wizardDto), syncStarted, canProceed);
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(() -> classService.syncAllClasses());
@@ -830,19 +760,11 @@ class Open5eClassServiceTest {
       CountDownLatch syncStarted = new CountDownLatch(1);
       CountDownLatch canProceed = new CountDownLatch(1);
 
-      when(apiClient.getByPath("/v1/classes/", Open5eClassResponse.class))
-          .thenAnswer(invocation -> {
-            syncStarted.countDown();
-            canProceed.await(5, TimeUnit.SECONDS);
-            return apiResponse;
-          });
-      when(apiClient.extractNextPath(null)).thenReturn(null);
+      mockFetchAllBlocking(List.of(fighterDto, wizardDto), syncStarted, canProceed);
       when(dndClassRepository.findBySlug(anyString())).thenReturn(Optional.empty());
       when(dndClassMapper.toEntity(any(Open5eClassDto.class))).thenReturn(fighterEntity);
       when(dndClassRepository.save(any(DndClass.class))).thenReturn(fighterEntity);
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
-      doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+      stubSyncMetricsHappyPath();
 
       ExecutorService executor = Executors.newSingleThreadExecutor();
       executor.submit(() -> classService.syncAllClasses());
@@ -858,7 +780,8 @@ class Open5eClassServiceTest {
 
       verify(dndClassRepository, never()).findBySlug(anyString());
       verify(dndClassRepository, never()).save(any());
-      verify(apiClient, never()).getByPath(anyString(), any());
+      verify(apiClient, never())
+          .fetchAll(anyString(), any(ParameterizedTypeReference.class));
 
       canProceed.countDown();
       executor.shutdown();

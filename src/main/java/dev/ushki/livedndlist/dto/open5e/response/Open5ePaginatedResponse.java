@@ -1,17 +1,15 @@
 package dev.ushki.livedndlist.dto.open5e.response;
 
-import dev.ushki.livedndlist.dto.open5e.Open5eSpellDto;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 import lombok.Data;
 
 @Data
-public class Open5eSpellResponse {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Open5ePaginatedResponse<T> {
 
   private Integer count;
-
   private String next;
-
   private String previous;
-
-  private List<Open5eSpellDto> results;
+  private List<T> results;
 }

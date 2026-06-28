@@ -1,4 +1,4 @@
-package dev.ushki.livedndlist.entity.character;
+package dev.ushki.livedndlist.entity.dndCharacter;
 
 import dev.ushki.livedndlist.enums.SpellSchool;
 import jakarta.persistence.Column;

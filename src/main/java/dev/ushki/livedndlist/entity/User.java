@@ -1,6 +1,6 @@
 package dev.ushki.livedndlist.entity;
 
-import dev.ushki.livedndlist.entity.character.DndCharacter;
+import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.enums.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

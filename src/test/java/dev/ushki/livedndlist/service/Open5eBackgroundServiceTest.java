@@ -15,11 +15,11 @@ import static org.mockito.Mockito.when;
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundBenefitDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eBackgroundResponse;
+import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.character.Background;
-import dev.ushki.livedndlist.entity.character.BackgroundBenefit;
+import dev.ushki.livedndlist.entity.dndCharacter.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.BackgroundBenefit;
 import dev.ushki.livedndlist.mapper.BackgroundMapper;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
@@ -33,6 +33,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +67,28 @@ class Open5eBackgroundServiceTest {
         .build();
   }
 
+  // ---------------------------------------------------------------
+  // Helper: mock apiClient.fetchAll for backgrounds
+  // ---------------------------------------------------------------
+
+  private void mockFetchAll(List<Open5eBackgroundDto> results) {
+    when(apiClient.fetchAll(
+        anyString(),
+        any(ParameterizedTypeReference.class))
+    ).thenReturn(results);
+  }
+
+  private void mockFetchAllThrows(RuntimeException ex) {
+    when(apiClient.fetchAll(
+        anyString(),
+        any(ParameterizedTypeReference.class))
+    ).thenThrow(ex);
+  }
+
+  // ---------------------------------------------------------------
+  // syncAllBackgrounds
+  // ---------------------------------------------------------------
+
   @Test
   void syncAllBackgroundsShouldReturnErrorWhenAlreadyInProgress() {
     SyncProgressTracker tracker = (SyncProgressTracker) ReflectionTestUtils.getField(
@@ -83,18 +106,10 @@ class Open5eBackgroundServiceTest {
 
   @Test
   void syncAllBackgroundsShouldHandlePaginationAndCreateNew() {
-    Open5eBackgroundResponse page1 = new Open5eBackgroundResponse();
-    page1.setResults(List.of(sampleDto));
-    page1.setNext("page2");
-
-    Open5eBackgroundResponse page2 = new Open5eBackgroundResponse();
-    page2.setResults(Collections.emptyList());
-    page2.setNext(null);
-
-    when(apiClient.getByPath(anyString(), eq(Open5eBackgroundResponse.class)))
-        .thenReturn(page1)
-        .thenReturn(page2);
-    when(apiClient.extractNextPath("page2")).thenReturn("/page/2");
+    // Pagination is now handled entirely inside apiClient.fetchAll().
+    // The service receives all results in a single list — we just return
+    // the combined items that would have come from both pages.
+    mockFetchAll(List.of(sampleDto));
     when(backgroundRepository.findByKey(anyString())).thenReturn(Optional.empty());
     when(backgroundMapper.toEntity(any())).thenReturn(sampleEntity);
 
@@ -108,10 +123,7 @@ class Open5eBackgroundServiceTest {
 
   @Test
   void syncAllBackgroundsShouldUpdateExisting() {
-    Open5eBackgroundResponse response = new Open5eBackgroundResponse();
-    response.setResults(List.of(sampleDto));
-
-    when(apiClient.getByPath(anyString(), any())).thenReturn(response);
+    mockFetchAll(List.of(sampleDto));
     when(backgroundRepository.findByKey(anyString())).thenReturn(Optional.of(sampleEntity));
 
     SyncResultDto result = backgroundService.syncAllBackgrounds();
@@ -124,10 +136,7 @@ class Open5eBackgroundServiceTest {
 
   @Test
   void syncAllBackgroundsShouldRecordErrorsWhenProcessBackgroundFails() {
-    Open5eBackgroundResponse response = new Open5eBackgroundResponse();
-    response.setResults(List.of(sampleDto));
-
-    when(apiClient.getByPath(anyString(), any())).thenReturn(response);
+    mockFetchAll(List.of(sampleDto));
     when(backgroundRepository.findByKey(anyString())).thenThrow(new RuntimeException("DB Error"));
 
     SyncResultDto result = backgroundService.syncAllBackgrounds();
@@ -139,13 +148,17 @@ class Open5eBackgroundServiceTest {
 
   @Test
   void syncAllBackgroundsShouldHandleCriticalException() {
-    when(apiClient.getByPath(anyString(), any())).thenThrow(new RuntimeException("API Down"));
+    mockFetchAllThrows(new RuntimeException("API Down"));
 
     SyncResultDto result = backgroundService.syncAllBackgrounds();
 
     assertFalse(result.isSuccess());
     assertTrue(result.getMessage().contains("Critical error"));
   }
+
+  // ---------------------------------------------------------------
+  // syncBySlug — uses getBySlug (not fetchAll), unchanged
+  // ---------------------------------------------------------------
 
   @Test
   void syncBySlugShouldCreateWhenNotFound() {
@@ -183,6 +196,10 @@ class Open5eBackgroundServiceTest {
     assertTrue(result.getMessage().contains("Critical error"));
   }
 
+  // ---------------------------------------------------------------
+  // clearAll
+  // ---------------------------------------------------------------
+
   @Test
   void clearAllShouldDeleteSuccessfully() {
     when(backgroundRepository.count()).thenReturn(5L);
@@ -204,6 +221,10 @@ class Open5eBackgroundServiceTest {
     assertTrue(result.getMessage().contains("Delete error"));
   }
 
+  // ---------------------------------------------------------------
+  // getBenefitsByBackground
+  // ---------------------------------------------------------------
+
   @Test
   void getBenefitsByBackgroundShouldReturnListWhenFound() {
     BackgroundBenefit benefit = new BackgroundBenefit();
@@ -213,7 +234,8 @@ class Open5eBackgroundServiceTest {
     when(backgroundRepository.findByKey("acolyte")).thenReturn(Optional.of(sampleEntity));
     when(backgroundMapper.toBenefitDto(benefit)).thenReturn(benefitDto);
 
-    List<Open5eBackgroundBenefitDto> result = backgroundService.getBenefitsByBackground("acolyte");
+    List<Open5eBackgroundBenefitDto> result =
+        backgroundService.getBenefitsByBackground("acolyte");
 
     assertNotNull(result);
     assertEquals(1, result.size());
@@ -223,11 +245,15 @@ class Open5eBackgroundServiceTest {
   void getBenefitsByBackgroundShouldReturnNullAndLogErrorWhenKeyNotFound() {
     when(backgroundRepository.findByKey("invalid-key")).thenReturn(Optional.empty());
 
-    List<Open5eBackgroundBenefitDto> result = backgroundService.getBenefitsByBackground(
-        "invalid-key");
+    List<Open5eBackgroundBenefitDto> result =
+        backgroundService.getBenefitsByBackground("invalid-key");
 
     assertNull(result);
   }
+
+  // ---------------------------------------------------------------
+  // getSyncStatus
+  // ---------------------------------------------------------------
 
   @Test
   void getSyncStatusShouldReturnCurrentStatus() {
@@ -236,6 +262,10 @@ class Open5eBackgroundServiceTest {
     assertNotNull(status);
     assertFalse(status.isInProgress());
   }
+
+  // ---------------------------------------------------------------
+  // getAllBackgrounds
+  // ---------------------------------------------------------------
 
   @Test
   void getAllBackgroundsShouldReturnList() {

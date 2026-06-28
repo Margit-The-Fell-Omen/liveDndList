@@ -1,4 +1,4 @@
-package dev.ushki.livedndlist.entity.character;
+package dev.ushki.livedndlist.entity.dndCharacter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -4,10 +4,10 @@ import static dev.ushki.livedndlist.service.Open5eClassService.getSyncResultDto;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5eRaceResponse;
+import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.character.Race;
+import dev.ushki.livedndlist.entity.dndCharacter.Race;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.RaceMapper;
 import dev.ushki.livedndlist.repository.RaceRepository;
@@ -15,12 +15,12 @@ import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -143,25 +143,11 @@ public class Open5eRaceService {
   }
 
   private List<Open5eRaceDto> fetchAllFromApi() {
-    List<Open5eRaceDto> allRaces = new ArrayList<>();
-    String currentPath = API_PATH;
-    int pageCount = 0;
-
-    while (currentPath != null) {
-      pageCount++;
-      progressTracker.setOperation(String.format("Fetching page %d from API", pageCount));
-
-      Open5eRaceResponse response = apiClient.getByPath(currentPath, Open5eRaceResponse.class);
-
-      if (response.getResults() != null) {
-        allRaces.addAll(response.getResults());
-        currentPath = apiClient.extractNextPath(response.getNext());
-      } else {
-        break;
-      }
-    }
-
-    return allRaces;
+    return apiClient.fetchAll(
+        API_PATH,
+        new ParameterizedTypeReference<Open5ePaginatedResponse<Open5eRaceDto>>() {
+        }
+    );
   }
 
   private void processRace(Open5eRaceDto dto, SyncResult result) {

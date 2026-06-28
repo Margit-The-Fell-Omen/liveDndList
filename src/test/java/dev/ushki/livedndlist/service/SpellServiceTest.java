@@ -13,7 +13,7 @@ import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
-import dev.ushki.livedndlist.entity.character.Spell;
+import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.exceptions.DuplicateResourceException;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
