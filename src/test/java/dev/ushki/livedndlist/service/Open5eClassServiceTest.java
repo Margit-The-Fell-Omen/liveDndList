@@ -3,6 +3,7 @@ package dev.ushki.livedndlist.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -270,9 +271,8 @@ class Open5eClassServiceTest {
     @DisplayName("Should handle empty API response")
     void shouldHandleEmptyApiResponse() {
       mockFetchAll(List.of());
-      stubSyncMetricsHappyPath();
-      doNothing().when(syncMetrics)
-          .recordRequest(anyLong(), eq(true)); // won't be called but lenient
+      doNothing().when(syncMetrics).startOperation();
+      doNothing().when(syncMetrics).endOperation();
 
       SyncResultDto result = classService.syncAllClasses();
 
@@ -282,7 +282,9 @@ class Open5eClassServiceTest {
       assertThat(result.getStatistics().getCreated()).isZero();
 
       verify(dndClassRepository, never()).save(any());
+      verify(syncMetrics, never()).recordRequest(anyLong(), anyBoolean());
     }
+
 
     @Test
     @DisplayName("Should record sync completed with errors when some classes fail")
