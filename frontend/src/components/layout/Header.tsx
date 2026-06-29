@@ -1,6 +1,7 @@
 import {useAuth} from '@/context/AuthContext';
 import {ThemeToggle} from '@/components/common/ThemeToggle';
 import {Button} from '@/components/common/Button';
+import DndIcon from '@assets/icons/dndIcon.svg?react';
 import styles from './Header.module.css';
 
 interface HeaderProps {
@@ -26,9 +27,10 @@ export function Header({isSidebarExpanded, onToggleSidebar}: HeaderProps) {
 
         <div className={styles.left}>
           <h1 className={styles.logo}>
-            <span className={styles.logoIcon}>🎲</span>
-            <span
-                className={styles.logoText}>D&D Sheet</span>
+          <span className={styles.logoIcon}>
+            <DndIcon/>
+          </span>
+            <span className={styles.logoText}>D&D Sheet</span>
           </h1>
         </div>
 

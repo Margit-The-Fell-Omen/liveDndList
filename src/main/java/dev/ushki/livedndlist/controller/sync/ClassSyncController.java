@@ -43,7 +43,8 @@ public class ClassSyncController {
   public ApiResponse<SyncResultDto> syncAllClasses() {
     log.info("Received request to sync all classes");
     SyncResultDto result = classSyncService.syncAllClasses();
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @PostMapping("/async")
@@ -66,7 +67,8 @@ public class ClassSyncController {
   public ApiResponse<SyncResultDto> syncClassBySlug(@PathVariable String slug) {
     log.info("Received request to sync class: {}", slug);
     SyncResultDto result = classSyncService.syncBySlug(slug);
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @DeleteMapping
@@ -74,7 +76,8 @@ public class ClassSyncController {
   public ApiResponse<SyncResultDto> clearAllClasses() {
     log.info("Received request to delete all classes");
     SyncResultDto result = classSyncService.clearAll();
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @GetMapping("/count")

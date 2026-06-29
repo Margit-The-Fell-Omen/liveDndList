@@ -7,9 +7,8 @@ docker compose -f docker-compose.dev.yml --project-name livednd-dev up --build
 Plan for live-dnd-list:
 
 (to fix frontend)
-- fix ApiResponse success field
+- bug with proficiency of sleight of hand skill
 - caching added to new parts and rewritten to redis
-- change icons to pretty
 - make active weapons a scrollable horizontally on mobile
 - fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
 - fix that after initial loading of character on main page you traverse to the character sheet instantly
@@ -33,6 +32,7 @@ Plan for live-dnd-list:
 - auto-remember latest login
 
 (later plans)
+- why do races still use ResponseEntity ???: 
 - remove not used endpoints and repo methods
 - rewrite my Cache Manager -> Redis
 ----> migrate to api.open5e/v2
@@ -54,4 +54,4 @@ IMPORTANT NOTES:
 - in character update there is raceID (shall be changed to Name)
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 
-(current fix: ApiResponse)
+(current fix: caching rewrite)

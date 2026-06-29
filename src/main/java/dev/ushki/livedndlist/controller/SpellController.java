@@ -108,7 +108,8 @@ public class SpellController {
   public ApiResponse<SyncResultDto> syncAll() {
     log.info("Received request to sync all classes");
     SyncResultDto result = spellService.syncAllSpells();
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @PostMapping("/sync/async")

@@ -43,7 +43,8 @@ public class BackgroundSyncController {
   public ApiResponse<SyncResultDto> syncAllClasses() {
     log.info("Received request to sync all classes");
     SyncResultDto result = backgroundService.syncAllBackgrounds();
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @PostMapping("/async")
@@ -67,7 +68,8 @@ public class BackgroundSyncController {
   public ApiResponse<SyncResultDto> syncClassBySlug(@PathVariable String slug) {
     log.info("Received request to sync class: {}", slug);
     SyncResultDto result = backgroundService.syncBySlug(slug);
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @DeleteMapping
@@ -75,7 +77,8 @@ public class BackgroundSyncController {
   public ApiResponse<SyncResultDto> clearAllClasses() {
     log.info("Received request to delete all classes");
     SyncResultDto result = backgroundService.clearAll();
-    return ApiResponse.success(result);
+    return result.isSuccess() ? ApiResponse.success(result)
+        : ApiResponse.error(result.getMessage(), result);
   }
 
   @GetMapping("/count")
@@ -85,18 +88,18 @@ public class BackgroundSyncController {
   }
 
   @GetMapping("/list")
-  @Operation(summary = "Get list of all classes from database")
-  public ApiResponse<List<Open5eBackgroundDto>> getAllClasses() {
-    List<Open5eBackgroundDto> classes = backgroundService.getAllBackgrounds();
-    return ApiResponse.success(classes);
+  @Operation(summary = "Get list of all backgrounds from database")
+  public ApiResponse<List<Open5eBackgroundDto>> getAllBackgrounds() {
+    List<Open5eBackgroundDto> backgrounds = backgroundService.getAllBackgrounds();
+    return ApiResponse.success(backgrounds);
   }
 
   @GetMapping("/{key}/benefits")
-  @Operation(summary = "Get all archetypes of class by id")
-  public ApiResponse<List<Open5eBackgroundBenefitDto>> getArchetypesByClass(
+  @Operation(summary = "Get all benefits of background by key")
+  public ApiResponse<List<Open5eBackgroundBenefitDto>> getBenefitsByBackground(
       @PathVariable String key) {
-    List<Open5eBackgroundBenefitDto> archetypes = backgroundService.getBenefitsByBackground(key);
-    return ApiResponse.success(archetypes);
+    List<Open5eBackgroundBenefitDto> benefits = backgroundService.getBenefitsByBackground(key);
+    return ApiResponse.success(benefits);
   }
 
 }
