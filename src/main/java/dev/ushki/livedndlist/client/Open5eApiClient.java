@@ -8,6 +8,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,12 +29,12 @@ public class Open5eApiClient {
 
   public <T> T getByPath(String path, Class<T> responseType) {
     validatePath(path);
-    return executeRawPathWithRetry(path, responseType);
+    return executeRawPathWithRetry(path, spec -> spec.body(responseType));
   }
 
   public <T> T getBySlug(String resource, String slug, Class<T> responseType) {
     String uriTemplate = "/{resource}/{slug}/";
-    return executeTemplateWithRetry(uriTemplate, responseType, resource, slug);
+    return executeTemplateWithRetry(uriTemplate, spec -> spec.body(responseType), resource, slug);
   }
 
   public <T> List<T> fetchAll(
@@ -48,7 +49,8 @@ public class Open5eApiClient {
       pageCount++;
       log.info("Fetching page {} from {}", pageCount, currentPath);
 
-      Open5ePaginatedResponse<T> response = executeRawPathWithRetry(currentPath, responseType);
+      Open5ePaginatedResponse<T> response = executeRawPathWithRetry(
+          currentPath, spec -> spec.body(responseType));
 
       if (response == null || response.getResults() == null) {
         break;
@@ -65,107 +67,53 @@ public class Open5eApiClient {
 
   private <T> T executeTemplateWithRetry(
       String uriTemplate,
-      Class<T> responseType,
+      Function<RestClient.ResponseSpec, T> bodyExtractor,
       Object... uriVariables) {
 
-    int attempt = 0;
-    Exception lastException = null;
+    URI finalUri = UriComponentsBuilder.fromPath(uriTemplate)
+        .buildAndExpand(uriVariables)
+        .toUri();
 
-    while (attempt < rateLimitConfig.getMaxRetries()) {
-      try {
-        rateLimitDelay();
+    return executeWithRetry(uriTemplate, () -> {
+      log.info("Requesting Open5e template URI: {}", finalUri);
 
-        URI finalUri = UriComponentsBuilder.fromPath(uriTemplate)
-            .buildAndExpand(uriVariables)
-            .toUri();
+      RestClient.ResponseSpec responseSpec = open5eRestClient.get()
+          .uri(finalUri)
+          .retrieve();
 
-        log.info("Requesting Open5e template URI: {}", finalUri);
-
-        return open5eRestClient.get()
-            .uri(finalUri)
-            .retrieve()
-            .body(responseType);
-
-      } catch (HttpClientErrorException.NotFound e) {
-        log.warn("Resource not found (404): {}", uriTemplate);
-        throw e;
-      } catch (HttpClientErrorException e) {
-        log.error("Client error ({}): {}", e.getStatusCode(), e.getMessage());
-        throw new Open5eApiException("Client error during API request", e);
-      } catch (Exception e) {
-        lastException = e;
-        attempt++;
-        log.warn("Transient API error (attempt {}/{}): {}",
-            attempt, rateLimitConfig.getMaxRetries(), e.getMessage());
-
-        if (attempt < rateLimitConfig.getMaxRetries()) {
-          sleep(rateLimitConfig.getRetryDelayMs() * attempt);
-        }
-      }
-    }
-
-    throw new Open5eApiException("Request failed after retries", lastException);
+      return bodyExtractor.apply(responseSpec);
+    });
   }
 
-  private <T> T executeRawPathWithRetry(String path, Class<T> responseType) {
-    int attempt = 0;
-    Exception lastException = null;
+  private <T> T executeRawPathWithRetry(
+      String path,
+      Function<RestClient.ResponseSpec, T> bodyExtractor) {
 
-    while (attempt < rateLimitConfig.getMaxRetries()) {
-      try {
-        validatePath(path);
-        rateLimitDelay();
+    validatePath(path);
+    URI finalUri = URI.create(path);
 
-        URI finalUri = URI.create(path); // IMPORTANT
+    return executeWithRetry(path, () -> {
+      log.info("Requesting Open5e raw URI: {}", finalUri);
 
-        log.info("Requesting Open5e raw URI: {}", finalUri);
+      RestClient.ResponseSpec responseSpec = open5eRestClient.get()
+          .uri(finalUri)
+          .retrieve();
 
-        return open5eRestClient.get()
-            .uri(finalUri)
-            .retrieve()
-            .body(responseType);
-
-      } catch (HttpClientErrorException.NotFound e) {
-        log.warn("Resource not found (404): {}", path);
-        throw e;
-      } catch (HttpClientErrorException e) {
-        log.error("Client error ({}): {}", e.getStatusCode(), e.getMessage());
-        throw new Open5eApiException("Client error during API request", e);
-      } catch (Exception e) {
-        lastException = e;
-        attempt++;
-        log.warn("Transient API error (attempt {}/{}): {}",
-            attempt, rateLimitConfig.getMaxRetries(), e.getMessage());
-
-        if (attempt < rateLimitConfig.getMaxRetries()) {
-          sleep(rateLimitConfig.getRetryDelayMs() * attempt);
-        }
-      }
-    }
-
-    throw new Open5eApiException("Request failed after retries", lastException);
+      return bodyExtractor.apply(responseSpec);
+    });
   }
 
-  private <T> T executeRawPathWithRetry(String path, ParameterizedTypeReference<T> responseType) {
+  private <T> T executeWithRetry(String pathDescription, ApiCall<T> apiCall) {
     int attempt = 0;
     Exception lastException = null;
 
     while (attempt < rateLimitConfig.getMaxRetries()) {
       try {
-        validatePath(path);
         rateLimitDelay();
-
-        URI finalUri = URI.create(path); // IMPORTANT
-
-        log.info("Requesting Open5e raw URI: {}", finalUri);
-
-        return open5eRestClient.get()
-            .uri(finalUri)
-            .retrieve()
-            .body(responseType);
+        return apiCall.execute();
 
       } catch (HttpClientErrorException.NotFound e) {
-        log.warn("Resource not found (404): {}", path);
+        log.warn("Resource not found (404): {}", pathDescription);
         throw e;
       } catch (HttpClientErrorException e) {
         log.error("Client error ({}): {}", e.getStatusCode(), e.getMessage());
@@ -235,5 +183,11 @@ public class Open5eApiClient {
       Thread.currentThread().interrupt();
       throw new Open5eApiException("Request interrupted", e);
     }
+  }
+
+  @FunctionalInterface
+  private interface ApiCall<T> {
+
+    T execute() throws Exception;
   }
 }
