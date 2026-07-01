@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,6 +13,9 @@ import static org.mockito.Mockito.when;
 
 import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.client.Open5eApiClient;
+import dev.ushki.livedndlist.dto.open5e.Open5eSpellDto;
+import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
+import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.Spell;
@@ -20,6 +25,8 @@ import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.SpellMapper;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
+import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
+import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -37,15 +45,14 @@ class SpellServiceTest {
 
   @Mock
   private SpellRepository spellRepository;
-
   @Mock
   private SpellMapper spellMapper;
-
   @Mock
   private Open5eApiClient open5eApiClient;
-
   @Mock
   private SyncMetrics syncMetrics;
+  @Mock
+  private SyncProgressTracker progressTracker;
 
   private SpellService spellService;
 
@@ -875,6 +882,467 @@ class SpellServiceTest {
 
       assertThat(result).isEmpty();
       verify(spellRepository).saveAll(List.of());
+    }
+  }
+  // ---------------
+  // sync tests
+  // ---------------
+
+  private void mockFetchAll(List<Open5eSpellDto> results) {
+    when(open5eApiClient.fetchAll(anyString(),
+        any(ParameterizedTypeReference.class))).thenReturn(results);
+  }
+
+  private void mockFetchAllThrows(RuntimeException ex) {
+    when(open5eApiClient.fetchAll(
+        anyString(),
+        any(ParameterizedTypeReference.class))
+    ).thenThrow(ex);
+  }
+
+  @Nested
+  @DisplayName("Get Sync Status")
+  class GetSyncStatusTests {
+
+    @Test
+    @DisplayName("Should return sync status with inProgress false when no sync running")
+    void shouldReturnSyncStatusNotRunning() {
+      SyncStatusDto result = spellService.getSyncStatus();
+
+      assertThat(result).isNotNull();
+      assertThat(result.isInProgress()).isFalse();
+    }
+
+    @Test
+    @DisplayName("Should return status with currentOperation null when idle")
+    void shouldReturnNullOperationWhenIdle() {
+      SyncStatusDto result = spellService.getSyncStatus();
+
+      assertThat(result.getCurrentOperation()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should return zero counts when no sync has run")
+    void shouldReturnZeroCountsWhenIdle() {
+      SyncStatusDto result = spellService.getSyncStatus();
+
+      assertThat(result.getProcessedCount()).isZero();
+      assertThat(result.getTotalCount()).isZero();
+      assertThat(result.getProgressPercent()).isZero();
+    }
+  }
+
+  @Nested
+  @DisplayName("Sync All Spells")
+  class SyncAllSpellsTests {
+
+    @Test
+    @DisplayName("Should return already in progress result when sync is running")
+    void shouldReturnAlreadyInProgressWhenSyncRunning() throws InterruptedException {
+      java.util.concurrent.CountDownLatch fetchStarted = new java.util.concurrent.CountDownLatch(1);
+      java.util.concurrent.CountDownLatch allowFinish = new java.util.concurrent.CountDownLatch(1);
+
+      when(open5eApiClient.fetchAll(anyString(), any(ParameterizedTypeReference.class)))
+          .thenAnswer(invocation -> {
+            fetchStarted.countDown();
+            allowFinish.await();
+            return List.of();
+          });
+
+      Thread syncThread = new Thread(() -> spellService.syncAllSpells());
+      syncThread.start();
+
+      fetchStarted.await();
+
+      SyncResultDto alreadyInProgressResult = spellService.syncAllSpells();
+
+      allowFinish.countDown();
+      syncThread.join();
+
+      assertThat(alreadyInProgressResult.isSuccess()).isFalse();
+      assertThat(alreadyInProgressResult.getMessage()).isEqualTo("Sync already in progress");
+      assertThat(alreadyInProgressResult.getTaskId()).isNotNull();
+      assertThat(alreadyInProgressResult.getSyncedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Should return success result when sync completes creating new spells")
+    void shouldReturnSuccessResultWhenCreatingNewSpells() {
+      Open5eSpellDto spellDto1 = Open5eSpellDto.builder().name("Fireball").build();
+      Open5eSpellDto spellDto2 = Open5eSpellDto.builder().name("Magic Missile").build();
+
+      mockFetchAll(List.of(spellDto1, spellDto2));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.empty());
+      when(spellRepository.findByName("Magic Missile")).thenReturn(Optional.empty());
+      when(spellMapper.fromOpen5eDto(spellDto1)).thenReturn(fireball);
+      when(spellMapper.fromOpen5eDto(spellDto2)).thenReturn(magicMissile);
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+      when(spellRepository.save(magicMissile)).thenReturn(magicMissile);
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result).isNotNull();
+      assertThat(result.isSuccess()).isTrue();
+      assertThat(result.getMessage()).isEqualTo("Sync completed successfully");
+      assertThat(result.getTaskId()).isNotNull();
+      assertThat(result.getSyncedAt()).isNotNull();
+      assertThat(result.getStatistics()).isNotNull();
+      assertThat(result.getStatistics().getTotalFetched()).isEqualTo(2);
+      assertThat(result.getStatistics().getCreated()).isEqualTo(2);
+      assertThat(result.getStatistics().getUpdated()).isEqualTo(0);
+      assertThat(result.getStatistics().getFailed()).isEqualTo(0);
+      assertThat(result.getErrors()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should record updated count when spell already exists in repository")
+    void shouldRecordUpdatedCountWhenSpellAlreadyExists() {
+      Open5eSpellDto spellDto = Open5eSpellDto.builder().name("Fireball").build();
+
+      mockFetchAll(List.of(spellDto));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.of(fireball));
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result.isSuccess()).isTrue();
+      assertThat(result.getStatistics().getCreated()).isEqualTo(0);
+      assertThat(result.getStatistics().getUpdated()).isEqualTo(1);
+      assertThat(result.getStatistics().getFailed()).isEqualTo(0);
+      verify(spellMapper).updateEntityFromOpen5eDto(fireball, spellDto);
+      verify(spellMapper, never()).fromOpen5eDto(any());
+    }
+
+    @Test
+    @DisplayName("Should mix created and updated counts correctly")
+    void shouldMixCreatedAndUpdatedCountsCorrectly() {
+      Open5eSpellDto existingDto = Open5eSpellDto.builder().name("Fireball").build();
+      Open5eSpellDto newDto = Open5eSpellDto.builder().name("Magic Missile").build();
+
+      mockFetchAll(List.of(existingDto, newDto));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.of(fireball));
+      when(spellRepository.findByName("Magic Missile")).thenReturn(Optional.empty());
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+      when(spellMapper.fromOpen5eDto(newDto)).thenReturn(magicMissile);
+      when(spellRepository.save(magicMissile)).thenReturn(magicMissile);
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result.isSuccess()).isTrue();
+      assertThat(result.getStatistics().getCreated()).isEqualTo(1);
+      assertThat(result.getStatistics().getUpdated()).isEqualTo(1);
+      assertThat(result.getStatistics().getFailed()).isEqualTo(0);
+      assertThat(result.getStatistics().getTotalFetched()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("Should return success false with errors when some spells fail processing")
+    void shouldReturnSuccessFalseWithErrorsWhenSomeSpellsFailProcessing() {
+      Open5eSpellDto goodDto = Open5eSpellDto.builder().name("Fireball").build();
+      Open5eSpellDto badDto = Open5eSpellDto.builder().name("Bad Spell").build();
+
+      mockFetchAll(List.of(goodDto, badDto));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.empty());
+      when(spellMapper.fromOpen5eDto(goodDto)).thenReturn(fireball);
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+      when(spellRepository.findByName("Bad Spell"))
+          .thenThrow(new RuntimeException("DB error for Bad Spell"));
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result.isSuccess()).isFalse();
+      assertThat(result.getMessage()).isEqualTo("Sync completed with errors");
+      assertThat(result.getStatistics().getCreated()).isEqualTo(1);
+      assertThat(result.getStatistics().getFailed()).isEqualTo(1);
+      assertThat(result.getErrors()).isNotNull();
+      assertThat(result.getErrors()).anyMatch(e -> e.contains("Bad Spell"));
+    }
+
+    @Test
+    @DisplayName("Should return error result when critical API exception occurs")
+    void shouldReturnErrorResultWhenCriticalApiExceptionOccurs() {
+      mockFetchAllThrows(new RuntimeException("API unavailable"));
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result).isNotNull();
+      assertThat(result.isSuccess()).isFalse();
+      assertThat(result.getMessage()).contains("Critical error");
+      assertThat(result.getMessage()).contains("API unavailable");
+      assertThat(result.getTaskId()).isNotNull();
+      assertThat(result.getSyncedAt()).isNotNull();
+      assertThat(result.getErrors()).isNotNull();
+      assertThat(result.getErrors()).contains("API unavailable");
+    }
+
+    @Test
+    @DisplayName("Should call syncMetrics startOperation and endOperation on success")
+    void shouldCallSyncMetricsStartAndEndOnSuccess() {
+      Open5eSpellDto spellDto = Open5eSpellDto.builder().name("Fireball").build();
+
+      mockFetchAll(List.of(spellDto));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.empty());
+      when(spellMapper.fromOpen5eDto(spellDto)).thenReturn(fireball);
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+
+      spellService.syncAllSpells();
+
+      verify(syncMetrics).startOperation();
+      verify(syncMetrics).endOperation();
+    }
+
+    @Test
+    @DisplayName("Should call syncMetrics endOperation even on critical API error")
+    void shouldCallSyncMetricsEndOperationEvenOnCriticalError() {
+      mockFetchAllThrows(new RuntimeException("API failure"));
+
+      spellService.syncAllSpells();
+
+      verify(syncMetrics).startOperation();
+      verify(syncMetrics).endOperation();
+    }
+
+    @Test
+    @DisplayName("Should record metrics for each successfully processed spell")
+    void shouldRecordMetricsForEachProcessedSpell() {
+      Open5eSpellDto dto1 = Open5eSpellDto.builder().name("Fireball").build();
+      Open5eSpellDto dto2 = Open5eSpellDto.builder().name("Magic Missile").build();
+
+      mockFetchAll(List.of(dto1, dto2));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.empty());
+      when(spellRepository.findByName("Magic Missile")).thenReturn(Optional.empty());
+      when(spellMapper.fromOpen5eDto(dto1)).thenReturn(fireball);
+      when(spellMapper.fromOpen5eDto(dto2)).thenReturn(magicMissile);
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+      when(spellRepository.save(magicMissile)).thenReturn(magicMissile);
+
+      spellService.syncAllSpells();
+
+      verify(syncMetrics, times(2)).recordRequest(anyLong(), eq(true));
+    }
+
+    @Test
+    @DisplayName("Should record failed metric on critical fetch error")
+    void shouldRecordFailedMetricOnCriticalFetchError() {
+      mockFetchAllThrows(new RuntimeException("API failure"));
+
+      spellService.syncAllSpells();
+
+      verify(syncMetrics).recordRequest(anyLong(), eq(false));
+      verify(syncMetrics, never()).recordRequest(anyLong(), eq(true));
+    }
+
+    @Test
+    @DisplayName("Should include non-negative duration in statistics")
+    void shouldIncludeNonNegativeDurationInStatistics() {
+      Open5eSpellDto spellDto = Open5eSpellDto.builder().name("Fireball").build();
+
+      mockFetchAll(List.of(spellDto));
+      when(spellRepository.findByName("Fireball")).thenReturn(Optional.empty());
+      when(spellMapper.fromOpen5eDto(spellDto)).thenReturn(fireball);
+      when(spellRepository.save(fireball)).thenReturn(fireball);
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result.getStatistics().getDurationMs()).isGreaterThanOrEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("Should handle empty spell list from API")
+    void shouldHandleEmptySpellListFromApi() {
+      mockFetchAll(List.of());
+
+      SyncResultDto result = spellService.syncAllSpells();
+
+      assertThat(result.isSuccess()).isTrue();
+      assertThat(result.getStatistics().getTotalFetched()).isEqualTo(0);
+      assertThat(result.getStatistics().getCreated()).isEqualTo(0);
+      assertThat(result.getStatistics().getUpdated()).isEqualTo(0);
+      assertThat(result.getStatistics().getFailed()).isEqualTo(0);
+      assertThat(result.getErrors()).isNull();
+      verify(spellRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should generate unique task IDs for consecutive already-in-progress results")
+    void shouldGenerateUniqueTaskIds() throws Exception {
+      java.util.concurrent.CountDownLatch fetchStarted = new java.util.concurrent.CountDownLatch(1);
+      java.util.concurrent.CountDownLatch allowFinish = new java.util.concurrent.CountDownLatch(1);
+
+      when(open5eApiClient.fetchAll(anyString(), any(ParameterizedTypeReference.class)))
+          .thenAnswer(invocation -> {
+            fetchStarted.countDown();
+            allowFinish.await();
+            return List.of();
+          });
+
+      Thread syncThread = new Thread(() -> spellService.syncAllSpells());
+      syncThread.start();
+      fetchStarted.await();
+
+      SyncResultDto inProgress1 = spellService.syncAllSpells();
+      SyncResultDto inProgress2 = spellService.syncAllSpells();
+
+      allowFinish.countDown();
+      syncThread.join();
+
+      assertThat(inProgress1.getTaskId()).isNotEqualTo(inProgress2.getTaskId());
+    }
+
+    @Test
+    @DisplayName("Should not call fetchAll when already in progress")
+    void shouldNotCallFetchAllWhenAlreadyInProgress() throws Exception {
+      java.util.concurrent.CountDownLatch fetchStarted = new java.util.concurrent.CountDownLatch(1);
+      java.util.concurrent.CountDownLatch allowFinish = new java.util.concurrent.CountDownLatch(1);
+
+      when(open5eApiClient.fetchAll(anyString(), any(ParameterizedTypeReference.class)))
+          .thenAnswer(invocation -> {
+            fetchStarted.countDown();
+            allowFinish.await();
+            return List.of();
+          });
+
+      Thread syncThread = new Thread(() -> spellService.syncAllSpells());
+      syncThread.start();
+      fetchStarted.await();
+
+      spellService.syncAllSpells();
+
+      allowFinish.countDown();
+      syncThread.join();
+
+      verify(open5eApiClient, times(1)).fetchAll(anyString(),
+          any(ParameterizedTypeReference.class));
+    }
+
+    @Test
+    @DisplayName("Should allow new sync to start after previous one finishes")
+    void shouldAllowNewSyncAfterPreviousFinishes() {
+      mockFetchAll(List.of());
+
+      SyncResultDto first = spellService.syncAllSpells();
+      SyncResultDto second = spellService.syncAllSpells();
+
+      assertThat(first.isSuccess()).isTrue();
+      assertThat(second.isSuccess()).isTrue();
+      verify(open5eApiClient, times(2)).fetchAll(anyString(),
+          any(ParameterizedTypeReference.class));
+    }
+
+    @Test
+    @DisplayName("Should allow new sync after previous critical error")
+    void shouldAllowNewSyncAfterCriticalError() {
+      mockFetchAllThrows(new RuntimeException("First failure"));
+
+      SyncResultDto errorResult = spellService.syncAllSpells();
+
+      mockFetchAll(List.of());
+
+      SyncResultDto successResult = spellService.syncAllSpells();
+
+      assertThat(errorResult.isSuccess()).isFalse();
+      assertThat(successResult.isSuccess()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Should record metrics even when individual spell processing fails")
+    void shouldRecordMetricsEvenWhenIndividualSpellFails() {
+      Open5eSpellDto badDto = Open5eSpellDto.builder().name("Bad Spell").build();
+
+      mockFetchAll(List.of(badDto));
+      when(spellRepository.findByName("Bad Spell"))
+          .thenThrow(new RuntimeException("Processing error"));
+
+      spellService.syncAllSpells();
+
+      verify(syncMetrics, times(1)).recordRequest(anyLong(), eq(true));
+    }
+  }
+
+  @Nested
+  @DisplayName("getSyncResultDto static helper")
+  class GetSyncResultDtoTests {
+
+    @Test
+    @DisplayName("Should build success dto when result has no errors")
+    void shouldBuildSuccessDtoWhenNoErrors() {
+      SyncResult result = new SyncResult();
+      result.recordCreated();
+      result.recordUpdated();
+
+      SyncResultDto dto = SpellService.getSyncResultDto(result, 2, 100L, "task-1");
+
+      assertThat(dto.isSuccess()).isTrue();
+      assertThat(dto.getMessage()).isEqualTo("Sync completed successfully");
+      assertThat(dto.getTaskId()).isEqualTo("task-1");
+      assertThat(dto.getStatistics().getTotalFetched()).isEqualTo(2);
+      assertThat(dto.getStatistics().getCreated()).isEqualTo(1);
+      assertThat(dto.getStatistics().getUpdated()).isEqualTo(1);
+      assertThat(dto.getStatistics().getFailed()).isEqualTo(0);
+      assertThat(dto.getStatistics().getDurationMs()).isEqualTo(100L);
+      assertThat(dto.getErrors()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should build error dto when result has errors")
+    void shouldBuildErrorDtoWhenResultHasErrors() {
+      SyncResult result = new SyncResult();
+      result.recordCreated();
+      result.recordError("Bad Spell", new RuntimeException("oops"));
+
+      SyncResultDto dto = SpellService.getSyncResultDto(result, 2, 200L, "task-2");
+
+      assertThat(dto.isSuccess()).isFalse();
+      assertThat(dto.getMessage()).isEqualTo("Sync completed with errors");
+      assertThat(dto.getErrors()).isNotNull();
+      assertThat(dto.getErrors()).anyMatch(e -> e.contains("Bad Spell"));
+      assertThat(dto.getStatistics().getFailed()).isEqualTo(1);
+      assertThat(dto.getStatistics().getCreated()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("Should not include errors list when result has no errors")
+    void shouldNotIncludeErrorsWhenNoErrors() {
+      SyncResult result = new SyncResult();
+
+      SyncResultDto dto = SpellService.getSyncResultDto(result, 0, 0L, "task-3");
+
+      assertThat(dto.getErrors()).isNull();
+    }
+
+    @Test
+    @DisplayName("Should include syncedAt timestamp")
+    void shouldIncludeSyncedAtTimestamp() {
+      SyncResult result = new SyncResult();
+
+      SyncResultDto dto = SpellService.getSyncResultDto(result, 0, 0L, "task-4");
+
+      assertThat(dto.getSyncedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Should preserve taskId in result")
+    void shouldPreserveTaskId() {
+      SyncResult result = new SyncResult();
+      String taskId = "my-custom-task-id";
+
+      SyncResultDto dto = SpellService.getSyncResultDto(result, 0, 0L, taskId);
+
+      assertThat(dto.getTaskId()).isEqualTo(taskId);
+    }
+
+    @Test
+    @DisplayName("Should set success false when all spells failed")
+    void shouldSetSuccessFalseWhenAllSpellsFailed() {
+      SyncResult result = new SyncResult();
+      result.recordError("Spell A", new RuntimeException("err1"));
+      result.recordError("Spell B", new RuntimeException("err2"));
+
+      SyncResultDto dto = SpellService.getSyncResultDto(result, 2, 50L, "task-5");
+
+      assertThat(dto.isSuccess()).isFalse();
+      assertThat(dto.getStatistics().getFailed()).isEqualTo(2);
+      assertThat(dto.getErrors()).hasSize(2);
     }
   }
 }

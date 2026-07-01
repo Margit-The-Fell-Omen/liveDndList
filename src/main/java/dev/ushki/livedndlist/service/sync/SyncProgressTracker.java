@@ -1,10 +1,9 @@
 package dev.ushki.livedndlist.service.sync;
 
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import lombok.Getter;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.Getter;
 
 public class SyncProgressTracker {
 
@@ -13,7 +12,7 @@ public class SyncProgressTracker {
   private final AtomicInteger totalCount = new AtomicInteger(0);
 
   @Getter
-  private volatile String currentOperation = "";
+  private volatile String currentOperation = null;
 
   public boolean tryStart() {
     return syncInProgress.compareAndSet(false, true);
