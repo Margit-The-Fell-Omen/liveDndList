@@ -1,13 +1,14 @@
 package dev.ushki.livedndlist.mapper;
 
-import dev.ushki.livedndlist.dto.open5e.Open5eAsiDto;
+import dev.ushki.livedndlist.dto.open5e.Open5eDocumentDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
-import dev.ushki.livedndlist.dto.open5e.Open5eSpeedDto;
-import dev.ushki.livedndlist.dto.open5e.Open5eSubraceDto;
-import dev.ushki.livedndlist.entity.dndCharacter.AbilityScoresIncrease;
+import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
+import dev.ushki.livedndlist.dto.open5e.Open5eTraitDto;
+import dev.ushki.livedndlist.entity.dndCharacter.Document;
+import dev.ushki.livedndlist.entity.dndCharacter.GameSystem;
+import dev.ushki.livedndlist.entity.dndCharacter.Publisher;
 import dev.ushki.livedndlist.entity.dndCharacter.Race;
-import dev.ushki.livedndlist.entity.dndCharacter.Speed;
-import dev.ushki.livedndlist.entity.dndCharacter.Subrace;
+import dev.ushki.livedndlist.entity.dndCharacter.RaceTrait;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,100 +25,55 @@ public class RaceMapper {
 
     Race race = Race.builder()
         .name(dto.getName())
-        .slug(dto.getSlug())
+        .key(dto.getKey())
         .description(dto.getDesc())
-        .asiDescription(dto.getAsiDesc())
-        .age(dto.getAge())
-        .alignment(dto.getAlignment())
-        .size(dto.getSize())
-        .sizeRaw(dto.getSizeRaw())
-        .speedDescription(dto.getSpeedDesc())
-        .languages(dto.getLanguages())
-        .vision(dto.getVision())
-        .traits(dto.getTraits())
-        .documentSlug(dto.getDocumentSlug())
-        .documentTitle(dto.getDocumentTitle())
-        .documentLicenseUrl(dto.getDocumentLicenseUrl())
-        .documentUrl(dto.getDocumentUrl())
-        .abilityScoreIncreases(new ArrayList<>())
-        .subraces(new ArrayList<>())
+        .subspecies(dto.isSubspecies())
+        .traits(new ArrayList<>())
+        .document(toDocumentEntity(dto.getDocument()))
         .build();
 
-    if (dto.getSpeed() != null) {
-      Speed speed = toSpeedEntity(dto.getSpeed());
-      race.setSpeed(speed);
-      speed.setRace(race);
+    if (dto.isSubspecies()) {
+      race.setParentRaceKey(dto.getSubspeciesOf());
     }
 
-    if (dto.getAsi() != null) {
-      dto.getAsi().forEach(asiDto -> {
-        AbilityScoresIncrease asi = toAsiEntity(asiDto);
-        asi.setRace(race);
-        race.getAbilityScoreIncreases().add(asi);
-      });
-    }
-
-    if (dto.getSubraces() != null) {
-      dto.getSubraces().forEach(subraceDto -> {
-        Subrace subrace = toSubraceEntity(subraceDto);
-        subrace.setRace(race);
-        race.getSubraces().add(subrace);
-      });
-    }
+    applyTraits(dto.getTraits(), race);
 
     return race;
   }
 
-  public Subrace toSubraceEntity(Open5eSubraceDto dto) {
+  public Document toDocumentEntity(Open5eDocumentDto dto) {
     if (dto == null) {
       return null;
     }
 
-    Subrace subrace = Subrace.builder()
+    return Document.builder()
+        .key(dto.getKey())
         .name(dto.getName())
-        .slug(dto.getSlug())
-        .description(dto.getDesc())
-        .traits(dto.getTraits())
-        .asiDescription(dto.getAsiDesc())
-        .documentSlug(dto.getDocumentSlug())
-        .documentTitle(dto.getDocumentTitle())
-        .documentUrl(dto.getDocumentUrl())
-        .abilityScoreIncreases(new ArrayList<>())
-        .build();
-
-    if (dto.getAsi() != null) {
-      dto.getAsi().forEach(asiDto -> {
-        AbilityScoresIncrease asi = toAsiEntity(asiDto);
-        asi.setSubrace(subrace);
-        subrace.getAbilityScoreIncreases().add(asi);
-      });
-    }
-
-    return subrace;
-  }
-
-  public AbilityScoresIncrease toAsiEntity(Open5eAsiDto dto) {
-    if (dto == null) {
-      return null;
-    }
-
-    return AbilityScoresIncrease.builder()
-        .value(dto.getValue())
-        .attributes(dto.getAttributes() != null ? String.join(",", dto.getAttributes()) : "")
+        .type(dto.getType())
+        .displayName(dto.getDisplayName())
+        .permalink(dto.getPermalink())
+        .publisher(toPublisherEntity(dto.getPublisher()))
+        .gamesystem(toGameSystemEntity(dto.getGameSystem()))
         .build();
   }
 
-  public Speed toSpeedEntity(Open5eSpeedDto dto) {
+  private Publisher toPublisherEntity(Open5eReferenceDto dto) {
     if (dto == null) {
       return null;
     }
+    return Publisher.builder()
+        .name(dto.getName())
+        .key(dto.getKey())
+        .build();
+  }
 
-    return Speed.builder()
-        .walk(dto.getWalk())
-        .fly(dto.getFly())
-        .swim(dto.getSwim())
-        .climb(dto.getClimb())
-        .burrow(dto.getBurrow())
+  private GameSystem toGameSystemEntity(Open5eReferenceDto dto) {
+    if (dto == null) {
+      return null;
+    }
+    return GameSystem.builder()
+        .name(dto.getName())
+        .key(dto.getKey())
         .build();
   }
 
@@ -127,97 +83,17 @@ public class RaceMapper {
     }
 
     updateIfPresent(dto.getName(), entity::setName);
+    updateIfPresent(dto.getKey(), entity::setKey);
     updateIfPresent(dto.getDesc(), entity::setDescription);
-    updateIfPresent(dto.getAsiDesc(), entity::setAsiDescription);
-    updateIfPresent(dto.getAge(), entity::setAge);
-    updateIfPresent(dto.getAlignment(), entity::setAlignment);
-    updateIfPresent(dto.getSize(), entity::setSize);
-    updateIfPresent(dto.getSizeRaw(), entity::setSizeRaw);
-    updateIfPresent(dto.getSpeedDesc(), entity::setSpeedDescription);
-    updateIfPresent(dto.getLanguages(), entity::setLanguages);
-    updateIfPresent(dto.getVision(), entity::setVision);
-    updateIfPresent(dto.getTraits(), entity::setTraits);
-    updateIfPresent(dto.getDocumentSlug(), entity::setDocumentSlug);
-    updateIfPresent(dto.getDocumentTitle(), entity::setDocumentTitle);
-    updateIfPresent(dto.getDocumentLicenseUrl(), entity::setDocumentLicenseUrl);
-    updateIfPresent(dto.getDocumentUrl(), entity::setDocumentUrl);
+    updateIfPresent(dto.isSubspecies(), entity::setSubspecies);
 
-    updateSpeed(entity, dto.getSpeed());
-
-    updateAbilityScoreIncreases(entity, dto.getAsi());
-
-    updateSubraces(entity, dto.getSubraces());
-  }
-
-  private void updateSpeed(Race entity, Open5eSpeedDto speedDto) {
-    if (speedDto == null) {
-      return;
+    if (dto.getDocument() != null) {
+      entity.setDocument(toDocumentEntity(dto.getDocument()));
     }
 
-    if (entity.getSpeed() == null) {
-      Speed speed = toSpeedEntity(speedDto);
-      speed.setRace(entity);
-      entity.setSpeed(speed);
-    } else {
-      Speed existingSpeed = entity.getSpeed();
-      updateIfPresent(speedDto.getWalk(), existingSpeed::setWalk);
-      updateIfPresent(speedDto.getFly(), existingSpeed::setFly);
-      updateIfPresent(speedDto.getSwim(), existingSpeed::setSwim);
-      updateIfPresent(speedDto.getClimb(), existingSpeed::setClimb);
-      updateIfPresent(speedDto.getBurrow(), existingSpeed::setBurrow);
-    }
-  }
-
-  private void updateAbilityScoreIncreases(Race entity, List<Open5eAsiDto> asiDtos) {
-    entity.getAbilityScoreIncreases().clear();
-
-    if (asiDtos == null || asiDtos.isEmpty()) {
-      return;
-    }
-
-    asiDtos.forEach(asiDto -> {
-      AbilityScoresIncrease asi = toAsiEntity(asiDto);
-      asi.setRace(entity);
-      entity.getAbilityScoreIncreases().add(asi);
-    });
-  }
-
-  private void updateSubraces(Race entity, List<Open5eSubraceDto> subraceDtos) {
-    entity.getSubraces().clear();
-
-    if (subraceDtos == null || subraceDtos.isEmpty()) {
-      return;
-    }
-
-    subraceDtos.forEach(subraceDto -> {
-      Subrace subrace = toSubraceEntity(subraceDto);
-      subrace.setRace(entity);
-      entity.getSubraces().add(subrace);
-    });
-  }
-
-  public void updateSubraceEntity(Subrace entity, Open5eSubraceDto dto) {
-    if (dto == null || entity == null) {
-      return;
-    }
-
-    updateIfPresent(dto.getName(), entity::setName);
-    updateIfPresent(dto.getSlug(), entity::setSlug);
-    updateIfPresent(dto.getDesc(), entity::setDescription);
-    updateIfPresent(dto.getTraits(), entity::setTraits);
-    updateIfPresent(dto.getAsiDesc(), entity::setAsiDescription);
-    updateIfPresent(dto.getDocumentSlug(), entity::setDocumentSlug);
-    updateIfPresent(dto.getDocumentTitle(), entity::setDocumentTitle);
-    updateIfPresent(dto.getDocumentUrl(), entity::setDocumentUrl);
-
-    // Обновляем ASI для подрасы
-    entity.getAbilityScoreIncreases().clear();
-    if (dto.getAsi() != null) {
-      dto.getAsi().forEach(asiDto -> {
-        AbilityScoresIncrease asi = toAsiEntity(asiDto);
-        asi.setSubrace(entity);
-        entity.getAbilityScoreIncreases().add(asi);
-      });
+    if (dto.getTraits() != null) {
+      entity.getTraits().clear();
+      applyTraits(dto.getTraits(), entity);
     }
   }
 
@@ -228,102 +104,86 @@ public class RaceMapper {
 
     Open5eRaceDto dto = new Open5eRaceDto();
     dto.setName(entity.getName());
-    dto.setSlug(entity.getSlug());
+    dto.setKey(entity.getKey());
     dto.setDesc(entity.getDescription());
-    dto.setAsiDesc(entity.getAsiDescription());
-    dto.setAge(entity.getAge());
-    dto.setAlignment(entity.getAlignment());
-    dto.setSize(entity.getSize());
-    dto.setSizeRaw(entity.getSizeRaw());
-    dto.setSpeedDesc(entity.getSpeedDescription());
-    dto.setLanguages(entity.getLanguages());
-    dto.setVision(entity.getVision());
-    dto.setTraits(entity.getTraits());
-    dto.setDocumentSlug(entity.getDocumentSlug());
-    dto.setDocumentTitle(entity.getDocumentTitle());
-    dto.setDocumentLicenseUrl(entity.getDocumentLicenseUrl());
-    dto.setDocumentUrl(entity.getDocumentUrl());
+    dto.setSubspecies(entity.isSubspecies());
+    dto.setDocument(toDocumentDto(entity.getDocument()));
 
-    if (entity.getSpeed() != null) {
-      dto.setSpeed(toSpeedDto(entity.getSpeed()));
-    }
-
-    if (entity.getAbilityScoreIncreases() != null) {
-      List<Open5eAsiDto> asiDtos = entity.getAbilityScoreIncreases().stream()
-          .map(this::toAsiDto)
-          .toList();
-      dto.setAsi(asiDtos);
-    }
-
-    if (entity.getSubraces() != null) {
-      List<Open5eSubraceDto> subraceDtos = entity.getSubraces().stream()
-          .map(this::toSubraceDto)
-          .toList();
-      dto.setSubraces(subraceDtos);
-    }
+    dto.setTraits(buildTraitDtos(entity.getTraits()));
 
     return dto;
   }
 
-  public Open5eSubraceDto toSubraceDto(Subrace entity) {
+  public Open5eDocumentDto toDocumentDto(Document entity) {
     if (entity == null) {
       return null;
     }
-
-    Open5eSubraceDto dto = new Open5eSubraceDto();
+    Open5eDocumentDto dto = new Open5eDocumentDto();
+    dto.setKey(entity.getKey());
     dto.setName(entity.getName());
-    dto.setSlug(entity.getSlug());
-    dto.setDesc(entity.getDescription());
-    dto.setTraits(entity.getTraits());
-    dto.setAsiDesc(entity.getAsiDescription());
-    dto.setDocumentSlug(entity.getDocumentSlug());
-    dto.setDocumentTitle(entity.getDocumentTitle());
-    dto.setDocumentUrl(entity.getDocumentUrl());
-
-    if (entity.getAbilityScoreIncreases() != null) {
-      List<Open5eAsiDto> asiDtos = entity.getAbilityScoreIncreases().stream()
-          .map(this::toAsiDto)
-          .toList();
-      dto.setAsi(asiDtos);
-    }
-
+    dto.setType(entity.getType());
+    dto.setDisplayName(entity.getDisplayName());
+    dto.setPermalink(entity.getPermalink());
+    dto.setPublisher(toReferenceDto(entity.getPublisher()));
+    dto.setGameSystem(toReferenceDto(entity.getGamesystem()));
     return dto;
   }
 
-  public Open5eAsiDto toAsiDto(AbilityScoresIncrease entity) {
+  private Open5eReferenceDto toReferenceDto(Publisher entity) {
     if (entity == null) {
       return null;
     }
-
-    Open5eAsiDto dto = new Open5eAsiDto();
-    dto.setValue(entity.getValue());
-    dto.setAttributes(entity.getAttributesList());
-
+    Open5eReferenceDto dto = new Open5eReferenceDto();
+    dto.setName(entity.getName());
+    dto.setKey(entity.getKey());
     return dto;
   }
 
-  public Open5eSpeedDto toSpeedDto(Speed entity) {
+  private Open5eReferenceDto toReferenceDto(GameSystem entity) {
     if (entity == null) {
       return null;
     }
-
-    Open5eSpeedDto dto = new Open5eSpeedDto();
-    dto.setWalk(entity.getWalk());
-    dto.setFly(entity.getFly());
-    dto.setSwim(entity.getSwim());
-    dto.setClimb(entity.getClimb());
-    dto.setBurrow(entity.getBurrow());
-
+    Open5eReferenceDto dto = new Open5eReferenceDto();
+    dto.setName(entity.getName());
+    dto.setKey(entity.getKey());
     return dto;
   }
 
-  public List<Open5eRaceDto> toDtoList(List<Race> entities) {
-    if (entities == null) {
-      return List.of();
+  private void applyTraits(List<Open5eTraitDto> traitDtos, Race race) {
+    if (traitDtos == null) {
+      return;
     }
 
-    return entities.stream()
-        .map(this::toDto)
+    traitDtos.forEach(traitDto -> {
+      RaceTrait trait = toTraitEntity(traitDto);
+      trait.setRace(race);
+      race.getTraits().add(trait);
+    });
+  }
+
+  private RaceTrait toTraitEntity(Open5eTraitDto dto) {
+    return RaceTrait.builder()
+        .name(dto.getName())
+        .description(dto.getDesc())
+        .type(dto.getType())
+        .traitOrder(dto.getOrder())
+        .build();
+  }
+
+  private List<Open5eTraitDto> buildTraitDtos(List<RaceTrait> traits) {
+    if (traits == null || traits.isEmpty()) {
+      return null;
+    }
+
+    return traits.stream()
+        .map(trait -> {
+          Open5eTraitDto dto = new Open5eTraitDto();
+          dto.setName(trait.getName());
+          dto.setDesc(trait.getDescription());
+          dto.setType(trait.getType());
+          dto.setOrder(trait.getTraitOrder());
+          return dto;
+        })
         .toList();
   }
 

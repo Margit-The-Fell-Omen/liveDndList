@@ -9,46 +9,19 @@ public class Open5eRaceDto {
 
   private String name;
 
-  private String slug;
+  private String key;
 
+  @JsonProperty("desc")
   private String desc;
 
-  @JsonProperty("asi_desc")
-  private String asiDesc;
+  private Open5eDocumentDto document;
 
-  private List<Open5eAsiDto> asi;
+  private boolean isSubspecies;
 
-  private String age;
+  @JsonProperty("subspecies_of")
+  private String subspeciesOf;
 
-  private String alignment;
+  private List<Open5eTraitDto> traits;
 
-  private String size;
-
-  @JsonProperty("size_raw")
-  private String sizeRaw;
-
-  private Open5eSpeedDto speed;
-
-  @JsonProperty("speed_desc")
-  private String speedDesc;
-
-  private String languages;
-
-  private String vision;
-
-  private String traits;
-
-  private List<Open5eSubraceDto> subraces;
-
-  @JsonProperty("document__slug")
-  private String documentSlug;
-
-  @JsonProperty("document__title")
-  private String documentTitle;
-
-  @JsonProperty("document__license_url")
-  private String documentLicenseUrl;
-
-  @JsonProperty("document__url")
-  private String documentUrl;
+  private Open5eCrossReferencesDto crossreferences;
 }

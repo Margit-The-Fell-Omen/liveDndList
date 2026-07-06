@@ -1,5 +1,7 @@
 package dev.ushki.livedndlist.client;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ushki.livedndlist.config.Open5eRateLimitConfig;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.exceptions.Open5eApiException;
@@ -14,8 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 @Slf4j
@@ -65,20 +67,30 @@ public class Open5eApiClient {
     return allResults;
   }
 
+  private long parseRetryAfter(String responseBody) {
+    try {
+      // Quick parse without full deserialization
+      ObjectMapper mapper = new ObjectMapper();
+      JsonNode root = mapper.readTree(responseBody);
+      JsonNode retryAfter = root.get("retry_after");
+      if (retryAfter != null && retryAfter.isNumber()) {
+        return Math.min(retryAfter.asLong(), 300); // cap at 5 minutes
+      }
+    } catch (Exception ignored) {
+    }
+    return 60; // safe default
+  }
+
   private <T> T executeTemplateWithRetry(
       String uriTemplate,
       Function<RestClient.ResponseSpec, T> bodyExtractor,
       Object... uriVariables) {
 
-    URI finalUri = UriComponentsBuilder.fromPath(uriTemplate)
-        .buildAndExpand(uriVariables)
-        .toUri();
-
     return executeWithRetry(uriTemplate, () -> {
-      log.info("Requesting Open5e template URI: {}", finalUri);
+      log.info("Requesting Open5e template URI: {}", uriTemplate);
 
       RestClient.ResponseSpec responseSpec = open5eRestClient.get()
-          .uri(finalUri)
+          .uri(uriTemplate, uriVariables) // ← RestClient resolves template against base URL
           .retrieve();
 
       return bodyExtractor.apply(responseSpec);
@@ -90,13 +102,17 @@ public class Open5eApiClient {
       Function<RestClient.ResponseSpec, T> bodyExtractor) {
 
     validatePath(path);
-    URI finalUri = URI.create(path);
 
     return executeWithRetry(path, () -> {
-      log.info("Requesting Open5e raw URI: {}", finalUri);
+      log.info("Requesting Open5e raw URI: {}", path);
 
       RestClient.ResponseSpec responseSpec = open5eRestClient.get()
-          .uri(finalUri)
+          .uri(uriBuilder -> {
+            if (path.startsWith("http://") || path.startsWith("https://")) {
+              return URI.create(path);
+            }
+            return uriBuilder.replacePath(path).build();
+          })
           .retrieve();
 
       return bodyExtractor.apply(responseSpec);
@@ -118,6 +134,13 @@ public class Open5eApiClient {
       } catch (HttpClientErrorException e) {
         log.error("Client error ({}): {}", e.getStatusCode(), e.getMessage());
         throw new Open5eApiException("Client error during API request", e);
+      } catch (HttpServerErrorException e) {
+        if (e.getStatusCode().value() == 504 || e.getStatusCode().value() == 429) {
+          long retryAfterSeconds = parseRetryAfter(e.getResponseBodyAsString());
+          log.warn("Server overloaded ({}), backing off for {}s as requested",
+              e.getStatusCode(), retryAfterSeconds);
+          sleep(retryAfterSeconds * 1000);
+        }
       } catch (Exception e) {
         lastException = e;
         attempt++;
@@ -138,10 +161,7 @@ public class Open5eApiClient {
       return null;
     }
     try {
-      URI uri = new URI(nextFullUrl);
-      String path = uri.getPath();
-      String query = uri.getQuery();
-      return query != null ? path + "?" + query : path;
+      return new URI(nextFullUrl).toString();
     } catch (Exception e) {
       log.error("Failed to parse next URL: {}", nextFullUrl, e);
       throw new Open5eApiException("Invalid next URL format: " + nextFullUrl, e);
@@ -149,8 +169,8 @@ public class Open5eApiClient {
   }
 
   private void validatePath(String path) {
-    if (path == null || !path.startsWith("/")) {
-      throw new IllegalArgumentException("Invalid path: must start with '/'");
+    if (path == null || path.isBlank()) {
+      throw new Open5eApiException("API path must not be blank", null);
     }
 
     String pathOnly = path.contains("?") ? path.substring(0, path.indexOf('?')) : path;

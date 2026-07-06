@@ -6,8 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,89 +33,21 @@ public class Race {
   private String name;
 
   @Column(unique = true, nullable = false)
-  private String slug;
+  private String key;
 
   @Column(columnDefinition = "TEXT")
   private String description;
 
-  @Column(name = "asi_description", columnDefinition = "TEXT")
-  private String asiDescription;
+  @Column(nullable = false)
+  private boolean subspecies;
 
-  @Column(columnDefinition = "TEXT")
-  private String age;
+  private String parentRaceKey;
 
-  @Column(columnDefinition = "TEXT")
-  private String alignment;
-
-  @Column(name = "size_description")
-  private String size;
-
-  @Column(name = "size_raw")
-  private String sizeRaw;
-
-  @Column(name = "speed_description", columnDefinition = "TEXT")
-  private String speedDescription;
-
-  @Column(columnDefinition = "TEXT")
-  private String languages;
-
-  @Column(columnDefinition = "TEXT")
-  private String vision;
-
-  @Column(columnDefinition = "TEXT")
-  private String traits;
-
-  @Column(name = "document_slug")
-  private String documentSlug;
-
-  @Column(name = "document_title")
-  private String documentTitle;
-
-  @Column(name = "document_license_url")
-  private String documentLicenseUrl;
-
-  @Column(name = "document_url")
-  private String documentUrl;
-
-  @OneToMany(mappedBy = "race", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
-  private List<AbilityScoresIncrease> abilityScoreIncreases = new ArrayList<>();
-
-  @OneToOne(mappedBy = "race", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Speed speed;
-
   @OneToMany(mappedBy = "race", cascade = CascadeType.ALL, orphanRemoval = true)
-  @Builder.Default
-  private List<Subrace> subraces = new ArrayList<>();
+  private List<RaceTrait> traits = new ArrayList<>();
 
-  public void addAbilityScoreIncrease(AbilityScoresIncrease asi) {
-    abilityScoreIncreases.add(asi);
-    asi.setRace(this);
-  }
-
-  public void removeAbilityScoreIncrease(AbilityScoresIncrease asi) {
-    abilityScoreIncreases.remove(asi);
-    asi.setRace(null);
-  }
-
-  public void setSpeed(Speed speed) {
-    if (speed == null) {
-      if (this.speed != null) {
-        this.speed.setRace(null);
-      }
-    } else {
-      speed.setRace(this);
-    }
-    this.speed = speed;
-  }
-
-  public void addSubrace(Subrace subrace) {
-    subraces.add(subrace);
-    subrace.setRace(this);
-  }
-
-  public void removeSubrace(Subrace subrace) {
-    subraces.remove(subrace);
-    subrace.setRace(null);
-  }
+  @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+  @JoinColumn(name = "document_id")
+  private Document document;
 }

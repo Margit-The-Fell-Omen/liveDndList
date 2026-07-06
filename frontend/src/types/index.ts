@@ -67,32 +67,24 @@ export interface Speed {
   fly?: number;
 }
 
-export interface Subrace extends DocumentInfo {
+export interface RaceTrait {
+  id: number;
   name: string;
-  slug: string;
-  desc: string;
-  asi: Asi[];
-  asi_desc: string;
-  traits: string;
+  description: string;
+  type: string;
+  traitOrder: number;
 }
 
 export interface Race extends DocumentInfo {
+  id: number;
   name: string;
-  slug: string;
-  desc: string;
-  asi_desc: string;
-  asi: Asi[];
-  age: string;
-  alignment: string;
-  size: string;
-  size_raw: string;
-  speed: Speed;
-  speed_desc: string;
-  languages: string;
-  vision: string;
-  traits: string;
-  subraces: Subrace[];
+  key: string;
+  description: string;
+  subspecies: boolean;
+  parentRaceKey: string | null;
+  traits: RaceTrait[];
 }
+
 
 export interface Archetype extends DocumentInfo {
   name: string;
@@ -234,7 +226,7 @@ export interface SpellResponse {
 
 export interface CharacterCreateRequest {
   name: string;
-  raceSlug: string;
+  raceKey: string;
   backgroundKey: string;
   alignment?: CharacterAlignment;
   background?: string;

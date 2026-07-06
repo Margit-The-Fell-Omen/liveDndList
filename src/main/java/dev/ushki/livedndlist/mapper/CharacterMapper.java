@@ -171,13 +171,13 @@ public class CharacterMapper {
       return null;
     }
 
-    Race race = raceRepository.findBySlug(request.getRaceSlug())
+    Race race = raceRepository.findByKey(request.getRaceKey())
         .orElseThrow(() -> new EntityNotFoundException(
-            "Race not found with id: " + request.getRaceSlug()));
+            "Race not found with key: " + request.getRaceKey()));
 
     DndClass dndClass = dndClassRepository.findBySlug(request.getClassSlug())
         .orElseThrow(() -> new EntityNotFoundException(
-            "Class not found with id: " + request.getClassSlug()));
+            "Class not found with slug: " + request.getClassSlug()));
 
     Archetype archetype = null;
     if (request.getArchetypeSlug() != null) {

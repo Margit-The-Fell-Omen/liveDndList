@@ -1,6 +1,5 @@
 package dev.ushki.livedndlist.entity.dndCharacter;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,22 +8,19 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "subraces")
+@Table(name = "race_traits")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Subrace {
+public class RaceTrait {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,31 +29,15 @@ public class Subrace {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false)
-  private String slug;
-
   @Column(columnDefinition = "TEXT")
   private String description;
 
-  @Column(columnDefinition = "TEXT")
-  private String traits;
+  private String type;
 
-  @Column(name = "asi_description", columnDefinition = "TEXT")
-  private String asiDescription;
-
-  @Column(name = "document_slug")
-  private String documentSlug;
-
-  @Column(name = "document_title")
-  private String documentTitle;
-
-  @Column(name = "document_url")
-  private String documentUrl;
+  @Column(name = "trait_order")
+  private Integer traitOrder;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "race_id", nullable = false)
   private Race race;
-
-  @OneToMany(mappedBy = "subrace", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<AbilityScoresIncrease> abilityScoreIncreases = new ArrayList<>();
 }
