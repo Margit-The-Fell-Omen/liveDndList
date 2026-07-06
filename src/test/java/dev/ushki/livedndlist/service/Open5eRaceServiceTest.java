@@ -3,11 +3,13 @@ package dev.ushki.livedndlist.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.when;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
+import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.dndCharacter.Race;
@@ -36,10 +39,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.core.ParameterizedTypeReference;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class Open5eRaceServiceTest {
+
+  private static final String API_PATH = "/v2/species/";
+  private static final long AWAIT_TIMEOUT_SECONDS = 5L;
 
   @Mock
   private RaceRepository raceRepository;
@@ -96,43 +105,56 @@ class Open5eRaceServiceTest {
   // Helpers
   // ---------------------------------------------------------------
 
+  private static ParameterizedTypeReference<Open5ePaginatedResponse<Open5eRaceDto>> paginatedRef() {
+    return new ParameterizedTypeReference<>() {
+    };
+  }
+
   private void mockFetchAll(List<Open5eRaceDto> results) {
-    when(apiClient.fetchAll(
-        eq("/v1/races/"),
-        any(ParameterizedTypeReference.class))
-    ).thenReturn(results);
+    when(apiClient.fetchAll(eq(API_PATH), any(ParameterizedTypeReference.class)))
+        .thenReturn(results);
   }
 
   private void mockFetchAllThrows(RuntimeException ex) {
-    when(apiClient.fetchAll(
-        eq("/v1/races/"),
-        any(ParameterizedTypeReference.class))
-    ).thenThrow(ex);
+    when(apiClient.fetchAll(eq(API_PATH), any(ParameterizedTypeReference.class)))
+        .thenThrow(ex);
   }
 
   private void mockFetchAllBlocking(List<Open5eRaceDto> results,
       CountDownLatch started,
       CountDownLatch canProceed) {
-    when(apiClient.fetchAll(
-        eq("/v1/races/"),
-        any(ParameterizedTypeReference.class))
-    ).thenAnswer(invocation -> {
-      started.countDown();
-      canProceed.await(5, TimeUnit.SECONDS);
-      return results;
-    });
+    when(apiClient.fetchAll(eq(API_PATH), any(ParameterizedTypeReference.class)))
+        .thenAnswer(invocation -> {
+          started.countDown();
+          boolean proceeded = canProceed.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+          if (!proceeded) {
+            throw new IllegalStateException("canProceed latch was never released");
+          }
+          return results;
+        });
   }
 
-  private void stubSyncMetricsHappyPath() {
-    doNothing().when(syncMetrics).startOperation();
-    doNothing().when(syncMetrics).endOperation();
-    doNothing().when(syncMetrics).recordRequest(anyLong(), eq(true));
+  private static ParameterizedTypeReference<Open5ePaginatedResponse<Open5eRaceDto>>
+  anyRacePageReference() {
+    return org.mockito.ArgumentMatchers.any();
   }
 
-  private void stubSyncMetricsErrorPath() {
-    doNothing().when(syncMetrics).startOperation();
-    doNothing().when(syncMetrics).endOperation();
-    doNothing().when(syncMetrics).recordRequest(anyLong(), eq(false));
+  private void stubSyncMetricsAll() {
+    lenient().doNothing().when(syncMetrics).startOperation();
+    lenient().doNothing().when(syncMetrics).endOperation();
+    lenient().doNothing().when(syncMetrics).recordRequest(anyLong(), anyBoolean());
+  }
+
+  private static ExecutorService newExecutor() {
+    return Executors.newSingleThreadExecutor();
+  }
+
+  private static void shutdownExecutor(ExecutorService executor) throws InterruptedException {
+    executor.shutdown();
+    boolean terminated = executor.awaitTermination(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+    if (!terminated) {
+      executor.shutdownNow();
+    }
   }
 
   // ---------------------------------------------------------------
@@ -170,7 +192,7 @@ class Open5eRaceServiceTest {
       when(raceMapper.toEntity(humanDto)).thenReturn(humanEntity);
       when(raceMapper.toEntity(elfDto)).thenReturn(elfEntity);
       when(raceRepository.save(any(Race.class))).thenAnswer(i -> i.getArgument(0));
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -195,7 +217,7 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey("human")).thenReturn(Optional.of(humanEntity));
       when(raceRepository.findByKey("elf")).thenReturn(Optional.of(elfEntity));
       when(raceRepository.save(any(Race.class))).thenAnswer(i -> i.getArgument(0));
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -217,7 +239,7 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey("elf")).thenReturn(Optional.empty());
       when(raceMapper.toEntity(elfDto)).thenReturn(elfEntity);
       when(raceRepository.save(any(Race.class))).thenAnswer(i -> i.getArgument(0));
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -231,7 +253,7 @@ class Open5eRaceServiceTest {
     @DisplayName("Should handle API error during sync")
     void shouldHandleApiErrorDuringSync() {
       mockFetchAllThrows(new RuntimeException("API connection failed"));
-      stubSyncMetricsErrorPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -248,8 +270,7 @@ class Open5eRaceServiceTest {
     @DisplayName("Should handle empty API response")
     void shouldHandleEmptyApiResponse() {
       mockFetchAll(List.of());
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -270,7 +291,7 @@ class Open5eRaceServiceTest {
       when(raceMapper.toEntity(humanDto)).thenReturn(humanEntity);
       when(raceMapper.toEntity(elfDto)).thenThrow(new RuntimeException("Mapping error"));
       when(raceRepository.save(humanEntity)).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -287,8 +308,7 @@ class Open5eRaceServiceTest {
     @DisplayName("Should handle null results from fetchAll gracefully")
     void shouldHandleNullResultsFromFetchAll() {
       mockFetchAll(List.of());
-      doNothing().when(syncMetrics).startOperation();
-      doNothing().when(syncMetrics).endOperation();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -308,7 +328,7 @@ class Open5eRaceServiceTest {
       when(raceMapper.toEntity(humanDto)).thenReturn(humanEntity);
       when(raceMapper.toEntity(elfDto)).thenReturn(elfEntity);
       when(raceRepository.save(any(Race.class))).thenAnswer(i -> i.getArgument(0));
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -324,12 +344,12 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenAnswer(i -> i.getArgument(0));
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       raceService.syncAllRaces();
 
       verify(apiClient, times(1))
-          .fetchAll(eq("/v1/races/"), any(ParameterizedTypeReference.class));
+          .fetchAll(eq(API_PATH), anyRacePageReference());
     }
   }
 
@@ -417,7 +437,7 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       raceService.syncAllRaces();
 
@@ -432,7 +452,7 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       raceService.syncAllRaces();
 
@@ -443,7 +463,7 @@ class Open5eRaceServiceTest {
     @DisplayName("Should record failure metric on API error")
     void shouldRecordFailureMetricOnApiError() {
       mockFetchAllThrows(new RuntimeException("API error"));
-      stubSyncMetricsErrorPath();
+      stubSyncMetricsAll();
 
       raceService.syncAllRaces();
 
@@ -454,7 +474,7 @@ class Open5eRaceServiceTest {
     @DisplayName("Should call endOperation even on error")
     void shouldCallEndOperationEvenOnError() {
       mockFetchAllThrows(new RuntimeException("API error"));
-      stubSyncMetricsErrorPath();
+      stubSyncMetricsAll();
 
       raceService.syncAllRaces();
 
@@ -485,11 +505,17 @@ class Open5eRaceServiceTest {
           .parentRaceKey("elf")
           .build();
 
-      when(apiClient.getBySlug("/v1/races/", "wood-elf", Open5eRaceDto.class))
-          .thenReturn(woodElfDto);
+      mockFetchAll(List.of(woodElfDto));
       when(raceRepository.findByKey("wood-elf")).thenReturn(Optional.empty());
       when(raceMapper.toEntity(woodElfDto)).thenReturn(woodElfEntity);
       when(raceRepository.save(woodElfEntity)).thenReturn(woodElfEntity);
+      stubSyncMetricsAll();
+
+      SyncResultDto result = raceService.syncAllRaces();
+
+      assertThat(result).isNotNull();
+      assertThat(result.isSuccess()).isTrue();
+      assertThat(result.getStatistics().getCreated()).isEqualTo(1);
     }
 
     @Test
@@ -503,7 +529,7 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey("null-race")).thenReturn(Optional.empty());
       when(raceMapper.toEntity(nullNameDto)).thenReturn(humanEntity);
       when(raceRepository.save(humanEntity)).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto result = raceService.syncAllRaces();
 
@@ -530,27 +556,28 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      Future<SyncResultDto> firstSync = executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        Future<SyncResultDto> firstSync = executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS),
+            "First sync should start");
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS), "First sync should start");
+        SyncResultDto secondResult = raceService.syncAllRaces();
 
-      SyncResultDto secondResult = raceService.syncAllRaces();
+        assertThat(secondResult).isNotNull();
+        assertThat(secondResult.isSuccess()).isFalse();
+        assertThat(secondResult.getMessage()).isEqualTo("Sync already in progress");
+        assertThat(secondResult.getTaskId()).isNotNull();
+        assertThat(secondResult.getSyncedAt()).isNotNull();
 
-      assertThat(secondResult).isNotNull();
-      assertThat(secondResult.isSuccess()).isFalse();
-      assertThat(secondResult.getMessage()).isEqualTo("Sync already in progress");
-      assertThat(secondResult.getTaskId()).isNotNull();
-      assertThat(secondResult.getSyncedAt()).isNotNull();
-
-      canProceed.countDown();
-      SyncResultDto firstResult = firstSync.get(5, TimeUnit.SECONDS);
-      assertThat(firstResult.isSuccess()).isTrue();
-
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+        SyncResultDto firstResult = firstSync.get(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        assertThat(firstResult.isSuccess()).isTrue();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
 
     @Test
@@ -563,22 +590,23 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        SyncResultDto result = raceService.syncAllRaces();
 
-      SyncResultDto result = raceService.syncAllRaces();
+        assertThat(result.getTaskId()).isNotNull();
+        assertThat(result.getTaskId())
+            .matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
 
-      assertThat(result.getTaskId()).isNotNull();
-      assertThat(result.getTaskId())
-          .matches("[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}");
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
 
     @Test
@@ -591,21 +619,22 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        SyncResultDto result = raceService.syncAllRaces();
 
-      SyncResultDto result = raceService.syncAllRaces();
+        assertThat(result.getStatistics()).isNull();
+        assertThat(result.getErrors()).isNull();
 
-      assertThat(result.getStatistics()).isNull();
-      assertThat(result.getErrors()).isNull();
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
 
     @Test
@@ -615,7 +644,7 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto firstResult = raceService.syncAllRaces();
       assertThat(firstResult.isSuccess()).isTrue();
@@ -631,19 +660,18 @@ class Open5eRaceServiceTest {
     @DisplayName("Should release progress tracker even when sync fails")
     void shouldReleaseProgressTrackerEvenWhenSyncFails() {
       mockFetchAllThrows(new RuntimeException("API error"));
-      stubSyncMetricsErrorPath();
+      stubSyncMetricsAll();
 
       SyncResultDto firstResult = raceService.syncAllRaces();
       assertThat(firstResult.isSuccess()).isFalse();
 
-      // Reset and set up a successful second sync
       org.mockito.Mockito.reset(apiClient, raceRepository, raceMapper, syncMetrics);
 
       mockFetchAll(List.of(humanDto, elfDto));
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
       SyncResultDto secondResult = raceService.syncAllRaces();
       assertThat(secondResult.isSuccess()).isTrue();
@@ -660,19 +688,20 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        SyncStatusDto status = raceService.getSyncStatus();
+        assertThat(status.isInProgress()).isTrue();
 
-      SyncStatusDto status = raceService.getSyncStatus();
-      assertThat(status.isInProgress()).isTrue();
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
 
       SyncStatusDto finalStatus = raceService.getSyncStatus();
       assertThat(finalStatus.isInProgress()).isFalse();
@@ -688,22 +717,23 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        org.mockito.Mockito.clearInvocations(syncMetrics);
 
-      org.mockito.Mockito.clearInvocations(syncMetrics);
+        raceService.syncAllRaces();
 
-      raceService.syncAllRaces();
+        verify(syncMetrics, never()).startOperation();
 
-      verify(syncMetrics, never()).startOperation();
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
 
     @Test
@@ -716,28 +746,29 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        org.mockito.Mockito.clearInvocations(raceRepository);
+        org.mockito.Mockito.clearInvocations(apiClient);
 
-      org.mockito.Mockito.clearInvocations(raceRepository);
-      org.mockito.Mockito.clearInvocations(apiClient);
+        SyncResultDto result = raceService.syncAllRaces();
 
-      SyncResultDto result = raceService.syncAllRaces();
+        assertThat(result.getMessage()).isEqualTo("Sync already in progress");
 
-      assertThat(result.getMessage()).isEqualTo("Sync already in progress");
+        verify(raceRepository, never()).findByKey(anyString());
+        verify(raceRepository, never()).save(any());
+        verify(apiClient, never())
+            .fetchAll(anyString(), any(paginatedRef().getClass()));
 
-      verify(raceRepository, never()).findByKey(anyString());
-      verify(raceRepository, never()).save(any());
-      verify(apiClient, never())
-          .fetchAll(anyString(), any(ParameterizedTypeReference.class));
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
 
     @Test
@@ -750,24 +781,25 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        LocalDateTime beforeCall = LocalDateTime.now();
+        SyncResultDto result = raceService.syncAllRaces();
+        LocalDateTime afterCall = LocalDateTime.now();
 
-      LocalDateTime beforeCall = LocalDateTime.now();
-      SyncResultDto result = raceService.syncAllRaces();
-      LocalDateTime afterCall = LocalDateTime.now();
+        assertThat(result.getSyncedAt()).isNotNull();
+        assertThat(result.getSyncedAt()).isAfterOrEqualTo(beforeCall.minusSeconds(1));
+        assertThat(result.getSyncedAt()).isBeforeOrEqualTo(afterCall.plusSeconds(1));
 
-      assertThat(result.getSyncedAt()).isNotNull();
-      assertThat(result.getSyncedAt()).isAfterOrEqualTo(beforeCall.minusSeconds(1));
-      assertThat(result.getSyncedAt()).isBeforeOrEqualTo(afterCall.plusSeconds(1));
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
 
     @Test
@@ -780,21 +812,22 @@ class Open5eRaceServiceTest {
       when(raceRepository.findByKey(anyString())).thenReturn(Optional.empty());
       when(raceMapper.toEntity(any(Open5eRaceDto.class))).thenReturn(humanEntity);
       when(raceRepository.save(any(Race.class))).thenReturn(humanEntity);
-      stubSyncMetricsHappyPath();
+      stubSyncMetricsAll();
 
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      executor.submit(() -> raceService.syncAllRaces());
+      ExecutorService executor = newExecutor();
+      try {
+        executor.submit(() -> raceService.syncAllRaces());
+        assertTrue(syncStarted.await(AWAIT_TIMEOUT_SECONDS, TimeUnit.SECONDS));
 
-      assertTrue(syncStarted.await(5, TimeUnit.SECONDS));
+        SyncResultDto firstRejected = raceService.syncAllRaces();
+        SyncResultDto secondRejected = raceService.syncAllRaces();
 
-      SyncResultDto firstRejected = raceService.syncAllRaces();
-      SyncResultDto secondRejected = raceService.syncAllRaces();
+        assertThat(firstRejected.getTaskId()).isNotEqualTo(secondRejected.getTaskId());
 
-      assertThat(firstRejected.getTaskId()).isNotEqualTo(secondRejected.getTaskId());
-
-      canProceed.countDown();
-      executor.shutdown();
-      executor.awaitTermination(5, TimeUnit.SECONDS);
+        canProceed.countDown();
+      } finally {
+        shutdownExecutor(executor);
+      }
     }
   }
 }
