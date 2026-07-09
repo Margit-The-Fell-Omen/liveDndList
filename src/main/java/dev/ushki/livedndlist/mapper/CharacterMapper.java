@@ -9,17 +9,15 @@ import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.SkillResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.AbilityScores;
-import dev.ushki.livedndlist.entity.dndCharacter.Archetype;
-import dev.ushki.livedndlist.entity.dndCharacter.Background;
-import dev.ushki.livedndlist.entity.dndCharacter.CharacterClass;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
-import dev.ushki.livedndlist.entity.dndCharacter.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCurrency;
-import dev.ushki.livedndlist.entity.dndCharacter.Race;
 import dev.ushki.livedndlist.entity.dndCharacter.Skill;
+import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel;
+import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
+import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.SkillType;
-import dev.ushki.livedndlist.repository.ArchetypeRepository;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.repository.RaceRepository;
@@ -77,7 +75,6 @@ public class CharacterMapper {
   private final RaceRepository raceRepository;
   private final BackgroundRepository backgroundRepository;
   private final DndClassRepository dndClassRepository;
-  private final ArchetypeRepository archetypeRepository;
   private final SpellMapper spellMapper;
   private final EquipmentMapper equipmentMapper;
 
@@ -141,7 +138,7 @@ public class CharacterMapper {
 
     String classDisplay = Hibernate.isInitialized(character.getClasses())
         ? character.getClasses().stream()
-        .sorted(Comparator.comparing(CharacterClass::getLevel).reversed())
+        .sorted(Comparator.comparing(DndCharacterClassLevel::getLevel).reversed())
         .map(c -> c.getDndClass().getName() + " " + c.getLevel())
         .collect(Collectors.joining(" / "))
         : null;
@@ -175,21 +172,9 @@ public class CharacterMapper {
         .orElseThrow(() -> new EntityNotFoundException(
             "Race not found with key: " + request.getRaceKey()));
 
-    DndClass dndClass = dndClassRepository.findBySlug(request.getClassSlug())
+    DndClass dndClass = dndClassRepository.findByKey(request.getClassSlug())
         .orElseThrow(() -> new EntityNotFoundException(
             "Class not found with slug: " + request.getClassSlug()));
-
-    Archetype archetype = null;
-    if (request.getArchetypeSlug() != null) {
-      archetype = archetypeRepository.findBySlug(request.getArchetypeSlug())
-          .orElseThrow(() -> new EntityNotFoundException(
-              "Archetype not found with id: " + request.getArchetypeSlug()));
-
-      if (!archetype.getDndClass().getId().equals(dndClass.getId())) {
-        throw new IllegalArgumentException(
-            "Archetype " + archetype.getName() + " does not belong to class " + dndClass.getName());
-      }
-    }
 
     Background background = backgroundRepository.findByKey(request.getBackgroundKey())
         .orElseThrow(
@@ -204,9 +189,8 @@ public class CharacterMapper {
         .portraitUrl(request.getPortraitUrl())
         .build();
 
-    CharacterClass characterClass = CharacterClass.builder()
+    DndCharacterClassLevel characterClass = DndCharacterClassLevel.builder()
         .dndClass(dndClass)
-        .archetype(archetype)
         .level(1)
         .build();
     character.addClass(characterClass);
@@ -270,8 +254,8 @@ public class CharacterMapper {
       if (newTotalLevel > oldTotalLevel) {
         int levelsToAdd = newTotalLevel - oldTotalLevel;
 
-        Optional<CharacterClass> classToLevelUp = character.getClasses().stream()
-            .max(Comparator.comparing(CharacterClass::getLevel));
+        Optional<DndCharacterClassLevel> classToLevelUp = character.getClasses().stream()
+            .max(Comparator.comparing(DndCharacterClassLevel::getLevel));
 
         classToLevelUp.ifPresent(primaryClass ->
             primaryClass.setLevel(primaryClass.getLevel() + levelsToAdd)

@@ -15,11 +15,10 @@ import static org.mockito.Mockito.when;
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundBenefitDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundDto;
-import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.dndCharacter.Background;
-import dev.ushki.livedndlist.entity.dndCharacter.BackgroundBenefit;
+import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.background.BackgroundBenefit;
 import dev.ushki.livedndlist.mapper.BackgroundMapper;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
@@ -151,46 +150,6 @@ class Open5eBackgroundServiceTest {
     mockFetchAllThrows(new RuntimeException("API Down"));
 
     SyncResultDto result = backgroundService.syncAllBackgrounds();
-
-    assertFalse(result.isSuccess());
-    assertTrue(result.getMessage().contains("Critical error"));
-  }
-
-  // ---------------------------------------------------------------
-  // syncBySlug — uses getBySlug (not fetchAll), unchanged
-  // ---------------------------------------------------------------
-
-  @Test
-  void syncBySlugShouldCreateWhenNotFound() {
-    when(apiClient.getBySlug(anyString(), anyString(), any())).thenReturn(sampleDto);
-    when(backgroundRepository.findByKey(anyString())).thenReturn(Optional.empty());
-    when(backgroundMapper.toEntity(any())).thenReturn(sampleEntity);
-
-    SyncResultDto result = backgroundService.syncBySlug("acolyte");
-
-    assertTrue(result.isSuccess());
-    assertTrue(result.getMessage().contains("Class created"));
-    assertEquals(1, result.getStatistics().getCreated());
-  }
-
-  @Test
-  void syncBySlugShouldUpdateWhenFound() {
-    when(apiClient.getBySlug(anyString(), anyString(), any())).thenReturn(sampleDto);
-    when(backgroundRepository.findByKey(anyString())).thenReturn(Optional.of(sampleEntity));
-
-    SyncResultDto result = backgroundService.syncBySlug("acolyte");
-
-    assertTrue(result.isSuccess());
-    assertTrue(result.getMessage().contains("Class updated"));
-    assertEquals(1, result.getStatistics().getUpdated());
-  }
-
-  @Test
-  void syncBySlugShouldReturnErrorResultWhenExceptionOccurs() {
-    when(apiClient.getBySlug(anyString(), anyString(), any()))
-        .thenThrow(new RuntimeException("Timeout"));
-
-    SyncResultDto result = backgroundService.syncBySlug("acolyte");
 
     assertFalse(result.isSuccess());
     assertTrue(result.getMessage().contains("Critical error"));

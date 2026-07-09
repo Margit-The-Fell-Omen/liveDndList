@@ -2,7 +2,7 @@ package dev.ushki.livedndlist.repository;
 
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
-import dev.ushki.livedndlist.entity.dndCharacter.Race;
+import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;

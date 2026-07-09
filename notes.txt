@@ -51,5 +51,7 @@ IMPORTANT NOTES:
 - in character update there is raceID (shall be changed to Name)
 - in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 - currently speed is not being derived from race
+- currently I cannot add more than 1 class to character
 
 (current fix: transfer to v2 (classes))
+- debug class sync (list -> "An unexpected error occurred: No enum constant dev.ushki.livedndlist.enums.AbilityType.2")

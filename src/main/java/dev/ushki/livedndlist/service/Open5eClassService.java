@@ -1,16 +1,13 @@
 package dev.ushki.livedndlist.service;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
-import dev.ushki.livedndlist.dto.open5e.Open5eArchetypeDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.dndCharacter.Archetype;
-import dev.ushki.livedndlist.entity.dndCharacter.DndClass;
+import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
-import dev.ushki.livedndlist.repository.ArchetypeRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
@@ -30,13 +27,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class Open5eClassService {
 
-  private static final String API_PATH = "/v1/classes/";
+  private static final String API_PATH = "/v2/classes/";
 
   private final DndClassRepository dndClassRepository;
   private final DndClassMapper dndClassMapper;
   private final Open5eApiClient apiClient;
   private final SyncMetrics syncMetrics;
-  private final ArchetypeRepository archetypeRepository;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
 
@@ -92,39 +88,6 @@ public class Open5eClassService {
   }
 
   @Transactional
-  public SyncResultDto syncBySlug(String slug) {
-    long startTime = System.currentTimeMillis();
-
-    try {
-      log.info("Syncing class by slug: {}", slug);
-
-      Open5eClassDto dto = apiClient.getBySlug(API_PATH, slug, Open5eClassDto.class);
-      SyncAction action = saveOrUpdate(dto);
-
-      long duration = System.currentTimeMillis() - startTime;
-
-      return SyncResultDto.builder()
-          .success(true)
-          .message(action == SyncAction.CREATED
-              ? "Class created: " + dto.getName()
-              : "Class updated: " + dto.getName())
-          .syncedAt(LocalDateTime.now())
-          .statistics(SyncResultDto.SyncStatistics.builder()
-              .totalFetched(1)
-              .created(action == SyncAction.CREATED ? 1 : 0)
-              .updated(action == SyncAction.UPDATED ? 1 : 0)
-              .failed(0)
-              .durationMs(duration)
-              .build())
-          .build();
-
-    } catch (Exception e) {
-      log.error("API request error: {}", e.getMessage());
-      return buildErrorResult(e, "");
-    }
-  }
-
-  @Transactional
   public SyncResultDto clearAll() {
     try {
       long count = dndClassRepository.count();
@@ -167,7 +130,7 @@ public class Open5eClassService {
   }
 
   private SyncAction saveOrUpdate(Open5eClassDto dto) {
-    Optional<DndClass> existing = dndClassRepository.findBySlug(dto.getSlug());
+    Optional<DndClass> existing = dndClassRepository.findByKey(dto.getKey());
 
     if (existing.isPresent()) {
       DndClass dndClass = existing.get();
@@ -229,8 +192,4 @@ public class Open5eClassService {
         .map(dndClassMapper::toDto).toList();
   }
 
-  public List<Open5eArchetypeDto> getArchetypesByClass(Long id) {
-    List<Archetype> archetypes = archetypeRepository.findByDndClassId(id);
-    return archetypes.stream().map(dndClassMapper::toArchetypeDto).toList();
-  }
 }

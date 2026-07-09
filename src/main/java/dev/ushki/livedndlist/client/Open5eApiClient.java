@@ -34,11 +34,6 @@ public class Open5eApiClient {
     return executeRawPathWithRetry(path, spec -> spec.body(responseType));
   }
 
-  public <T> T getBySlug(String resource, String slug, Class<T> responseType) {
-    String uriTemplate = "/{resource}/{slug}/";
-    return executeTemplateWithRetry(uriTemplate, spec -> spec.body(responseType), resource, slug);
-  }
-
   public <T> List<T> fetchAll(
       String initialPath,
       ParameterizedTypeReference<Open5ePaginatedResponse<T>> responseType) {

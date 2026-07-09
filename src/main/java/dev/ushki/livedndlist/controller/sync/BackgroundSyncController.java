@@ -62,16 +62,6 @@ public class BackgroundSyncController {
     return ApiResponse.success("Sync started. Check status at: GET /api/sync/backgrounds/status");
   }
 
-  // In v2 of Open5e key effectively works as slug so no need for method name change
-  @PostMapping("/{slug}")
-  @Operation(summary = "Sync specific class by slug")
-  public ApiResponse<SyncResultDto> syncClassBySlug(@PathVariable String slug) {
-    log.info("Received request to sync class: {}", slug);
-    SyncResultDto result = backgroundService.syncBySlug(slug);
-    return result.isSuccess() ? ApiResponse.success(result)
-        : ApiResponse.error(result.getMessage(), result);
-  }
-
   @DeleteMapping
   @Operation(summary = "Delete all classes from database")
   public ApiResponse<SyncResultDto> clearAllClasses() {

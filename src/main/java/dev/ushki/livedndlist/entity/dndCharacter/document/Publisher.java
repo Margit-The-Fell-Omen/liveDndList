@@ -1,4 +1,4 @@
-package dev.ushki.livedndlist.entity.dndCharacter;
+package dev.ushki.livedndlist.entity.dndCharacter.document;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GameSystem {
+@NoArgsConstructor
+public class Publisher {
 
-  @Column(name = "system_name")
+  @Column(name = "publisher_name")
   private String name;
-  @Column(name = "system_key")
+  @Column(name = "publisher_key")
   private String key;
 }

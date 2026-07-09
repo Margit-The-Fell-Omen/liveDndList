@@ -1,5 +1,6 @@
-package dev.ushki.livedndlist.entity.dndCharacter;
+package dev.ushki.livedndlist.entity.dndCharacter.background;
 
+import dev.ushki.livedndlist.entity.dndCharacter.document.Document;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

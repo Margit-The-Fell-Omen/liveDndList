@@ -6,8 +6,8 @@ import dev.ushki.livedndlist.dto.open5e.Open5eBackgroundDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.dndCharacter.Background;
-import dev.ushki.livedndlist.entity.dndCharacter.BackgroundBenefit;
+import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.background.BackgroundBenefit;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.BackgroundMapper;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
@@ -85,38 +85,6 @@ public class Open5eBackgroundService {
     } finally {
       syncMetrics.endOperation();
       progressTracker.finish();
-    }
-  }
-
-  public SyncResultDto syncBySlug(String slug) {
-    long startTime = System.currentTimeMillis();
-
-    try {
-      log.info("Syncing class by slug: {}", slug);
-
-      Open5eBackgroundDto dto = apiClient.getBySlug(API_PATH, slug, Open5eBackgroundDto.class);
-      SyncAction action = saveOrUpdate(dto);
-
-      long duration = System.currentTimeMillis() - startTime;
-
-      return SyncResultDto.builder()
-          .success(true)
-          .message(action == SyncAction.CREATED
-              ? "Class created: " + dto.getName()
-              : "Class updated: " + dto.getName())
-          .syncedAt(LocalDateTime.now())
-          .statistics(SyncResultDto.SyncStatistics.builder()
-              .totalFetched(1)
-              .created(action == SyncAction.CREATED ? 1 : 0)
-              .updated(action == SyncAction.UPDATED ? 1 : 0)
-              .failed(0)
-              .durationMs(duration)
-              .build())
-          .build();
-
-    } catch (Exception e) {
-      log.error("API request error: {}", e.getMessage());
-      return buildErrorResult(e, "");
     }
   }
 

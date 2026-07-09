@@ -1,6 +1,9 @@
 package dev.ushki.livedndlist.entity.dndCharacter;
 
 import dev.ushki.livedndlist.entity.User;
+import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
+import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel;
+import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import jakarta.persistence.CascadeType;
@@ -109,7 +112,7 @@ public class DndCharacter {
 
   @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true)
   @Builder.Default
-  private Set<CharacterClass> classes = new HashSet<>();
+  private Set<DndCharacterClassLevel> classes = new HashSet<>();
 
   @Embedded
   @Builder.Default
@@ -221,13 +224,13 @@ public class DndCharacter {
 
   public int getTotalLevel() {
     return classes.stream()
-        .mapToInt(CharacterClass::getLevel)
+        .mapToInt(DndCharacterClassLevel::getLevel)
         .sum();
   }
 
-  public void addClass(CharacterClass clazz) {
-    classes.add(clazz);
-    clazz.setCharacter(this);
+  public void addClass(DndCharacterClassLevel characterclass) {
+    classes.add(characterclass);
+    characterclass.setCharacter(this);
   }
 
   public void addEquipment(Equipment item) {

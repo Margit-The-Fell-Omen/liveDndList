@@ -21,7 +21,7 @@ public class Open5eApiConfig {
   @Bean
   public RestClient open5eRestClient() {
     HttpClient httpClient = HttpClient.newBuilder()
-        .connectTimeout(Duration.ofSeconds(10))
+        .connectTimeout(Duration.ofSeconds(100))
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build();
 

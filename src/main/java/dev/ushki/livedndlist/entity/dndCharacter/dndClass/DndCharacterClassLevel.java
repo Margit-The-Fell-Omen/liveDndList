@@ -1,5 +1,6 @@
-package dev.ushki.livedndlist.entity.dndCharacter;
+package dev.ushki.livedndlist.entity.dndCharacter.dndClass;
 
+import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,23 +26,19 @@ import lombok.ToString;
 @Builder
 @ToString(exclude = {"character", "dndClass"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CharacterClass {
+public class DndCharacterClassLevel {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "character_id", nullable = false)
   private DndCharacter character;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "class_id", nullable = false)
   private DndClass dndClass;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "archetype_id")
-  private Archetype archetype;
 
   @Builder.Default
   private Integer level = 1;

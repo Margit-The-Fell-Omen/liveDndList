@@ -1,4 +1,4 @@
-package dev.ushki.livedndlist.entity.dndCharacter;
+package dev.ushki.livedndlist.entity.dndCharacter.race;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
