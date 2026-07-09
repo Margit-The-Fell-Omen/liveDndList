@@ -1,75 +1,16 @@
 # This file is for the 'dev' branch environment. It uses different ports and volumes
 # to run alongside the main production environment without conflicts.
+
 services:
-  db:
-    image: postgres:18-alpine
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
-    ports:
-      - "5433:5432"
-    volumes:
-      - pgdata-dev:/var/lib/postgresql
-    networks:
-      - app-dev
-    restart: always
-
-  backend:
-    build: .
-    ports:
-      - "8081:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-        restart: true
-      redis:
-        condition: service_started
-    healthcheck:
-      test: [ "CMD", "curl", "--fail", "http://localhost:8080/actuator/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
-      APP_JWT_SECRET: ${APP_JWT_SECRET}
-      SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
-    networks:
-      - app-dev
-    restart: always
-
-  redis:
-    image: redis
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    ports:
-      - "6380:6379"
-    networks:
-      - app-dev
-    restart: always
-
   frontend:
-    build: ./frontend/
+    build: frontend
+    restart: always
     depends_on:
       - backend
     ports:
       - "81:80"
     volumes:
-      - ./frontend/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/nginx.dev.conf:/etc/nginx/conf.d/localhost.conf
       - ./frontend:/app
       - /app/node_modules
     environment:
@@ -77,10 +18,74 @@ services:
       BACKEND_PORT: 8080
     networks:
       - app-dev
+
+  backend:
+    build: .
     restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
+      APP_JWT_SECRET: ${APP_JWT_SECRET}
+      SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://127.0.0.1:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - app-dev
+
+  redis:
+    image: redis:8-alpine@sha256:9d317178eceac8454a2284a9e6df2466b93c745529947f0cd42a0fa9609d7005
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    restart: always
+    ports:
+      - "127.0.0.1:6380:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - app-dev
+
+  db:
+    image: postgres:18-alpine@sha256:9a8afca54e7861fd90fab5fdf4c42477a6b1cb7d293595148e674e0a3181de15
+    restart: always
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+    networks:
+      - app-dev
 
 volumes:
-  pgdata-dev:
+  pgdata-dev: {}
 
 networks:
-  app-dev:
+  app-dev: {}
