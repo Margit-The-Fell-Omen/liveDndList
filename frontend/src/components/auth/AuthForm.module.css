@@ -6,6 +6,25 @@
   gap: var(--space-xl);
 }
 
+.rememberRow {
+  display: flex;
+  align-items: center;
+}
+
+.rememberLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.rememberCheckbox {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  cursor: pointer;
+}
+
 .formWrapper {
   display: flex;
   flex-direction: column;

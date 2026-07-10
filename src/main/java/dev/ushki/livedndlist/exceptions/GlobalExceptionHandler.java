@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(UnauthorizedException.class)
-  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ApiResponse<Void> handleUnauthorized(UnauthorizedException ex) {
     return ApiResponse.error(ex.getMessage());
   }
@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
     ex.getBindingResult().getAllErrors().forEach(error -> {
       String fieldName = ((FieldError) error).getField();
       String errorMessage = error.getDefaultMessage();
-      log.error("Validation failed:", ex.getMessage());
+      log.error("Validation failed: {}", ex.getMessage());
       errors.put(fieldName, errorMessage);
     });
 

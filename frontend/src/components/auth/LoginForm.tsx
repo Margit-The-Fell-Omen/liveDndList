@@ -1,5 +1,3 @@
-// src/components/auth/LoginForm.tsx
-
 import {type FormEvent, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '@/context/AuthContext';
@@ -14,6 +12,7 @@ interface LoginFormProps {
 export function LoginForm({onSwitchToRegister}: LoginFormProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [remember, setRemember] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,10 +32,10 @@ export function LoginForm({onSwitchToRegister}: LoginFormProps) {
     setIsSubmitting(true);
 
     try {
-      await login({username, password});
+      await login({username, password}, {remember});
       navigate('/', {replace: true});
     } catch (err) {
-      console.error("Login failed:", err);
+      console.error('Login failed:', err);
     } finally {
       setIsSubmitting(false);
     }
@@ -69,6 +68,20 @@ export function LoginForm({onSwitchToRegister}: LoginFormProps) {
               onChange={(e) => setPassword(e.target.value)}
               required
           />
+
+          <div className={styles.rememberRow}>
+            <label className={styles.rememberLabel}>
+              <input
+                  type="checkbox"
+                  name="rememberDevice"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  className={styles.rememberCheckbox}
+              />
+              <span>Stay signed in on this device</span>
+            </label>
+          </div>
+
           <Button type="submit" fullWidth disabled={isSubmitting}>
             {isSubmitting ? 'Logging in...' : 'Log In'}
           </Button>
@@ -76,7 +89,7 @@ export function LoginForm({onSwitchToRegister}: LoginFormProps) {
 
         <p className={styles.switchText}>
           Don't have an account?{' '}
-          <button onClick={onSwitchToRegister} className={styles.switchButton}>
+          <button type="button" onClick={onSwitchToRegister} className={styles.switchButton}>
             Sign Up
           </button>
         </p>

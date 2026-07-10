@@ -54,6 +54,15 @@ IMPORTANT NOTES:
 - currently speed is not being derived from race
 - currently I cannot add more than 1 class to character
 
-(current fix: transfer to v2 (classes))
-- debug class sync (list -> "An unexpected error occurred: No enum constant dev.ushki.livedndlist.enums.AbilityType.2")
-- when syncing error with duplicated keys (see logs for clarity)
+(current fix: front fixing (classes and races))
+- rewrite character creation to be multistaged with info about class/race/background provided:
+    - subraces are not mapped right now
+    - documents are not mapped right now (need to display doc name when selecting race/class/background)
+    - init render (not clicked) of class shows ugly MD formatting
+    - need sort class features by level gainedAt
+    - rounded light-grey blocks in races/backgrounds need change
+    - if no desc - just ignore decs DO NOT WRITE [no description provided]
+    - fate-touched background has no desc while not chosen (weird)
+- add feat of watching in separate window (or something similar) info of classes/races/backgrounds;
+- add class/race change in character sheet
+- add multiclassing/leveling mechanic

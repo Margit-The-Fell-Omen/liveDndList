@@ -42,6 +42,7 @@ export interface RegisterData {
 
 export interface AuthResponse {
   token: string;
+  refreshToken?: string;
   user: User;
 }
 
@@ -57,22 +58,24 @@ interface DocumentInfo {
 }
 
 export interface RaceTrait {
-  id: number;
   name: string;
-  description: string;
-  type: string;
-  traitOrder: number;
+  desc: string;
+  type: string | null;
+  order: number | null;
 }
 
-export interface Race extends DocumentInfo {
-  id: number;
+export interface Race {
+  id?: number;
   name: string;
   key: string;
-  description: string;
-  subspecies: boolean;
-  parentRaceKey: string | null;
-  traits: RaceTrait[];
+  desc: string;
+  is_subspecies: boolean;
+  subspecies_of: string | null;
+  traits: RaceTrait[] | null;
+  document__slug?: string;
+  document__title?: string;
 }
+
 
 export interface Open5eReference {
   name: string;
@@ -98,22 +101,21 @@ export interface ClassFeature {
   dataForClassTable: Open5eDataForClassTable[];
 }
 
-export interface CharacterClass extends DocumentInfo {
+export interface CharacterClass {
   name: string;
   key: string;
   desc: string;
-  hitDice: string;
-  hitDiceName: string;
-  hitPointsOn1stLevel: string;
-  hitPointsOnHigherLevels: string;
-  savingThrows: AbilityType[];
-  subclassOf: Open5eReference;
-  subclasses: Open5eReference[];
+  hit_dice?: string;
+  hitDice?: string;
+  hitDiceName?: string;
+  hitPointsOn1stLevel?: string;
+  hitPointsOnHigherLevels?: string;
+  savingThrows: string[];
+  subclassOf: { name: string; key: string } | null;
+  subclasses: Array<{ name: string; key: string }>;
   features: ClassFeature[];
-}
-
-export interface Open5eSavingThrow {
-  name: string;
+  document__slug?: string;
+  document__title?: string;
 }
 
 export interface BackgroundBenefit {
@@ -126,7 +128,7 @@ export interface Background extends DocumentInfo {
   name: string;
   key: string;
   desc: string;
-  backgroundBenefits: BackgroundBenefit[];
+  benefits: BackgroundBenefit[];
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -239,14 +241,13 @@ export interface CharacterCreateRequest {
   raceKey: string;
   backgroundKey: string;
   alignment?: CharacterAlignment;
-  background?: string;
-  classSlug: string;
-  archetypeSlug?: string;
+  classKey: string;
   abilityScores: AbilityScores;
   maxHitPoints: number;
   portraitUrl?: string;
   spellcastingAbility?: AbilityType;
 }
+
 
 export interface CharacterSummary {
   id: number;
@@ -342,11 +343,9 @@ export interface CharacterContextType {
   loading: boolean;
   saving: boolean;
   error: string | null;
-
   races: Race[];
   classes: CharacterClass[];
   backgrounds: Background[];
-
   fetchCharacters: () => Promise<void>;
   fetchReferenceData: () => Promise<void>;
   selectCharacter: (id: number) => Promise<void>;
@@ -354,7 +353,17 @@ export interface CharacterContextType {
   updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
   deleteCharacter: (id: number) => Promise<void>;
   clearError: () => void;
+  addEquipment: (data: EquipmentData) => Promise<void>;
+  updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
+  removeEquipment: (itemId: number) => Promise<void>;
+  toggleEquipmentEquipped: (itemId: number) => Promise<void>;
+  addSpellToCharacter: (spellId: number) => Promise<void>;
+  removeSpellFromCharacter: (spellId: number) => Promise<void>;
+  toggleSavingThrowProficiency: (ability: AbilityType) => Promise<void>;
+  toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
+  toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
 }
+
 
 export interface EquipmentData {
   name: string;
@@ -380,23 +389,4 @@ export interface SpellData {
   ritual: boolean;
   description: string;
   higherLevels?: string;
-}
-
-export interface CharacterContextType {
-  createCharacter: (data: CharacterCreateRequest) => Promise<Character>;
-  updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
-  deleteCharacter: (id: number) => Promise<void>;
-  clearError: () => void;
-
-  addEquipment: (data: EquipmentData) => Promise<void>;
-  updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
-  removeEquipment: (itemId: number) => Promise<void>;
-  toggleEquipmentEquipped: (itemId: number) => Promise<void>;
-
-  addSpellToCharacter: (spellId: number) => Promise<void>;
-  removeSpellFromCharacter: (spellId: number) => Promise<void>;
-
-  toggleSavingThrowProficiency: (ability: AbilityType) => Promise<void>;
-  toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
-  toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
 }

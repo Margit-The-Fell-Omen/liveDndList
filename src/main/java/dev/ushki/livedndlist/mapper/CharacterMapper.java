@@ -172,9 +172,9 @@ public class CharacterMapper {
         .orElseThrow(() -> new EntityNotFoundException(
             "Race not found with key: " + request.getRaceKey()));
 
-    DndClass dndClass = dndClassRepository.findByKey(request.getClassSlug())
+    DndClass dndClass = dndClassRepository.findByKey(request.getClassKey())
         .orElseThrow(() -> new EntityNotFoundException(
-            "Class not found with slug: " + request.getClassSlug()));
+            "Class not found with slug: " + request.getClassKey()));
 
     Background background = backgroundRepository.findByKey(request.getBackgroundKey())
         .orElseThrow(

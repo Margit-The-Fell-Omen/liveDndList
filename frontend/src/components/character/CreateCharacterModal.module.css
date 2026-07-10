@@ -31,3 +31,28 @@
   border-radius: var(--radius-md);
   text-align: center;
 }
+.stepBody {
+  min-height: 400px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: var(--space-xs);
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.footerError {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  text-align: center;
+}
+
+.footerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}

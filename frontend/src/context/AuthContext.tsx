@@ -1,17 +1,24 @@
-// src/context/AuthContext.tsx
-
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useState} from 'react';
-
 import {authApi} from '@/services/api';
-
+import {
+  clearAuthSession,
+  getAccessToken,
+  getRefreshToken,
+  setAuthSession,
+  setStoredUser
+} from '@/utils/authStorage';
 import type {AuthResponse, LoginCredentials, RegisterData, User} from '@/types';
+
+interface LoginOptions {
+  remember?: boolean;
+}
 
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  login: (credentials: LoginCredentials) => Promise<AuthResponse>;
+  login: (credentials: LoginCredentials, options?: LoginOptions) => Promise<AuthResponse>;
   register: (data: RegisterData) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   clearError: () => void;
@@ -29,34 +36,47 @@ export function AuthProvider({children}: AuthProviderProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getAccessToken();
 
-    if (token) {
-      authApi.getCurrentUser()
-      .then((freshUserData) => {
-        setUser(freshUserData);
-        localStorage.setItem('user', JSON.stringify(freshUserData));
-      })
-      .catch(() => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-    } else {
+    if (!token) {
       setLoading(false);
+      return;
     }
+
+    authApi
+        .getCurrentUser()
+        .then((freshUserData) => {
+          setUser(freshUserData);
+          setStoredUser(freshUserData);
+        })
+        .catch(() => {
+          clearAuthSession();
+          setUser(null);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
   }, []);
 
-
-  const login = useCallback(async (credentials: LoginCredentials): Promise<AuthResponse> => {
+  const login = useCallback(async (
+      credentials: LoginCredentials,
+      options: LoginOptions = {},
+  ): Promise<AuthResponse> => {
+    const remember = options.remember ?? true;
     setError(null);
+
     try {
       const response = await authApi.login(credentials);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+
+      setAuthSession(
+          {
+            accessToken: response.token,
+            refreshToken: response.refreshToken,
+            user: response.user,
+          },
+          remember,
+      );
+
       setUser(response.user);
       return response;
     } catch (err) {
@@ -68,10 +88,19 @@ export function AuthProvider({children}: AuthProviderProps) {
 
   const register = useCallback(async (userData: RegisterData): Promise<AuthResponse> => {
     setError(null);
+
     try {
       const response = await authApi.register(userData);
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+
+      setAuthSession(
+          {
+            accessToken: response.token,
+            refreshToken: response.refreshToken,
+            user: response.user,
+          },
+          true,
+      );
+
       setUser(response.user);
       return response;
     } catch (err) {
@@ -83,12 +112,12 @@ export function AuthProvider({children}: AuthProviderProps) {
 
   const logout = useCallback(async (): Promise<void> => {
     try {
-      await authApi.logout();
+      const refreshToken = getRefreshToken();
+      await authApi.logout(refreshToken ?? undefined);
     } catch (err) {
-      console.error("Logout API call failed, but logging out locally anyway.", err);
+      console.error('Logout API call failed, but logging out locally anyway.', err);
     } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      clearAuthSession();
       setUser(null);
     }
   }, []);
@@ -109,8 +138,10 @@ export function AuthProvider({children}: AuthProviderProps) {
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
+
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
+
   return context;
 }
