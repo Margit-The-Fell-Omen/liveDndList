@@ -49,6 +49,21 @@ services:
       SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
       APP_JWT_SECRET: ${APP_JWT_SECRET}
       SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
+      LOGGING_FILE_NAME: /app/logs/backend.log
+      LOGGING_LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN: /app/logs/backend.%d{yyyy-MM-dd}.%i.log.gz
+      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE: 20MB
+      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_HISTORY: 14
+      LOGGING_LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP: 500MB
+
+    volumes:
+      - ./logs/dev/backend:/app/logs
+
+    logging:
+      driver: local
+      options:
+        max-size: "20m"
+        max-file: "5"
+
     networks:
       - app-dev
     restart: always

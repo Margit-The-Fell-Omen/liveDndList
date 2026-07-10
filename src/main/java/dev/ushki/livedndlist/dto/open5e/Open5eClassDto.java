@@ -23,7 +23,7 @@ public class Open5eClassDto {
   private List<String> primaryAbilities;
 
   @JsonProperty("saving_throws")
-  private List<Open5eReferenceDto> savingThrows;
+  private List<Open5eSavingThrowDto> savingThrows;
 
   @JsonProperty("subclass_of")
   private Open5eReferenceDto subclassOf;

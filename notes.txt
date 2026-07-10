@@ -55,3 +55,4 @@ IMPORTANT NOTES:
 
 (current fix: transfer to v2 (classes))
 - debug class sync (list -> "An unexpected error occurred: No enum constant dev.ushki.livedndlist.enums.AbilityType.2")
+- when syncing error with duplicated keys (see logs for clarity)

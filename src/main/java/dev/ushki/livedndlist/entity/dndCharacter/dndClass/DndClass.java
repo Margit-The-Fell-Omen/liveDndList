@@ -5,6 +5,8 @@ import dev.ushki.livedndlist.enums.AbilityType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,6 +54,7 @@ public class DndClass {
 
   private String hitDice;
 
+  @Enumerated(EnumType.STRING)
   private List<AbilityType> savingThrows;
 
   @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})

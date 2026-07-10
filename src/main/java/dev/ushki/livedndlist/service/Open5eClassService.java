@@ -191,5 +191,4 @@ public class Open5eClassService {
     return classes.stream()
         .map(dndClassMapper::toDto).toList();
   }
-
 }

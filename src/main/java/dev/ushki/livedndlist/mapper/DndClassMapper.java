@@ -5,16 +5,20 @@ import dev.ushki.livedndlist.dto.open5e.Open5eClassFeatureDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassTableDataDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eGainedAtDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
+import dev.ushki.livedndlist.dto.open5e.Open5eSavingThrowDto;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassTableData;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.GainedAt;
 import dev.ushki.livedndlist.enums.AbilityType;
+import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
+import dev.ushki.livedndlist.repository.DndClassFeatureRepository;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,7 @@ import org.springframework.stereotype.Component;
 public class DndClassMapper {
 
   private final DocumentMapper documentMapper;
+  private final DndClassFeatureRepository dndClassFeatureRepository;
 
   // ──────────────────────────────────────────────
   // DTO → Entity
@@ -69,7 +74,7 @@ public class DndClassMapper {
     return dndClass;
   }
 
-  private DndClassFeature toFeatureEntity(Open5eClassFeatureDto dto) {
+  public DndClassFeature toFeatureEntity(Open5eClassFeatureDto dto) {
     if (dto == null) {
       return null;
     }
@@ -114,8 +119,7 @@ public class DndClassMapper {
       dto.setSavingThrows(
           entity.getSavingThrows().stream()
               .map(ability -> {
-                Open5eReferenceDto st = new Open5eReferenceDto();
-                st.setKey(ability.name().toLowerCase());
+                Open5eSavingThrowDto st = new Open5eSavingThrowDto();
                 st.setName(ability.name());
                 return st;
               })
@@ -215,37 +219,74 @@ public class DndClassMapper {
   }
 
   private void updateFeatures(DndClass entity, Open5eClassDto dto) {
-    entity.getFeatures().clear();
 
     if (dto.getFeatures() == null || dto.getFeatures().isEmpty()) {
       return;
     }
 
+    Set<String> featureKeySet = entity.getFeatures().stream()
+        .map(DndClassFeature::getKey)
+        .collect(Collectors.toSet());
+
     dto.getFeatures().forEach(featureDto -> {
-      DndClassFeature feature = toFeatureEntity(featureDto);
-      feature.setDndClass(entity);
-      entity.getFeatures().add(feature);
+      if (!featureKeySet.contains(featureDto.getKey())) {
+        DndClassFeature feature = toFeatureEntity(featureDto);
+        feature.setDndClass(entity);
+        entity.getFeatures().add(feature);
+      } else {
+        DndClassFeature feature = getDndClassFeature(featureDto.getKey());
+        DndClassFeature newFeature = toFeatureEntity(featureDto);
+        updateIfPresent(newFeature.getFeatureType(), feature::setFeatureType);
+        updateIfPresent(newFeature.getName(), feature::setName);
+        updateIfPresent(newFeature.getDescription(), feature::setDescription);
+        updateIfPresent(newFeature.getGainedAt(), feature::setGainedAt);
+        updateIfPresent(newFeature.getDataForClassTable(), feature::setDataForClassTable);
+      }
     });
   }
 
+
+  public DndClassFeature getDndClassFeature(String key) {
+    Optional<DndClassFeature> retrieved = dndClassFeatureRepository.findByKey(key);
+    if (retrieved.isEmpty()) {
+      throw new ResourceNotFoundException("DndClassFeature", "key", key);
+    }
+    return retrieved.get();
+  }
+
+  public void createDndClassFeature(Open5eClassFeatureDto dto) {
+    dndClassFeatureRepository.save(toFeatureEntity(dto));
+  }
+
+  public void deleteDndClassFeature(String key) {
+    dndClassFeatureRepository.delete(getDndClassFeature(key));
+  }
   // ──────────────────────────────────────────────
   // Helpers
   // ──────────────────────────────────────────────
 
-  private List<AbilityType> mapSavingThrows(List<Open5eReferenceDto> savingThrows) {
+  private List<AbilityType> mapSavingThrows(List<Open5eSavingThrowDto> savingThrows) {
     if (savingThrows == null || savingThrows.isEmpty()) {
       return Collections.emptyList();
     }
 
     return savingThrows.stream()
         .map(s -> {
-          String raw = s.getKey() != null ? s.getKey() : s.getName();
+          String raw = s.getName();
           if (raw == null) {
+            return null;
+          }
+
+          raw = raw.trim();
+
+          if (raw.matches("\\d+")) {
+            log.warn("Skipping numeric saving throw value: {}", raw);
             return null;
           }
           try {
             return AbilityType.valueOf(raw.toUpperCase());
           } catch (IllegalArgumentException e) {
+            log.warn("Unknown saving throw value '{}', skipping", raw);
             return null;
           }
         })
