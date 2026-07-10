@@ -103,11 +103,17 @@ export interface CharacterClass extends DocumentInfo {
   key: string;
   desc: string;
   hitDice: string;
-  casterType: string;
-  primaryAbilities: string[];
-  savingThrows: Open5eReference[];
+  hitDiceName: string;
+  hitPointsOn1stLevel: string;
+  hitPointsOnHigherLevels: string;
+  savingThrows: AbilityType[];
   subclassOf: Open5eReference;
+  subclasses: Open5eReference[];
   features: ClassFeature[];
+}
+
+export interface Open5eSavingThrow {
+  name: string;
 }
 
 export interface BackgroundBenefit {

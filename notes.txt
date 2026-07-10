@@ -29,6 +29,7 @@ Plan for live-dnd-list:
 - auto-remember latest login
 
 (later plans)
+- redundant parentDndClass key and name fields in DndClass
 - why do races still use ResponseEntity ???: 
 - remove not used endpoints and repo methods
 - rewrite my Cache Manager -> Redis

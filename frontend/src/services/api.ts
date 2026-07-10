@@ -1,7 +1,6 @@
 // services/api.ts
 
 import type {
-  Archetype,
   AuthResponse,
   Background,
   Character,
@@ -163,10 +162,6 @@ export const referenceDataApi = {
   },
   getClasses: async (): Promise<CharacterClass[]> => {
     return fetchWithAuth<CharacterClass[]>('/sync/classes/list');
-  },
-  getArchetypesByClass: async (classId: number): Promise<Archetype[]> => {
-    const endpoint = `/dndclass/${classId}/archetypes`;
-    return fetchWithAuth<Archetype[]>(endpoint);
   },
   getBackgrounds: async (): Promise<Background[]> => {
     return fetchWithAuth<Background[]>('/backgrounds/list');

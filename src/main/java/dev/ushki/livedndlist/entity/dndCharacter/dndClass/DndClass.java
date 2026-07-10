@@ -54,6 +54,15 @@ public class DndClass {
 
   private String hitDice;
 
+  @Column(name = "hit_dice_name")
+  private String hitDiceName;
+
+  @Column(name = "hit_points_on_1st_level")
+  private String hitPointsOn1stLevel;
+
+  @Column(name = "hit_points_on_higher_levels")
+  private String hitPointsOnHigherLevels;
+
   @Enumerated(EnumType.STRING)
   private List<AbilityType> savingThrows;
 

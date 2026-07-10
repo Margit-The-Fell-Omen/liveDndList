@@ -21,7 +21,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   const [name, setName] = useState('');
   const [raceKey, setRaceKey] = useState<string | ''>('');
   const [backgroundKey, setBackgroundKey] = useState<string | ''>('');
-  const [classSlug, setClassSlug] = useState<string | ''>('');
+  const [classKey, setClassKey] = useState<string | ''>('');
   const [abilityScores, setAbilityScores] = useState<AbilityScores>(initialScores);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,20 +32,20 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!name || !raceKey || !classSlug) {
+    if (!name || !raceKey || !classKey) {
       setError("Name, Race, and Class are required.");
       return;
     }
 
-    const selectedClass = classes.find(c => c.slug === String(classSlug));
+    const selectedClass = classes.find(c => c.key === String(classKey));
     const constitutionModifier = Math.floor((abilityScores.constitution - 10) / 2);
 
-    const hitDieValue = selectedClass ? parseInt(selectedClass.hit_dice.split('d')[1], 10) : 10;
+    const hitDieValue = selectedClass ? parseInt(selectedClass.hitDice.split('D')[1], 10) : 10;
 
     const payload: CharacterCreateRequest = {
       name,
       raceKey: String(raceKey),
-      classSlug: String(classSlug),
+      classSlug: String(classKey),
       backgroundKey: String(backgroundKey),
       abilityScores,
       maxHitPoints: hitDieValue + constitutionModifier,
@@ -60,7 +60,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   };
 
   const raceOptions = races.map(r => ({value: r.key, label: r.name}));
-  const classOptions = classes.map(c => ({value: c.slug, label: c.name}));
+  const classOptions = classes.map(c => ({value: c.key, label: c.name}));
   const backgroundOptions = backgrounds.map(b => ({value: b.key, label: b.name}));
 
   return (
@@ -88,8 +88,8 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
             <Select label="Race" value={raceKey}
                     onChange={(e) => setRaceKey(String(e.target.value))}
                     options={raceOptions} placeholder="-- Select a Race --" required/>
-            <Select label="Class" value={classSlug}
-                    onChange={(e) => setClassSlug(String(e.target.value))} options={classOptions}
+            <Select label="Class" value={classKey}
+                    onChange={(e) => setClassKey(String(e.target.value))} options={classOptions}
                     placeholder="-- Select a Class --" required/>
             <Select label="Background" value={backgroundKey}
                     onChange={(e) => setBackgroundKey(String(e.target.value))}

@@ -2,6 +2,8 @@ services:
   frontend:
     build: frontend
     restart: always
+    depends_on:
+      - backend
     ports:
       - "80:80"
       - "443:443"
@@ -39,7 +41,7 @@ services:
       SERVER_TOMCAT_REMOTE_IP_HEADER: x-forwarded-for
       MANAGEMENT_ENDPOINTS_WEB_CORS_ALLOWED_ORIGINS: https://live-dnd-list.duckdns.org
     healthcheck:
-      test: ["CMD", "curl", "--fail", "http://127.0.0.1:8080/actuator/health"]
+      test: [ "CMD", "curl", "--fail", "http://127.0.0.1:8080/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -54,7 +56,7 @@ services:
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -72,7 +74,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     healthcheck:
       test:
-        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+        [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}" ]
       interval: 10s
       retries: 5
       start_period: 30s
@@ -97,7 +99,7 @@ services:
       - ./certbot-hook.sh:/certbot-hook.sh:ro
 
 volumes:
-  pgdata: {}
+  pgdata: { }
 
 networks:
-  app: {}
+  app: { }

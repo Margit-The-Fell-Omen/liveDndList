@@ -16,6 +16,15 @@ public class Open5eClassDto {
   @JsonProperty("hit_dice")
   private String hitDice;
 
+  @JsonProperty("hit_dice_name")
+  private String hitDiceName;
+
+  @JsonProperty("hit_points_at_1st_level")
+  private String hitPointsOn1stLevel;
+
+  @JsonProperty("hit_points_at_higher_levels")
+  private String hitPointsOnHigherLevels;
+
   @JsonProperty("caster_type")
   private String casterType;
 

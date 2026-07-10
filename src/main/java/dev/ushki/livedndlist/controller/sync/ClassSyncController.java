@@ -1,9 +1,9 @@
 package dev.ushki.livedndlist.controller.sync;
 
-import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
+import dev.ushki.livedndlist.dto.response.DndClassResponse;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.Open5eClassService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -77,8 +77,8 @@ public class ClassSyncController {
 
   @GetMapping("/list")
   @Operation(summary = "Get list of all classes from database")
-  public ApiResponse<List<Open5eClassDto>> getAllClasses() {
-    List<Open5eClassDto> classes = classSyncService.getAllClasses();
+  public ApiResponse<List<DndClassResponse>> getAllClasses() {
+    List<DndClassResponse> classes = classSyncService.getAllClasses();
     return ApiResponse.success(classes);
   }
 

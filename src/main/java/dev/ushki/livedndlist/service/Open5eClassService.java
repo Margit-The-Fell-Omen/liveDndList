@@ -5,6 +5,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
+import dev.ushki.livedndlist.dto.response.DndClassResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
@@ -70,6 +71,8 @@ public class Open5eClassService {
         progressTracker.incrementProcessed();
       }
 
+      mapSubclasses();
+
       long duration = System.currentTimeMillis() - startTime;
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
@@ -84,6 +87,17 @@ public class Open5eClassService {
     } finally {
       syncMetrics.endOperation();
       progressTracker.finish();
+    }
+  }
+
+  private void mapSubclasses() {
+    List<DndClass> dndClasses = dndClassRepository.findAll();
+
+    for (DndClass dndClass : dndClasses) {
+      if (dndClass.getSubclassOf() == null) {
+        dndClass.setSubclasses(
+            dndClassRepository.findDndClassesByParentDndClassKey(dndClass.getKey()));
+      }
     }
   }
 
@@ -186,7 +200,7 @@ public class Open5eClassService {
         .build();
   }
 
-  public List<Open5eClassDto> getAllClasses() {
+  public List<DndClassResponse> getAllClasses() {
     List<DndClass> classes = dndClassRepository.findAll();
     return classes.stream()
         .map(dndClassMapper::toDto).toList();

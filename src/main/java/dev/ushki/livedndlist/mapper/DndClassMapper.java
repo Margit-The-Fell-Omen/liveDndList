@@ -6,6 +6,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eClassTableDataDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eGainedAtDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eSavingThrowDto;
+import dev.ushki.livedndlist.dto.response.DndClassResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassTableData;
@@ -47,6 +48,9 @@ public class DndClassMapper {
         .name(dto.getName())
         .description(dto.getDesc())
         .hitDice(dto.getHitDice())
+        .hitDiceName(dto.getHitDiceName())
+        .hitPointsOn1stLevel(dto.getHitPointsOn1stLevel())
+        .hitPointsOnHigherLevels(dto.getHitPointsOnHigherLevels())
         .savingThrows(mapSavingThrows(dto.getSavingThrows()))
         .parentDndClassName(
             dto.getSubclassOf() != null
@@ -104,33 +108,32 @@ public class DndClassMapper {
   // Entity → DTO
   // ──────────────────────────────────────────────
 
-  public Open5eClassDto toDto(DndClass entity) {
+  public DndClassResponse toDto(DndClass entity) {
     if (entity == null) {
       return null;
     }
-    log.info("Mapping started");
-    Open5eClassDto dto = new Open5eClassDto();
+    DndClassResponse dto = new DndClassResponse();
     dto.setKey(entity.getKey());
     dto.setName(entity.getName());
     dto.setDesc(entity.getDescription());
     dto.setHitDice(entity.getHitDice());
+    dto.setHitDiceName(entity.getHitDiceName());
+    dto.setHitPointsOn1stLevel(entity.getHitPointsOn1stLevel());
+    dto.setHitPointsOnHigherLevels(entity.getHitPointsOnHigherLevels());
 
     if (entity.getSavingThrows() != null) {
-      dto.setSavingThrows(
-          entity.getSavingThrows().stream()
-              .map(ability -> {
-                Open5eSavingThrowDto st = new Open5eSavingThrowDto();
-                st.setName(ability.name());
-                return st;
-              })
-              .collect(Collectors.toList()));
+      dto.setSavingThrows(entity.getSavingThrows());
     }
 
     if (entity.getParentDndClassKey() != null) {
-      Open5eReferenceDto subRef = new Open5eReferenceDto();
-      subRef.setKey(entity.getParentDndClassKey());
-      subRef.setName(entity.getParentDndClassName());
-      dto.setSubclassOf(subRef);
+      Open5eReferenceDto parRef = new Open5eReferenceDto();
+      parRef.setKey(entity.getParentDndClassKey());
+      parRef.setName(entity.getParentDndClassName());
+      dto.setSubclassOf(parRef);
+
+      dto.setSubclasses(entity.getSubclasses().stream()
+          .map(sub -> new Open5eReferenceDto(sub.getKey(), sub.getName()))
+          .toList());
     }
 
     if (entity.getFeatures() != null) {
@@ -138,10 +141,6 @@ public class DndClassMapper {
           entity.getFeatures().stream()
               .map(this::toFeatureDto)
               .collect(Collectors.toList()));
-    }
-    log.info("Features mapped");
-    if (entity.getDocument() != null) {
-      dto.setDocument(documentMapper.toDocumentDto(entity.getDocument()));
     }
 
     return dto;
@@ -201,6 +200,9 @@ public class DndClassMapper {
     updateIfPresent(dto.getName(), entity::setName);
     updateIfPresent(dto.getDesc(), entity::setDescription);
     updateIfPresent(dto.getHitDice(), entity::setHitDice);
+    updateIfPresent(dto.getHitDiceName(), entity::setHitDiceName);
+    updateIfPresent(dto.getHitPointsOn1stLevel(), entity::setHitPointsOn1stLevel);
+    updateIfPresent(dto.getHitPointsOnHigherLevels(), entity::setHitPointsOnHigherLevels);
 
     if (dto.getSavingThrows() != null) {
       entity.setSavingThrows(mapSavingThrows(dto.getSavingThrows()));
