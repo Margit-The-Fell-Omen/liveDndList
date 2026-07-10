@@ -7,7 +7,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.entity.dndCharacter.Race;
+import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.RaceMapper;
 import dev.ushki.livedndlist.repository.RaceRepository;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class Open5eRaceService {
 
-  private static final String API_PATH = "/v1/races/";
+  private static final String API_PATH = "/v2/species/";
 
   private final RaceRepository raceRepository;
   private final RaceMapper raceMapper;
@@ -90,39 +90,6 @@ public class Open5eRaceService {
   }
 
   @Transactional
-  public SyncResultDto syncBySlug(String slug) {
-    long startTime = System.currentTimeMillis();
-
-    try {
-      log.info("Syncing race by slug: {}", slug);
-
-      Open5eRaceDto dto = apiClient.getBySlug(API_PATH, slug, Open5eRaceDto.class);
-      SyncAction action = saveOrUpdate(dto);
-
-      long duration = System.currentTimeMillis() - startTime;
-
-      return SyncResultDto.builder()
-          .success(true)
-          .message(action == SyncAction.CREATED
-              ? "Race created: " + dto.getName()
-              : "Race updated: " + dto.getName())
-          .syncedAt(LocalDateTime.now())
-          .statistics(SyncResultDto.SyncStatistics.builder()
-              .totalFetched(1)
-              .created(action == SyncAction.CREATED ? 1 : 0)
-              .updated(action == SyncAction.UPDATED ? 1 : 0)
-              .failed(0)
-              .durationMs(duration)
-              .build())
-          .build();
-
-    } catch (Exception e) {
-      log.error("API request error: {}", e.getMessage());
-      return buildErrorResult(e, "");
-    }
-  }
-
-  @Transactional
   public SyncResultDto clearAll() {
     try {
       long count = raceRepository.count();
@@ -165,7 +132,7 @@ public class Open5eRaceService {
   }
 
   private SyncAction saveOrUpdate(Open5eRaceDto dto) {
-    Optional<Race> existing = raceRepository.findBySlug(dto.getSlug());
+    Optional<Race> existing = raceRepository.findByKey(dto.getKey());
 
     if (existing.isPresent()) {
       Race race = existing.get();

@@ -88,5 +88,5 @@ public class Open5eSpellDto {
 
   private Boolean concentration;
 
-  private Open5eSpellCrossReferencesDto crossreferences;
+  private Open5eCrossReferencesDto crossreferences;
 }

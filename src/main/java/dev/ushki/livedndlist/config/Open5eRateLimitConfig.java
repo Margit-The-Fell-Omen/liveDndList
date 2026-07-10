@@ -13,5 +13,5 @@ public class Open5eRateLimitConfig {
 
   private long delayMs = 200;
   private int maxRetries = 3;
-  private long retryDelayMs = 1000;
+  private long retryDelayMs = 120000;
 }

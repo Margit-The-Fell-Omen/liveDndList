@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Open5eSpellCrossReferencesDto {
+public class Open5eCrossReferencesDto {
 
   private List<Object> to;
 }

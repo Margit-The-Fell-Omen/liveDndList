@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.entity.dndCharacter;
 
+import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

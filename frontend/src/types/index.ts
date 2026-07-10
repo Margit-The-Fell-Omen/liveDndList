@@ -56,67 +56,58 @@ interface DocumentInfo {
   document__url?: string;
 }
 
-export interface Asi {
-  attributes: string[];
-  value: number;
-}
-
-export interface Speed {
-  walk?: number;
-  swim?: number;
-  fly?: number;
-}
-
-export interface Subrace extends DocumentInfo {
+export interface RaceTrait {
+  id: number;
   name: string;
-  slug: string;
-  desc: string;
-  asi: Asi[];
-  asi_desc: string;
-  traits: string;
+  description: string;
+  type: string;
+  traitOrder: number;
 }
 
 export interface Race extends DocumentInfo {
+  id: number;
   name: string;
-  slug: string;
-  desc: string;
-  asi_desc: string;
-  asi: Asi[];
-  age: string;
-  alignment: string;
-  size: string;
-  size_raw: string;
-  speed: Speed;
-  speed_desc: string;
-  languages: string;
-  vision: string;
-  traits: string;
-  subraces: Subrace[];
+  key: string;
+  description: string;
+  subspecies: boolean;
+  parentRaceKey: string | null;
+  traits: RaceTrait[];
 }
 
-export interface Archetype extends DocumentInfo {
+export interface Open5eReference {
   name: string;
-  slug: string;
+  key: string;
+}
+
+export interface Open5eGainedAt {
+  level: number;
+  detail: string;
+}
+
+export interface Open5eDataForClassTable {
+  level: number;
+  columnValue: string;
+}
+
+export interface ClassFeature {
+  name: string;
+  key: string;
   desc: string;
+  featureType: FeatureType;
+  gainedAt: Open5eGainedAt[];
+  dataForClassTable: Open5eDataForClassTable[];
 }
 
 export interface CharacterClass extends DocumentInfo {
   name: string;
-  slug: string;
+  key: string;
   desc: string;
-  hit_dice: string;
-  hp_at_1st_level: string;
-  hp_at_higher_levels: string;
-  prof_armor: string;
-  prof_weapons: string;
-  prof_tools: string;
-  prof_saving_throws: string;
-  prof_skills: string;
-  equipment: string;
-  table: string;
-  spellcasting_ability: string;
-  subtypes_name: string;
-  archetypes: Archetype[];
+  hitDice: string;
+  casterType: string;
+  primaryAbilities: string[];
+  savingThrows: Open5eReference[];
+  subclassOf: Open5eReference;
+  features: ClassFeature[];
 }
 
 export interface BackgroundBenefit {
@@ -141,7 +132,12 @@ export type CharacterAlignment =
     | 'LAWFUL_NEUTRAL' | 'TRUE_NEUTRAL' | 'CHAOTIC_NEUTRAL'
     | 'LAWFUL_EVIL' | 'NEUTRAL_EVIL' | 'CHAOTIC_EVIL' | 'UNALIGNED';
 
-export type AbilityName =
+export type FeatureType =
+    | 'CLASS_TABLE_DATA' | 'PROFICIENCY_BONUS' | 'CLASS_LEVEL_FEATURE'
+    | 'PROFICIENCIES' | 'STARTING_EQUIPMENT' | 'CLASS_FEATURE_OPTION_LIST'
+    | 'SPELL_SLOTS' | 'CORE_TRAITS_TABLE'
+
+export type AbilityType =
     | 'STRENGTH' | 'DEXTERITY' | 'CONSTITUTION'
     | 'INTELLIGENCE' | 'WISDOM' | 'CHARISMA';
 
@@ -189,7 +185,7 @@ export interface AbilityScoresResponse {
 export interface SkillResponse {
   id: number;
   skillType: SkillName;
-  abilityType: AbilityName;
+  abilityType: AbilityType;
   proficient: boolean;
   expertise: boolean;
   totalBonus: number;
@@ -234,7 +230,7 @@ export interface SpellResponse {
 
 export interface CharacterCreateRequest {
   name: string;
-  raceSlug: string;
+  raceKey: string;
   backgroundKey: string;
   alignment?: CharacterAlignment;
   background?: string;
@@ -243,7 +239,7 @@ export interface CharacterCreateRequest {
   abilityScores: AbilityScores;
   maxHitPoints: number;
   portraitUrl?: string;
-  spellcastingAbility?: AbilityName;
+  spellcastingAbility?: AbilityType;
 }
 
 export interface CharacterSummary {
@@ -280,11 +276,11 @@ export interface Character {
   deathSaveSuccesses: number;
   deathSaveFailures: number;
   skills: SkillResponse[];
-  savingThrowProficiencies: AbilityName[];
-  equipment: EquipmentResponse[]; // Finalized
+  savingThrowProficiencies: AbilityType[];
+  equipment: EquipmentResponse[];
   currency: DndCurrencyResponse;
-  spells: SpellResponse[]; // Finalized
-  spellcastingAbility?: AbilityName;
+  spells: SpellResponse[];
+  spellcastingAbility?: AbilityType;
   featuresAndTraits: string;
   backstory: string;
   personalityTraits: string;
@@ -308,7 +304,7 @@ export interface CharacterUpdateRequest {
   armorClass?: number;
   speed?: number;
   portraitUrl?: string;
-  spellcastingAbility?: AbilityName;
+  spellcastingAbility?: AbilityType;
   backstory?: string;
   personalityTraits?: string;
   ideals?: string;
@@ -319,7 +315,7 @@ export interface CharacterUpdateRequest {
   deathSaveSuccesses?: number;
   deathSaveFailures?: number;
   experiencePoints?: number;
-  savingThrowProficiencies?: AbilityName[];
+  savingThrowProficiencies?: AbilityType[];
   skills?: SkillUpdateRequest[];
   initiative?: number;
 }
@@ -394,7 +390,7 @@ export interface CharacterContextType {
   addSpellToCharacter: (spellId: number) => Promise<void>;
   removeSpellFromCharacter: (spellId: number) => Promise<void>;
 
-  toggleSavingThrowProficiency: (ability: AbilityName) => Promise<void>;
+  toggleSavingThrowProficiency: (ability: AbilityType) => Promise<void>;
   toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
   toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
 }

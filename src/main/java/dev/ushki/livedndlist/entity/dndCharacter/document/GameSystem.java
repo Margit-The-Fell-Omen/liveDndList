@@ -1,4 +1,4 @@
-package dev.ushki.livedndlist.entity.dndCharacter;
+package dev.ushki.livedndlist.entity.dndCharacter.document;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -12,12 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BackgroundBenefit {
+public class GameSystem {
 
+  @Column(name = "system_name")
   private String name;
-
-  @Column(name = "description", columnDefinition = "TEXT")
-  private String desc;
-
-  private String type;
+  @Column(name = "system_key")
+  private String key;
 }

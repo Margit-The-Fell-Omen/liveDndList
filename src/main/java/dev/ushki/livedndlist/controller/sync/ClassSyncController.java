@@ -1,6 +1,5 @@
 package dev.ushki.livedndlist.controller.sync;
 
-import dev.ushki.livedndlist.dto.open5e.Open5eArchetypeDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,15 +60,6 @@ public class ClassSyncController {
     return ApiResponse.success("Sync started. Check status at: GET /api/sync/classes/status");
   }
 
-  @PostMapping("/{slug}")
-  @Operation(summary = "Sync specific class by slug")
-  public ApiResponse<SyncResultDto> syncClassBySlug(@PathVariable String slug) {
-    log.info("Received request to sync class: {}", slug);
-    SyncResultDto result = classSyncService.syncBySlug(slug);
-    return result.isSuccess() ? ApiResponse.success(result)
-        : ApiResponse.error(result.getMessage(), result);
-  }
-
   @DeleteMapping
   @Operation(summary = "Delete all classes from database")
   public ApiResponse<SyncResultDto> clearAllClasses() {
@@ -93,10 +82,4 @@ public class ClassSyncController {
     return ApiResponse.success(classes);
   }
 
-  @GetMapping("/dndclass/{id}/archetypes")
-  @Operation(summary = "Get all archetypes of class by id")
-  public ApiResponse<List<Open5eArchetypeDto>> getArchetypesByClass(@PathVariable Long id) {
-    List<Open5eArchetypeDto> archetypes = classSyncService.getArchetypesByClass(id);
-    return ApiResponse.success(archetypes);
-  }
 }

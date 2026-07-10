@@ -2,6 +2,82 @@
 # to run alongside the main production environment without conflicts.
 
 services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata-dev:/var/lib/postgresql
+    networks:
+      - app-dev
+    restart: always
+
+  backend:
+    build: .
+    ports:
+      - "8081:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATA_REDIS_PASSWORD: ${REDIS_PASSWORD}
+      APP_JWT_SECRET: ${APP_JWT_SECRET}
+      SERVER_SERVLET_SESSION_COOKIE_SECURE: "false"
+      LOGGING_FILE_NAME: /app/logs/backend.log
+      LOGGING_LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN: /app/logs/backend.%d{yyyy-MM-dd}.%i.log.gz
+      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE: 20MB
+      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_HISTORY: 14
+      LOGGING_LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP: 500MB
+
+    volumes:
+      - ./logs/dev/backend:/app/logs
+
+    logging:
+      driver: local
+      options:
+        max-size: "20m"
+        max-file: "5"
+
+    networks:
+      - app-dev
+    restart: always
+
+  redis:
+    image: redis
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "6380:6379"
+    networks:
+      - app-dev
+    restart: always
+
   frontend:
     build: frontend
     restart: always

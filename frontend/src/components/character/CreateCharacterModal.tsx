@@ -19,7 +19,7 @@ const initialScores: AbilityScores = {
 export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProps) {
   const {createCharacter, races, classes, backgrounds, saving} = useCharacter();
   const [name, setName] = useState('');
-  const [raceSlug, setRaceSlug] = useState<string | ''>('');
+  const [raceKey, setRaceKey] = useState<string | ''>('');
   const [backgroundKey, setBackgroundKey] = useState<string | ''>('');
   const [classSlug, setClassSlug] = useState<string | ''>('');
   const [abilityScores, setAbilityScores] = useState<AbilityScores>(initialScores);
@@ -32,7 +32,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!name || !raceSlug || !classSlug) {
+    if (!name || !raceKey || !classSlug) {
       setError("Name, Race, and Class are required.");
       return;
     }
@@ -44,7 +44,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
 
     const payload: CharacterCreateRequest = {
       name,
-      raceSlug: String(raceSlug),
+      raceKey: String(raceKey),
       classSlug: String(classSlug),
       backgroundKey: String(backgroundKey),
       abilityScores,
@@ -59,7 +59,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
     }
   };
 
-  const raceOptions = races.map(r => ({value: r.slug, label: r.name}));
+  const raceOptions = races.map(r => ({value: r.key, label: r.name}));
   const classOptions = classes.map(c => ({value: c.slug, label: c.name}));
   const backgroundOptions = backgrounds.map(b => ({value: b.key, label: b.name}));
 
@@ -85,8 +85,8 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
                  required fullWidth/>
 
           <div className={styles.grid}>
-            <Select label="Race" value={raceSlug}
-                    onChange={(e) => setRaceSlug(String(e.target.value))}
+            <Select label="Race" value={raceKey}
+                    onChange={(e) => setRaceKey(String(e.target.value))}
                     options={raceOptions} placeholder="-- Select a Race --" required/>
             <Select label="Class" value={classSlug}
                     onChange={(e) => setClassSlug(String(e.target.value))} options={classOptions}

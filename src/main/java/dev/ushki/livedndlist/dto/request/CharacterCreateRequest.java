@@ -12,6 +12,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@SuppressWarnings("checkstyle:TextBlockGoogleStyleFormatting")
 @Data
 @Builder
 @NoArgsConstructor
@@ -52,9 +53,9 @@ public class CharacterCreateRequest {
   @Schema(description = "Name of the character", example = "Gandalf the Grey")
   private String name;
 
-  @NotNull(message = "Race slug is required")
-  @Schema(description = "Slug of the character race", example = "human")
-  private String raceSlug;
+  @NotNull(message = "Race key is required")
+  @Schema(description = "Key of the character race", example = "human")
+  private String raceKey;
 
   @Schema(
       description = "Character alignment",

@@ -1,65 +1,36 @@
 package dev.ushki.livedndlist.dto.open5e;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-
 import java.util.List;
+import lombok.Data;
 
 @Data
 public class Open5eClassDto {
 
-  private String name;
+  private String key;
 
-  private String slug;
+  private String name;
 
   private String desc;
 
   @JsonProperty("hit_dice")
   private String hitDice;
 
-  @JsonProperty("hp_at_1st_level")
-  private String hpAt1stLevel;
+  @JsonProperty("caster_type")
+  private String casterType;
 
-  @JsonProperty("hp_at_higher_levels")
-  private String hpAtHigherLevels;
+  @JsonProperty("primary_abilities")
+  private List<String> primaryAbilities;
 
-  @JsonProperty("prof_armor")
-  private String profArmor;
+  @JsonProperty("saving_throws")
+  private List<Open5eSavingThrowDto> savingThrows;
 
-  @JsonProperty("prof_weapons")
-  private String profWeapons;
+  @JsonProperty("subclass_of")
+  private Open5eReferenceDto subclassOf;
 
-  @JsonProperty("prof_tools")
-  private String profTools;
+  private List<Open5eClassFeatureDto> features;
 
-  @JsonProperty("prof_saving_throws")
-  private String profSavingThrows;
+  private Open5eDocumentDto document;
 
-  @JsonProperty("prof_skills")
-  private String profSkills;
-
-  private String equipment;
-
-  @JsonProperty("table")
-  private String levelTable;
-
-  @JsonProperty("spellcasting_ability")
-  private String spellcastingAbility;
-
-  @JsonProperty("subtypes_name")
-  private String subtypesName;
-
-  private List<Open5eArchetypeDto> archetypes;
-
-  @JsonProperty("document__slug")
-  private String documentSlug;
-
-  @JsonProperty("document__title")
-  private String documentTitle;
-
-  @JsonProperty("document__license_url")
-  private String documentLicenseUrl;
-
-  @JsonProperty("document__url")
-  private String documentUrl;
+  private Open5eCrossReferencesDto crossreferences;
 }
