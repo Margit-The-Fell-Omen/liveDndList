@@ -4,19 +4,28 @@ import dev.ushki.livedndlist.dto.open5e.Open5eDocumentDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eTraitDto;
+import dev.ushki.livedndlist.dto.response.DndRaceResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.document.Document;
 import dev.ushki.livedndlist.entity.dndCharacter.document.GameSystem;
 import dev.ushki.livedndlist.entity.dndCharacter.document.Publisher;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.entity.dndCharacter.race.RaceTrait;
+import dev.ushki.livedndlist.repository.RaceRepository;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class RaceMapper {
+
+  private final RaceRepository raceRepository;
 
   public Race toEntity(Open5eRaceDto dto) {
     if (dto == null) {
@@ -34,6 +43,8 @@ public class RaceMapper {
 
     if (dto.isSubspecies()) {
       race.setParentRaceKey(dto.getSubspeciesOf());
+    } else {
+      race.setParentRaceKey(null);
     }
 
     applyTraits(dto.getTraits(), race);
@@ -86,6 +97,24 @@ public class RaceMapper {
     updateIfPresent(dto.getKey(), entity::setKey);
     updateIfPresent(dto.getDesc(), entity::setDescription);
     updateIfPresent(dto.isSubspecies(), entity::setSubspecies);
+    updateIfPresent(dto.getSubspeciesOf(), entity::setParentRaceKey);
+
+    if (dto.isSubspecies()) {
+      Optional<Race> parentOpt = raceRepository.findByKey(dto.getSubspeciesOf());
+      if (parentOpt.isEmpty()) {
+        log.warn("Parent race not found by key {}", dto.getSubspeciesOf());
+      } else {
+        Race parent = parentOpt.get();
+        if (parent.getSubracesOfThis() == null) {
+          parent.setSubracesOfThis(new ArrayList<>());
+        }
+        List<String> subraceKeys = parent.getSubracesOfThis();
+
+        subraceKeys.removeIf(key -> Objects.equals(key, dto.getKey()));
+
+        subraceKeys.add(dto.getKey());
+      }
+    }
 
     if (dto.getDocument() != null) {
       entity.setDocument(toDocumentEntity(dto.getDocument()));
@@ -97,18 +126,23 @@ public class RaceMapper {
     }
   }
 
-  public Open5eRaceDto toDto(Race entity) {
+  public DndRaceResponse toDto(Race entity) {
     if (entity == null) {
       return null;
     }
 
-    Open5eRaceDto dto = new Open5eRaceDto();
+    DndRaceResponse dto = new DndRaceResponse();
     dto.setName(entity.getName());
     dto.setKey(entity.getKey());
     dto.setDesc(entity.getDescription());
     dto.setSubspecies(entity.isSubspecies());
+    dto.setSubraceOf(entity.getParentRaceKey());
     dto.setDocument(toDocumentDto(entity.getDocument()));
-
+    if (!entity.isSubspecies() && entity.getSubracesOfThis() != null) {
+      dto.setSubraceOfThis(entity.getSubracesOfThis().stream()
+          .filter(key -> raceRepository.findByKey(key).isPresent())
+          .map(key -> raceRepository.findByKey(key).get().getKey()).toList());
+    } // dunno why it tells me that isPresent is not checked here...
     dto.setTraits(buildTraitDtos(entity.getTraits()));
 
     return dto;

@@ -22,6 +22,8 @@ function isTableSeparator(line: string): boolean {
   return /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?\s*$/.test(line);
 }
 
+const HEADING_RE = /^(#{1,6})\s*(.*)$/;
+
 function parseBlocks(source: string): Block[] {
   const lines = normalize(source).split('\n');
   const blocks: Block[] = [];
@@ -35,7 +37,7 @@ function parseBlocks(source: string): Block[] {
       continue;
     }
 
-    const headingMatch = /^(#{1,6})\s+(.*)$/.exec(line);
+    const headingMatch = HEADING_RE.exec(line);
     if (headingMatch) {
       blocks.push({
         kind: 'heading',
@@ -62,7 +64,7 @@ function parseBlocks(source: string): Block[] {
     while (
         i < lines.length &&
         lines[i].trim() &&
-        !/^#{1,6}\s+/.test(lines[i]) &&
+        !HEADING_RE.test(lines[i]) &&
         !(lines[i].trim().startsWith('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1]))
         ) {
       paragraphLines.push(lines[i]);

@@ -9,6 +9,7 @@ import {StepClass} from './wizard/StepClass';
 import {StepBackground} from './wizard/StepBackground';
 import {StepDetails} from './wizard/StepDetails';
 import styles from './CreateCharacterModal.module.css';
+import {EMPTY_RACE_SELECTION, isRaceSelectionComplete, type RaceSelection,} from '@/utils/races';
 
 interface CreateCharacterModalProps {
   isOpen: boolean;
@@ -26,7 +27,11 @@ const INITIAL_SCORES: AbilityScores = {
   charisma: 10,
 };
 
-function computeHitPoints(classes: ReturnType<typeof useCharacter>['classes'], classKey: string, constitution: number): number {
+function computeHitPoints(
+    classes: ReturnType<typeof useCharacter>['classes'],
+    classKey: string,
+    constitution: number
+): number {
   const cls = classes.find(c => c.key === classKey);
   const conMod = Math.floor((constitution - 10) / 2);
   const dieFaces = parseInt((cls?.hit_dice ?? cls?.hitDice ?? 'D8').replace('D', ''), 10);
@@ -37,7 +42,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   const {createCharacter, races, classes, backgrounds, saving} = useCharacter();
 
   const [step, setStep] = useState(0);
-  const [raceKey, setRaceKey] = useState('');
+  const [raceSelection, setRaceSelection] = useState<RaceSelection>(EMPTY_RACE_SELECTION);
   const [classKey, setClassKey] = useState('');
   const [backgroundKey, setBackgroundKey] = useState('');
   const [name, setName] = useState('');
@@ -51,7 +56,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
 
   const handleClose = () => {
     setStep(0);
-    setRaceKey('');
+    setRaceSelection(EMPTY_RACE_SELECTION);
     setClassKey('');
     setBackgroundKey('');
     setName('');
@@ -62,7 +67,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   };
 
   const canAdvance = (): boolean => {
-    if (step === 0) return !!raceKey;
+    if (step === 0) return isRaceSelectionComplete(races, raceSelection);
     if (step === 1) return !!classKey;
     if (step === 2) return !!backgroundKey;
     if (step === 3) return !!name.trim();
@@ -70,21 +75,22 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   };
 
   const handleNext = () => {
-    if (canAdvance()) setStep(s => s + 1);
+    if (canAdvance()) setStep(current => current + 1);
   };
 
-  const handleBack = () => setStep(s => s - 1);
+  const handleBack = () => setStep(current => current - 1);
 
   const handleSubmit = async () => {
     setError(null);
-    if (!name.trim() || !raceKey || !classKey) {
+
+    if (!name.trim() || !raceSelection.raceKey || !classKey) {
       setError('Name, Race, and Class are required.');
       return;
     }
 
     const payload: CharacterCreateRequest = {
       name: name.trim(),
-      raceKey,
+      raceKey: raceSelection.raceKey,
       classKey,
       backgroundKey,
       ...(alignment && {alignment}),
@@ -134,14 +140,21 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
 
         <div className={styles.stepBody}>
           {step === 0 && (
-              <StepRace races={races} selectedKey={raceKey} onSelect={setRaceKey}/>
+              <StepRace
+                  races={races}
+                  selection={raceSelection}
+                  onSelect={setRaceSelection}
+              />
           )}
           {step === 1 && (
               <StepClass classes={classes} selectedKey={classKey} onSelect={setClassKey}/>
           )}
           {step === 2 && (
-              <StepBackground backgrounds={backgrounds} selectedKey={backgroundKey}
-                              onSelect={setBackgroundKey}/>
+              <StepBackground
+                  backgrounds={backgrounds}
+                  selectedKey={backgroundKey}
+                  onSelect={setBackgroundKey}
+              />
           )}
           {step === 3 && (
               <StepDetails

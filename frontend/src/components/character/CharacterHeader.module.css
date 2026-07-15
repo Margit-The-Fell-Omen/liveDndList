@@ -14,6 +14,66 @@
   gap: var(--space-md);
 }
 
+.raceField {
+  display: flex;
+  flex-direction: column;
+}
+
+.raceField label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.raceField {
+  composes: wrapper from '@/components/common/Input.module.css';
+}
+
+.raceLabel {
+  composes: label from '@/components/common/Input.module.css';
+}
+
+.raceButton {
+  composes: select from '@/components/common/Input.module.css';
+  background-image: none;
+  padding-right: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.raceButton:hover {
+  border-color: var(--color-border-focus);
+}
+
+.raceButton:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-primary);
+  box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+.raceValue {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.raceEditIcon {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast);
+}
+
+.raceButton:hover .raceEditIcon {
+  color: var(--color-accent-primary);
+}
+
 .nameInput input {
   font-size: var(--font-size-3xl);
   font-family: var(--font-family-primary);

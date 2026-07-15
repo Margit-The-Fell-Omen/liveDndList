@@ -50,11 +50,14 @@ export interface AuthResponse {
 // REFERENCE DATA TYPES (Matches backend Open5e DTOs)
 // ═══════════════════════════════════════════════════════════════
 
-interface DocumentInfo {
-  document__slug: string;
-  document__title: string;
-  document__license_url?: string;
-  document__url?: string;
+export interface DocumentInfo {
+  name: string;
+  key: string;
+  type?: string;
+  display_name?: string;
+  publisher?: Open5eReference;
+  gamesystem?: Open5eReference;
+  permalink?: string;
 }
 
 export interface RaceTrait {
@@ -69,13 +72,12 @@ export interface Race {
   name: string;
   key: string;
   desc: string;
-  is_subspecies: boolean;
-  subspecies_of: string | null;
+  subspecies: boolean;
+  subraceOf: string | null;
+  subraceOfThis: string[];
   traits: RaceTrait[] | null;
-  document__slug?: string;
-  document__title?: string;
+  document?: DocumentInfo;
 }
-
 
 export interface Open5eReference {
   name: string;
@@ -111,11 +113,10 @@ export interface CharacterClass {
   hitPointsOn1stLevel?: string;
   hitPointsOnHigherLevels?: string;
   savingThrows: string[];
-  subclassOf: { name: string; key: string } | null;
-  subclasses: Array<{ name: string; key: string }>;
+  subclassOf: Open5eReference | null;
+  subclasses: Open5eReference[];
   features: ClassFeature[];
-  document__slug?: string;
-  document__title?: string;
+  document?: DocumentInfo;
 }
 
 export interface BackgroundBenefit {
@@ -124,11 +125,12 @@ export interface BackgroundBenefit {
   desc: string;
 }
 
-export interface Background extends DocumentInfo {
+export interface Background {
   name: string;
   key: string;
   desc: string;
   benefits: BackgroundBenefit[];
+  document?: DocumentInfo;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -239,6 +241,7 @@ export interface SpellResponse {
 export interface CharacterCreateRequest {
   name: string;
   raceKey: string;
+  subraceKey?: string;
   backgroundKey: string;
   alignment?: CharacterAlignment;
   classKey: string;
@@ -252,7 +255,7 @@ export interface CharacterCreateRequest {
 export interface CharacterSummary {
   id: number;
   name: string;
-  raceName: string;
+  raceKey: string;
   classDisplay: string;
   totalLevel: number;
   currentHitPoints: number;
@@ -264,7 +267,7 @@ export interface CharacterSummary {
 export interface Character {
   id: number;
   name: string;
-  raceName: string;
+  raceKey: string;
   alignment: CharacterAlignment;
   backgroundKey: string;
   experiencePoints: number;
@@ -301,7 +304,7 @@ export interface Character {
 
 export interface CharacterUpdateRequest {
   name?: string;
-  raceId?: number;
+  raceKey?: string;
   alignment?: CharacterAlignment;
   backgroundKey?: string;
   abilityScores?: AbilityScores;

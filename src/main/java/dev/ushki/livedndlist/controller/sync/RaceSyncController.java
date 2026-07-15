@@ -1,8 +1,8 @@
 package dev.ushki.livedndlist.controller.sync;
 
-import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
+import dev.ushki.livedndlist.dto.response.DndRaceResponse;
 import dev.ushki.livedndlist.repository.RaceRepository;
 import dev.ushki.livedndlist.service.Open5eRaceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,8 +76,8 @@ public class RaceSyncController {
 
   @GetMapping("/list")
   @Operation(summary = "Get list of all races from database")
-  public ResponseEntity<List<Open5eRaceDto>> getAllRaces() {
-    List<Open5eRaceDto> races = raceSyncService.getAllRaces();
+  public ResponseEntity<List<DndRaceResponse>> getAllRaces() {
+    List<DndRaceResponse> races = raceSyncService.getAllRaces();
     return ResponseEntity.ok(races);
   }
 }

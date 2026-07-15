@@ -7,6 +7,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
+import dev.ushki.livedndlist.dto.response.DndRaceResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.RaceMapper;
@@ -15,6 +16,7 @@ import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,6 +65,8 @@ public class Open5eRaceService {
 
       log.info("Fetched {} races from API", allRaces.size());
       progressTracker.setOperation("Saving to database");
+
+      allRaces.sort(Comparator.comparing(Open5eRaceDto::isSubspecies));
 
       for (Open5eRaceDto dto : allRaces) {
         long itemStart = System.currentTimeMillis();
@@ -170,7 +174,7 @@ public class Open5eRaceService {
         .build();
   }
 
-  public List<Open5eRaceDto> getAllRaces() {
+  public List<DndRaceResponse> getAllRaces() {
     List<Race> races = raceRepository.findAll();
     return races.stream()
         .map(raceMapper::toDto).toList();

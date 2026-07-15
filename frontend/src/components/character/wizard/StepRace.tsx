@@ -1,112 +1,177 @@
+import {Fragment} from 'react';
 import type {Race} from '@/types';
 import {SelectionCard} from './SelectionCard';
 import {MarkdownContent} from './MarkdownContent';
 import styles from './StepGrid.module.css';
+import {stripMarkdown} from '@utils/markdown.ts';
+import {
+  EMPTY_RACE_SELECTION,
+  getBaseRaces,
+  getSubracesForBaseRace,
+  type RaceSelection,
+} from '@/utils/races';
 
 interface StepRaceProps {
   races: Race[];
-  selectedKey: string;
-  onSelect: (key: string) => void;
+  selection: RaceSelection;
+  onSelect: (selection: RaceSelection) => void;
 }
 
-function RaceDetailPanel({race, allRaces}: { race: Race; allRaces: Race[] }) {
+function buildBadges(race: Race): string[] {
   const traits = race.traits ?? [];
-  const speedTrait = traits.find(t => t.type === 'SPEED');
-  const sizeTrait = traits.find(t => t.type === 'SIZE');
-  const narrativeTraits = traits.filter(t => t.type !== 'SPEED' && t.type !== 'SIZE');
+  const speedTrait = traits.find(trait => trait.type === 'SPEED');
+  const sizeTrait = traits.find(trait => trait.type === 'SIZE');
 
-  const subspecies = allRaces.filter(r => r.is_subspecies && r.subspecies_of === race.key);
+  return [
+    sizeTrait?.desc,
+    speedTrait?.desc ? `Speed: ${speedTrait.desc}` : undefined,
+  ].filter(Boolean) as string[];
+}
+
+function getDescription(race: Race): string | undefined {
+  const traits = race.traits ?? [];
+  const source = race.desc || traits.find(trait => !trait.type)?.desc || '';
+  return source ? stripMarkdown(source) : undefined;
+}
+
+function getNarrativeTraits(race: Race) {
+  return (race.traits ?? []).filter(
+      trait => trait.type !== 'SPEED' && trait.type !== 'SIZE'
+  );
+}
+
+function TraitSection({title, race}: { title: string; race: Race }) {
+  const traits = getNarrativeTraits(race);
+
+  if (traits.length === 0) return null;
+
+  return (
+      <div className={styles.detailSection}>
+        <h4 className={styles.detailSectionTitle}>{title}</h4>
+        <div className={styles.traitList}>
+          {traits.map((trait, index) => (
+              <div key={`${trait.name}-${index}`} className={styles.traitItem}>
+                <div className={styles.traitName}>{trait.name}</div>
+                <MarkdownContent text={trait.desc}/>
+              </div>
+          ))}
+        </div>
+      </div>
+  );
+}
+
+function RaceDetailPanel({
+                           baseRace,
+                           races,
+                           selection,
+                           onSelect,
+                         }: {
+  baseRace: Race;
+  races: Race[];
+  selection: RaceSelection;
+  onSelect: (selection: RaceSelection) => void;
+}) {
+  const subraces = getSubracesForBaseRace(baseRace, races);
+  const selectedSubrace = subraces.find(subrace => subrace.key === selection.raceKey);
+
+  const handleSubraceClick = (subraceKey: string) => {
+    onSelect({
+      baseRaceKey: baseRace.key,
+      raceKey: selection.raceKey === subraceKey ? '' : subraceKey,
+    });
+  };
 
   return (
       <div className={styles.detailPanel}>
         <div className={styles.detailHeader}>
-          <h3 className={styles.detailTitle}>{race.name}</h3>
+          <h3 className={styles.detailTitle}>{baseRace.name}</h3>
+          {baseRace.document?.display_name && (
+              <span className={styles.detailSubtitle}>{baseRace.document.display_name}</span>
+          )}
         </div>
-        <div className={styles.detailBadges}>
-          {sizeTrait?.desc && <span className={styles.detailBadge}>{sizeTrait.desc}</span>}
-          {speedTrait?.desc && <span className={styles.detailBadge}>Speed: {speedTrait.desc}</span>}
-        </div>
-        {race.desc && <MarkdownContent text={race.desc}/>}
 
-        {narrativeTraits.length > 0 && (
+        {baseRace.desc && <MarkdownContent text={baseRace.desc}/>}
+
+        <TraitSection title="Racial Traits" race={baseRace}/>
+
+        {subraces.length > 0 && (
             <div className={styles.detailSection}>
-              <h4 className={styles.detailSectionTitle}>Racial Traits</h4>
-              <div className={styles.traitList}>
-                {narrativeTraits.map((trait, idx) => (
-                    <div key={`${trait.name}-${idx}`} className={styles.traitItem}>
-                      <div className={styles.traitName}>{trait.name}</div>
-                      <MarkdownContent text={trait.desc}/>
-                    </div>
+              <h4 className={styles.detailSectionTitle}>Choose a Subrace</h4>
+              <p className={styles.subInfoNote}>
+                This race has subraces. You must choose one to continue.
+              </p>
+              <div className={styles.subraceGrid}>
+                {subraces.map(subrace => (
+                    <SelectionCard
+                        key={subrace.key}
+                        title={subrace.name}
+                        topRight={subrace.document?.display_name}
+                        badges={buildBadges(subrace)}
+                        description={getDescription(subrace)}
+                        isSelected={selection.raceKey === subrace.key}
+                        onClick={() => handleSubraceClick(subrace.key)}
+                    />
                 ))}
               </div>
             </div>
         )}
 
-        {subspecies.length > 0 && (
+        {selectedSubrace && (
             <div className={styles.detailSection}>
-              <h4 className={styles.detailSectionTitle}>Known Subspecies</h4>
-              <p className={styles.subInfoNote}>
-                Subspecies are informational only. Only base races can be selected.
-              </p>
-              <div className={styles.subInfoGrid}>
-                {subspecies.map(sub => (
-                    <div key={sub.key} className={styles.subInfoCard}>
-                      <div className={styles.subInfoTitle}>{sub.name}</div>
-                      {sub.desc && (
-                          <div className={styles.subInfoDesc}>
-                            <MarkdownContent text={sub.desc}/>
-                          </div>
-                      )}
-                    </div>
-                ))}
-              </div>
+              <h4 className={styles.detailSectionTitle}>Selected Subrace</h4>
+              {selectedSubrace.desc && <MarkdownContent text={selectedSubrace.desc}/>}
+              <TraitSection title="Subrace Traits" race={selectedSubrace}/>
             </div>
         )}
       </div>
   );
 }
 
-export function StepRace({races, selectedKey, onSelect}: StepRaceProps) {
-  const baseRaces = races.filter(r => !r.is_subspecies);
+export function StepRace({races, selection, onSelect}: StepRaceProps) {
+  const baseRaces = getBaseRaces(races);
 
-  const buildBadges = (race: Race): string[] => {
-    const traits = race.traits ?? [];
-    const speed = traits.find(t => t.type === 'SPEED');
-    const size = traits.find(t => t.type === 'SIZE');
-    return [
-      size?.desc,
-      speed ? `Speed: ${speed.desc}` : undefined,
-    ].filter(Boolean) as string[];
-  };
+  const handleBaseRaceClick = (race: Race) => {
+    const subraces = getSubracesForBaseRace(race, races);
 
-  const getDescription = (race: Race): string | undefined => {
-    const traits = race.traits ?? [];
-    return race.desc || traits.find(t => !t.type)?.desc;
+    if (selection.baseRaceKey === race.key) {
+      onSelect(EMPTY_RACE_SELECTION);
+      return;
+    }
+
+    onSelect({
+      baseRaceKey: race.key,
+      raceKey: subraces.length > 0 ? '' : race.key,
+    });
   };
 
   return (
       <div className={styles.container}>
         <p className={styles.hint}>
-          Select your character's race. Only base races can be chosen — subspecies are shown as
-          informational reference within each race.
+          Select your character&apos;s race. If a race has subraces, you must choose one.
         </p>
         <div className={styles.grid}>
           {baseRaces.map(race => {
-            const isSelected = selectedKey === race.key;
+            const isSelected = selection.baseRaceKey === race.key;
+
             return (
-                <>
+                <Fragment key={race.key}>
                   <SelectionCard
-                      key={race.key}
                       title={race.name}
+                      topRight={race.document?.display_name}
                       badges={buildBadges(race)}
                       description={getDescription(race)}
                       isSelected={isSelected}
-                      onClick={() => onSelect(race.key)}
+                      onClick={() => handleBaseRaceClick(race)}
                   />
                   {isSelected && (
-                      <RaceDetailPanel key={`${race.key}-detail`} race={race} allRaces={races}/>
+                      <RaceDetailPanel
+                          baseRace={race}
+                          races={races}
+                          selection={selection}
+                          onSelect={onSelect}
+                      />
                   )}
-                </>
+                </Fragment>
             );
           })}
         </div>

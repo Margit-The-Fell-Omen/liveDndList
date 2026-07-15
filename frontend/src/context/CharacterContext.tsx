@@ -118,6 +118,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
                 ? {
                   ...summary,
                   name: updatedChar.name ?? summary.name,
+                  raceKey: updatedChar.raceKey ?? summary.raceKey,
                   totalLevel: updatedChar.totalLevel ?? summary.totalLevel,
                   currentHitPoints: updatedChar.currentHitPoints ?? summary.currentHitPoints,
                   maxHitPoints: updatedChar.maxHitPoints ?? summary.maxHitPoints,

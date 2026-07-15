@@ -20,8 +20,8 @@ public class CharacterSummaryResponse {
   @Schema(description = "Character name", example = "Aragorn")
   private String name;
 
-  @Schema(description = "Character race name", example = "Human")
-  private String raceName;
+  @Schema(description = "Character race key", example = "srd_human")
+  private String raceKey;
 
   @Schema(description = "Display string for class and level", example = "Ranger 5")
   private String classDisplay;

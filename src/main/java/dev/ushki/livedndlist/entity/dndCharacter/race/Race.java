@@ -45,6 +45,9 @@ public class Race {
   private String parentRaceKey;
 
   @Builder.Default
+  private List<String> subracesOfThis = new ArrayList<>();
+
+  @Builder.Default
   @OneToMany(mappedBy = "race", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<RaceTrait> traits = new ArrayList<>();
 

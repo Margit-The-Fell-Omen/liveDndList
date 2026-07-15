@@ -1,4 +1,3 @@
-/* MODIFIED: Added transform for smoother mobile slide-in */
 .sidebar {
   position: fixed;
   left: 0;
@@ -9,7 +8,7 @@
   border-right: 1px solid var(--color-border-light);
   z-index: var(--z-sticky);
   transition: width var(--transition-normal), transform var(--transition-normal);
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 @media (min-width: 1024px) {
@@ -17,6 +16,96 @@
     width: var(--sidebar-width);
     box-shadow: var(--shadow-lg);
   }
+}
+
+.rail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-collapsed-width);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-top: var(--space-xl);
+  padding-bottom: var(--space-md);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: opacity var(--transition-normal);
+}
+
+.sidebar.expanded .rail {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.railCreateButton {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 2px dashed var(--color-border);
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-bottom: calc(var(--space-md) + 1px);
+  transition: border-color var(--transition-fast),
+  color var(--transition-fast),
+  background-color var(--transition-fast);
+}
+
+.railCreateButton:hover:not(:disabled) {
+  border-color: var(--color-accent-primary);
+  color: var(--color-accent-primary);
+  background-color: var(--color-bg-hover);
+}
+
+.railCreateButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.railList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--space-xs) + 4px);
+  width: 100%;
+}
+
+.railAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+  color: var(--color-text-inverse);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast),
+  box-shadow var(--transition-fast),
+  border-color var(--transition-fast);
+}
+
+.railAvatar:hover {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-md);
+}
+
+.railAvatarActive {
+  border-color: var(--color-text-primary);
+  box-shadow: 0 0 0 2px var(--color-accent-primary);
 }
 
 .content {
@@ -45,9 +134,6 @@
   font-size: var(--font-size-xl);
   color: var(--color-text-primary);
   margin: 0;
-}
-
-.actions, .characterList, .emptyMessage, .characterItem, .characterButton, .characterAvatar, .characterInfo, .characterName, .characterMeta, .deleteButton {
 }
 
 .actions {
@@ -107,7 +193,7 @@
   height: 36px;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
-  color: white;
+  color: var(--color-text-inverse);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,7 +240,6 @@
   opacity: 1 !important;
 }
 
-
 .overlay {
   display: none;
 }
@@ -169,6 +254,10 @@
   .sidebar.expanded {
     transform: translateX(0);
     box-shadow: var(--shadow-lg);
+  }
+
+  .sidebar .rail {
+    display: none;
   }
 
   .sidebar.expanded .content {

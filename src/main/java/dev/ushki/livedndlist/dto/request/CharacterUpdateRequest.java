@@ -23,8 +23,8 @@ public class CharacterUpdateRequest {
   @Schema(description = "Character name", example = "Gandalf the White")
   private String name;
 
-  @Schema(description = "Race ID", example = "1")
-  private Long raceId;
+  @Schema(description = "Race key", example = "srd_human")
+  private String raceKey;
 
   @Schema(description = "Character alignment", example = "LAWFUL_GOOD")
   private CharacterAlignment alignment;

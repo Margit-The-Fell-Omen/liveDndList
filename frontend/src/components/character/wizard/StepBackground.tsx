@@ -1,6 +1,7 @@
-import type {Background, BackgroundBenefit} from '@/types';
+import type {Background, BackgroundBenefit, DocumentInfo} from '@/types';
 import {SelectionCard} from './SelectionCard';
 import {MarkdownContent} from './MarkdownContent';
+import {stripMarkdown} from '@/utils/markdown';
 import styles from './StepGrid.module.css';
 
 interface StepBackgroundProps {
@@ -27,21 +28,27 @@ const humanizeKey = (raw: string): string =>
 
 const labelFor = (type: string): string => TYPE_LABELS[type] ?? humanizeKey(type);
 
+function documentLabel(doc?: DocumentInfo): string | undefined {
+  if (!doc) return undefined;
+  return doc.display_name || doc.name || doc.key;
+}
+
 function BackgroundDetailPanel({bg}: { bg: Background }) {
   const benefits = bg.benefits ?? [];
-
   const grouped = benefits.reduce<Record<string, BackgroundBenefit[]>>((acc, b) => {
     const type = b.type || 'other';
     acc[type] = [...(acc[type] ?? []), b];
     return acc;
   }, {});
 
+  const docLabel = documentLabel(bg.document);
+
   return (
       <div className={styles.detailPanel}>
         <div className={styles.detailHeader}>
           <h3 className={styles.detailTitle}>{bg.name}</h3>
-          {bg.document__title && (
-              <span className={styles.detailSubtitle}>{bg.document__title}</span>
+          {docLabel && (
+              <span className={styles.detailSubtitle}>{docLabel}</span>
           )}
         </div>
         {bg.desc && <MarkdownContent text={bg.desc}/>}
@@ -63,28 +70,37 @@ function BackgroundDetailPanel({bg}: { bg: Background }) {
 }
 
 export function StepBackground({backgrounds, selectedKey, onSelect}: StepBackgroundProps) {
+  const handleClick = (key: string) => {
+    onSelect(selectedKey === key ? '' : key);
+  };
+
   return (
       <div className={styles.container}>
         <p className={styles.hint}>
-          Choose a background that shaped your character's history and skills.
+          Choose a background that shaped your character's history and skills. Click again to
+          deselect.
         </p>
         <div className={styles.grid}>
           {backgrounds.map(bg => {
             const benefits = bg.benefits ?? [];
             const skills = benefits.find(b => b.type === 'skill_proficiency');
             const equipment = benefits.find(b => b.type === 'equipment');
-            const badges = skills?.desc ? [skills.desc] : [];
             const isSelected = selectedKey === bg.key;
+
+            const badges = skills?.desc ? [skills.desc] : [];
+            const descriptionSource = equipment?.desc || bg.desc || '';
+            const description = descriptionSource ? stripMarkdown(descriptionSource) : undefined;
 
             return (
                 <>
                   <SelectionCard
                       key={bg.key}
                       title={bg.name}
+                      topRight={documentLabel(bg.document)}
                       badges={badges}
-                      description={equipment?.desc}
+                      description={description}
                       isSelected={isSelected}
-                      onClick={() => onSelect(bg.key)}
+                      onClick={() => handleClick(bg.key)}
                   />
                   {isSelected && <BackgroundDetailPanel key={`${bg.key}-detail`} bg={bg}/>}
                 </>

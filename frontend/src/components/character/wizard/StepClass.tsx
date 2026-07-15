@@ -1,6 +1,8 @@
+import {useState} from 'react';
 import type {CharacterClass, ClassFeature, FeatureType} from '@/types';
 import {SelectionCard} from './SelectionCard';
 import {MarkdownContent} from './MarkdownContent';
+import {stripMarkdown} from '@/utils/markdown';
 import styles from './StepGrid.module.css';
 
 interface StepClassProps {
@@ -48,21 +50,17 @@ interface NormalizedFeature {
 
 function normalizeFeature(raw: ClassFeature | Record<string, unknown>): NormalizedFeature {
   const r = raw as Record<string, unknown>;
-
   const featureType = (r.featureType ?? r.feature_type ?? 'OTHER') as string;
-
   const gainedAtRaw = (r.gainedAt ?? r.gained_at ?? []) as Array<Record<string, unknown>>;
   const gainedAt = gainedAtRaw.map(g => ({
     level: Number(g.level ?? 0),
     detail: (g.detail as string | null) ?? null,
   }));
-
   const tableRaw = (r.dataForClassTable ?? r.data_for_class_table ?? []) as Array<Record<string, unknown>>;
   const tableRows = tableRaw.map(row => ({
     level: Number(row.level ?? 0),
     value: String(row.columnValue ?? row.column_value ?? ''),
   }));
-
   return {
     key: (r.key as string) ?? '',
     name: (r.name as string) ?? '',
@@ -73,13 +71,19 @@ function normalizeFeature(raw: ClassFeature | Record<string, unknown>): Normaliz
   };
 }
 
-function ProgressionTable({features}: { features: NormalizedFeature[] }) {
+function minGainedLevel(feat: NormalizedFeature): number {
+  if (!feat.gainedAt.length) return Number.MAX_SAFE_INTEGER;
+  return Math.min(...feat.gainedAt.map(g => g.level));
+}
+
+function ProgressionTable({features, valueLabel}: {
+  features: NormalizedFeature[];
+  valueLabel?: string
+}) {
   const levels = new Set<number>();
   features.forEach(f => f.tableRows.forEach(r => levels.add(r.level)));
   const sortedLevels = Array.from(levels).sort((a, b) => a - b);
-
   if (sortedLevels.length === 0) return null;
-
   return (
       <div className={styles.tableWrapper}>
         <table className={styles.classTable}>
@@ -87,7 +91,7 @@ function ProgressionTable({features}: { features: NormalizedFeature[] }) {
           <tr>
             <th>Level</th>
             {features.map(f => (
-                <th key={f.key}>{f.name}</th>
+                <th key={f.key} title={valueLabel}>{f.name}</th>
             ))}
           </tr>
           </thead>
@@ -111,10 +115,8 @@ function FeatureItem({feat}: { feat: NormalizedFeature }) {
   const gained = feat.gainedAt
       .map(g => `Lv ${g.level}${g.detail ? ` (${g.detail})` : ''}`)
       .join(', ');
-
   const hasTable = feat.tableRows.length > 0;
   const hasDesc = feat.desc.trim().length > 0;
-
   return (
       <div className={styles.traitItem}>
         <div className={styles.traitName}>
@@ -152,53 +154,62 @@ function FeatureItem({feat}: { feat: NormalizedFeature }) {
   );
 }
 
+function documentLabel(doc?: CharacterClass['document']): string | undefined {
+  if (!doc) return undefined;
+  return doc.display_name || doc.name || doc.key;
+}
+
 function ClassDetailPanel({cls, allClasses}: {
   cls: CharacterClass;
   allClasses: CharacterClass[]
 }) {
+  const [expandedSubclasses, setExpandedSubclasses] = useState<Set<string>>(new Set());
+
   const hitDie = cls.hitDice ?? cls.hit_dice ?? '—';
   const saves = (cls.savingThrows ?? []).map(humanize).join(', ') || '—';
   const hp1st = cls.hitPointsOn1stLevel;
-  const hpHigher = cls.hitPointsAtHigherLevels ?? cls.hitPointsOnHigherLevels;
-
+  const hpHigher = cls.hitPointsOnHigherLevels ?? cls.hitPointsOnHigherLevels;
   const features = (cls.features ?? []).map(normalizeFeature);
-
   const groupedByType = features.reduce<Record<string, NormalizedFeature[]>>((acc, f) => {
     const t = f.featureType || 'OTHER';
     acc[t] = [...(acc[t] ?? []), f];
     return acc;
   }, {});
-
-  const orderedKeys: string[] = [
-    ...PREFERRED_ORDER.filter(k => groupedByType[k]),
-    ...Object.keys(groupedByType).filter(k => !(PREFERRED_ORDER as string[]).includes(k)),
+  const PROGRESSION_TYPES: string[] = [
+    'PROFICIENCY_BONUS',
+    'CLASS_TABLE_DATA',
+    'SPELL_SLOTS',
   ];
-
+  const orderedKeys: string[] = [
+    ...PREFERRED_ORDER.filter(k => groupedByType[k] && !PROGRESSION_TYPES.includes(k)),
+    ...Object.keys(groupedByType).filter(
+        k => !(PREFERRED_ORDER as string[]).includes(k) && !PROGRESSION_TYPES.includes(k),
+    ),
+  ];
+  const progressionFeatures: NormalizedFeature[] = PROGRESSION_TYPES.flatMap(
+      t => groupedByType[t] ?? [],
+  );
   const subclasses = (cls.subclasses ?? [])
       .map(sc => allClasses.find(c => c.key === sc.key) ?? sc);
 
+  const toggleSubclass = (key: string) => {
+    setExpandedSubclasses(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
+
   const renderSection = (type: string, items: NormalizedFeature[]) => {
-    if (type === 'CLASS_TABLE_DATA' || type === 'PROFICIENCY_BONUS') {
-      const combined = [
-        ...(groupedByType['PROFICIENCY_BONUS'] ?? []),
-        ...(groupedByType['CLASS_TABLE_DATA'] ?? []),
-      ];
-      if (type === 'PROFICIENCY_BONUS' && groupedByType['CLASS_TABLE_DATA']) {
-        return null;
-      }
-      return (
-          <div key="progression" className={styles.detailSection}>
-            <h4 className={styles.detailSectionTitle}>Class Progression Table</h4>
-            <ProgressionTable features={combined}/>
-          </div>
-      );
-    }
+    const sortedItems = items
+        .slice()
+        .sort((a, b) => minGainedLevel(a) - minGainedLevel(b));
 
     return (
         <div key={type} className={styles.detailSection}>
           <h4 className={styles.detailSectionTitle}>{labelForFeatureType(type)}</h4>
           <div className={styles.traitList}>
-            {items.map((feat, idx) => (
+            {sortedItems.map((feat, idx) => (
                 <FeatureItem key={`${feat.key || feat.name}-${idx}`} feat={feat}/>
             ))}
           </div>
@@ -206,10 +217,15 @@ function ClassDetailPanel({cls, allClasses}: {
     );
   };
 
+  const docLabel = documentLabel(cls.document);
+
   return (
       <div className={styles.detailPanel}>
         <div className={styles.detailHeader}>
           <h3 className={styles.detailTitle}>{cls.name}</h3>
+          {docLabel && (
+              <span className={styles.detailSubtitle}>{docLabel}</span>
+          )}
         </div>
         <div className={styles.detailBadges}>
           <span className={styles.detailBadge}>Hit Die: {hitDie}</span>
@@ -224,6 +240,13 @@ function ClassDetailPanel({cls, allClasses}: {
             <p className={styles.detailDesc}>No features available for this class.</p>
         )}
 
+        {progressionFeatures.length > 0 && (
+            <div className={styles.detailSection}>
+              <h4 className={styles.detailSectionTitle}>Class Progression Table</h4>
+              <ProgressionTable features={progressionFeatures}/>
+            </div>
+        )}
+
         {orderedKeys.map(type => renderSection(type, groupedByType[type]))}
 
         {subclasses.length > 0 && (
@@ -232,15 +255,34 @@ function ClassDetailPanel({cls, allClasses}: {
               <p className={styles.subInfoNote}>
                 Subclasses unlock at higher levels. You cannot pick one at level 1.
               </p>
-              <div className={styles.subInfoGrid}>
+              <div className={styles.expandableList}>
                 {subclasses.map(sc => {
+                  const isExpanded = expandedSubclasses.has(sc.key);
                   const full = 'desc' in sc ? (sc as CharacterClass) : null;
                   return (
-                      <div key={sc.key} className={styles.subInfoCard}>
-                        <div className={styles.subInfoTitle}>{sc.name}</div>
-                        {full?.desc && (
-                            <div className={styles.subInfoDesc}>
-                              <MarkdownContent text={full.desc}/>
+                      <div key={sc.key} className={styles.expandableItem}>
+                        <button
+                            type="button"
+                            className={styles.expandableHeader}
+                            onClick={() => toggleSubclass(sc.key)}
+                            aria-expanded={isExpanded}
+                        >
+                          <span className={styles.expandableTitle}>{sc.name}</span>
+                          <span
+                              className={styles.expandableChevron}
+                              data-expanded={isExpanded}
+                              aria-hidden="true"
+                          >
+                            ›
+                          </span>
+                        </button>
+                        {isExpanded && (
+                            <div className={styles.expandableBody}>
+                              {full?.desc ? (
+                                  <MarkdownContent text={full.desc}/>
+                              ) : (
+                                  <p className={styles.traitDesc}>No description available.</p>
+                              )}
                             </div>
                         )}
                       </div>
@@ -265,10 +307,15 @@ export function StepClass({classes, selectedKey, onSelect}: StepClassProps) {
     ].filter(Boolean) as string[];
   };
 
+  const handleClick = (key: string) => {
+    onSelect(selectedKey === key ? '' : key);
+  };
+
   return (
       <div className={styles.container}>
         <p className={styles.hint}>
-          Choose your class. You will be level 1 — subclasses unlock at higher levels.
+          Choose your class. Click again to deselect. You will be level 1 — subclasses unlock at
+          higher levels.
         </p>
         <div className={styles.grid}>
           {baseClasses.map(cls => {
@@ -277,16 +324,19 @@ export function StepClass({classes, selectedKey, onSelect}: StepClassProps) {
               return norm.featureType === 'PROFICIENCIES';
             });
             const profDesc = profFeature ? normalizeFeature(profFeature).desc : '';
+            const previewSource = profDesc || cls.desc || '';
+            const previewPlain = stripMarkdown(previewSource);
             const isSelected = selectedKey === cls.key;
             return (
                 <>
                   <SelectionCard
                       key={cls.key}
                       title={cls.name}
+                      topRight={documentLabel(cls.document)}
                       badges={buildBadges(cls)}
-                      description={profDesc || cls.desc}
+                      description={previewPlain}
                       isSelected={isSelected}
-                      onClick={() => onSelect(cls.key)}
+                      onClick={() => handleClick(cls.key)}
                   />
                   {isSelected && (
                       <ClassDetailPanel key={`${cls.key}-detail`} cls={cls} allClasses={classes}/>

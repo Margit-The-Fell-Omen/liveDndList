@@ -1,8 +1,10 @@
+import type {ReactNode} from 'react';
 import styles from './SelectionCard.module.css';
 
 interface SelectionCardProps {
   title: string;
   subtitle?: string;
+  topRight?: ReactNode;
   badges?: string[];
   description?: string;
   isSelected: boolean;
@@ -12,6 +14,7 @@ interface SelectionCardProps {
 export function SelectionCard({
                                 title,
                                 subtitle,
+                                topRight,
                                 badges,
                                 description,
                                 isSelected,
@@ -24,9 +27,12 @@ export function SelectionCard({
           data-selected={isSelected}
           onClick={onClick}
       >
-        <div className={styles.header}>
-          <span className={styles.title}>{title}</span>
-          {subtitle && <span className={styles.subtitle}>{subtitle}</span>}
+        <div className={styles.headerRow}>
+          <div className={styles.header}>
+            <span className={styles.title}>{title}</span>
+            {subtitle && <span className={styles.subtitle}>{subtitle}</span>}
+          </div>
+          {topRight && <span className={styles.topRight}>{topRight}</span>}
         </div>
         {badges && badges.length > 0 && (
             <div className={styles.badges}>

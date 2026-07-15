@@ -26,11 +26,20 @@
   box-shadow: 0 0 0 1px var(--color-accent-primary), var(--shadow-md);
 }
 
+.headerRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
 .header {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  flex: 1;
 }
 
 .title {
@@ -51,6 +60,21 @@
   font-style: italic;
 }
 
+.topRight {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-family: var(--font-family-secondary);
+  font-weight: 500;
+  padding: 2px var(--space-sm);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 0;
+}
+
 .badges {
   display: flex;
   flex-wrap: wrap;
@@ -62,7 +86,7 @@
   font-size: var(--font-size-xs);
   font-family: var(--font-family-secondary);
   padding: 2px var(--space-sm);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   background: var(--color-bg-tertiary);
   color: var(--color-text-secondary);
   max-width: 100%;
