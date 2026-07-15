@@ -86,7 +86,7 @@ public class CharacterMapper {
     return CharacterResponse.builder()
         .id(character.getId())
         .name(character.getName())
-        .raceName(character.getRace().getName())
+        .raceKey(character.getRace().getKey())
         .alignment(character.getAlignment())
         .backgroundKey(character.getBackground().getKey())
         .experiencePoints(character.getExperiencePoints())
@@ -146,7 +146,7 @@ public class CharacterMapper {
     return CharacterSummaryResponse.builder()
         .id(character.getId())
         .name(character.getName())
-        .raceName(character.getRace() != null ? character.getRace().getName() : null)
+        .raceKey(character.getRace() != null ? character.getRace().getKey() : null)
         .classDisplay(classDisplay)
         .totalLevel(Hibernate.isInitialized(character.getClasses())
             ? character.getTotalLevel() : 0)
@@ -172,9 +172,9 @@ public class CharacterMapper {
         .orElseThrow(() -> new EntityNotFoundException(
             "Race not found with key: " + request.getRaceKey()));
 
-    DndClass dndClass = dndClassRepository.findByKey(request.getClassSlug())
+    DndClass dndClass = dndClassRepository.findByKey(request.getClassKey())
         .orElseThrow(() -> new EntityNotFoundException(
-            "Class not found with slug: " + request.getClassSlug()));
+            "Class not found with slug: " + request.getClassKey()));
 
     Background background = backgroundRepository.findByKey(request.getBackgroundKey())
         .orElseThrow(
@@ -283,10 +283,10 @@ public class CharacterMapper {
       }
     }
 
-    if (request.getRaceId() != null) {
-      Race race = raceRepository.findById(request.getRaceId())
+    if (request.getRaceKey() != null) {
+      Race race = raceRepository.findByKey(request.getRaceKey())
           .orElseThrow(() -> new EntityNotFoundException(
-              "Race not found with id: " + request.getRaceId()));
+              "Race not found with key: " + request.getRaceKey()));
       character.setRace(race);
     }
 

@@ -1,6 +1,6 @@
 // src/utils/constants.ts
 
-import type {AbilityName, Character, CharacterAlignment, SkillName} from '@/types';
+import type {AbilityType, Character, CharacterAlignment, SkillName} from '@/types';
 
 // ===============================================================
 // LOCAL UI-ONLY TYPES
@@ -16,7 +16,7 @@ export interface AbilityInfo {
 export interface SkillInfo {
   key: SkillName; // e.g., 'ACROBATICS'
   name: string; // e.g., 'Acrobatics'
-  ability: AbilityName; // e.g., 'DEXTERITY'
+  ability: AbilityType; // e.g., 'DEXTERITY'
 }
 
 // ===============================================================
@@ -89,9 +89,9 @@ export const DICE: readonly string[] = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', '
 // ===============================================================
 
 export const EMPTY_CHARACTER: Character = {
-  id: 0, // Use 0 or a negative number to indicate a new character
+  id: 0,
   name: 'New Character',
-  raceName: '',
+  raceKey: '',
   alignment: 'TRUE_NEUTRAL',
   backgroundKey: '',
   experiencePoints: 0,
@@ -116,8 +116,8 @@ export const EMPTY_CHARACTER: Character = {
   hitDice: '1d8',
   deathSaveSuccesses: 0,
   deathSaveFailures: 0,
-  skills: [], // Skills will be populated by the backend
-  savingThrowProficiencies: [], // An empty array of proficient saves
+  skills: [],
+  savingThrowProficiencies: [],
   equipment: [],
   currency: {
     copper: 0,
@@ -127,7 +127,7 @@ export const EMPTY_CHARACTER: Character = {
     platinum: 0,
   },
   spells: [],
-  spellcastingAbility: undefined, // Or a default like 'INTELLIGENCE'
+  spellcastingAbility: undefined,
   featuresAndTraits: '',
   backstory: '',
   personalityTraits: '',

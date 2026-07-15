@@ -16,6 +16,7 @@ public class Open5eRaceDto {
 
   private Open5eDocumentDto document;
 
+  @JsonProperty("is_subspecies")
   private boolean isSubspecies;
 
   @JsonProperty("subspecies_of")

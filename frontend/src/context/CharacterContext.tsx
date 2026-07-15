@@ -1,11 +1,8 @@
-// src/context/CharacterContext.tsx
-
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import {charactersApi, equipmentApi, referenceDataApi} from '@/services/api';
 import {useAuth} from './AuthContext';
 import type {
-  AbilityName,
-  Archetype,
+  AbilityType,
   Background,
   Character,
   CharacterClass,
@@ -17,11 +14,7 @@ import type {
   Race,
 } from '@/types';
 
-export interface CharacterContextTypeWithArchetypes extends CharacterContextType {
-  getArchetypesForClass: (classId: number) => Promise<Archetype[]>;
-}
-
-const CharacterContext = createContext<CharacterContextTypeWithArchetypes | undefined>(undefined);
+const CharacterContext = createContext<CharacterContextType | undefined>(undefined);
 
 interface CharacterProviderProps {
   children: ReactNode;
@@ -40,14 +33,15 @@ export function CharacterProvider({children}: CharacterProviderProps) {
 
   const fetchReferenceData = useCallback(async (): Promise<void> => {
     try {
-      const racesData = await referenceDataApi.getRaces();
-      const classesData = await referenceDataApi.getClasses();
-      const backgroundsData = await referenceDataApi.getBackgrounds();
+      const [racesData, classesData, backgroundsData] = await Promise.all([
+        referenceDataApi.getRaces(),
+        referenceDataApi.getClasses(),
+        referenceDataApi.getBackgrounds(),
+      ]);
       setRaces(racesData);
       setClasses(classesData);
       setBackgrounds(backgroundsData);
     } catch (err) {
-      console.error('Failed to fetch reference data:', err);
       setError(err instanceof Error ? err.message : 'Could not load game data.');
     }
   }, []);
@@ -78,10 +72,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (isAuthenticated) {
       const loadData = async () => {
         setLoading(true);
-        await Promise.all([
-          fetchReferenceData(),
-          fetchCharacters()
-        ]);
+        await Promise.all([fetchReferenceData(), fetchCharacters()]);
         setLoading(false);
       };
       loadData();
@@ -95,7 +86,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, [isAuthenticated, fetchReferenceData, fetchCharacters]);
 
-  const createCharacter = async (data: CharacterCreateRequest) => {
+  const createCharacter = async (data: CharacterCreateRequest): Promise<Character> => {
     setSaving(true);
     try {
       const newChar = await charactersApi.create(data);
@@ -107,41 +98,39 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   };
 
-
   const setAndMergeCurrentCharacter = (updatedChar: Partial<Character>) => {
-    setCurrentCharacter(prevCharacter => {
-      if (!prevCharacter) return updatedChar as Character;
-      const newCharacterState = {
-        ...prevCharacter,
+    setCurrentCharacter(prev => {
+      if (!prev) return updatedChar as Character;
+      return {
+        ...prev,
         ...updatedChar,
-        skills: updatedChar.skills ?? prevCharacter.skills,
-        equipment: updatedChar.equipment ?? prevCharacter.equipment,
-        spells: updatedChar.spells ?? prevCharacter.spells,
-        savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prevCharacter.savingThrowProficiencies,
-        classesInfo: updatedChar.classesInfo ?? prevCharacter.classesInfo,
+        skills: updatedChar.skills ?? prev.skills,
+        equipment: updatedChar.equipment ?? prev.equipment,
+        spells: updatedChar.spells ?? prev.spells,
+        savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prev.savingThrowProficiencies,
+        classesInfo: updatedChar.classesInfo ?? prev.classesInfo,
       };
-      return newCharacterState;
     });
 
-    setCharacters(prevSummaries =>
-        prevSummaries.map(summary => {
-          if (summary.id === updatedChar.id) {
-            return {
-              ...summary,
-              name: updatedChar.name ?? summary.name,
-              totalLevel: updatedChar.totalLevel ?? summary.totalLevel,
-              currentHitPoints: updatedChar.currentHitPoints ?? summary.currentHitPoints,
-              maxHitPoints: updatedChar.maxHitPoints ?? summary.maxHitPoints,
-              portraitUrl: updatedChar.portraitUrl ?? summary.portraitUrl,
-              updatedAt: updatedChar.updatedAt ?? summary.updatedAt,
-            };
-          }
-          return summary;
-        })
+    setCharacters(prev =>
+        prev.map(summary =>
+            summary.id === updatedChar.id
+                ? {
+                  ...summary,
+                  name: updatedChar.name ?? summary.name,
+                  raceKey: updatedChar.raceKey ?? summary.raceKey,
+                  totalLevel: updatedChar.totalLevel ?? summary.totalLevel,
+                  currentHitPoints: updatedChar.currentHitPoints ?? summary.currentHitPoints,
+                  maxHitPoints: updatedChar.maxHitPoints ?? summary.maxHitPoints,
+                  portraitUrl: updatedChar.portraitUrl ?? summary.portraitUrl,
+                  updatedAt: updatedChar.updatedAt ?? summary.updatedAt,
+                }
+                : summary,
+        ),
     );
   };
 
-  const updateCharacter = async (id: number, data: CharacterUpdateRequest) => {
+  const updateCharacter = async (id: number, data: CharacterUpdateRequest): Promise<Character> => {
     setSaving(true);
     try {
       const updatedChar = await charactersApi.update(id, data);
@@ -152,16 +141,14 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   };
 
-  const deleteCharacter = async (id: number) => {
+  const deleteCharacter = async (id: number): Promise<void> => {
     await charactersApi.delete(id);
-    if (currentCharacter?.id === id) {
-      setCurrentCharacter(null);
-    }
+    if (currentCharacter?.id === id) setCurrentCharacter(null);
     await fetchCharacters();
   };
 
   const addEquipment = async (data: EquipmentData): Promise<void> => {
-    if (!currentCharacter) throw new Error("No character selected.");
+    if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
       const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
@@ -172,7 +159,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   };
 
   const removeEquipment = async (itemId: number): Promise<void> => {
-    if (!currentCharacter) throw new Error("No character selected.");
+    if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
       const updatedChar = await charactersApi.removeEquipment(currentCharacter.id, itemId);
@@ -183,19 +170,16 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   };
 
   const updateEquipment = async (itemId: number, data: EquipmentData): Promise<void> => {
-    if (!currentCharacter) throw new Error("No character selected.");
+    if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
       const updatedItem = await equipmentApi.update(itemId, data);
-
-      setCurrentCharacter(prevChar => {
-        if (!prevChar) return null;
-
-        const newEquipmentList = prevChar.equipment.map(item =>
-            item.id === itemId ? updatedItem : item
-        );
-
-        return {...prevChar, equipment: newEquipmentList};
+      setCurrentCharacter(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          equipment: prev.equipment.map(item => (item.id === itemId ? updatedItem : item))
+        };
       });
     } finally {
       setSaving(false);
@@ -203,89 +187,71 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   };
 
   const toggleEquipmentEquipped = async (itemId: number): Promise<void> => {
-    if (!currentCharacter) throw new Error("No character selected.");
-
-    const itemToToggle = currentCharacter.equipment.find(item => item.id === itemId);
-    if (!itemToToggle) throw new Error("Equipment item not found.");
-
-    const updatedItemData: EquipmentData = {
-      name: itemToToggle.name,
-      description: itemToToggle.description,
-      quantity: itemToToggle.quantity,
-      weight: itemToToggle.weight,
-      type: itemToToggle.type,
-      equipped: !itemToToggle.equipped,
-      damage: itemToToggle.damage,
-      damageType: itemToToggle.damageType,
-      properties: itemToToggle.properties,
-    };
-
-    await updateEquipment(itemId, updatedItemData);
+    if (!currentCharacter) throw new Error('No character selected.');
+    const item = currentCharacter.equipment.find(i => i.id === itemId);
+    if (!item) throw new Error('Equipment item not found.');
+    await updateEquipment(itemId, {
+      name: item.name,
+      description: item.description,
+      quantity: item.quantity,
+      weight: item.weight,
+      type: item.type,
+      equipped: !item.equipped,
+      damage: item.damage,
+      damageType: item.damageType,
+      properties: item.properties,
+    });
   };
 
   const addSpellToCharacter = async (spellId: number): Promise<void> => {
-    if (!currentCharacter) throw new Error("No character selected.");
+    if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
       await charactersApi.addSpell(currentCharacter.id, spellId);
-
-      const freshCharacter = await charactersApi.getById(currentCharacter.id);
-      setAndMergeCurrentCharacter(freshCharacter);
-
+      const fresh = await charactersApi.getById(currentCharacter.id);
+      setAndMergeCurrentCharacter(fresh);
     } finally {
       setSaving(false);
     }
   };
 
   const removeSpellFromCharacter = async (spellId: number): Promise<void> => {
-    if (!currentCharacter) throw new Error("No character selected.");
+    if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
       await charactersApi.removeSpell(currentCharacter.id, spellId);
-
-      const freshCharacter = await charactersApi.getById(currentCharacter.id);
-      setAndMergeCurrentCharacter(freshCharacter);
+      const fresh = await charactersApi.getById(currentCharacter.id);
+      setAndMergeCurrentCharacter(fresh);
     } finally {
       setSaving(false);
     }
   };
 
-  const getArchetypesForClass = useCallback(async (classId: number): Promise<Archetype[]> => {
-    try {
-      return await referenceDataApi.getArchetypesByClass(classId);
-    } catch (err) {
-      console.error(`Failed to fetch archetypes for class ${classId}:`, err);
-      setError(err instanceof Error ? err.message : 'Could not load archetypes.');
-      return [];
-    }
-  }, []);
-
-  const toggleSavingThrowProficiency = async (ability: AbilityName) => {
+  const toggleSavingThrowProficiency = async (ability: AbilityType): Promise<void> => {
     if (!currentCharacter) return;
-
-    const currentProfs = currentCharacter.savingThrowProficiencies || [];
-    const newProfs = currentProfs.includes(ability)
-        ? currentProfs.filter(p => p !== ability)
-        : [...currentProfs, ability];
-
-    await updateCharacter(currentCharacter.id, {savingThrowProficiencies: newProfs});
+    const current = currentCharacter.savingThrowProficiencies ?? [];
+    const updated = current.includes(ability)
+        ? current.filter(p => p !== ability)
+        : [...current, ability];
+    await updateCharacter(currentCharacter.id, {savingThrowProficiencies: updated});
   };
 
-  const toggleSkillProficiency = async (skillId: number, isNowProficient: boolean) => {
+  const toggleSkillProficiency = async (skillId: number, isNowProficient: boolean): Promise<void> => {
     if (!currentCharacter) return;
     await updateCharacter(currentCharacter.id, {
-      skills: [{id: skillId, proficient: isNowProficient}],
+      skills: [{
+        id: skillId,
+        proficient: isNowProficient
+      }]
     });
   };
 
-  const toggleSkillExpertise = async (skillId: number, isNowExpert: boolean) => {
+  const toggleSkillExpertise = async (skillId: number, isNowExpert: boolean): Promise<void> => {
     if (!currentCharacter) return;
-    await updateCharacter(currentCharacter.id, {
-      skills: [{id: skillId, expertise: isNowExpert}],
-    });
+    await updateCharacter(currentCharacter.id, {skills: [{id: skillId, expertise: isNowExpert}]});
   };
 
-  const value: CharacterContextTypeWithArchetypes = { // FIXME: this naming stinks
+  const value: CharacterContextType = {
     characters,
     currentCharacter,
     loading,
@@ -301,7 +267,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     updateCharacter,
     deleteCharacter,
     clearError: () => setError(null),
-    getArchetypesForClass,
     addEquipment,
     updateEquipment,
     toggleEquipmentEquipped,
@@ -316,7 +281,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
 }
 
-export function useCharacter(): CharacterContextTypeWithArchetypes {
+export function useCharacter(): CharacterContextType {
   const context = useContext(CharacterContext);
   if (!context) throw new Error('useCharacter must be used within a CharacterProvider');
   return context;

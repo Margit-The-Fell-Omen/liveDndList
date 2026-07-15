@@ -25,7 +25,7 @@ public class CharacterResponse {
   private String name;
 
   @Schema(description = "Character race name", example = "Human")
-  private String raceName;
+  private String raceKey;
 
   @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
   private CharacterAlignment alignment;
@@ -122,23 +122,6 @@ public class CharacterResponse {
 
   @Schema(description = "Last update timestamp", example = "2023-01-02T12:00:00")
   private LocalDateTime updatedAt;
-
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Schema(description = "Represents a single class of the character")
-  public static class CharacterClassResponse {
-
-    private Long id;
-    private Long classId;
-    private String className;
-    private String classSlug;
-    private Long archetypeId;
-    private String archetypeName;
-    private String archetypeSlug;
-    private Integer level;
-  }
 
   @Data
   @Builder

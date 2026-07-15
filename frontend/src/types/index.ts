@@ -42,6 +42,7 @@ export interface RegisterData {
 
 export interface AuthResponse {
   token: string;
+  refreshToken?: string;
   user: User;
 }
 
@@ -49,29 +50,33 @@ export interface AuthResponse {
 // REFERENCE DATA TYPES (Matches backend Open5e DTOs)
 // ═══════════════════════════════════════════════════════════════
 
-interface DocumentInfo {
-  document__slug: string;
-  document__title: string;
-  document__license_url?: string;
-  document__url?: string;
+export interface DocumentInfo {
+  name: string;
+  key: string;
+  type?: string;
+  display_name?: string;
+  publisher?: Open5eReference;
+  gamesystem?: Open5eReference;
+  permalink?: string;
 }
 
 export interface RaceTrait {
-  id: number;
   name: string;
-  description: string;
-  type: string;
-  traitOrder: number;
+  desc: string;
+  type: string | null;
+  order: number | null;
 }
 
-export interface Race extends DocumentInfo {
-  id: number;
+export interface Race {
+  id?: number;
   name: string;
   key: string;
-  description: string;
+  desc: string;
   subspecies: boolean;
-  parentRaceKey: string | null;
-  traits: RaceTrait[];
+  subraceOf: string | null;
+  subraceOfThis: string[];
+  traits: RaceTrait[] | null;
+  document?: DocumentInfo;
 }
 
 export interface Open5eReference {
@@ -98,22 +103,20 @@ export interface ClassFeature {
   dataForClassTable: Open5eDataForClassTable[];
 }
 
-export interface CharacterClass extends DocumentInfo {
+export interface CharacterClass {
   name: string;
   key: string;
   desc: string;
-  hitDice: string;
-  hitDiceName: string;
-  hitPointsOn1stLevel: string;
-  hitPointsOnHigherLevels: string;
-  savingThrows: AbilityType[];
-  subclassOf: Open5eReference;
+  hit_dice?: string;
+  hitDice?: string;
+  hitDiceName?: string;
+  hitPointsOn1stLevel?: string;
+  hitPointsOnHigherLevels?: string;
+  savingThrows: string[];
+  subclassOf: Open5eReference | null;
   subclasses: Open5eReference[];
   features: ClassFeature[];
-}
-
-export interface Open5eSavingThrow {
-  name: string;
+  document?: DocumentInfo;
 }
 
 export interface BackgroundBenefit {
@@ -122,11 +125,12 @@ export interface BackgroundBenefit {
   desc: string;
 }
 
-export interface Background extends DocumentInfo {
+export interface Background {
   name: string;
   key: string;
   desc: string;
-  backgroundBenefits: BackgroundBenefit[];
+  benefits: BackgroundBenefit[];
+  document?: DocumentInfo;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -237,21 +241,21 @@ export interface SpellResponse {
 export interface CharacterCreateRequest {
   name: string;
   raceKey: string;
+  subraceKey?: string;
   backgroundKey: string;
   alignment?: CharacterAlignment;
-  background?: string;
-  classSlug: string;
-  archetypeSlug?: string;
+  classKey: string;
   abilityScores: AbilityScores;
   maxHitPoints: number;
   portraitUrl?: string;
   spellcastingAbility?: AbilityType;
 }
 
+
 export interface CharacterSummary {
   id: number;
   name: string;
-  raceName: string;
+  raceKey: string;
   classDisplay: string;
   totalLevel: number;
   currentHitPoints: number;
@@ -263,7 +267,7 @@ export interface CharacterSummary {
 export interface Character {
   id: number;
   name: string;
-  raceName: string;
+  raceKey: string;
   alignment: CharacterAlignment;
   backgroundKey: string;
   experiencePoints: number;
@@ -300,7 +304,7 @@ export interface Character {
 
 export interface CharacterUpdateRequest {
   name?: string;
-  raceId?: number;
+  raceKey?: string;
   alignment?: CharacterAlignment;
   backgroundKey?: string;
   abilityScores?: AbilityScores;
@@ -342,11 +346,9 @@ export interface CharacterContextType {
   loading: boolean;
   saving: boolean;
   error: string | null;
-
   races: Race[];
   classes: CharacterClass[];
   backgrounds: Background[];
-
   fetchCharacters: () => Promise<void>;
   fetchReferenceData: () => Promise<void>;
   selectCharacter: (id: number) => Promise<void>;
@@ -354,7 +356,17 @@ export interface CharacterContextType {
   updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
   deleteCharacter: (id: number) => Promise<void>;
   clearError: () => void;
+  addEquipment: (data: EquipmentData) => Promise<void>;
+  updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
+  removeEquipment: (itemId: number) => Promise<void>;
+  toggleEquipmentEquipped: (itemId: number) => Promise<void>;
+  addSpellToCharacter: (spellId: number) => Promise<void>;
+  removeSpellFromCharacter: (spellId: number) => Promise<void>;
+  toggleSavingThrowProficiency: (ability: AbilityType) => Promise<void>;
+  toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
+  toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
 }
+
 
 export interface EquipmentData {
   name: string;
@@ -380,23 +392,4 @@ export interface SpellData {
   ritual: boolean;
   description: string;
   higherLevels?: string;
-}
-
-export interface CharacterContextType {
-  createCharacter: (data: CharacterCreateRequest) => Promise<Character>;
-  updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
-  deleteCharacter: (id: number) => Promise<void>;
-  clearError: () => void;
-
-  addEquipment: (data: EquipmentData) => Promise<void>;
-  updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
-  removeEquipment: (itemId: number) => Promise<void>;
-  toggleEquipmentEquipped: (itemId: number) => Promise<void>;
-
-  addSpellToCharacter: (spellId: number) => Promise<void>;
-  removeSpellFromCharacter: (spellId: number) => Promise<void>;
-
-  toggleSavingThrowProficiency: (ability: AbilityType) => Promise<void>;
-  toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
-  toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
 }

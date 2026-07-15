@@ -18,6 +18,7 @@ import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.exceptions.DuplicateResourceException;
 import dev.ushki.livedndlist.mapper.UserMapper;
 import dev.ushki.livedndlist.repository.UserRepository;
+import dev.ushki.livedndlist.security.UserDetailsServiceImpl;
 import dev.ushki.livedndlist.security.jwt.JwtTokenProvider;
 import java.util.Optional;
 import java.util.Set;
@@ -50,6 +51,12 @@ class AuthServiceTest {
   @Mock
   private UserMapper userMapper;
 
+  @Mock
+  private TokenBlacklistService tokenBlacklistService;
+
+  @Mock
+  private UserDetailsServiceImpl userDetailsService;
+
   private AuthService authService;
 
   private User testUser;
@@ -60,7 +67,7 @@ class AuthServiceTest {
     CacheManager cacheManager = new CacheManager();
 
     authService = new AuthService(userRepository, passwordEncoder, authenticationManager,
-        jwtTokenProvider, userMapper, cacheManager);
+        jwtTokenProvider, userMapper, cacheManager, tokenBlacklistService, userDetailsService);
 
     testUser = User.builder()
         .id(1L)

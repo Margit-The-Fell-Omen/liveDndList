@@ -2,12 +2,14 @@ package dev.ushki.livedndlist.service;
 
 import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.LoginRequest;
+import dev.ushki.livedndlist.dto.request.RefreshTokenRequest;
 import dev.ushki.livedndlist.dto.request.RegisterRequest;
 import dev.ushki.livedndlist.dto.response.JwtResponse;
 import dev.ushki.livedndlist.dto.response.UserResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.exceptions.DuplicateResourceException;
+import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.UserMapper;
 import dev.ushki.livedndlist.repository.UserRepository;
 import dev.ushki.livedndlist.security.jwt.JwtTokenProvider;
@@ -16,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,8 @@ public class AuthService {
   private final JwtTokenProvider jwtTokenProvider;
   private final UserMapper userMapper;
   private final CacheManager cacheManager;
+  private final TokenBlacklistService tokenBlacklistService;
+  private final UserDetailsService userDetailsService;
 
   public JwtResponse login(LoginRequest request) {
     Authentication authentication = authenticationManager.authenticate(
@@ -36,16 +41,50 @@ public class AuthService {
     );
 
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    String token = jwtTokenProvider.generateToken(userDetails);
+    String accessToken = jwtTokenProvider.generateToken(userDetails);
+    String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
 
     User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
 
     return JwtResponse.builder()
-        .accessToken(token)
-        .refreshToken(token)
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
         .tokenType("Bearer")
-        .expiresIn(jwtTokenProvider.getExpirationMs())
+        .expiresIn(jwtTokenProvider.getExpirationMs() / 1000)
         .user(userMapper.toResponse(user))
+        .build();
+  }
+
+  public JwtResponse refresh(RefreshTokenRequest request) {
+    String incomingRefreshToken = request.getRefreshToken();
+
+    if (!jwtTokenProvider.validate(incomingRefreshToken)) {
+      throw new UnauthorizedException("Invalid or expired refresh token");
+    }
+
+    if (!jwtTokenProvider.isRefreshToken(incomingRefreshToken)) {
+      throw new UnauthorizedException("Provided token is not a refresh token");
+    }
+
+    if (tokenBlacklistService.isTokenBlacklisted(incomingRefreshToken)) {
+      throw new UnauthorizedException("Refresh token has been revoked");
+    }
+
+    String username = jwtTokenProvider.getUsername(incomingRefreshToken);
+    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+    long oldRefreshTtl = jwtTokenProvider.getExpirationTimeFromToken(incomingRefreshToken)
+        - System.currentTimeMillis();
+    tokenBlacklistService.blacklistToken(incomingRefreshToken, oldRefreshTtl);
+
+    String newAccessToken = jwtTokenProvider.generateToken(userDetails);
+    String newRefreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+
+    return JwtResponse.builder()
+        .accessToken(newAccessToken)
+        .refreshToken(newRefreshToken)
+        .tokenType("Bearer")
+        .expiresIn(jwtTokenProvider.getExpirationMs() / 1000)
         .build();
   }
 
@@ -67,7 +106,6 @@ public class AuthService {
         .build();
 
     User savedUser = userRepository.save(user);
-
     cacheManager.invalidateByPrefix("Users");
 
     return userMapper.toResponse(savedUser);
