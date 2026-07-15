@@ -165,12 +165,13 @@ public class Open5eRaceService {
   }
 
   private SyncResultDto buildErrorResult(Exception e, String taskId) {
+    String message = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
     return SyncResultDto.builder()
         .taskId(taskId)
         .success(false)
-        .message("Critical error: " + e.getMessage())
+        .message("Critical error: " + message)
         .syncedAt(LocalDateTime.now())
-        .errors(List.of(e.getMessage()))
+        .errors(List.of(message))
         .build();
   }
 
