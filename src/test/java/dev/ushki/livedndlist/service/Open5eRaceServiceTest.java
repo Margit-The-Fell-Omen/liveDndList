@@ -25,6 +25,7 @@ import dev.ushki.livedndlist.mapper.RaceMapper;
 import dev.ushki.livedndlist.repository.RaceRepository;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -112,12 +113,7 @@ class Open5eRaceServiceTest {
 
   private void mockFetchAll(List<Open5eRaceDto> results) {
     when(apiClient.fetchAll(eq(API_PATH), any(ParameterizedTypeReference.class)))
-        .thenReturn(results);
-  }
-
-  private void mockFetchAllThrows(RuntimeException ex) {
-    when(apiClient.fetchAll(eq(API_PATH), any(ParameterizedTypeReference.class)))
-        .thenThrow(ex);
+        .thenReturn(new ArrayList<>(results));
   }
 
   private void mockFetchAllBlocking(List<Open5eRaceDto> results,
@@ -130,8 +126,13 @@ class Open5eRaceServiceTest {
           if (!proceeded) {
             throw new IllegalStateException("canProceed latch was never released");
           }
-          return results;
+          return new ArrayList<>(results);
         });
+  }
+
+  private void mockFetchAllThrows(RuntimeException ex) {
+    when(apiClient.fetchAll(eq(API_PATH), any(ParameterizedTypeReference.class)))
+        .thenThrow(ex);
   }
 
   private static ParameterizedTypeReference<Open5ePaginatedResponse<Open5eRaceDto>>

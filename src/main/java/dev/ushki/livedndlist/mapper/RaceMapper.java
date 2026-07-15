@@ -139,10 +139,12 @@ public class RaceMapper {
     dto.setSubraceOf(entity.getParentRaceKey());
     dto.setDocument(toDocumentDto(entity.getDocument()));
     if (!entity.isSubspecies() && entity.getSubracesOfThis() != null) {
-      dto.setSubraceOfThis(entity.getSubracesOfThis().stream()
-          .filter(key -> raceRepository.findByKey(key).isPresent())
-          .map(key -> raceRepository.findByKey(key).get().getKey()).toList());
-    } // dunno why it tells me that isPresent is not checked here...
+      List<String> validSubraceKeys = entity.getSubracesOfThis().stream()
+          .flatMap(key -> raceRepository.findByKey(key).stream())
+          .map(Race::getKey)
+          .toList();
+      dto.setSubraceOfThis(validSubraceKeys);
+    }
     dto.setTraits(buildTraitDtos(entity.getTraits()));
 
     return dto;
