@@ -76,6 +76,9 @@ public class SecurityConfig {
                 // --- Authentication ---
                 "/api/v1/auth/**",
 
+                // --- Monitoring ---
+                "/actuator/metrics",
+
                 // --- All Swagger/OpenAPI related paths ---
                 "/swagger-ui.html",
                 "/swagger-ui/**",
