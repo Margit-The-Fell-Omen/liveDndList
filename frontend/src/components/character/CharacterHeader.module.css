@@ -14,6 +14,23 @@
   gap: var(--space-md);
 }
 
+.raceLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.pendingBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent-primary);
+  background: color-mix(in srgb, var(--color-accent-primary) 12%, transparent);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  line-height: 1.2;
+}
+
 .raceField {
   display: flex;
   flex-direction: column;

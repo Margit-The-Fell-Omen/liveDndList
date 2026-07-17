@@ -6,7 +6,7 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
-import dev.ushki.livedndlist.service.Open5eBackgroundService;
+import dev.ushki.livedndlist.service.DndBackgroundService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "bearerAuth")
 public class BackgroundSyncController {
 
-  private final Open5eBackgroundService backgroundService;
+  private final DndBackgroundService backgroundService;
   private final BackgroundRepository backgroundRepository;
 
   @GetMapping("/status")

@@ -4,7 +4,7 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.DndRaceResponse;
 import dev.ushki.livedndlist.repository.RaceRepository;
-import dev.ushki.livedndlist.service.Open5eRaceService;
+import dev.ushki.livedndlist.service.DndRaceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "bearerAuth")
 public class RaceSyncController {
 
-  private final Open5eRaceService raceSyncService;
+  private final DndRaceService raceSyncService;
   private final RaceRepository raceRepository;
 
   @GetMapping("/status")

@@ -1,26 +1,44 @@
 import {type ChangeEvent, useEffect, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Input, Select} from '@/components/common/Input';
+import {Button} from '@/components/common/Button';
 import {ALIGNMENT_OPTIONS} from '@/utils/constants';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
 import {RacePickerModal} from './RacePickerModal';
+import {ClassManagerModal} from './ClassManagerModal';
+import {ClassPickerModal} from './ClassPickerModal';
+import {LevelUpModal} from './LevelUpModal';
+import {SetLevelModal} from './SetLevelModal';
 import {getRaceDisplayName} from '@/utils/races';
+import {formatClassLevels, pendingLevels, totalLevelOf} from '@/utils/classes';
+import {levelForXp} from '@/utils/experience';
+import type {DndClassLevel} from '@/types';
 import styles from './CharacterHeader.module.css';
 
 export function CharacterHeader({className}: { className?: string }) {
-  const {currentCharacter, backgrounds, races, updateCharacter, saving} = useCharacter();
+  const {
+    currentCharacter,
+    backgrounds,
+    races,
+    classes,
+    updateCharacter,
+    saving,
+  } = useCharacter();
 
   const [characterName, setCharacterName] = useState('');
   const [backgroundKey, setBackgroundKey] = useState<string>('');
   const [alignment, setAlignment] = useState<string>('');
   const [experience, setExperience] = useState(0);
+
   const [isRacePickerOpen, setIsRacePickerOpen] = useState(false);
+  const [isClassManagerOpen, setIsClassManagerOpen] = useState(false);
+  const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
+  const [isAddClassOpen, setIsAddClassOpen] = useState(false);
+  const [isSetLevelOpen, setIsSetLevelOpen] = useState(false);
 
   const debouncedUpdate = useDebouncedCallback(
       (payload: object) => {
-        if (currentCharacter) {
-          updateCharacter(currentCharacter.id, payload);
-        }
+        if (currentCharacter) updateCharacter(currentCharacter.id, payload);
       },
       500
   );
@@ -34,17 +52,19 @@ export function CharacterHeader({className}: { className?: string }) {
     }
   }, [currentCharacter]);
 
-  if (!currentCharacter) {
-    return null;
-  }
+  if (!currentCharacter) return null;
 
-  const backgroundOptions = backgrounds.map(background => ({
-    value: background.key,
-    label: background.name,
-  }));
-
+  const backgroundOptions = backgrounds.map(bg => ({value: bg.key, label: bg.name}));
   const raceDisplay =
       getRaceDisplayName(races, currentCharacter.raceKey) || currentCharacter.raceKey || 'N/A';
+
+  const classDisplay = formatClassLevels(classes, currentCharacter.classesInfo);
+  const takenClassKeys = currentCharacter.classesInfo.map(entry => entry.classKey);
+
+  const earnedLevel = levelForXp(currentCharacter.experiencePoints);
+  const assignedLevel = totalLevelOf(currentCharacter.classesInfo);
+  const pending = pendingLevels(earnedLevel, currentCharacter.classesInfo);
+  const hasPending = pending > 0;
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCharacterName(e.target.value);
@@ -52,15 +72,13 @@ export function CharacterHeader({className}: { className?: string }) {
   };
 
   const handleBackgroundChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newKey = e.target.value;
-    setBackgroundKey(newKey);
-    debouncedUpdate({backgroundKey: newKey});
+    setBackgroundKey(e.target.value);
+    debouncedUpdate({backgroundKey: e.target.value});
   };
 
   const handleAlignmentChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newAlignment = e.target.value;
-    setAlignment(newAlignment);
-    debouncedUpdate({alignment: newAlignment});
+    setAlignment(e.target.value);
+    debouncedUpdate({alignment: e.target.value});
   };
 
   const handleExperienceChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +90,38 @@ export function CharacterHeader({className}: { className?: string }) {
   const handleRaceConfirm = async (raceKey: string) => {
     await updateCharacter(currentCharacter.id, {raceKey});
     setIsRacePickerOpen(false);
+  };
+
+  const persistClassList = async (nextClasses: DndClassLevel[]) => {
+    await updateCharacter(currentCharacter.id, {dndClassLevels: nextClasses});
+  };
+
+  const handleSetLevel = async (xp: number) => {
+    await updateCharacter(currentCharacter.id, {experiencePoints: xp});
+    setExperience(xp);
+    setIsSetLevelOpen(false);
+  };
+
+  const handleLevelUpExisting = async (classKey: string) => {
+    const next = currentCharacter.classesInfo.map(entry =>
+        entry.classKey === classKey ? {...entry, level: entry.level + 1} : entry
+    );
+    await persistClassList(next);
+    setIsLevelUpOpen(false);
+  };
+
+  const handleAddNewClass = async (classKey: string) => {
+    const next: DndClassLevel[] = [
+      ...currentCharacter.classesInfo,
+      {classKey, level: 1},
+    ];
+    await persistClassList(next);
+    setIsAddClassOpen(false);
+  };
+
+  const handlePrimaryLevelButton = () => {
+    if (hasPending) setIsLevelUpOpen(true);
+    else setIsSetLevelOpen(true);
   };
 
   return (
@@ -100,12 +150,26 @@ export function CharacterHeader({className}: { className?: string }) {
               </button>
             </div>
 
-            <div className={styles.infoBlock}>
-              <label>Class & Level</label>
-              <span>
-              {currentCharacter.classesInfo.join(' / ') || 'N/A'}
-                {` - Level ${currentCharacter.totalLevel}`}
-            </span>
+            <div className={styles.raceField}>
+              <label className={styles.raceLabel}>
+                Class & Level
+                {hasPending && (
+                    <span className={styles.pendingBadge}>
+        +{pending} pending
+      </span>
+                )}
+              </label>
+              <button
+                  type="button"
+                  className={styles.raceButton}
+                  onClick={() => setIsClassManagerOpen(true)}
+              >
+    <span className={styles.raceValue}>
+      {classDisplay || 'N/A'}
+      {` — Total ${assignedLevel}`}
+    </span>
+                <span className={styles.raceEditIcon} aria-hidden="true">✎</span>
+              </button>
             </div>
 
             <Select
@@ -129,6 +193,17 @@ export function CharacterHeader({className}: { className?: string }) {
                 value={experience}
                 onChange={handleExperienceChange}
             />
+
+            <div className={styles.raceField}>
+              <label className={styles.raceLabel}>&nbsp;</label>
+              <Button
+                  variant={hasPending ? 'primary' : 'secondary'}
+                  onClick={handlePrimaryLevelButton}
+                  disabled={saving}
+              >
+                {hasPending ? 'Apply Level' : 'Set Level'}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -138,6 +213,47 @@ export function CharacterHeader({className}: { className?: string }) {
             races={races}
             initialRaceKey={currentCharacter.raceKey}
             onConfirm={handleRaceConfirm}
+            saving={saving}
+        />
+
+        <ClassManagerModal
+            isOpen={isClassManagerOpen}
+            onClose={() => setIsClassManagerOpen(false)}
+            classes={classes}
+            currentClasses={currentCharacter.classesInfo}
+            onSave={persistClassList}
+            saving={saving}
+        />
+
+        <SetLevelModal
+            isOpen={isSetLevelOpen}
+            onClose={() => setIsSetLevelOpen(false)}
+            currentLevel={earnedLevel}
+            onConfirm={handleSetLevel}
+            saving={saving}
+        />
+
+        <LevelUpModal
+            isOpen={isLevelUpOpen}
+            onClose={() => setIsLevelUpOpen(false)}
+            classes={classes}
+            currentClasses={currentCharacter.classesInfo}
+            pendingLevels={pending}
+            onExistingClassLevelUp={handleLevelUpExisting}
+            onAddNewClass={() => {
+              setIsLevelUpOpen(false);
+              setIsAddClassOpen(true);
+            }}
+            saving={saving}
+        />
+
+        <ClassPickerModal
+            isOpen={isAddClassOpen}
+            onClose={() => setIsAddClassOpen(false)}
+            classes={classes}
+            title="Multiclass: Pick a New Class"
+            disabledKeys={takenClassKeys}
+            onConfirm={handleAddNewClass}
             saving={saving}
         />
       </>

@@ -5,7 +5,7 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.DndClassResponse;
 import dev.ushki.livedndlist.repository.DndClassRepository;
-import dev.ushki.livedndlist.service.Open5eClassService;
+import dev.ushki.livedndlist.service.DndClassService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SecurityRequirement(name = "bearerAuth")
 public class ClassSyncController {
 
-  private final Open5eClassService classSyncService;
+  private final DndClassService classSyncService;
   private final DndClassRepository dndClassRepository;
 
   @GetMapping("/status")

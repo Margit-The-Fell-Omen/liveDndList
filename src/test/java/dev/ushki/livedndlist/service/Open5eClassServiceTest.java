@@ -53,7 +53,7 @@ class Open5eClassServiceTest {
   @Mock
   private SyncMetrics syncMetrics;
 
-  private Open5eClassService classService;
+  private DndClassService classService;
 
   private Open5eClassDto fighterDto;
   private Open5eClassDto wizardDto;
@@ -62,7 +62,7 @@ class Open5eClassServiceTest {
 
   @BeforeEach
   void setUp() {
-    classService = new Open5eClassService(
+    classService = new DndClassService(
         dndClassRepository,
         dndClassMapper,
         apiClient,

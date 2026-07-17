@@ -272,7 +272,7 @@ export interface Character {
   backgroundKey: string;
   experiencePoints: number;
   portraitUrl?: string;
-  classesInfo: string[];
+  classesInfo: DndClassLevel[];
   totalLevel: number;
   abilityScores: AbilityScoresResponse;
   maxHitPoints: number;
@@ -302,6 +302,11 @@ export interface Character {
   updatedAt: string;
 }
 
+export interface DndClassLevel {
+  level: number;
+  classKey: string;
+}
+
 export interface CharacterUpdateRequest {
   name?: string;
   raceKey?: string;
@@ -324,10 +329,11 @@ export interface CharacterUpdateRequest {
   featuresAndTraits?: string;
   deathSaveSuccesses?: number;
   deathSaveFailures?: number;
-  experiencePoints?: number;
   savingThrowProficiencies?: AbilityType[];
   skills?: SkillUpdateRequest[];
   initiative?: number;
+  dndClassLevels?: DndClassLevel[];
+  experiencePoints?: number;
 }
 
 export interface SkillUpdateRequest {

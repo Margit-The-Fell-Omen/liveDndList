@@ -1,0 +1,17 @@
+.footerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.errorText {
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  margin-right: auto;
+}
+
+.emptyMessage {
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: var(--space-2xl);
+}

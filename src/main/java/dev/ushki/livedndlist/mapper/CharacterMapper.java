@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.mapper;
 
+import dev.ushki.livedndlist.dto.DndClassLevelDto;
 import dev.ushki.livedndlist.dto.request.AbilityScoresRequest;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
@@ -18,6 +19,7 @@ import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.SkillType;
+import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.repository.RaceRepository;
@@ -91,12 +93,8 @@ public class CharacterMapper {
         .backgroundKey(character.getBackground().getKey())
         .experiencePoints(character.getExperiencePoints())
         .portraitUrl(character.getPortraitUrl())
-        .classesInfo(Hibernate.isInitialized(character.getClasses())
-            ? character.getClasses().stream()
-            .map(c -> c.getDndClass().getName())
-            .toList() : null)
-        .totalLevel(Hibernate.isInitialized(character.getClasses())
-            ? character.getTotalLevel() : 0)
+        .classesInfo(mapClasses(character.getClasses()))
+        .totalLevel(character.getTotalLevel())
         .abilityScores(mapAbilityScores(character.getAbilityScores()))
         .maxHitPoints(character.getMaxHitPoints())
         .currentHitPoints(character.getCurrentHitPoints())
@@ -129,6 +127,18 @@ public class CharacterMapper {
         .createdAt(character.getCreatedAt())
         .updatedAt(character.getUpdatedAt())
         .build();
+  }
+
+  private List<DndClassLevelDto> mapClasses(Set<DndCharacterClassLevel> classes) {
+    if (classes == null || classes.isEmpty()) {
+      return List.of();
+    }
+    return classes.stream()
+        .map(cc -> DndClassLevelDto.builder()
+            .classKey(cc.getDndClass().getKey())
+            .level(cc.getLevel())
+            .build())
+        .toList();
   }
 
   public CharacterSummaryResponse toSummaryResponse(DndCharacter character) {
@@ -231,12 +241,16 @@ public class CharacterMapper {
     updateIfPresent(request.getNotes(), character::setNotes);
     updateIfPresent(request.getDeathSaveFailures(), character::setDeathSaveFailures);
     updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
-    updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
     updateIfPresent(request.getFeaturesAndTraits(), character::setFeaturesAndTraits);
+    updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
+
+    if (request.getExperiencePoints() != null) {
+      character.setLevel(getLevelFromExperience(request.getExperiencePoints()));
+    }
 
     if (request.getBackgroundKey() != null) {
       Background background = backgroundRepository.findByKey(request.getBackgroundKey())
-          .orElseThrow(() -> new EntityNotFoundException(
+          .orElseThrow(() -> new ResourceNotFoundException(
               "Background not found with key: " + request.getBackgroundKey()));
       character.setBackground(background);
       log.info("Character update: background found: {}", background);
@@ -244,21 +258,31 @@ public class CharacterMapper {
       log.info("Character update: background key is null");
     }
 
-    if (request.getExperiencePoints() != null) {
-      int oldTotalLevel = character.getTotalLevel();
-      int newExperience = request.getExperiencePoints();
-      character.setExperiencePoints(newExperience);
+    if (request.getDndClassLevels() != null) {
+      Map<String, DndClassLevelDto> desired = request.getDndClassLevels().stream()
+          .collect(Collectors.toMap(DndClassLevelDto::getClassKey, dto -> dto));
 
-      int newTotalLevel = getLevelFromExperience(newExperience);
+      character.getClasses().removeIf(existing ->
+          !desired.containsKey(existing.getDndClass().getKey())
+      );
 
-      if (newTotalLevel > oldTotalLevel) {
-        int levelsToAdd = newTotalLevel - oldTotalLevel;
+      for (DndCharacterClassLevel existing : character.getClasses()) {
+        DndClassLevelDto dto = desired.remove(existing.getDndClass().getKey());
+        if (dto != null) {
+          existing.setLevel(dto.getLevel());
+        }
+      }
 
-        Optional<DndCharacterClassLevel> classToLevelUp = character.getClasses().stream()
-            .max(Comparator.comparing(DndCharacterClassLevel::getLevel));
-
-        classToLevelUp.ifPresent(primaryClass ->
-            primaryClass.setLevel(primaryClass.getLevel() + levelsToAdd)
+      for (DndClassLevelDto dto : desired.values()) {
+        DndClass dndClass = dndClassRepository.findByKey(dto.getClassKey())
+            .orElseThrow(() -> new ResourceNotFoundException(
+                "Class not found by key: " + dto.getClassKey()));
+        character.addClass(
+            DndCharacterClassLevel.builder()
+                .character(character)
+                .dndClass(dndClass)
+                .level(dto.getLevel())
+                .build()
         );
       }
     }

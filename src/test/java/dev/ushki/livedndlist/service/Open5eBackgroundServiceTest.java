@@ -48,7 +48,7 @@ class Open5eBackgroundServiceTest {
   private SyncMetrics syncMetrics;
 
   @InjectMocks
-  private Open5eBackgroundService backgroundService;
+  private DndBackgroundService backgroundService;
 
   private Open5eBackgroundDto sampleDto;
   private Background sampleEntity;

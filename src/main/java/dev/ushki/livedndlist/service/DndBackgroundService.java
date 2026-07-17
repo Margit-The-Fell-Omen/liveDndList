@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class Open5eBackgroundService {
+public class DndBackgroundService {
 
   private static final String API_PATH = "/v2/backgrounds/";
 

@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.dto.response;
 
+import dev.ushki.livedndlist.dto.DndClassLevelDto;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,7 +41,7 @@ public class CharacterResponse {
   private String portraitUrl;
 
   @Schema(description = "List of character classes and levels")
-  private List<String> classesInfo;
+  private List<DndClassLevelDto> classesInfo;
 
   @Schema(description = "Total level across all classes", example = "5")
   private Integer totalLevel;

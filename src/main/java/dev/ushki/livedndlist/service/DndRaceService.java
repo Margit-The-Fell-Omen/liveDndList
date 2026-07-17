@@ -1,6 +1,6 @@
 package dev.ushki.livedndlist.service;
 
-import static dev.ushki.livedndlist.service.Open5eClassService.getSyncResultDto;
+import static dev.ushki.livedndlist.service.DndClassService.getSyncResultDto;
 
 import dev.ushki.livedndlist.client.Open5eApiClient;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class Open5eRaceService {
+public class DndRaceService {
 
   private static final String API_PATH = "/v2/species/";
 

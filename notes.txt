@@ -7,33 +7,25 @@ docker compose -f docker-compose.dev.yml --project-name livednd-dev up --build
 Plan for live-dnd-list:
 
 (to fix frontend)
+- add fast navigation to class/race/backgr cards in wirard (buttons in header)
 - bug with proficiency of sleight of hand skill
 - caching added to new parts and rewritten to redis
 - make active weapons a scrollable horizontally on mobile
 - fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
-- fix that after initial loading of character on main page you traverse to the character sheet instantly
 - add overall field validation
 - add current hits validation (not higher than max hits)
 - refactor spell search
-- add auto-login when registered
-- fix  class/race/archetype change
 - add UI to change character logo
 - add race, class, etc. pop-up windows with desc
 - add theme change based on base-16 color scheme (or another type of choice)
 
 (Quality of life)
 - add swipe (left <- right) to open side-menu with labels for fast sheet traverse on mobile
-- add icons on unexpanded sidebar
 - when logged in - open last opened character
-- add (remember device) functionality
-- auto-remember latest login
 
 (later plans)
-- redundant parentDndClass key and name fields in DndClass
 - why do races still use ResponseEntity ???: 
-- remove not used endpoints and repo methods
 - rewrite my Cache Manager -> Redis
-----> migrate to api.open5e/v2
 - add export to pdf via async method
 - get the rest of info fetched from open5e
 - add sharing feature?
@@ -44,23 +36,21 @@ Plan for live-dnd-list:
 
 (afterwards)
 - determine the next system
-- implement sysmet choise
+- implement system choise
 
 
 IMPORTANT NOTES:
-
-- in character update there is raceID (shall be changed to Name)
-- in BackgroundRepository findByName shall not be used when custom background feature will be implemented (use keys 'cause they're unique)
 - currently speed is not being derived from race
 - currently I cannot add more than 1 class to character
 
 (current fixes:)
+BUG!!! ------ spells do not sync
+LEVELING
+    - currently levelup -> new class does not work + no sync with exp
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird
     - game system choice & validation
     - better font families
     - if no desc - just ignore decs DO NOT WRITE [no description provided] // can't find where I found it
-    - fate-touched background has no desc while not chosen (weird)
-- add feat of watching in separate window (or something similar) info of classes/races/backgrounds;
-- add class/race change in character sheet
 - add multiclassing/leveling mechanic
+- add feat of watching in separate window (or something similar) info of classes/races/backgrounds;

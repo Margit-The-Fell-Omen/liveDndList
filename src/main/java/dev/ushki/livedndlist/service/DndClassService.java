@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class Open5eClassService {
+public class DndClassService {
 
   private static final String API_PATH = "/v2/classes/";
 

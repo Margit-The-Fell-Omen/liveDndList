@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.dto.request;
 
+import dev.ushki.livedndlist.dto.DndClassLevelDto;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -90,7 +91,11 @@ public class CharacterUpdateRequest {
   @Schema(description = "Death saves failures", example = "0")
   private Integer deathSaveFailures;
 
-  @Schema(description = "Total character experience", example = "0")
+  @Schema(description = "Character classes and their levels")
+  private List<DndClassLevelDto> dndClassLevels;
+
+  @Min(0)
+  @Schema(description = "Experience points", example = "3500")
   private Integer experiencePoints;
 
   @Schema(description = "List of proficient saving throws")

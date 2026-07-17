@@ -63,7 +63,7 @@ class Open5eRaceServiceTest {
   @Mock
   private SyncMetrics syncMetrics;
 
-  private Open5eRaceService raceService;
+  private DndRaceService raceService;
 
   private Open5eRaceDto humanDto;
   private Open5eRaceDto elfDto;
@@ -72,7 +72,7 @@ class Open5eRaceServiceTest {
 
   @BeforeEach
   void setUp() {
-    raceService = new Open5eRaceService(
+    raceService = new DndRaceService(
         raceRepository,
         raceMapper,
         apiClient,
