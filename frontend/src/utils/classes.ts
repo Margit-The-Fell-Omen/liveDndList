@@ -42,3 +42,11 @@ export function pendingLevels(
   const assigned = totalLevelOf(entries);
   return Math.max(0, totalLevelFromXp - assigned);
 }
+
+export function excessLevels(
+    totalLevelFromXp: number,
+    entries: DndClassLevel[]
+): number {
+  const assigned = totalLevelOf(entries);
+  return Math.max(0, assigned - totalLevelFromXp);
+}

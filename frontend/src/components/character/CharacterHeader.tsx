@@ -8,9 +8,10 @@ import {RacePickerModal} from './RacePickerModal';
 import {ClassManagerModal} from './ClassManagerModal';
 import {ClassPickerModal} from './ClassPickerModal';
 import {LevelUpModal} from './LevelUpModal';
+import {LevelDownModal} from './LevelDownModal';
 import {SetLevelModal} from './SetLevelModal';
 import {getRaceDisplayName} from '@/utils/races';
-import {formatClassLevels, pendingLevels, totalLevelOf} from '@/utils/classes';
+import {excessLevels, formatClassLevels, pendingLevels, totalLevelOf} from '@/utils/classes';
 import {levelForXp} from '@/utils/experience';
 import type {DndClassLevel} from '@/types';
 import styles from './CharacterHeader.module.css';
@@ -33,6 +34,7 @@ export function CharacterHeader({className}: { className?: string }) {
   const [isRacePickerOpen, setIsRacePickerOpen] = useState(false);
   const [isClassManagerOpen, setIsClassManagerOpen] = useState(false);
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
+  const [isLevelDownOpen, setIsLevelDownOpen] = useState(false);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
   const [isSetLevelOpen, setIsSetLevelOpen] = useState(false);
 
@@ -64,7 +66,9 @@ export function CharacterHeader({className}: { className?: string }) {
   const earnedLevel = levelForXp(currentCharacter.experiencePoints);
   const assignedLevel = totalLevelOf(currentCharacter.classesInfo);
   const pending = pendingLevels(earnedLevel, currentCharacter.classesInfo);
+  const excess = excessLevels(earnedLevel, currentCharacter.classesInfo);
   const hasPending = pending > 0;
+  const hasExcess = excess > 0;
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCharacterName(e.target.value);
@@ -110,6 +114,20 @@ export function CharacterHeader({className}: { className?: string }) {
     setIsLevelUpOpen(false);
   };
 
+  const handleLevelDown = async (classKey: string) => {
+    const entry = currentCharacter.classesInfo.find(e => e.classKey === classKey);
+    if (!entry) return;
+
+    const next = entry.level <= 1
+        ? currentCharacter.classesInfo.filter(e => e.classKey !== classKey)
+        : currentCharacter.classesInfo.map(e =>
+            e.classKey === classKey ? {...e, level: e.level - 1} : e
+        );
+
+    await persistClassList(next);
+    setIsLevelDownOpen(false);
+  };
+
   const handleAddNewClass = async (classKey: string) => {
     const next: DndClassLevel[] = [
       ...currentCharacter.classesInfo,
@@ -121,6 +139,7 @@ export function CharacterHeader({className}: { className?: string }) {
 
   const handlePrimaryLevelButton = () => {
     if (hasPending) setIsLevelUpOpen(true);
+    else if (hasExcess) setIsLevelDownOpen(true);
     else setIsSetLevelOpen(true);
   };
 
@@ -155,8 +174,13 @@ export function CharacterHeader({className}: { className?: string }) {
                 Class & Level
                 {hasPending && (
                     <span className={styles.pendingBadge}>
-        +{pending} pending
-      </span>
+                      +{pending} pending
+                    </span>
+                )}
+                {hasExcess && (
+                    <span className={styles.excessBadge}>
+                      -{excess} excess
+                    </span>
                 )}
               </label>
               <button
@@ -164,10 +188,10 @@ export function CharacterHeader({className}: { className?: string }) {
                   className={styles.raceButton}
                   onClick={() => setIsClassManagerOpen(true)}
               >
-    <span className={styles.raceValue}>
-      {classDisplay || 'N/A'}
-      {` — Total ${assignedLevel}`}
-    </span>
+                <span className={styles.raceValue}>
+                  {classDisplay || 'N/A'}
+                  {` — Total ${assignedLevel}`}
+                </span>
                 <span className={styles.raceEditIcon} aria-hidden="true">✎</span>
               </button>
             </div>
@@ -197,11 +221,11 @@ export function CharacterHeader({className}: { className?: string }) {
             <div className={styles.raceField}>
               <label className={styles.raceLabel}>&nbsp;</label>
               <Button
-                  variant={hasPending ? 'primary' : 'secondary'}
+                  variant={hasPending ? 'primary' : hasExcess ? 'danger' : 'secondary'}
                   onClick={handlePrimaryLevelButton}
                   disabled={saving}
               >
-                {hasPending ? 'Apply Level' : 'Set Level'}
+                {hasPending ? 'Apply Level' : hasExcess ? 'Remove Level' : 'Set Level'}
               </Button>
             </div>
           </div>
@@ -244,6 +268,16 @@ export function CharacterHeader({className}: { className?: string }) {
               setIsLevelUpOpen(false);
               setIsAddClassOpen(true);
             }}
+            saving={saving}
+        />
+
+        <LevelDownModal
+            isOpen={isLevelDownOpen}
+            onClose={() => setIsLevelDownOpen(false)}
+            classes={classes}
+            currentClasses={currentCharacter.classesInfo}
+            excessLevels={excess}
+            onLevelDown={handleLevelDown}
             saving={saving}
         />
 

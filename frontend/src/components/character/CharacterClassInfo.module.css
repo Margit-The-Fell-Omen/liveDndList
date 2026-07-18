@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  padding: var(--space-md) 0;
+  animation: fadeIn var(--transition-normal);
+}
+
+.classSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.classHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--color-accent-primary);
+  padding-bottom: var(--space-xs);
+}
+
+.className {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.classLevel {
+  font-size: var(--font-size-lg);
+  color: var(--color-accent-primary);
+  font-weight: 600;
+}
+
+.contentWrapper {
+  /* ClassDetailPanel already brings StepGrid styles,
+     we just need to remove its internal top-level padding if any */
+}

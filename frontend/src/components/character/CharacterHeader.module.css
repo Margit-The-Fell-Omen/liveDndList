@@ -21,6 +21,13 @@
   flex-wrap: wrap;
 }
 
+.excessBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent-primary);
+  margin-left: var(--space-xs);
+}
+
 .pendingBadge {
   font-size: var(--font-size-xs);
   font-weight: 600;

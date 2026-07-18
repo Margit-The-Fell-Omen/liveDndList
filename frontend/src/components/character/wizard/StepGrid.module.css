@@ -23,6 +23,16 @@
   min-width: 0;
 }
 
+.classTable tr.activeTableRow td {
+  background-color: color-mix(in srgb, var(--color-accent-primary) 22%, var(--color-bg-primary));
+  color: var(--color-accent-primary);
+  font-weight: 700;
+}
+
+.classTable tr.activeTableRow td:first-child {
+  box-shadow: inset 3px 0 0 var(--color-accent-primary);
+}
+
 .detailPanel {
   grid-column: 1 / -1;
   min-width: 0;

@@ -16,6 +16,12 @@
   gap: var(--space-sm);
 }
 
+.itemGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
 .item {
   display: flex;
   align-items: center;
@@ -25,6 +31,21 @@
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: border-color var(--transition-fast),
+  background-color var(--transition-fast);
+}
+
+.item:hover {
+  border-color: var(--color-accent-primary);
+  background: var(--color-bg-hover);
+}
+
+.item[data-expanded="true"] {
+  border-color: var(--color-accent-primary);
+  background: color-mix(in srgb, var(--color-accent-primary) 6%, var(--color-bg-primary));
 }
 
 .itemInfo {
@@ -47,8 +68,32 @@
 
 .itemActions {
   display: flex;
+  align-items: center;
   gap: var(--space-xs);
   flex-shrink: 0;
+}
+
+.chevron {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-lg);
+  transition: transform var(--transition-fast);
+  margin-left: var(--space-xs);
+}
+
+.chevron[data-expanded="true"] {
+  transform: rotate(90deg);
+  color: var(--color-accent-primary);
+}
+
+.detailWrapper {
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-accent-primary);
+}
+
+.missingClass {
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: var(--space-md);
 }
 
 .transferOption {

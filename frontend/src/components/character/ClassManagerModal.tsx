@@ -2,8 +2,9 @@ import {useState} from 'react';
 import {ConfirmModal, Modal} from '@/components/common/Modal';
 import {Button} from '@/components/common/Button';
 import type {CharacterClass, DndClassLevel} from '@/types';
-import {getClassDisplayName} from '@/utils/classes';
+import {getClassByKey, getClassDisplayName} from '@/utils/classes';
 import {ClassPickerModal} from './ClassPickerModal';
+import {ClassDetailPanel} from './wizard/ClassDetailPanel';
 import styles from './ClassManagerModal.module.css';
 
 interface ClassManagerModalProps {
@@ -30,6 +31,7 @@ export function ClassManagerModal({
                                   }: ClassManagerModalProps) {
   const [pending, setPending] = useState<PendingAction>(null);
   const [confirmRemoval, setConfirmRemoval] = useState<{ classKey: string } | null>(null);
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
   const takenKeys = currentClasses.map(entry => entry.classKey);
 
@@ -50,6 +52,7 @@ export function ClassManagerModal({
 
     await onSave(next);
     setPending(null);
+    setExpandedKey(null);
   };
 
   const handleTransferLevels = async (destinationKey: string) => {
@@ -66,6 +69,7 @@ export function ClassManagerModal({
 
     await onSave(next);
     setPending(null);
+    setExpandedKey(null);
   };
 
   const beginRemove = (classKey: string) => {
@@ -88,6 +92,10 @@ export function ClassManagerModal({
     setPending({type: 'transferFor', classKey: target.classKey, level: target.level});
   };
 
+  const toggleExpanded = (classKey: string) => {
+    setExpandedKey(prev => (prev === classKey ? null : classKey));
+  };
+
   const footer = (
       <div className={styles.footerActions}>
         <Button variant="secondary" onClick={onClose}>Close</Button>
@@ -105,45 +113,77 @@ export function ClassManagerModal({
             isOpen={isOpen && !pending}
             onClose={onClose}
             title="Manage Classes"
-            size="medium"
+            size="large"
             footer={footer}
         >
           <div className={styles.body}>
             <p className={styles.hint}>
-              Change or remove classes. Levels from a removed class must be transferred to another
+              Click a class to view its details. Use the actions on the right to change or remove a
               class.
+              Levels from a removed class must be transferred to another class.
             </p>
 
             <div className={styles.list}>
               {currentClasses.map(entry => {
                 const canRemove = currentClasses.length > 1;
+                const isExpanded = expandedKey === entry.classKey;
+                const clsRef = getClassByKey(classes, entry.classKey);
+
                 return (
-                    <div key={entry.classKey} className={styles.item}>
-                      <div className={styles.itemInfo}>
-                    <span className={styles.itemName}>
-                      {getClassDisplayName(classes, entry.classKey)}
-                    </span>
-                        <span className={styles.itemLevel}>Level {entry.level}</span>
-                      </div>
-                      <div className={styles.itemActions}>
-                        <Button
-                            variant="ghost"
-                            size="small"
-                            onClick={() => setPending({type: 'change', classKey: entry.classKey})}
-                            disabled={saving}
+                    <div key={entry.classKey} className={styles.itemGroup}>
+                      <button
+                          type="button"
+                          className={styles.item}
+                          data-expanded={isExpanded}
+                          onClick={() => toggleExpanded(entry.classKey)}
+                          aria-expanded={isExpanded}
+                      >
+                        <div className={styles.itemInfo}>
+                      <span className={styles.itemName}>
+                        {getClassDisplayName(classes, entry.classKey)}
+                      </span>
+                          <span className={styles.itemLevel}>Level {entry.level}</span>
+                        </div>
+                        <div
+                            className={styles.itemActions}
+                            onClick={e => e.stopPropagation()}
                         >
-                          Change
-                        </Button>
-                        <Button
-                            variant="danger"
-                            size="small"
-                            onClick={() => beginRemove(entry.classKey)}
-                            disabled={saving || !canRemove}
-                            title={canRemove ? 'Remove class' : 'A character must have at least one class'}
-                        >
-                          Remove
-                        </Button>
-                      </div>
+                          <Button
+                              variant="ghost"
+                              size="small"
+                              onClick={() => setPending({type: 'change', classKey: entry.classKey})}
+                              disabled={saving}
+                          >
+                            Change
+                          </Button>
+                          <Button
+                              variant="danger"
+                              size="small"
+                              onClick={() => beginRemove(entry.classKey)}
+                              disabled={saving || !canRemove}
+                              title={canRemove ? 'Remove class' : 'A character must have at least one class'}
+                          >
+                            Remove
+                          </Button>
+                          <span
+                              className={styles.chevron}
+                              data-expanded={isExpanded}
+                              aria-hidden="true"
+                          >
+                        ›
+                      </span>
+                        </div>
+                      </button>
+
+                      {isExpanded && clsRef && (
+                          <div className={styles.detailWrapper}>
+                            <ClassDetailPanel
+                                cls={clsRef}
+                                allClasses={classes}
+                                currentLevel={entry.level}
+                            />
+                          </div>
+                      )}
                     </div>
                 );
               })}
