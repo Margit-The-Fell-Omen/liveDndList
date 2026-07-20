@@ -1,0 +1,31 @@
+{{ define "alert_list" }}{{ range . }}
+---
+🪪 <b>{{ .Labels.alertname }}</b>
+{{- if eq .Labels.severity "critical" }}
+🚨 CRITICAL 🚨 {{ end }}
+{{- if eq .Labels.severity "warning" }}
+⚠️ WARNING ⚠️{{ end }}
+{{- if eq .Labels.severity "info" }}
+ℹ️ INFO ℹ️{{ end }}
+{{- if .Annotations.summary }}
+📝 {{ .Annotations.summary }}{{ end }}
+{{- if .Annotations.description }}
+📖 {{ .Annotations.description }}{{ end }}
+
+🏷 Labels:
+{{ range .Labels.SortedPairs }}  <i>{{ .Name }}</i>: <code>{{ .Value }}</code>
+{{ end }}
+🛠 <a href="{{ .GeneratorURL }}">Grafana</a> 🛠
+{{ end }}
+{{ end }}
+
+{{ define "telegram.message" }}
+{{ if gt (len .Alerts.Firing) 0 }}
+🔥 Alerts Firing 🔥
+{{ template "alert_list" .Alerts.Firing }}
+{{ end }}
+{{ if gt (len .Alerts.Resolved) 0 }}
+✅ Alerts Resolved ✅
+{{ template "alert_list" .Alerts.Resolved }}
+{{ end }}
+{{ end }}

@@ -1,0 +1,37 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 5s
+
+scrape_configs:
+  - job_name: node-exporter
+    static_configs:
+      - targets:
+          - host.docker.internal:9100
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+          - cadvisor:8080
+  - job_name: grafana
+    metrics_path: /grafana/metrics
+    static_configs:
+      - targets:
+          - grafana:3000
+  - job_name: postgresql
+    static_configs:
+      - targets:
+          - postgres_exporter:9187
+  - job_name: redis
+    static_configs:
+      - targets:
+          - redis_exporter:9121
+  - job_name: backend
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - backend:8080
+    metric_relabel_configs:
+      - action: replace
+        source_labels:
+          - __name__
+        target_label: __name__
+        replacement: backend_$1
