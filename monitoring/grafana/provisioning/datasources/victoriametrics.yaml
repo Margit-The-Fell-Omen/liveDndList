@@ -1,0 +1,13 @@
+apiVersion: 1
+datasources:
+  - name: VictoriaMetrics
+    type: victoriametrics-metrics-datasource
+    access: proxy
+    uid: victoriametrics
+    url: https://victoriametrics:8428
+    isDefault: true
+    editable: false
+    jsonData:
+      tlsAuthWithCACert: true
+    secureJsonData:
+      tlsCACert: $__file{/etc/grafana/ca.crt}

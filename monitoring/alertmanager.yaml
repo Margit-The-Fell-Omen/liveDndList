@@ -1,0 +1,15 @@
+templates:
+  - /telegram.tmpl
+
+route:
+  receiver: telegram
+  group_by:
+    - severity
+  repeat_interval: 5m
+
+receivers:
+  - name: telegram
+    telegram_configs:
+      - bot_token: $TELEGRAM_BOT_TOKEN
+        chat_id: $TELEGRAM_CHAT_ID
+        message: '{{ template "telegram.message". }}'
