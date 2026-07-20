@@ -64,7 +64,7 @@ services:
       - --config.file=/config/alertmanager.yaml
     env_file: ../.env
     volumes:
-      - ./monitoring/telegram.tmpl:/telegram.tmpl
+      - ./monitoring/telegram.tmpl.tmpl:/telegram.tmpl.tmpl
       - ./monitoring/alertmanager.yaml:/config/alertmanager.yaml
     networks:
       - livedndlist_app
@@ -139,8 +139,8 @@ services:
       - livedndlist_app
 
 volumes:
-  victoriametrics_data: {}
-  grafana_data: {}
+  victoriametrics_data: { }
+  grafana_data: { }
 
 networks:
   livedndlist_app:
