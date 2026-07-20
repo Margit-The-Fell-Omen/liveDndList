@@ -4,7 +4,7 @@
 // UTILITY & PAGINATION TYPES
 // ═══════════════════════════════════════════════════════════════
 
-export interface Page<T> {
+export interface PageResponse<T> {
   content: T[];
   pageNumber: number;
   pageSize: number;
@@ -14,6 +14,7 @@ export interface Page<T> {
   last: boolean;
   empty: boolean;
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 // USER & AUTH TYPES (Unchanged as requested)

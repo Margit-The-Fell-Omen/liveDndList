@@ -1,5 +1,6 @@
 import {Modal} from '@/components/common/Modal';
 import {Button} from '@/components/common/Button';
+import {MarkdownContent} from '../common/MarkdownContent.tsx';
 import type {SpellResponse} from '@/types';
 import styles from './SpellInfoModal.module.css';
 
@@ -42,8 +43,9 @@ export function SpellInfoModal({isOpen, onClose, spell}: SpellInfoModalProps) {
             </div>
             <div className={styles.detailItem}>
               <span className={styles.label}>Duration</span>
-              <span
-                  className={styles.value}>{spell.duration}{spell.concentration && ' (Concentration)'}</span>
+              <span className={styles.value}>
+                {spell.duration}{spell.concentration && ' (Concentration)'}
+              </span>
             </div>
             <div className={styles.detailItem}>
               <span className={styles.label}>Ritual</span>
@@ -53,18 +55,18 @@ export function SpellInfoModal({isOpen, onClose, spell}: SpellInfoModalProps) {
 
           <div className={styles.descriptionBlock}>
             <p className={styles.label}>Components</p>
-            <p>{spell.components}</p>
+            <p className={styles.plainText}>{spell.components}</p>
           </div>
 
           <div className={styles.descriptionBlock}>
             <p className={styles.label}>Description</p>
-            <p>{spell.description}</p>
+            <MarkdownContent text={spell.description}/>
           </div>
 
           {spell.higherLevels && (
               <div className={styles.descriptionBlock}>
                 <p className={styles.label}>At Higher Levels</p>
-                <p>{spell.higherLevels}</p>
+                <MarkdownContent text={spell.higherLevels}/>
               </div>
           )}
         </div>

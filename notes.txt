@@ -44,12 +44,9 @@ IMPORTANT NOTES:
 - currently I cannot add more than 1 class to character
 
 (current fixes:)
-LEVELING
-    - currently levelup -> new class does not work + no sync with exp
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird
     - game system choice & validation
     - better font families
     - if no desc - just ignore decs DO NOT WRITE [no description provided] // can't find where I found it
-- add multiclassing/leveling mechanic
-- add feat of watching in separate window (or something similar) info of classes/races/backgrounds;
+- add feat of watching in separate page (or something similar) info of classes/races/backgrounds;

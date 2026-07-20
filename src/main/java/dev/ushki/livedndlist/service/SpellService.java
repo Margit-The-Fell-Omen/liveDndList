@@ -8,6 +8,7 @@ import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
+import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.enums.SpellSchool;
@@ -27,8 +28,8 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,27 +51,30 @@ public class SpellService {
 
   private static final String SPELL_STRING = "Spells";
 
-  public List<SpellResponse> getAllSpells(
+  public PageResponse<SpellResponse> getAllSpells(
       SpellSchool school,
       Integer minLevel,
       Integer maxLevel,
       Boolean ritual,
+      String search,
       Boolean concentration,
-      String sortBy,
-      String sortDir) {
+      Pageable pageable) {
 
-    CompositeKey key = new CompositeKey("all", school, minLevel, maxLevel, ritual, concentration,
-        sortBy, sortDir);
+    CompositeKey key = new CompositeKey(school, minLevel, maxLevel, ritual, concentration, search,
+        pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort().toString());
 
     return cacheManager.get(SPELL_STRING, key, () -> {
-      Sort sort = sortDir.equalsIgnoreCase("asc")
-          ? Sort.by(sortBy).ascending()
-          : Sort.by(sortBy).descending();
 
-      List<Spell> spells = spellRepository.findAll(sort);
+      Page<Spell> spellPage;
+      if (search == null) {
+        spellPage = spellRepository.findAll(pageable);
+      } else {
+        spellPage = spellRepository.findByNameContainingIgnoreCase(search, pageable);
+      }
 
-      Stream<Spell> stream = spells.stream();
+      Page<SpellResponse> responsePage = spellPage.map(spellMapper::toResponse);
 
+      Stream<SpellResponse> stream = responsePage.stream();
       if (school != null) {
         stream = stream.filter(s -> s.getSchool() == school);
       }
@@ -87,10 +91,21 @@ public class SpellService {
         stream = stream.filter(s -> s.isConcentration() == concentration);
       }
 
-      return stream
-          .map(spellMapper::toResponse)
-          .toList();
+      List<SpellResponse> filteredContent = stream.toList();
+
+      return PageResponse.<SpellResponse>builder()
+          .content(filteredContent)
+          .pageNumber(spellPage.getNumber())
+          .pageSize(spellPage.getSize())
+          .totalElements(spellPage.getTotalElements())
+          .totalPages(spellPage.getTotalPages())
+          .first(spellPage.isFirst())
+          .last(spellPage.isLast())
+          .empty(filteredContent.isEmpty())
+          .build();
     });
+
+
   }
 
   public SpellResponse getById(Long id) {
@@ -108,7 +123,7 @@ public class SpellService {
     CompositeKey key = new CompositeKey("search", name, school, maxLevel);
 
     return cacheManager.get(SPELL_STRING, key, () -> {
-      List<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name, pageable);
+      Page<Spell> spells = spellRepository.findByNameContainingIgnoreCase(name, pageable);
 
       Stream<Spell> stream = spells.stream();
 

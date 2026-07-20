@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import type {CharacterClass, ClassFeature, FeatureType} from '@/types';
-import {MarkdownContent} from './MarkdownContent';
+import {MarkdownContent} from '../../common/MarkdownContent.tsx';
 import styles from './StepGrid.module.css';
 
 const humanize = (raw: string): string =>

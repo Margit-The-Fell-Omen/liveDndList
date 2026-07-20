@@ -1,6 +1,6 @@
 import type {Background, BackgroundBenefit, DocumentInfo} from '@/types';
 import {SelectionCard} from './SelectionCard';
-import {MarkdownContent} from './MarkdownContent';
+import {MarkdownContent} from '../../common/MarkdownContent.tsx';
 import {stripMarkdown} from '@/utils/markdown';
 import styles from './StepGrid.module.css';
 

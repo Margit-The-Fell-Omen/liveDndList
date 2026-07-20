@@ -1,7 +1,7 @@
 import {Fragment} from 'react';
 import type {Race} from '@/types';
 import {SelectionCard} from './SelectionCard';
-import {MarkdownContent} from './MarkdownContent';
+import {MarkdownContent} from '../../common/MarkdownContent.tsx';
 import styles from './StepGrid.module.css';
 import {stripMarkdown} from '@utils/markdown.ts';
 import {

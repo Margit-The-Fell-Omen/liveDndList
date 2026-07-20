@@ -1,3 +1,4 @@
+import type React from 'react';
 import styles from './MarkdownContent.module.css';
 
 interface MarkdownContentProps {
@@ -7,6 +8,7 @@ interface MarkdownContentProps {
 type Block =
     | { kind: 'heading'; level: number; text: string }
     | { kind: 'table'; headers: string[]; rows: string[][] }
+    | { kind: 'list'; ordered: boolean; items: string[] }
     | { kind: 'paragraph'; text: string };
 
 function normalize(text: string): string {
@@ -23,6 +25,16 @@ function isTableSeparator(line: string): boolean {
 }
 
 const HEADING_RE = /^(#{1,6})\s*(.*)$/;
+const UNORDERED_LIST_RE = /^\s*[*\-+]\s+(.*)$/;
+const ORDERED_LIST_RE = /^\s*\d+\.\s+(.*)$/;
+
+function matchListItem(line: string): { ordered: boolean; content: string } | null {
+  const u = UNORDERED_LIST_RE.exec(line);
+  if (u) return {ordered: false, content: u[1]};
+  const o = ORDERED_LIST_RE.exec(line);
+  if (o) return {ordered: true, content: o[1]};
+  return null;
+}
 
 function parseBlocks(source: string): Block[] {
   const lines = normalize(source).split('\n');
@@ -60,11 +72,30 @@ function parseBlocks(source: string): Block[] {
       continue;
     }
 
+    const firstItem = matchListItem(line);
+    if (firstItem) {
+      const items: string[] = [firstItem.content];
+      const ordered = firstItem.ordered;
+      i++;
+      while (i < lines.length) {
+        const nextItem = matchListItem(lines[i]);
+        if (nextItem && nextItem.ordered === ordered) {
+          items.push(nextItem.content);
+          i++;
+        } else {
+          break;
+        }
+      }
+      blocks.push({kind: 'list', ordered, items});
+      continue;
+    }
+
     const paragraphLines: string[] = [];
     while (
         i < lines.length &&
         lines[i].trim() &&
         !HEADING_RE.test(lines[i]) &&
+        !matchListItem(lines[i]) &&
         !(lines[i].trim().startsWith('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1]))
         ) {
       paragraphLines.push(lines[i]);
@@ -138,6 +169,18 @@ export function MarkdownContent({text}: MarkdownContentProps) {
                     </tbody>
                   </table>
                 </div>
+            );
+          }
+          if (block.kind === 'list') {
+            const Tag = block.ordered ? 'ol' : 'ul';
+            return (
+                <Tag key={idx} className={styles.list}>
+                  {block.items.map((item, iIdx) => (
+                      <li key={iIdx} className={styles.listItem}>
+                        {renderInline(item)}
+                      </li>
+                  ))}
+                </Tag>
             );
           }
           return (

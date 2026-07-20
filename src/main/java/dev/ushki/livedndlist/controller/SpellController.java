@@ -4,6 +4,7 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
+import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.service.SpellService;
@@ -55,7 +56,7 @@ public class SpellController {
           description =
               "Unauthorized", content = @Content)
   })
-  public ApiResponse<List<SpellResponse>> getAllSpells(
+  public ApiResponse<PageResponse<SpellResponse>> getAllSpells(
       @Parameter(description = "Filter by spell school", example = "EVOCATION")
       @RequestParam(required = false) SpellSchool school,
       @Parameter(description = "Minimum spell level", example = "0")
@@ -66,14 +67,14 @@ public class SpellController {
       @RequestParam(required = false) Boolean ritual,
       @Parameter(description = "Filter concentration spells", example = "false")
       @RequestParam(required = false) Boolean concentration,
-      @Parameter(description = "Sort by field", example = "name")
-      @RequestParam(defaultValue = "name") String sortBy,
-      @Parameter(description = "Sort direction", example = "asc", schema =
-      @Schema(allowableValues = {
-          "asc", "desc"}))
-      @RequestParam(defaultValue = "asc") String sortDir) {
+      @Parameter(description = "Case-insensitive substring match on spell name", example = "fire")
+      @RequestParam(required = false) String search,
+      @Parameter(description = "Pagination and sorting parameters")
+      @PageableDefault(size = 50, sort = "name", direction = Sort.Direction.ASC)
+      Pageable pageable) {
+
     return ApiResponse.success(spellService.getAllSpells(
-        school, minLevel, maxLevel, ritual, concentration, sortBy, sortDir));
+        school, minLevel, maxLevel, ritual, search, concentration, pageable));
   }
 
   @GetMapping("/{id}")

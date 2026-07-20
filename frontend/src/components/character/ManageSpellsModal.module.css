@@ -3,6 +3,14 @@
   flex-direction: column;
   gap: var(--space-md);
   min-height: 50vh;
+  max-height: 70vh;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 240px);
+  gap: var(--space-sm);
+  align-items: end;
 }
 
 .resultsContainer {
@@ -10,7 +18,28 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
+  padding-right: var(--space-xs);
+}
+
+.groupLabel {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: var(--space-xs) var(--space-sm);
+  margin-top: var(--space-sm);
+  background: var(--color-bg-secondary);
+  color: var(--color-accent-primary);
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.groupLabel:first-child {
+  margin-top: 0;
 }
 
 .spellRow {
@@ -20,21 +49,110 @@
   padding: var(--space-sm) var(--space-md);
   background-color: var(--color-bg-tertiary);
   border-radius: var(--radius-md);
+  gap: var(--space-md);
 }
 
 .spellInfo {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  min-width: 0;
 }
 
 .spellName {
   font-weight: 500;
   color: var(--color-text-primary);
+  overflow-wrap: break-word;
 }
 
 .spellMeta {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
-  text-transform: capitalize;
+}
+
+.sentinel {
+  height: 1px;
+}
+
+.loadingText,
+.emptyText,
+.errorText,
+.endOfListText {
+  text-align: center;
+  padding: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.errorText {
+  color: var(--color-accent-primary, #e53e3e);
+}
+
+.resultsWrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.refreshBar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-accent-primary) 50%,
+      transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: refreshSlide 1s linear infinite;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.resultsContainer[data-stale] {
+  opacity: 0.6;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+}
+
+.spellRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  gap: var(--space-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.spellRow:hover {
+  background-color: var(--color-bg-hover, var(--color-bg-secondary));
+}
+
+.spellRow:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 2px;
+}
+
+@keyframes refreshSlide {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    grid-template-columns: 1fr;
+  }
 }

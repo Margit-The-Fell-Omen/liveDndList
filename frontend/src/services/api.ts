@@ -9,10 +9,11 @@ import type {
   EquipmentData,
   EquipmentResponse,
   LoginCredentials,
-  Page,
+  PageResponse,
   Race,
   RegisterData,
   SpellResponse,
+  SpellSchool,
   User,
 } from '@/types';
 import {
@@ -249,10 +250,10 @@ export const referenceDataApi = {
 };
 
 export const charactersApi = {
-  getSummaries: async (params: PageParams = {}): Promise<Page<CharacterSummary>> =>
-      fetchWithAuth<Page<CharacterSummary>>(`/characters${buildPageQuery(params)}`),
-  getAllFull: async (params: PageParams = {}): Promise<Page<Character>> =>
-      fetchWithAuth<Page<Character>>(`/characters/mine${buildPageQuery(params)}`),
+  getSummaries: async (params: PageParams = {}): Promise<PageResponse<CharacterSummary>> =>
+      fetchWithAuth<PageResponse<CharacterSummary>>(`/characters${buildPageQuery(params)}`),
+  getAllFull: async (params: PageParams = {}): Promise<PageResponse<Character>> =>
+      fetchWithAuth<PageResponse<Character>>(`/characters/mine${buildPageQuery(params)}`),
   getById: async (id: number): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${id}`),
   create: async (data: CharacterCreateRequest): Promise<Character> =>
@@ -284,9 +285,42 @@ export const equipmentApi = {
       }),
 };
 
+export type SpellSortField =
+    | 'name'
+    | 'level'
+    | 'castingTime'
+    | 'school'
+    | 'concentration'
+    | 'ritual';
+
+export interface SpellQueryParams {
+  page?: number;
+  size?: number;
+  search?: string;
+  sort?: string[];
+  minLevel?: number;
+  maxLevel?: number;
+  school?: SpellSchool;
+  concentration?: boolean;
+  ritual?: boolean;
+}
+
+const buildSpellQuery = (params: SpellQueryParams): string => {
+  const query = new URLSearchParams();
+  if (params.page !== undefined) query.append('page', params.page.toString());
+  if (params.size !== undefined) query.append('size', params.size.toString());
+  if (params.search) query.append('search', params.search);
+  if (params.minLevel !== undefined) query.append('minLevel', params.minLevel.toString());
+  if (params.maxLevel !== undefined) query.append('maxLevel', params.maxLevel.toString());
+  if (params.school) query.append('school', params.school);
+  if (params.concentration !== undefined) query.append('concentration', String(params.concentration));
+  if (params.ritual !== undefined) query.append('ritual', String(params.ritual));
+  (params.sort ?? []).forEach(s => query.append('sort', s));
+  const qs = query.toString();
+  return qs ? `?${qs}` : '';
+};
+
 export const spellsApi = {
-  search: async (name: string): Promise<SpellResponse[]> => {
-    if (!name.trim()) return [];
-    return fetchWithAuth<SpellResponse[]>(`/spells/search?${new URLSearchParams({name})}`);
-  },
+  list: async (params: SpellQueryParams = {}): Promise<PageResponse<SpellResponse>> =>
+      fetchWithAuth<PageResponse<SpellResponse>>(`/spells${buildSpellQuery(params)}`),
 };

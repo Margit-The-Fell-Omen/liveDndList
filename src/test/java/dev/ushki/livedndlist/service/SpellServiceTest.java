@@ -17,6 +17,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eSpellDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.request.SpellRequest;
+import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.dto.response.SpellResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.enums.SpellSchool;
@@ -37,6 +38,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -67,6 +71,8 @@ class SpellServiceTest {
   private SpellResponse healResponse;
   private SpellResponse detectMagicResponse;
   private SpellRequest testSpellRequest;
+  private Pageable defaultPageable;
+  private Pageable nameAscPageable;
 
   @BeforeEach
   void setUp() {
@@ -74,6 +80,9 @@ class SpellServiceTest {
 
     spellService = new SpellService(spellRepository, spellMapper, cacheManager, open5eApiClient,
         syncMetrics);
+
+    defaultPageable = PageRequest.of(0, 20, Sort.by("name").ascending());
+    nameAscPageable = PageRequest.of(0, 20, Sort.by("name").ascending());
 
     fireball = Spell.builder()
         .id(1L)
@@ -207,6 +216,10 @@ class SpellServiceTest {
         .build();
   }
 
+  private Page<Spell> createPage(List<Spell> spells, Pageable pageable) {
+    return new PageImpl<>(spells, pageable, spells.size());
+  }
+
   @Nested
   @DisplayName("Caching Behavior Tests")
   class CachingTests {
@@ -214,13 +227,15 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should return from cache on second call for getAllSpells")
     void shouldReturnFromCacheOnSecondCallGetAllSpells() {
-      when(spellRepository.findAll(any(Sort.class))).thenReturn(List.of(fireball));
+      Pageable pageable = nameAscPageable;
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
-      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
-      verify(spellRepository, times(1)).findAll(any(Sort.class));
+      verify(spellRepository, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -236,26 +251,14 @@ class SpellServiceTest {
     }
 
     @Test
-    @DisplayName("Should return from cache on second call for searchByName")
-    void shouldReturnFromCacheOnSecondCallSearchByName() {
-      Pageable pageable = Pageable.unpaged();
-      when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
-          .thenReturn(List.of(fireball));
-      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
-
-      spellService.searchByName("fire", null, null, pageable);
-      spellService.searchByName("fire", null, null, pageable);
-
-      verify(spellRepository, times(1)).findByNameContainingIgnoreCase("fire", pageable);
-    }
-
-    @Test
     @DisplayName("Should invalidate cache on create")
     void shouldInvalidateCacheOnCreate() {
-      when(spellRepository.findAll(any(Sort.class))).thenReturn(List.of(fireball));
+      Pageable pageable = nameAscPageable;
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
       when(spellRepository.existsByName("New Spell")).thenReturn(false);
       SpellRequest newRequest = SpellRequest.builder().name("New Spell").build();
@@ -266,9 +269,9 @@ class SpellServiceTest {
           SpellResponse.builder().name("New Spell").build());
 
       spellService.create(newRequest);
-      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
-      verify(spellRepository, times(2)).findAll(any(Sort.class));
+      verify(spellRepository, times(2)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -306,10 +309,12 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should invalidate cache on bulk create")
     void shouldInvalidateCacheOnBulkCreate() {
-      when(spellRepository.findAll(any(Sort.class))).thenReturn(List.of(fireball));
+      Pageable pageable = nameAscPageable;
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
       SpellRequest newRequest = SpellRequest.builder().name("New Spell").build();
       Spell newSpell = Spell.builder().name("New Spell").build();
@@ -320,9 +325,9 @@ class SpellServiceTest {
           SpellResponse.builder().name("New Spell").build());
 
       spellService.createBulk(List.of(newRequest));
-      spellService.getAllSpells(null, null, null, null, null, "name", "asc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
-      verify(spellRepository, times(2)).findAll(any(Sort.class));
+      verify(spellRepository, times(2)).findAll(any(Pageable.class));
     }
   }
 
@@ -333,195 +338,239 @@ class SpellServiceTest {
     @Test
     @DisplayName("Should get all spells with default sorting")
     void shouldGetAllSpells() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, magicMissile, shield));
+      Pageable pageable = PageRequest.of(0, 20, Sort.by("name").ascending());
+      List<Spell> spells = List.of(fireball, magicMissile, shield);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      // stub all three
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
       when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, null, null, null, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, null, null, null, null, null, pageable);
 
-      assertThat(result).hasSize(3);
-      verify(spellRepository).findAll(any(Sort.class));
+      assertThat(result.getContent()).hasSize(3);
+      verify(spellRepository).findAll(any(Pageable.class));
     }
 
     @Test
     @DisplayName("Should filter spells by school")
     void shouldFilterSpellsBySchool() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, magicMissile, shield));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, magicMissile, shield);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      // stub all three spells that the page contains
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
+      when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          SpellSchool.EVOCATION, null, null, null, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          SpellSchool.EVOCATION, null, null, null, null, null, pageable);
 
-      assertThat(result).hasSize(2).allMatch(s -> s.getSchool() == SpellSchool.EVOCATION);
+      assertThat(result.getContent()).hasSize(2)
+          .allMatch(s -> s.getSchool() == SpellSchool.EVOCATION);
     }
 
     @Test
     @DisplayName("Should filter spells by minimum level")
     void shouldFilterSpellsByMinLevel() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, magicMissile, shield));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, magicMissile, shield);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      // stub all three
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+      when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
+      when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, 3, null, null, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, 3, null, null, null, null, pageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().getLevel()).isGreaterThanOrEqualTo(3);
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().get(0).getLevel()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
     @DisplayName("Should filter spells by maximum level")
     void shouldFilterSpellsByMaxLevel() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, magicMissile, shield));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, magicMissile, shield);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
       when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, null, 1, null, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, null, 1, null, null, null, pageable);
 
-      assertThat(result).hasSize(2).allMatch(s -> s.getLevel() <= 1);
+      assertThat(result.getContent()).hasSize(2)
+          .allMatch(s -> s.getLevel() <= 1);
     }
 
     @Test
     @DisplayName("Should filter spells by level range")
     void shouldFilterSpellsByLevelRange() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, magicMissile, shield, heal));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, magicMissile, shield, heal);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
       when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
-      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+      when(spellMapper.toResponse(heal)).thenReturn(healResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, 1, 3, null, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, 1, 3, null, null, null, pageable);
 
-      assertThat(result).hasSize(3).allMatch(s -> s.getLevel() >= 1 && s.getLevel() <= 3);
+      assertThat(result.getContent()).hasSize(3)
+          .allMatch(s -> s.getLevel() >= 1 && s.getLevel() <= 3);
     }
 
     @Test
     @DisplayName("Should filter spells by ritual true")
     void shouldFilterSpellsByRitualTrue() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, detectMagic));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, detectMagic);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      // stub both
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(detectMagic)).thenReturn(detectMagicResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, null, null, true, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, null, null, true, null, null, pageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().isRitual()).isTrue();
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().get(0).isRitual()).isTrue();
     }
 
     @Test
     @DisplayName("Should filter spells by ritual false")
     void shouldFilterSpellsByRitualFalse() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, detectMagic));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, detectMagic);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+      when(spellMapper.toResponse(detectMagic)).thenReturn(detectMagicResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, null, null, false, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, null, null, false, null, null, pageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().isRitual()).isFalse();
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().get(0).isRitual()).isFalse();
     }
 
     @Test
     @DisplayName("Should filter spells by concentration true")
     void shouldFilterSpellsByConcentrationTrue() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, heal));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, heal);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      // stub both to avoid strict stubbing problem
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(heal)).thenReturn(healResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, null, null, null, true, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, null, null, null, null, true, pageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().isConcentration()).isTrue();
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().get(0).isConcentration()).isTrue();
     }
 
     @Test
     @DisplayName("Should filter spells by concentration false")
     void shouldFilterSpellsByConcentrationFalse() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, heal));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, heal);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
+      when(spellMapper.toResponse(heal)).thenReturn(healResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          null, null, null, null, false, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          null, null, null, null, null, false, pageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().isConcentration()).isFalse();
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().get(0).isConcentration()).isFalse();
     }
 
     @Test
     @DisplayName("Should apply all filters together")
     void shouldApplyAllFiltersTogether() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball, magicMissile, shield, heal, detectMagic));
+      Pageable pageable = nameAscPageable;
+      List<Spell> spells = List.of(fireball, magicMissile, shield, heal, detectMagic);
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(spells, pageable));
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
       when(spellMapper.toResponse(magicMissile)).thenReturn(magicMissileResponse);
+      when(spellMapper.toResponse(shield)).thenReturn(shieldResponse);
+      when(spellMapper.toResponse(heal)).thenReturn(healResponse);
+      when(spellMapper.toResponse(detectMagic)).thenReturn(detectMagicResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          SpellSchool.EVOCATION, 1, 2, false, false, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          SpellSchool.EVOCATION, 1, 2, false, null, false, pageable);
 
-      assertThat(result).hasSize(1);
-      assertThat(result.getFirst().getName()).isEqualTo("Magic Missile");
+      assertThat(result.getContent()).hasSize(1);
+      assertThat(result.getContent().get(0).getName()).isEqualTo("Magic Missile");
     }
 
     @Test
     @DisplayName("Should sort ascending when specified")
     void shouldSortAscending() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball));
+      Pageable pageable = PageRequest.of(0, 20, Sort.by("level").ascending());
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      spellService.getAllSpells(
-          null, null, null, null, null, "level", "asc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
-      verify(spellRepository).findAll(Sort.by("level").ascending());
+      verify(spellRepository).findAll(eq(pageable));
     }
 
     @Test
     @DisplayName("Should sort descending when specified")
     void shouldSortDescending() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball));
+      Pageable pageable = PageRequest.of(0, 20, Sort.by("level").descending());
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      spellService.getAllSpells(
-          null, null, null, null, null, "level", "desc");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
-      verify(spellRepository).findAll(Sort.by("level").descending());
+      verify(spellRepository).findAll(eq(pageable));
     }
 
     @Test
     @DisplayName("Should handle uppercase sort direction")
     void shouldHandleUppercaseSortDirection() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball));
+      Pageable pageable = PageRequest.of(0, 20, Sort.by(Sort.Direction.fromString("ASC"), "level"));
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      spellService.getAllSpells(
-          null, null, null, null, null, "level", "ASC");
+      spellService.getAllSpells(null, null, null, null, null, null, pageable);
 
-      verify(spellRepository).findAll(Sort.by("level").ascending());
+      verify(spellRepository).findAll(eq(pageable));
     }
 
     @Test
     @DisplayName("Should return empty list when no spells match filters")
     void shouldReturnEmptyListWhenNoSpellsMatchFilters() {
-      when(spellRepository.findAll(any(Sort.class)))
-          .thenReturn(List.of(fireball));
+      Pageable pageable = nameAscPageable;
+      when(spellRepository.findAll(any(Pageable.class)))
+          .thenReturn(createPage(List.of(fireball), pageable));
+      // Must stub fireball because it will be mapped before filtering
+      when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
-      List<SpellResponse> result = spellService.getAllSpells(
-          SpellSchool.NECROMANCY, null, null, null, null, "name", "asc");
+      PageResponse<SpellResponse> result = spellService.getAllSpells(
+          SpellSchool.NECROMANCY, null, null, null, null, null, pageable);
 
-      assertThat(result).isEmpty();
+      assertThat(result.getContent()).isEmpty();
     }
   }
 
@@ -564,7 +613,7 @@ class SpellServiceTest {
       Pageable pageable = Pageable.unpaged();
 
       when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
-          .thenReturn(List.of(fireball));
+          .thenReturn(new PageImpl<>(List.of(fireball)));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", null, null, pageable);
@@ -580,7 +629,7 @@ class SpellServiceTest {
       Pageable pageable = Pageable.unpaged();
 
       when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
-          .thenReturn(List.of(fireball));
+          .thenReturn(new PageImpl<>(List.of(fireball)));
       when(spellMapper.toResponse(fireball)).thenReturn(fireballResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", SpellSchool.EVOCATION, null,
@@ -596,7 +645,7 @@ class SpellServiceTest {
       Pageable pageable = Pageable.unpaged();
 
       when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
-          .thenReturn(List.of(fireball));
+          .thenReturn(new PageImpl<>(List.of(fireball)));
 
       List<SpellResponse> result = spellService.searchByName("fire", SpellSchool.ABJURATION, null,
           pageable);
@@ -624,7 +673,7 @@ class SpellServiceTest {
           .build();
 
       when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
-          .thenReturn(List.of(fireBolt, fireball));
+          .thenReturn(new PageImpl<>(List.of(fireBolt, fireball)));
       when(spellMapper.toResponse(fireBolt)).thenReturn(fireBoltResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", null, 2, pageable);
@@ -653,7 +702,7 @@ class SpellServiceTest {
           .build();
 
       when(spellRepository.findByNameContainingIgnoreCase("fire", pageable))
-          .thenReturn(List.of(fireBolt, fireball));
+          .thenReturn(new PageImpl<>(List.of(fireBolt, fireball)));
       when(spellMapper.toResponse(fireBolt)).thenReturn(fireBoltResponse);
 
       List<SpellResponse> result = spellService.searchByName("fire", SpellSchool.EVOCATION, 2,
@@ -669,7 +718,7 @@ class SpellServiceTest {
       Pageable pageable = Pageable.unpaged();
 
       when(spellRepository.findByNameContainingIgnoreCase("nonexistent", pageable))
-          .thenReturn(List.of());
+          .thenReturn(new PageImpl<>(List.of()));
 
       List<SpellResponse> result = spellService.searchByName("nonexistent", null, null, pageable);
 
