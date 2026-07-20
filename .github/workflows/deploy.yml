@@ -21,18 +21,30 @@ jobs:
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         with:
           host: ${{ secrets.GCP_VM_IP }}
           username: ${{ secrets.GCP_VM_USER }}
           key: ${{ secrets.GCP_VM_SSH_PRIVATE_KEY }}
+          envs: TELEGRAM_BOT_TOKEN,TELEGRAM_CHAT_ID
           script: |
             set -euo pipefail 
-            
+
             mkdir liveDndList || true
-            
+
             pushd liveDndList
             git clone https://github.com/Margit-The-Fell-Omen/liveDndList.git . || git pull origin master
             docker compose up --build -d
+
+            pushd monitoring
+            ./generate_certs.sh
+            envsubst < telegram.tmpl.tmpl > telegram.tmpl
+
+            docker compose -f docker-compose.yml up -d
+            curl --cacert ca.crt https://127.0.0.1:8428/-/reload || true
             popd
-            
+            popd
+
             docker image prune -f

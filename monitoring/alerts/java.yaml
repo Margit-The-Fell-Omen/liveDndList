@@ -1,0 +1,132 @@
+groups:
+  - name: java_alerts
+    rules:
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Backend is down (instance {{ $labels.instance }})
+          description: Failed to scrape backend for more than 2 minutes.    VALUE = {{ $value }}
+
+      - alert: BackendRestarted
+        expr: resets(backend_process_uptime_seconds[5m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend restarted (instance {{ $labels.instance }})
+          description: Backend process has restarted.    VALUE = {{ $value }}
+
+      - alert: BackendHigh5xxRate
+        expr: |
+          sum by(instance)(
+            rate(backend_http_server_requests_seconds_count{status=~"5.."}[5m])
+          )
+          /
+          sum by(instance)(
+            rate(backend_http_server_requests_seconds_count[5m])
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Backend high HTTP 5xx rate (instance {{ $labels.instance }})
+          description: More than 5% of requests are returning HTTP 5xx.    VALUE = {{ $value }}
+
+      - alert: BackendHighLatency
+        expr: |
+          sum by(instance)(
+            rate(backend_http_server_requests_seconds_sum{status!~"5.."}[5m])
+          )
+          /
+          sum by(instance)(
+            rate(backend_http_server_requests_seconds_count{status!~"5.."}[5m])
+          ) > 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend high latency (instance {{ $labels.instance }})
+          description: Average request latency exceeds 1 second.    VALUE = {{ $value }}
+
+      - alert: BackendNoTraffic
+        expr: sum by(instance)(rate(backend_http_server_requests_seconds_count[5m])) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend received no traffic (instance {{ $labels.instance }})
+          description: No HTTP requests received during the last 10 minutes.    VALUE = {{ $value }}
+
+      - alert: BackendHighCpuUsage
+        expr: backend_process_cpu_usage > 0.9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend high CPU usage (instance {{ $labels.instance }})
+          description: Process CPU utilization exceeded 90%.    VALUE = {{ $value }}
+
+      - alert: BackendHighHeapUsage
+        expr: |
+          sum by(instance)(backend_jvm_memory_used_bytes{area="heap"})
+          /
+          sum by(instance)(backend_jvm_memory_max_bytes{area="heap"})
+          > 0.9
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend JVM heap usage high (instance {{ $labels.instance }})
+          description: Heap utilization exceeded 90%.    VALUE = {{ $value }}
+
+      - alert: BackendHeapAlmostFull
+        expr: |
+          sum by(instance)(backend_jvm_memory_used_bytes{area="heap"})
+          /
+          sum by(instance)(backend_jvm_memory_max_bytes{area="heap"})
+          > 0.98
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Backend JVM heap almost full (instance {{ $labels.instance }})
+          description: Heap utilization exceeded 98%.    VALUE = {{ $value }}
+
+      - alert: BackendHighGcTime
+        expr: rate(backend_jvm_gc_pause_seconds_sum[5m]) > 0.15
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend high GC time (instance {{ $labels.instance }})
+          description: Garbage collection consumes significant execution time.    VALUE = {{ $value }}
+
+      - alert: BackendLongGcPause
+        expr: backend_jvm_gc_pause_seconds_max > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend long GC pause (instance {{ $labels.instance }})
+          description: Maximum GC pause exceeded 2 seconds.    VALUE = {{ $value }}
+
+      - alert: BackendBlockedThreads
+        expr: backend_jvm_threads_states_threads{state="blocked"} > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend blocked JVM threads (instance {{ $labels.instance }})
+          description: More than five JVM threads are blocked.    VALUE = {{ $value }}
+
+      - alert: BackendTomcatThreadPoolExhaustion
+        expr: backend_tomcat_threads_busy_threads / backend_tomcat_threads_config_max > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: Backend Tomcat thread pool exhausted (instance {{ $labels.instance }})
+          description: More than 90% of Tomcat worker threads are busy.    VALUE = {{ $value }}
