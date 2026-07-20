@@ -1,5 +1,5 @@
 templates:
-  - /telegram.tmpl.tmpl
+  - /telegram.tmpl
 
 route:
   receiver: telegram

@@ -22,10 +22,10 @@ services:
     volumes:
       - victoriametrics_data:/victoriametrics
 
-      - ./monitoring/prometheus.yaml:/prometheus.yaml:ro
+      - ./prometheus.yaml:/prometheus.yaml:ro
 
-      - ./monitoring/victoriametrics.crt:/victoriametrics.crt:ro
-      - ./monitoring/victoriametrics.key:/victoriametrics.key:ro
+      - ./victoriametrics.crt:/victoriametrics.crt:ro
+      - ./victoriametrics.key:/victoriametrics.key:ro
     extra_hosts:
       # to access node-exporter
       - host.docker.internal:host-gateway
@@ -51,9 +51,9 @@ services:
       - victoriametrics
       - alertmanager
     volumes:
-      - ./monitoring/alerts:/etc/alerts:ro
+      - ./alerts:/etc/alerts:ro
 
-      - ./monitoring/ca.crt:/ca.crt:ro
+      - ./ca.crt:/ca.crt:ro
     networks:
       - livedndlist_app
 
@@ -64,8 +64,8 @@ services:
       - --config.file=/config/alertmanager.yaml
     env_file: ../.env
     volumes:
-      - ./monitoring/telegram.tmpl.tmpl:/telegram.tmpl.tmpl
-      - ./monitoring/alertmanager.yaml:/config/alertmanager.yaml
+      - ./telegram.tmpl:/telegram.tmpl
+      - ./alertmanager.yaml:/config/alertmanager.yaml
     networks:
       - livedndlist_app
 
@@ -87,10 +87,10 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
 
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
 
-      - ./monitoring/ca.crt:/etc/grafana/ca.crt:ro
+      - ./ca.crt:/etc/grafana/ca.crt:ro
     networks:
       - livedndlist_app
 
