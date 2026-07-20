@@ -3,12 +3,16 @@ package dev.ushki.livedndlist.dto.open5e;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Open5eSpellDto {
 
   private String key;

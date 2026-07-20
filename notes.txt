@@ -44,7 +44,6 @@ IMPORTANT NOTES:
 - currently I cannot add more than 1 class to character
 
 (current fixes:)
-BUG!!! ------ spells do not sync
 LEVELING
     - currently levelup -> new class does not work + no sync with exp
 - rewrite character creation to be multistaged with info about class/race/background provided:
