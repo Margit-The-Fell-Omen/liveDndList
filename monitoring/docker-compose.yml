@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
     command:
       - --config.file=/config/alertmanager.yaml
-    env_file: ../.env
+    env_file: .env
     volumes:
       - ./telegram.tmpl:/telegram.tmpl
       - ./alertmanager.yaml:/config/alertmanager.yaml
@@ -74,7 +74,7 @@ services:
     restart: unless-stopped
     ports:
       - 127.0.0.1:3000:3000
-    env_file: ../.env
+    env_file: .env
     environment:
       # install VictoriaMetrics plugin
       GF_INSTALL_PLUGINS: victoriametrics-metrics-datasource
@@ -121,7 +121,7 @@ services:
   postgres_exporter:
     image: quay.io/prometheuscommunity/postgres-exporter:v0.20.1@sha256:ac5ec343104fae0e2d84a27bb8d69b38430a11910c5382cad85d478d2bab713e
     restart: unless-stopped
-    env_file: ../.env
+    env_file: .env
     environment:
       DATA_SOURCE_URI: $POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB?sslmode=disable
       DATA_SOURCE_USER: $POSTGRES_USER
@@ -132,15 +132,15 @@ services:
   redis_exporter:
     image: oliver006/redis_exporter:v1.87.0@sha256:9ca6f929a8abc518d78158757922444f1cf807661a2238f44b28c3cd08a1b652
     restart: unless-stopped
-    env_file: ../.env
+    env_file: .env
     environment:
       REDIS_ADDR: redis://$REDIS_HOST:$REDIS_PORT
     networks:
       - livedndlist_app
 
 volumes:
-  victoriametrics_data: { }
-  grafana_data: { }
+  victoriametrics_data: {}
+  grafana_data: {}
 
 networks:
   livedndlist_app:

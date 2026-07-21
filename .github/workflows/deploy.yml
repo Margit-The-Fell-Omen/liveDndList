@@ -40,7 +40,7 @@ jobs:
 
             pushd monitoring
             ./generate_certs.sh
-            envsubst < telegram.tmpl.tmpl > telegram.tmpl
+            envsubst < alertmanager.yaml.tmpl > alertmanager.yaml
 
             docker compose -f docker-compose.yml up -d
             curl --cacert ca.crt https://127.0.0.1:8428/-/reload || true
