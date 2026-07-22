@@ -1,7 +1,7 @@
-// src/components/character/AbilityScore.tsx
+import {type ChangeEvent, useEffect, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
-import {AbilityInfo} from '@/utils/constants';
+import {type AbilityInfo} from '@/utils/constants';
 import {formatModifier} from '@/utils/helpers';
 import {Input} from '@/components/common/Input';
 import styles from './AbilityScore.module.css';
@@ -15,22 +15,30 @@ interface AbilityScoreProps {
 export function AbilityScore({ability, score, modifier}: AbilityScoreProps) {
   const {currentCharacter, updateCharacter} = useCharacter();
 
+  const [draft, setDraft] = useState<string>(String(score));
+
+  useEffect(() => {
+    setDraft(String(score));
+  }, [score, currentCharacter?.id]);
+
   const debouncedUpdate = useDebouncedCallback((newScore: number) => {
-    if (currentCharacter) {
-      const abilityKey = ability.key as keyof typeof currentCharacter.abilityScores;
-      const payload = {
-        abilityScores: {
-          ...currentCharacter.abilityScores,
-          [abilityKey]: newScore,
-        },
-      };
-      updateCharacter(currentCharacter.id, payload);
-    }
+    if (!currentCharacter) return;
+    const abilityKey = ability.key as keyof typeof currentCharacter.abilityScores;
+    updateCharacter(currentCharacter.id, {
+      abilityScores: {
+        ...currentCharacter.abilityScores,
+        [abilityKey]: newScore,
+      },
+    });
   }, 500);
 
-  const handleScoreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newScore = parseInt(e.target.value, 10) || 0;
-    debouncedUpdate(newScore);
+  const handleScoreChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    setDraft(raw);
+    const parsed = parseInt(raw, 10);
+    if (!Number.isNaN(parsed)) {
+      debouncedUpdate(parsed);
+    }
   };
 
   return (
@@ -40,7 +48,7 @@ export function AbilityScore({ability, score, modifier}: AbilityScoreProps) {
         <div className={styles.scoreInputWrapper}>
           <Input
               type="number"
-              defaultValue={score}
+              value={draft}
               onChange={handleScoreChange}
               className={styles.scoreInput}
               aria-label={`${ability.name} score`}

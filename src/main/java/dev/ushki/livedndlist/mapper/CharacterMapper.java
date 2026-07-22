@@ -253,9 +253,6 @@ public class CharacterMapper {
           .orElseThrow(() -> new ResourceNotFoundException(
               "Background not found with key: " + request.getBackgroundKey()));
       character.setBackground(background);
-      log.info("Character update: background found: {}", background);
-    } else {
-      log.info("Character update: background key is null");
     }
 
     if (request.getDndClassLevels() != null) {
@@ -302,7 +299,12 @@ public class CharacterMapper {
         Skill skillToUpdate = skillMap.get(skillUpdate.getId());
         if (skillToUpdate != null) {
           updateIfPresent(skillUpdate.getProficient(), skillToUpdate::setProficiency);
-          updateIfPresent(skillUpdate.getExpertise(), skillToUpdate::setExpertise);
+
+          if (skillToUpdate.isProficient()) {
+            updateIfPresent(skillUpdate.getExpertise(), skillToUpdate::setExpertise);
+          } else if (skillToUpdate.isExpertise()) {
+            skillToUpdate.setExpertise(false);
+          }
         }
       }
     }

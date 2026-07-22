@@ -17,6 +17,7 @@ Plan for live-dnd-list:
 - refactor spell search
 - add UI to change character logo
 - add race, class, etc. pop-up windows with desc
+- make spell delerion button more visible
 - add theme change based on base-16 color scheme (or another type of choice)
 
 (Quality of life)

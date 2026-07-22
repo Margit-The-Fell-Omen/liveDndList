@@ -49,7 +49,7 @@ export const SKILLS: readonly SkillInfo[] = [
   {key: 'PERFORMANCE', name: 'Performance', ability: 'CHARISMA'},
   {key: 'PERSUASION', name: 'Persuasion', ability: 'CHARISMA'},
   {key: 'RELIGION', name: 'Religion', ability: 'INTELLIGENCE'},
-  {key: 'SLIGHT_OF_HAND', name: 'Sleight of Hand', ability: 'DEXTERITY'},
+  {key: 'SLEIGHT_OF_HAND', name: 'Sleight of Hand', ability: 'DEXTERITY'},
   {key: 'STEALTH', name: 'Stealth', ability: 'DEXTERITY'},
   {key: 'SURVIVAL', name: 'Survival', ability: 'WISDOM'},
 ];

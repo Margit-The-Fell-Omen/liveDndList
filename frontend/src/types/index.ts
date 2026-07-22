@@ -156,7 +156,7 @@ export type SkillName =
     | 'ACROBATICS' | 'ANIMAL_HANDLING' | 'ARCANA' | 'ATHLETICS' | 'DECEPTION'
     | 'HISTORY' | 'INSIGHT' | 'INTIMIDATION' | 'INVESTIGATION' | 'MEDICINE'
     | 'NATURE' | 'PERCEPTION' | 'PERFORMANCE' | 'PERSUASION' | 'RELIGION'
-    | 'SLIGHT_OF_HAND' | 'STEALTH' | 'SURVIVAL';
+    | 'SLEIGHT_OF_HAND' | 'STEALTH' | 'SURVIVAL';
 
 export type EquipmentType = 'WEAPON' | 'ARMOR' | 'GEAR' | 'CONSUMABLE' | 'TOOL' | 'OTHER';
 export type SpellSchool =
