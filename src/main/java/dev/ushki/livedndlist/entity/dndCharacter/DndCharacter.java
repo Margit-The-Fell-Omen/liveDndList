@@ -131,6 +131,9 @@ public class DndCharacter {
   private Integer armorClass = DEFAULT_AC;
 
   @Builder.Default
+  private Integer armorClassBonus = 0;
+
+  @Builder.Default
   private Integer initiative = 0;
 
   @Builder.Default

@@ -83,21 +83,21 @@ export function Equipment({className}: { className?: string }) {
                         }}
                     >
                       <div className={styles.itemNameContainer}>
-                <span className={styles.itemName}>
-                  {item.name}
-                  {item.quantity > 1 && ` (x${item.quantity})`}
-                </span>
-                        <span className={styles.itemType}>{item.type}</span>
-                      </div>
-                      <div className={styles.itemControls}>
-                        <button
-                            type="button"
-                            className={styles.removeButton}
-                            onClick={(e) => handleOpenDeleteConfirm(e, item.id)}
-                            aria-label={`Remove ${item.name}`}
-                        >
-                          &times;
-                        </button>
+                        <span className={styles.itemName}>
+                          {item.name}
+                          {item.quantity > 1 && ` (x${item.quantity})`}
+                        </span>
+                        <div className={styles.itemMeta}>
+                          <span className={styles.itemType}>{item.type}</span>
+                          {item.equipped && <span className={styles.activeBadge}>Active</span>}
+                          {item.type === 'ARMOR' && item.armorClass !== undefined && (
+                              <span className={styles.itemStat}>AC {item.armorClass}</span>
+                          )}
+                          {item.type === 'WEAPON' && item.damage && (
+                              <span
+                                  className={styles.itemStat}>{item.damage}{item.damageType ? ` ${item.damageType}` : ''}</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                 ))

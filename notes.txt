@@ -7,6 +7,7 @@ docker compose -f docker-compose.dev.yml --project-name livednd-dev up --build
 Plan for live-dnd-list:
 
 (to fix frontend)
+- redo AC bonus editable field styling
 - add fast navigation to class/race/backgr cards in wirard (buttons in header)
 - bug with proficiency of sleight of hand skill
 - caching added to new parts and rewritten to redis
@@ -14,9 +15,8 @@ Plan for live-dnd-list:
 - fix SetActive button when adding a weapon to work when save button is pressed and layout on mobile
 - add overall field validation
 - add current hits validation (not higher than max hits)
-- refactor spell search
 - add UI to change character logo
-- add race, class, etc. pop-up windows with desc
+- add race, class, etc. pop-up windows with desc  // half-way done
 - make spell delerion button more visible
 - add theme change based on base-16 color scheme (or another type of choice)
 
@@ -28,7 +28,7 @@ Plan for live-dnd-list:
 - why do races still use ResponseEntity ???: 
 - rewrite my Cache Manager -> Redis
 - add export to pdf via async method
-- get the rest of info fetched from open5e
+- get the rest of info fetched from open5e  // half-way done
 - add sharing feature?
 - add likes to lists feature?
 - add homebrew functionality/validation
@@ -48,6 +48,8 @@ IMPORTANT NOTES:
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird
     - game system choice & validation
+    - mapping of profs, prof. bonuses, etc.
     - better font families
+    - background menu on character sheet;
     - if no desc - just ignore decs DO NOT WRITE [no description provided] // can't find where I found it
 - add feat of watching in separate page (or something similar) info of classes/races/backgrounds;

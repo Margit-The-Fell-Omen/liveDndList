@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.repository;
 
+import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import java.util.List;
@@ -13,4 +14,7 @@ public interface EquipmentRepository extends JpaRepository<Equipment, Long> {
   List<Equipment> findByType(EquipmentType type, Pageable pageable);
 
   List<Equipment> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+  List<Equipment> findByCharacterAndTypeAndEquippedTrue(DndCharacter character,
+      EquipmentType equipmentType);
 }

@@ -27,9 +27,11 @@ public class EquipmentMapper {
         .equipped(equipment.isEquipped())
         .attuned(equipment.isAttuned())
         .type(equipment.getType())
+        .armorClass(equipment.getArmorClass())
         .damage(equipment.getDamage())
         .damageType(equipment.getDamageType())
         .properties(equipment.getProperties())
+        .armorCategory(equipment.getArmorCategory())
         .build();
   }
 
@@ -60,6 +62,8 @@ public class EquipmentMapper {
         .weight(request.getWeight())
         .type(request.getType())
         .damage(request.getDamage())
+        .armorClass(request.getArmorClass())
+        .armorCategory(request.getArmorCategory())
         .damageType(request.getDamageType())
         .properties(request.getProperties())
         .equipped(request.isEquipped())
@@ -73,6 +77,8 @@ public class EquipmentMapper {
     updateIfPresent(request.getWeight(), equipment::setWeight);
     updateIfPresent(request.getType(), equipment::setType);
     updateIfPresent(request.getDamage(), equipment::setDamage);
+    updateIfPresent(request.getArmorClass(), equipment::setArmorClass);
+    updateIfPresent(request.getArmorCategory(), equipment::setArmorCategory);
     updateIfPresent(request.getDamageType(), equipment::setDamageType);
     updateIfPresent(request.getProperties(), equipment::setProperties);
     updateIfPresent(request.isEquipped(), equipment::setEquipped);

@@ -21,6 +21,61 @@
   gap: 0.75rem;
 }
 
+.acBonusWrapper {
+  position: absolute;
+  top: 50%;
+  right: 0.4rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.1rem 0.3rem;
+  transition: border-color var(--transition-fast);
+}
+
+.acBonusWrapper:focus-within {
+  border-color: var(--color-accent-primary);
+}
+
+.acBonusPrefix {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
+
+.acBonusInput {
+  width: 2rem;
+  padding: 0.05rem 0.1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-text-primary);
+  background-color: transparent;
+  border: none;
+  outline: none;
+
+  -moz-appearance: textfield;
+}
+
+.acBonusInput::-webkit-outer-spin-button,
+.acBonusInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.acContainer {
+  position: relative;
+  width: 100%;
+}
+
+.acContainer .value {
+  padding-right: 3rem;
+}
+
 .value {
   width: 100%;
   min-height: 36px;

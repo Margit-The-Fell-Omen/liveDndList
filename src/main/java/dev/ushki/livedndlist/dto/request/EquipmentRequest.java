@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.dto.request;
 
+import dev.ushki.livedndlist.enums.ArmorCategory;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -39,6 +40,12 @@ public class EquipmentRequest {
 
   @Schema(description = "Damage dice (e.g., 1d8)", example = "1d8")
   private String damage;
+
+  @Schema(description = "Armor class", example = "16")
+  private Integer armorClass;
+
+  @Schema(description = "Armor category", example = "SHIELD")
+  private ArmorCategory armorCategory;
 
   @Schema(description = "Damage type", example = "Slashing")
   private String damageType;

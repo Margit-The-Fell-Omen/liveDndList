@@ -23,6 +23,7 @@ import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.repository.RaceRepository;
+import dev.ushki.livedndlist.service.EquipmentService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import java.util.Comparator;
@@ -74,6 +75,7 @@ public class CharacterMapper {
     return (entry != null) ? entry.getValue() : 1;
   }
 
+  private final EquipmentService equipmentService;
   private final RaceRepository raceRepository;
   private final BackgroundRepository backgroundRepository;
   private final DndClassRepository dndClassRepository;
@@ -230,7 +232,7 @@ public class CharacterMapper {
     updateIfPresent(request.getMaxHitPoints(), character::setMaxHitPoints);
     updateIfPresent(request.getCurrentHitPoints(), character::setCurrentHitPoints);
     updateIfPresent(request.getTemporaryHitPoints(), character::setTemporaryHitPoints);
-    updateIfPresent(request.getArmorClass(), character::setArmorClass);
+    updateIfPresent(request.getArmorClassBonus(), character::setArmorClassBonus);
     updateIfPresent(request.getSpeed(), character::setSpeed);
     updateIfPresent(request.getPortraitUrl(), character::setPortraitUrl);
     updateIfPresent(request.getBackstory(), character::setBackstory);
@@ -243,6 +245,11 @@ public class CharacterMapper {
     updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
     updateIfPresent(request.getFeaturesAndTraits(), character::setFeaturesAndTraits);
     updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
+
+    if ((request.getAbilityScores() != null && request.getAbilityScores().getDexterity() != null)
+        || request.getArmorClassBonus() != null) {
+      character.setArmorClass(equipmentService.recalculateArmorClass(character));
+    }
 
     if (request.getExperiencePoints() != null) {
       character.setLevel(getLevelFromExperience(request.getExperiencePoints()));

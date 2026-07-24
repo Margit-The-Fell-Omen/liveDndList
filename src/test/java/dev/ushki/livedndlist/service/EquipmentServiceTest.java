@@ -21,6 +21,7 @@ import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.enums.Role;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
+import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.EquipmentRepository;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,9 @@ class EquipmentServiceTest {
   @Mock
   private EquipmentMapper equipmentMapper;
 
+  @Mock
+  private CharacterRepository characterRepository;
+
   private EquipmentService equipmentService;
 
   private User testUser;
@@ -59,7 +63,8 @@ class EquipmentServiceTest {
   @BeforeEach
   void setUp() {
     CacheManager cacheManager = new CacheManager();
-    equipmentService = new EquipmentService(equipmentRepository, equipmentMapper, cacheManager);
+    equipmentService = new EquipmentService(equipmentRepository, characterRepository,
+        equipmentMapper, cacheManager);
 
     testUser = User.builder()
         .id(1L)
@@ -210,14 +215,12 @@ class EquipmentServiceTest {
     void shouldInvalidateCacheOnDelete() {
       when(equipmentRepository.findById(1L)).thenReturn(Optional.of(testWeapon));
       when(equipmentMapper.toResponse(testWeapon)).thenReturn(testWeaponResponse);
-      equipmentService.getById(1L);
 
-      when(equipmentRepository.existsById(1L)).thenReturn(true);
+      equipmentService.getById(1L);
       equipmentService.delete(1L);
-
       equipmentService.getById(1L);
 
-      verify(equipmentRepository, times(2)).findById(1L);
+      verify(equipmentRepository, times(3)).findById(1L);
     }
   }
 
@@ -509,7 +512,7 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should delete equipment successfully")
     void shouldDeleteEquipmentSuccessfully() {
-      when(equipmentRepository.existsById(1L)).thenReturn(true);
+      when(equipmentRepository.findById(1L)).thenReturn(Optional.of(testWeapon));
 
       equipmentService.delete(1L);
 
@@ -519,7 +522,7 @@ class EquipmentServiceTest {
     @Test
     @DisplayName("Should throw exception when deleting non-existent equipment")
     void shouldThrowExceptionWhenDeletingNonExistentEquipment() {
-      when(equipmentRepository.existsById(999L)).thenReturn(false);
+      when(equipmentRepository.findById(999L)).thenReturn(Optional.empty());
 
       assertThatThrownBy(() -> equipmentService.delete(999L))
           .isInstanceOf(ResourceNotFoundException.class);

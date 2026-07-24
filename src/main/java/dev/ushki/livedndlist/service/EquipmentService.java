@@ -4,10 +4,14 @@ import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
+import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
+import dev.ushki.livedndlist.enums.AbilityType;
+import dev.ushki.livedndlist.enums.ArmorCategory;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
+import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.EquipmentRepository;
 import java.util.List;
 import java.util.Objects;
@@ -26,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class EquipmentService {
 
   private final EquipmentRepository equipmentRepository;
+  private final CharacterRepository characterRepository;
   private final EquipmentMapper equipmentMapper;
   private final CacheManager cacheManager;
 
@@ -103,14 +108,76 @@ public class EquipmentService {
     });
   }
 
+  private Equipment extraEquippedCheckAndSave(Equipment equipment) {
+    if (equipment.getType() == EquipmentType.ARMOR
+        && equipment.isEquipped()
+        && equipment.getArmorCategory() != ArmorCategory.SHIELD) {
+      equipmentRepository.findByCharacterAndTypeAndEquippedTrue(
+              equipment.getCharacter(), EquipmentType.ARMOR)
+          .stream()
+          .filter(e -> !Objects.equals(e.getId(), equipment.getId()))
+          .filter(e -> e.getArmorCategory() != ArmorCategory.SHIELD)
+          .forEach(e -> {
+            e.setEquipped(false);
+            equipmentRepository.save(e);
+          });
+    }
+
+    Equipment saved = equipmentRepository.save(equipment);
+
+    DndCharacter character = saved.getCharacter();
+    character.setArmorClass(recalculateArmorClass(character));
+    characterRepository.save(character);
+
+    return saved;
+  }
+
   public EquipmentResponse create(EquipmentRequest request) {
     Equipment equipment = equipmentMapper.toEntity(request);
-    Equipment savedEquipment = equipmentRepository.save(equipment);
+
+    Equipment savedEquipment = extraEquippedCheckAndSave(equipment);
     log.info("Equipment '{}' created", savedEquipment.getName());
 
     cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
 
     return equipmentMapper.toResponse(savedEquipment);
+  }
+
+  public int recalculateArmorClass(DndCharacter character) {
+    int dexMod = character.getAbilityScores().getModifier(AbilityType.DEXTERITY);
+
+    Equipment armor = character.getEquipment().stream()
+        .filter(e -> e.getType() == EquipmentType.ARMOR
+            && e.getArmorCategory() != null
+            && e.getArmorCategory() != ArmorCategory.SHIELD
+            && e.isEquipped())
+        .findFirst()
+        .orElse(null);
+
+    boolean hasShield = character.getEquipment().stream()
+        .anyMatch(e -> e.getType() == EquipmentType.ARMOR
+            && e.getArmorCategory() == ArmorCategory.SHIELD
+            && e.isEquipped());
+
+    int base;
+    if (armor == null) {
+      base = 10 + dexMod;
+    } else {
+      int armorAc = armor.getArmorClass() != null ? armor.getArmorClass() : 10;
+      base = switch (armor.getArmorCategory()) {
+        case LIGHT -> armorAc + dexMod;
+        case MEDIUM -> armorAc + Math.min(dexMod, 2);
+        case HEAVY -> armorAc;
+        case SHIELD -> armorAc;
+      };
+    }
+
+    if (hasShield) {
+      base += 2;
+    }
+
+    int bonus = character.getArmorClassBonus() != null ? character.getArmorClassBonus() : 0;
+    return base + bonus;
   }
 
   public EquipmentResponse update(Long id, EquipmentRequest request) {
@@ -122,7 +189,8 @@ public class EquipmentService {
     String characterCacheNamespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + characterId;
 
     equipmentMapper.updateEntity(equipment, request);
-    Equipment savedEquipment = equipmentRepository.save(equipment);
+
+    Equipment savedEquipment = extraEquippedCheckAndSave(equipment);
     log.info("Equipment '{}' updated", savedEquipment.getName());
 
     cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
@@ -132,12 +200,20 @@ public class EquipmentService {
   }
 
   public void delete(Long id) {
-    if (!equipmentRepository.existsById(id)) {
-      throw new ResourceNotFoundException(EQUIPMENT_STRING, "id", id);
-    }
-    equipmentRepository.deleteById(id);
-    log.info("Equipment deleted: {}", id);
+    Equipment equipment = equipmentRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException(EQUIPMENT_STRING, "id", id));
+    DndCharacter character = equipment.getCharacter();
+    boolean wasImpactful = equipment.getType() == EquipmentType.ARMOR && equipment.isEquipped();
 
+    equipmentRepository.deleteById(id);
+
+    if (wasImpactful) {
+      character.getEquipment().removeIf(e -> Objects.equals(e.getId(), id));
+      character.setArmorClass(recalculateArmorClass(character));
+      characterRepository.save(character);
+    }
+
+    log.info("Equipment deleted: {}", id);
     cacheManager.invalidateByPrefix(EQUIPMENT_STRING);
   }
 }

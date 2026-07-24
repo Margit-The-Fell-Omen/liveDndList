@@ -50,8 +50,8 @@ public class CharacterUpdateRequest {
   private Integer temporaryHitPoints;
 
   @Min(1)
-  @Schema(description = "Armor class", example = "16")
-  private Integer armorClass;
+  @Schema(description = "Armor class bonus", example = "1")
+  private Integer armorClassBonus;
 
   @Min(0)
   @Schema(description = "Speed in feet", example = "30")

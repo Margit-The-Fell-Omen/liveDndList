@@ -1,6 +1,4 @@
-// src/components/character/CombatStats.tsx
-
-import React, {type ChangeEvent} from 'react';
+import {type ChangeEvent, useEffect, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Input} from '@/components/common/Input';
 import {useDebouncedCallback} from '@/hooks/useDebounce';
@@ -8,10 +6,19 @@ import styles from './CombatStats.module.css';
 import {Card} from '@/components/common/Card';
 import type {EquipmentResponse} from '@/types';
 
-type EditableCombatKey = 'armorClass' | 'speed';
+type EditableCombatKey = 'speed' | 'armorClassBonus';
 
 export function CombatStats({className}: { className?: string }) {
   const {currentCharacter, updateCharacter} = useCharacter();
+
+  const [speedDraft, setSpeedDraft] = useState<string>('');
+  const [acBonusDraft, setAcBonusDraft] = useState<string>('');
+
+  useEffect(() => {
+    if (!currentCharacter) return;
+    setSpeedDraft(String(currentCharacter.speed));
+    setAcBonusDraft(String(currentCharacter.armorClassBonus ?? 0));
+  }, [currentCharacter?.id, currentCharacter?.speed, currentCharacter?.armorClassBonus]);
 
   const debouncedUpdate = useDebouncedCallback(
       (key: EditableCombatKey, value: number) => {
@@ -27,15 +34,11 @@ export function CombatStats({className}: { className?: string }) {
   }
 
   const {
-    armorClass,
-    speed,
     equipment,
     proficiencyBonus,
     abilityScores,
-    initiative
+    initiative,
   } = currentCharacter;
-
-  const currentInitiative = initiative;
 
   const formatModifier = (value: number): string =>
       value >= 0 ? `+${value}` : `${value}`;
@@ -45,10 +48,8 @@ export function CombatStats({className}: { className?: string }) {
       const isFinesse = weapon.properties?.toLowerCase().includes('finesse');
       const strMod = abilityScores.strengthModifier;
       const dexMod = abilityScores.dexterityModifier;
-
       const relevantModifier = isFinesse ? Math.max(strMod, dexMod) : strMod;
       const bonus = proficiencyBonus + relevantModifier;
-
       return formatModifier(bonus);
     } catch {
       return 'N/A';
@@ -65,10 +66,15 @@ export function CombatStats({className}: { className?: string }) {
 
   const handleChange = (
       e: ChangeEvent<HTMLInputElement>,
-      key: EditableCombatKey
+      key: EditableCombatKey,
+      setDraft: (v: string) => void
   ) => {
-    const value = parseInt(e.target.value, 10) || 0;
-    debouncedUpdate(key, value);
+    const raw = e.target.value;
+    setDraft(raw);
+    const parsed = parseInt(raw, 10);
+    if (!Number.isNaN(parsed)) {
+      debouncedUpdate(key, parsed);
+    }
   };
 
   return (
@@ -76,18 +82,28 @@ export function CombatStats({className}: { className?: string }) {
         <div className={styles.grid}>
           <div className={styles.stat}>
             <label className={styles.label}>Armor Class</label>
-            <Input
-                type="number"
-                defaultValue={armorClass}
-                onChange={(e) => handleChange(e, 'armorClass')}
-                min={0}
-                className={styles.input}
-            />
+            <div className={styles.acContainer}>
+    <span className={styles.value} aria-live="polite">
+      {currentCharacter.armorClass}
+    </span>
+              <div className={styles.acBonusWrapper}>
+                <span className={styles.acBonusPrefix} aria-hidden="true">+</span>
+                <input
+                    type="number"
+                    className={styles.acBonusInput}
+                    value={acBonusDraft}
+                    onChange={(e) => handleChange(e, 'armorClassBonus', setAcBonusDraft)}
+                    aria-label="Armor Class bonus"
+                    title="Manual AC bonus"
+                    placeholder="0"
+                />
+              </div>
+            </div>
           </div>
           <div className={styles.stat}>
             <label className={styles.label}>Initiative</label>
             <span className={styles.value} aria-live="polite">
-              {formatModifier(currentInitiative)}
+              {formatModifier(initiative)}
             </span>
           </div>
           <div className={styles.stat}>
@@ -95,8 +111,8 @@ export function CombatStats({className}: { className?: string }) {
             <div className={styles.speedInput}>
               <Input
                   type="number"
-                  defaultValue={speed}
-                  onChange={(e) => handleChange(e, 'speed')}
+                  value={speedDraft}
+                  onChange={(e) => handleChange(e, 'speed', setSpeedDraft)}
                   min={0}
                   className={styles.input}
               />

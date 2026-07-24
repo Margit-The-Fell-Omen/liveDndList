@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.entity.dndCharacter;
 
+import dev.ushki.livedndlist.enums.ArmorCategory;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,6 +59,13 @@ public class Equipment {
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "equipment_type")
   private EquipmentType type;
+
+  @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(columnDefinition = "armor_category")
+  private ArmorCategory armorCategory;
+
+  private Integer armorClass;
 
   private String damage;
   private String damageType;

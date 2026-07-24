@@ -7,6 +7,30 @@
   border: 1px solid var(--color-border-light);
 }
 
+.itemMeta {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.activeBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-accent-primary) 20%, transparent);
+  color: var(--color-accent-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.itemStat {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
 .title {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-xl);

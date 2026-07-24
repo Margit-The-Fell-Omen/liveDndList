@@ -169,6 +169,8 @@ export type SpellSchool =
     | 'NECROMANCY'
     | 'TRANSMUTATION';
 
+export type ArmorCategory = 'LIGHT' | 'MEDIUM' | 'HEAVY' | 'SHIELD';
+
 export interface AbilityScores {
   strength: number;
   dexterity: number;
@@ -212,8 +214,10 @@ export interface EquipmentResponse {
   attuned: boolean;
   type: EquipmentType;
   damage?: string;
+  armorClass?: number;
   damageType?: string;
   properties?: string;
+  armorCategory?: ArmorCategory;
 }
 
 export interface DndCurrencyResponse {
@@ -280,6 +284,7 @@ export interface Character {
   currentHitPoints: number;
   temporaryHitPoints: number;
   armorClass: number;
+  armorClassBonus: number;
   initiative: number;
   speed: number;
   proficiencyBonus: number;
@@ -318,6 +323,7 @@ export interface CharacterUpdateRequest {
   currentHitPoints?: number;
   temporaryHitPoints?: number;
   armorClass?: number;
+  armorClassBonus?: number;
   speed?: number;
   portraitUrl?: string;
   spellcastingAbility?: AbilityType;
@@ -383,8 +389,10 @@ export interface EquipmentData {
   type: EquipmentType;
   equipped?: boolean;
   damage?: string;
+  armorClass?: number;
   damageType?: string;
   properties?: string;
+  armorCategory?: ArmorCategory;
 }
 
 export interface SpellData {
