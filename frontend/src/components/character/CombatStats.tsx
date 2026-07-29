@@ -87,7 +87,7 @@ export function CombatStats({className}: { className?: string }) {
       {currentCharacter.armorClass}
     </span>
               <div className={styles.acBonusWrapper}>
-                <span className={styles.acBonusPrefix} aria-hidden="true">+</span>
+                <span className={styles.acBonusPrefix} aria-hidden="true">Bonus:</span>
                 <input
                     type="number"
                     className={styles.acBonusInput}

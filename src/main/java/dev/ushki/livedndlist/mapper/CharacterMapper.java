@@ -102,6 +102,7 @@ public class CharacterMapper {
         .currentHitPoints(character.getCurrentHitPoints())
         .temporaryHitPoints(character.getTemporaryHitPoints())
         .armorClass(character.getArmorClass())
+        .armorClassBonus(character.getArmorClassBonus())
         .initiative(character.getInitiative())
         .speed(character.getSpeed())
         .proficiencyBonus(character.getProficiencyBonus())
@@ -246,11 +247,6 @@ public class CharacterMapper {
     updateIfPresent(request.getFeaturesAndTraits(), character::setFeaturesAndTraits);
     updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
 
-    if ((request.getAbilityScores() != null && request.getAbilityScores().getDexterity() != null)
-        || request.getArmorClassBonus() != null) {
-      character.setArmorClass(equipmentService.recalculateArmorClass(character));
-    }
-
     if (request.getExperiencePoints() != null) {
       character.setLevel(getLevelFromExperience(request.getExperiencePoints()));
     }
@@ -332,6 +328,16 @@ public class CharacterMapper {
       character.setSpellcastingAbility(
           AbilityType.valueOf(request.getSpellcastingAbility()));
     }
+
+    boolean acAffected =
+        request.getArmorClassBonus() != null
+            || (request.getAbilityScores() != null
+            && request.getAbilityScores().getDexterity() != null);
+
+    if (acAffected) {
+      character.setArmorClass(equipmentService.recalculateArmorClass(character));
+    }
+
   }
 
   private <T> void updateIfPresent(T value, Consumer<T> setter) {

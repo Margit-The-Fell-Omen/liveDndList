@@ -49,7 +49,8 @@ public class CharacterUpdateRequest {
   @Schema(description = "Temporary hit points", example = "5")
   private Integer temporaryHitPoints;
 
-  @Min(1)
+  @Min(-20)
+  @Max(20)
   @Schema(description = "Armor class bonus", example = "1")
   private Integer armorClassBonus;
 

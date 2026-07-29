@@ -3,7 +3,6 @@ package dev.ushki.livedndlist.mapper;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassFeatureDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eClassTableDataDto;
-import dev.ushki.livedndlist.dto.open5e.Open5eDocumentDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eGainedAtDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eSavingThrowDto;
@@ -12,9 +11,6 @@ import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassTableData;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.GainedAt;
-import dev.ushki.livedndlist.entity.dndCharacter.document.Document;
-import dev.ushki.livedndlist.entity.dndCharacter.document.GameSystem;
-import dev.ushki.livedndlist.entity.dndCharacter.document.Publisher;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.repository.DndClassFeatureRepository;
@@ -125,7 +121,7 @@ public class DndClassMapper {
     dto.setHitPointsOn1stLevel(entity.getHitPointsOn1stLevel());
     dto.setHitPointsOnHigherLevels(entity.getHitPointsOnHigherLevels());
 
-    dto.setDocument(toDocumentDto(entity.getDocument()));
+    dto.setDocument(documentMapper.toDocumentDto(entity.getDocument()));
 
     if (entity.getSavingThrows() != null) {
       dto.setSavingThrows(entity.getSavingThrows());
@@ -149,41 +145,6 @@ public class DndClassMapper {
               .collect(Collectors.toList()));
     }
 
-    return dto;
-  }
-
-  public Open5eDocumentDto toDocumentDto(Document entity) {
-    if (entity == null) {
-      return null;
-    }
-    Open5eDocumentDto dto = new Open5eDocumentDto();
-    dto.setKey(entity.getKey());
-    dto.setName(entity.getName());
-    dto.setType(entity.getType());
-    dto.setDisplayName(entity.getDisplayName());
-    dto.setPermalink(entity.getPermalink());
-    dto.setPublisher(toReferenceDto(entity.getPublisher()));
-    dto.setGameSystem(toReferenceDto(entity.getGamesystem()));
-    return dto;
-  }
-
-  private Open5eReferenceDto toReferenceDto(Publisher entity) {
-    if (entity == null) {
-      return null;
-    }
-    Open5eReferenceDto dto = new Open5eReferenceDto();
-    dto.setName(entity.getName());
-    dto.setKey(entity.getKey());
-    return dto;
-  }
-
-  private Open5eReferenceDto toReferenceDto(GameSystem entity) {
-    if (entity == null) {
-      return null;
-    }
-    Open5eReferenceDto dto = new Open5eReferenceDto();
-    dto.setName(entity.getName());
-    dto.setKey(entity.getKey());
     return dto;
   }
 

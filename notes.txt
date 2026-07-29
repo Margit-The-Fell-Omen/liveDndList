@@ -45,6 +45,7 @@ IMPORTANT NOTES:
 - currently I cannot add more than 1 class to character
 
 (current fixes:)
+feat sync -> applying of ClassFeatures and raceTraits and etc. -> level up/down bonuses handling
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird
     - game system choice & validation

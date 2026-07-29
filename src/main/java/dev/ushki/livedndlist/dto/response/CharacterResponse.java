@@ -61,6 +61,9 @@ public class CharacterResponse {
   @Schema(description = "Armor class", example = "18")
   private Integer armorClass;
 
+  @Schema(description = "Armor class bonus", example = "-3")
+  private Integer armorClassBonus;
+
   @Schema(description = "Initiative bonus", example = "4")
   private Integer initiative;
 

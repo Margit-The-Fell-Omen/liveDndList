@@ -5,17 +5,23 @@ import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
 import dev.ushki.livedndlist.entity.dndCharacter.document.Document;
 import dev.ushki.livedndlist.entity.dndCharacter.document.GameSystem;
 import dev.ushki.livedndlist.entity.dndCharacter.document.Publisher;
+import dev.ushki.livedndlist.repository.DocumentRepository;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class DocumentMapper {
+
+  private final DocumentRepository documentRepository;
 
   public Document toDocumentEntity(Open5eDocumentDto dto) {
     if (dto == null) {
       return null;
     }
-
-    return Document.builder()
+    Optional<Document> optDocument = documentRepository.findByKey(dto.getKey());
+    return optDocument.orElseGet(() -> Document.builder()
         .key(dto.getKey())
         .name(dto.getName())
         .type(dto.getType())
@@ -23,7 +29,7 @@ public class DocumentMapper {
         .permalink(dto.getPermalink())
         .publisher(toPublisherEntity(dto.getPublisher()))
         .gamesystem(toGameSystemEntity(dto.getGameSystem()))
-        .build();
+        .build());
   }
 
   private Publisher toPublisherEntity(Open5eReferenceDto dto) {

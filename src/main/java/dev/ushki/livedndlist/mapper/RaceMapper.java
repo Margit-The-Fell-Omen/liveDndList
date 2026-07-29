@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 public class RaceMapper {
 
   private final RaceRepository raceRepository;
+  private final DocumentMapper documentMapper;
 
   public Race toEntity(Open5eRaceDto dto) {
     if (dto == null) {
@@ -38,7 +39,7 @@ public class RaceMapper {
         .description(dto.getDesc())
         .subspecies(dto.isSubspecies())
         .traits(new ArrayList<>())
-        .document(toDocumentEntity(dto.getDocument()))
+        .document(documentMapper.toDocumentEntity(dto.getDocument()))
         .build();
 
     if (dto.isSubspecies()) {
@@ -50,42 +51,6 @@ public class RaceMapper {
     applyTraits(dto.getTraits(), race);
 
     return race;
-  }
-
-  public Document toDocumentEntity(Open5eDocumentDto dto) {
-    if (dto == null) {
-      return null;
-    }
-
-    return Document.builder()
-        .key(dto.getKey())
-        .name(dto.getName())
-        .type(dto.getType())
-        .displayName(dto.getDisplayName())
-        .permalink(dto.getPermalink())
-        .publisher(toPublisherEntity(dto.getPublisher()))
-        .gamesystem(toGameSystemEntity(dto.getGameSystem()))
-        .build();
-  }
-
-  private Publisher toPublisherEntity(Open5eReferenceDto dto) {
-    if (dto == null) {
-      return null;
-    }
-    return Publisher.builder()
-        .name(dto.getName())
-        .key(dto.getKey())
-        .build();
-  }
-
-  private GameSystem toGameSystemEntity(Open5eReferenceDto dto) {
-    if (dto == null) {
-      return null;
-    }
-    return GameSystem.builder()
-        .name(dto.getName())
-        .key(dto.getKey())
-        .build();
   }
 
   public void updateEntity(Race entity, Open5eRaceDto dto) {
@@ -117,7 +82,7 @@ public class RaceMapper {
     }
 
     if (dto.getDocument() != null) {
-      entity.setDocument(toDocumentEntity(dto.getDocument()));
+      entity.setDocument(documentMapper.toDocumentEntity(dto.getDocument()));
     }
 
     if (dto.getTraits() != null) {

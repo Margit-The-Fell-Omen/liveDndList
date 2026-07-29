@@ -177,7 +177,8 @@ public class EquipmentService {
     }
 
     int bonus = character.getArmorClassBonus() != null ? character.getArmorClassBonus() : 0;
-    return base + bonus;
+    int total = base + bonus;
+    return Math.max(1, total);
   }
 
   public EquipmentResponse update(Long id, EquipmentRequest request) {
