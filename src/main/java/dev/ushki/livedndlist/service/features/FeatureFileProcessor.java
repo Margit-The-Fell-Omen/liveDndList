@@ -131,6 +131,8 @@ public class FeatureFileProcessor {
     feature.getEffects().clear();
     feature.getChoices().clear();
 
+    featureRepository.saveAndFlush(feature);
+
     addEffectsFromNode(feature, node);
     addChoicesFromNode(feature, node);
   }
