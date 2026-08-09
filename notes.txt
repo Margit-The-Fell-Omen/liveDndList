@@ -44,8 +44,11 @@ IMPORTANT NOTES:
 - currently speed is not being derived from race
 - currently I cannot add more than 1 class to character
 
-(current fixes:)
+(current fixes: MASSIVE VALIDATION LEVEL)
 feat sync -> applying of ClassFeatures and raceTraits and etc. -> level up/down bonuses handling
+    - Added entities amd enums -> need to implement services
+    - !!! check enums to equal actual backend ones in .json files
+    - added all services and migration of DndFeat -> Feature table row
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird
     - game system choice & validation

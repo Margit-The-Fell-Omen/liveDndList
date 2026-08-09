@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "set-creature-type",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "HUMANOID",
+        "FEY",
+        "CONSTRUCT",
+        "UNDEAD",
+        "DRAGON",
+        "CELESTIAL",
+        "FIEND",
+        "ELEMENTAL",
+        "GIANT",
+        "MONSTROSITY",
+        "BEAST",
+        "OOZE",
+        "PLANT",
+        "ABERRATION"
+      ]
+    }
+  }
+}

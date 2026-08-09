@@ -247,6 +247,7 @@ export const referenceDataApi = {
   getRaces: async (): Promise<Race[]> => fetchWithAuth<Race[]>('/sync/races/list'),
   getClasses: async (): Promise<CharacterClass[]> => fetchWithAuth<CharacterClass[]>('/sync/classes/list'),
   getBackgrounds: async (): Promise<Background[]> => fetchWithAuth<Background[]>('/backgrounds/list'),
+  getFeats: async (): Promise<DndFeat[]> => fetchWithAuth<DndFeat[]>('/sync/feat/list'),
 };
 
 export const charactersApi = {

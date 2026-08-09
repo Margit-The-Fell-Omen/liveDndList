@@ -1,0 +1,1 @@
+ALTER TYPE feature_source_type ADD VALUE 'FIGHTING_STYLE';

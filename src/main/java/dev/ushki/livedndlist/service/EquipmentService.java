@@ -6,7 +6,6 @@ import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.EquipmentResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
-import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.ArmorCategory;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
@@ -126,7 +125,6 @@ public class EquipmentService {
     Equipment saved = equipmentRepository.save(equipment);
 
     DndCharacter character = saved.getCharacter();
-    character.setArmorClass(recalculateArmorClass(character));
     characterRepository.save(character);
 
     return saved;
@@ -143,43 +141,6 @@ public class EquipmentService {
     return equipmentMapper.toResponse(savedEquipment);
   }
 
-  public int recalculateArmorClass(DndCharacter character) {
-    int dexMod = character.getAbilityScores().getModifier(AbilityType.DEXTERITY);
-
-    Equipment armor = character.getEquipment().stream()
-        .filter(e -> e.getType() == EquipmentType.ARMOR
-            && e.getArmorCategory() != null
-            && e.getArmorCategory() != ArmorCategory.SHIELD
-            && e.isEquipped())
-        .findFirst()
-        .orElse(null);
-
-    boolean hasShield = character.getEquipment().stream()
-        .anyMatch(e -> e.getType() == EquipmentType.ARMOR
-            && e.getArmorCategory() == ArmorCategory.SHIELD
-            && e.isEquipped());
-
-    int base;
-    if (armor == null) {
-      base = 10 + dexMod;
-    } else {
-      int armorAc = armor.getArmorClass() != null ? armor.getArmorClass() : 10;
-      base = switch (armor.getArmorCategory()) {
-        case LIGHT -> armorAc + dexMod;
-        case MEDIUM -> armorAc + Math.min(dexMod, 2);
-        case HEAVY -> armorAc;
-        case SHIELD -> armorAc;
-      };
-    }
-
-    if (hasShield) {
-      base += 2;
-    }
-
-    int bonus = character.getArmorClassBonus() != null ? character.getArmorClassBonus() : 0;
-    int total = base + bonus;
-    return Math.max(1, total);
-  }
 
   public EquipmentResponse update(Long id, EquipmentRequest request) {
     Equipment equipment = equipmentRepository.findById(id)
@@ -210,7 +171,6 @@ public class EquipmentService {
 
     if (wasImpactful) {
       character.getEquipment().removeIf(e -> Objects.equals(e.getId(), id));
-      character.setArmorClass(recalculateArmorClass(character));
       characterRepository.save(character);
     }
 

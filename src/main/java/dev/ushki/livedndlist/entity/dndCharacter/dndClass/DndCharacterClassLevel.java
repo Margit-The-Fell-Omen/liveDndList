@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.entity.dndCharacter.dndClass;
 
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -41,6 +42,7 @@ public class DndCharacterClassLevel {
   @JoinColumn(name = "class_id", nullable = false)
   private DndClass dndClass;
 
+  @Column(name = "level", nullable = false)
   @Builder.Default
   private Integer level = 1;
 }

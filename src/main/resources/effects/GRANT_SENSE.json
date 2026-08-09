@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-sense",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "senseType",
+    "range"
+  ],
+  "properties": {
+    "senseType": {
+      "type": "string",
+      "enum": [
+        "DARKVISION",
+        "BLINDSIGHT",
+        "TREMORSENSE",
+        "TRUESIGHT"
+      ]
+    },
+    "range": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

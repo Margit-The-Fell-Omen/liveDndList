@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-tool-proficiency",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "toolKey": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

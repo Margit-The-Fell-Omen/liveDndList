@@ -23,6 +23,8 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.mapper.RaceMapper;
 import dev.ushki.livedndlist.repository.RaceRepository;
+import dev.ushki.livedndlist.service.features.FeatureCatalogService;
+import dev.ushki.livedndlist.service.features.FeatureUpsertHelper;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,6 +65,12 @@ class Open5eRaceServiceTest {
   @Mock
   private SyncMetrics syncMetrics;
 
+  @Mock
+  private FeatureUpsertHelper featureUpsertHelper;
+
+  @Mock
+  private FeatureCatalogService featureCatalogService;
+
   private DndRaceService raceService;
 
   private Open5eRaceDto humanDto;
@@ -76,7 +84,9 @@ class Open5eRaceServiceTest {
         raceRepository,
         raceMapper,
         apiClient,
-        syncMetrics
+        syncMetrics,
+        featureUpsertHelper,
+        featureCatalogService
     );
 
     humanDto = new Open5eRaceDto();

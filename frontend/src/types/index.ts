@@ -80,6 +80,19 @@ export interface Race {
   document?: DocumentInfo;
 }
 
+export type DndFeatType = 'GENERAL' | 'ORIGIN' | 'FIGHTING_STYLE' | 'EPIC_BOON';
+
+export interface DndFeat {
+  key: string;
+  name: string;
+  desc: string;
+  type: DndFeatType;
+  hasPrerequisite: boolean;
+  prerequisite?: string;
+  benefits: string[];
+  document?: DocumentInfo;
+}
+
 export interface Open5eReference {
   name: string;
   key: string;
@@ -360,6 +373,7 @@ export interface CharacterContextType {
   saving: boolean;
   error: string | null;
   races: Race[];
+  feats: DndFeat[];
   classes: CharacterClass[];
   backgrounds: Background[];
   fetchCharacters: () => Promise<void>;

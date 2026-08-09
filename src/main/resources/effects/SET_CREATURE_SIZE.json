@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "set-creature-size",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "size"
+  ],
+  "properties": {
+    "size": {
+      "type": "string",
+      "enum": [
+        "TINY",
+        "SMALL",
+        "MEDIUM",
+        "LARGE",
+        "HUGE",
+        "GARGANTUAN"
+      ]
+    }
+  }
+}

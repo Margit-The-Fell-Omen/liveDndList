@@ -8,9 +8,12 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
 import dev.ushki.livedndlist.entity.dndCharacter.background.BackgroundBenefit;
+import dev.ushki.livedndlist.enums.FeatureSourceType;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.BackgroundMapper;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
+import dev.ushki.livedndlist.service.features.FeatureCatalogService;
+import dev.ushki.livedndlist.service.features.FeatureUpsertHelper;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
@@ -35,6 +38,8 @@ public class DndBackgroundService {
   private final BackgroundMapper backgroundMapper;
   private final Open5eApiClient apiClient;
   private final SyncMetrics syncMetrics;
+  private final FeatureUpsertHelper featureUpsertHelper;
+  private final FeatureCatalogService featureCatalogService;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
 
@@ -75,6 +80,7 @@ public class DndBackgroundService {
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
 
+      featureCatalogService.invalidateCache();
       return buildSuccessResult(result, allBackgrounds.size(), duration, taskId);
 
     } catch (Exception e) {
@@ -132,17 +138,51 @@ public class DndBackgroundService {
 
   private SyncAction saveOrUpdate(Open5eBackgroundDto dto) {
     Optional<Background> existing = backgroundRepository.findByKey(dto.getKey());
-
+    Background background;
+    SyncAction action;
     if (existing.isPresent()) {
-      Background background = existing.get();
+      background = existing.get();
       backgroundMapper.updateEntity(background, dto);
       backgroundRepository.save(background);
-      return SyncAction.UPDATED;
+      action = SyncAction.UPDATED;
     } else {
-      Background dndClass = backgroundMapper.toEntity(dto);
-      backgroundRepository.save(dndClass);
-      return SyncAction.CREATED;
+      background = backgroundMapper.toEntity(dto);
+      backgroundRepository.save(background);
+      action = SyncAction.CREATED;
     }
+
+    syncBackgroundFeatures(background);
+    return action;
+  }
+
+  private void syncBackgroundFeatures(Background background) {
+    featureUpsertHelper.deleteBySource(FeatureSourceType.BACKGROUND, background.getKey());
+    if (background.getBenefits() == null) {
+      return;
+    }
+
+    int order = 0;
+    for (BackgroundBenefit benefit : background.getBenefits()) {
+      String featureKey = "bg_" + background.getKey() + "_" + slug(benefit.getName(), order);
+      featureUpsertHelper.upsertNarrativeFeature(
+          featureKey,
+          benefit.getName(),
+          benefit.getDesc(),
+          FeatureSourceType.BACKGROUND,
+          background.getKey(),
+          null,
+          null,
+          background.getDocument()
+      );
+      order++;
+    }
+  }
+
+  private String slug(String name, int fallback) {
+    if (name == null || name.isBlank()) {
+      return "benefit_" + fallback;
+    }
+    return name.toLowerCase().replaceAll("[^a-z0-9]+", "_").replaceAll("^_|_$", "");
   }
 
   private SyncResultDto buildAlreadyInProgressResult(String taskId) {

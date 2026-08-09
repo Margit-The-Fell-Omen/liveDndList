@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-armor-proficiency",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "category"
+  ],
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": [
+        "LIGHT",
+        "MEDIUM",
+        "HEAVY",
+        "SHIELD"
+      ]
+    },
+    "multiclass": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-speed-type",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "speedType"
+  ],
+  "properties": {
+    "speedType": {
+      "type": "string",
+      "enum": [
+        "FLY",
+        "SWIM",
+        "CLIMB",
+        "BURROW"
+      ]
+    },
+    "value": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "matchWalking": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "oneOf": [
+    {
+      "required": [
+        "value"
+      ]
+    },
+    {
+      "required": [
+        "matchWalking"
+      ],
+      "properties": {
+        "matchWalking": {
+          "const": true
+        }
+      }
+    }
+  ]
+}

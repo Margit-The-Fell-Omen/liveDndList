@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "modify-ability-score",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ability",
+    "amount"
+  ],
+  "properties": {
+    "ability": {
+      "type": "string",
+      "enum": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ]
+    },
+    "amount": {
+      "type": "integer"
+    },
+    "max": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 30
+    }
+  }
+}

@@ -9,9 +9,13 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.DndRaceResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
+import dev.ushki.livedndlist.entity.dndCharacter.race.RaceTrait;
+import dev.ushki.livedndlist.enums.FeatureSourceType;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.RaceMapper;
 import dev.ushki.livedndlist.repository.RaceRepository;
+import dev.ushki.livedndlist.service.features.FeatureCatalogService;
+import dev.ushki.livedndlist.service.features.FeatureUpsertHelper;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
@@ -37,6 +41,8 @@ public class DndRaceService {
   private final RaceMapper raceMapper;
   private final Open5eApiClient apiClient;
   private final SyncMetrics syncMetrics;
+  private final FeatureUpsertHelper featureUpsertHelper;
+  private final FeatureCatalogService featureCatalogService;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
 
@@ -80,6 +86,7 @@ public class DndRaceService {
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
 
+      featureCatalogService.invalidateCache();
       return buildSuccessResult(result, allRaces.size(), duration, taskId);
 
     } catch (Exception e) {
@@ -137,17 +144,57 @@ public class DndRaceService {
 
   private SyncAction saveOrUpdate(Open5eRaceDto dto) {
     Optional<Race> existing = raceRepository.findByKey(dto.getKey());
-
+    Race race;
+    SyncAction action;
     if (existing.isPresent()) {
-      Race race = existing.get();
+      race = existing.get();
       raceMapper.updateEntity(race, dto);
       raceRepository.save(race);
-      return SyncAction.UPDATED;
+      action = SyncAction.UPDATED;
     } else {
-      Race race = raceMapper.toEntity(dto);
+      race = raceMapper.toEntity(dto);
       raceRepository.save(race);
-      return SyncAction.CREATED;
+      action = SyncAction.CREATED;
     }
+
+    syncRaceFeatures(race);
+    return action;
+  }
+
+  private void syncRaceFeatures(Race race) {
+    FeatureSourceType sourceType = race.isSubspecies()
+        ? FeatureSourceType.SUBRACE
+        : FeatureSourceType.RACE;
+    String prefix = race.isSubspecies() ? "subrace_" : "race_";
+
+    featureUpsertHelper.deleteBySource(sourceType, race.getKey());
+
+    if (race.getTraits() == null) {
+      return;
+    }
+
+    int order = 0;
+    for (RaceTrait trait : race.getTraits()) {
+      String featureKey = prefix + race.getKey() + "_" + slug(trait.getName(), order);
+      featureUpsertHelper.upsertNarrativeFeature(
+          featureKey,
+          trait.getName(),
+          trait.getDescription(),
+          sourceType,
+          race.getKey(),
+          null,
+          null,
+          race.getDocument()
+      );
+      order++;
+    }
+  }
+
+  private String slug(String name, int fallback) {
+    if (name == null || name.isBlank()) {
+      return "trait_" + fallback;
+    }
+    return name.toLowerCase().replaceAll("[^a-z0-9]+", "_").replaceAll("^_|_$", "");
   }
 
   private SyncResultDto buildAlreadyInProgressResult(String taskId) {

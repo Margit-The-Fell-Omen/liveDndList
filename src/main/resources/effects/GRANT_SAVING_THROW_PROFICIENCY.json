@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-saving-throw-proficiency",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ability"
+  ],
+  "properties": {
+    "ability": {
+      "type": "string",
+      "enum": [
+        "STR",
+        "DEX",
+        "CON",
+        "INT",
+        "WIS",
+        "CHA"
+      ]
+    }
+  }
+}

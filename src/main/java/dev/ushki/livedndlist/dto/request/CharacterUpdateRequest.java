@@ -99,15 +99,4 @@ public class CharacterUpdateRequest {
   @Schema(description = "Experience points", example = "3500")
   private Integer experiencePoints;
 
-  @Schema(description = "List of proficient saving throws")
-  private List<String> savingThrowProficiencies;
-
-  @Schema(description = "List of skill updates")
-  private List<SkillUpdateRequest> skills;
-
-  @Schema(description = "Features")
-  private String featuresAndTraits;
-
-  @Schema(description = "Initiative")
-  private Integer initiative;
 }

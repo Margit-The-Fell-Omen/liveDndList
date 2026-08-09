@@ -21,6 +21,8 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.mapper.DndClassMapper;
 import dev.ushki.livedndlist.repository.DndClassRepository;
+import dev.ushki.livedndlist.service.features.FeatureCatalogService;
+import dev.ushki.livedndlist.service.features.FeatureUpsertHelper;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +55,12 @@ class Open5eClassServiceTest {
   @Mock
   private SyncMetrics syncMetrics;
 
+  @Mock
+  private FeatureUpsertHelper featureUpsertHelper;
+
+  @Mock
+  private FeatureCatalogService featureCatalogService;
+
   private DndClassService classService;
 
   private Open5eClassDto fighterDto;
@@ -66,7 +74,9 @@ class Open5eClassServiceTest {
         dndClassRepository,
         dndClassMapper,
         apiClient,
-        syncMetrics
+        syncMetrics,
+        featureUpsertHelper,
+        featureCatalogService
     );
 
     fighterDto = new Open5eClassDto();

@@ -3,6 +3,11 @@ package dev.ushki.livedndlist.entity.dndCharacter;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel;
+import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterCustomFeature;
+import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeat;
+import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
+import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterResource;
+import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterSubclassChoice;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
@@ -116,6 +121,7 @@ public class DndCharacter {
 
   @Embedded
   @Builder.Default
+  @Column(nullable = false)
   private AbilityScores abilityScores = new AbilityScores();
 
   @Builder.Default
@@ -128,19 +134,11 @@ public class DndCharacter {
   private Integer temporaryHitPoints = 0;
 
   @Builder.Default
-  private Integer armorClass = DEFAULT_AC;
-
-  @Builder.Default
+  @Column(nullable = false)
   private Integer armorClassBonus = 0;
 
   @Builder.Default
-  private Integer initiative = 0;
-
-  @Builder.Default
   private Integer speed = DEFAULT_SPEED;
-
-  @Builder.Default
-  private Integer proficiencyBonus = DEFAULT_PROF_BONUS;
 
   private String hitDice;
 
@@ -154,12 +152,37 @@ public class DndCharacter {
   @Builder.Default
   private Set<Skill> skills = new HashSet<>();
 
-  @ElementCollection
-  @CollectionTable(name = "character_saving_throws",
-      joinColumns = @JoinColumn(name = "character_id"))
+  @Column(name = "base_walking_speed_override")
+  private Integer baseWalkingSpeedOverride;
+
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private Set<CharacterFeature> characterFeatures = new HashSet<>();
+
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private Set<CharacterCustomFeature> customFeatures = new HashSet<>();
+
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private Set<CharacterFeat> feats = new HashSet<>();
+
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private Set<CharacterResource> resources = new HashSet<>();
+
+  @OneToMany(mappedBy = "character", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+  @Builder.Default
+  private Set<CharacterSubclassChoice> subclassChoices = new HashSet<>();
+
+  @ElementCollection(fetch = FetchType.LAZY)
+  @CollectionTable(
+      name = "character_saving_throws",
+      joinColumns = @JoinColumn(name = "character_id")
+  )
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-  @Column(name = "saving_throw_proficiencies", columnDefinition = "ability_type")
+  @Column(name = "saving_throw_proficiencies", columnDefinition = "ability_type", nullable = false)
   @Builder.Default
   private Set<AbilityType> savingThrowProficiencies = new HashSet<>();
 
@@ -184,9 +207,6 @@ public class DndCharacter {
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(columnDefinition = "ability_type")
   private AbilityType spellcastingAbility;
-
-  @Column(columnDefinition = "TEXT")
-  private String featuresAndTraits;
 
   @Column(columnDefinition = "TEXT")
   private String backstory;

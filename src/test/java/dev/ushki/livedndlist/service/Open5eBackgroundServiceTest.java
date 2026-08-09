@@ -21,6 +21,8 @@ import dev.ushki.livedndlist.entity.dndCharacter.background.Background;
 import dev.ushki.livedndlist.entity.dndCharacter.background.BackgroundBenefit;
 import dev.ushki.livedndlist.mapper.BackgroundMapper;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
+import dev.ushki.livedndlist.service.features.FeatureCatalogService;
+import dev.ushki.livedndlist.service.features.FeatureUpsertHelper;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import java.util.Collections;
@@ -46,6 +48,11 @@ class Open5eBackgroundServiceTest {
   private Open5eApiClient apiClient;
   @Mock
   private SyncMetrics syncMetrics;
+  @Mock
+  private FeatureUpsertHelper featureUpsertHelper;
+
+  @Mock
+  private FeatureCatalogService featureCatalogService;
 
   @InjectMocks
   private DndBackgroundService backgroundService;

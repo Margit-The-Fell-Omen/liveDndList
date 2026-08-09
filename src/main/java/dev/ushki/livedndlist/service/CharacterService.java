@@ -4,17 +4,12 @@ import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
-import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
-import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
-import dev.ushki.livedndlist.entity.dndCharacter.Spell;
-import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
-import dev.ushki.livedndlist.exceptions.ResourceSaveFailureException;
 import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
 import dev.ushki.livedndlist.mapper.EquipmentMapper;
@@ -22,6 +17,9 @@ import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.EquipmentRepository;
 import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
+import dev.ushki.livedndlist.service.features.CharacterFeatureMaterializer;
+import dev.ushki.livedndlist.service.features.CharacterPipelineService;
+import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +46,8 @@ public class CharacterService {
   private static final String USER_RESOURCE = "User:";
   private static final String CHARACTERS_SUFFIX = ":Characters";
   private static final String CHARACTER_ID_SUFFIX = ":Character:";
+  private final CharacterPipelineService characterPipelineService;
+  private final CharacterFeatureMaterializer characterFeatureMaterializer;
 
   @Transactional(readOnly = true)
   public PageResponse<CharacterSummaryResponse> getAllByUsername(
@@ -138,8 +138,8 @@ public class CharacterService {
       DndCharacter character = characterRepository.findByIdFull(id)
           .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
       verifyOwnership(character, username);
-      log.info("Character GET ById: {}", character);
-      return characterMapper.toResponse(character);
+      ComputedCharacterState state = characterPipelineService.compute(id);
+      return characterMapper.toResponse(character, state);
     });
   }
 
@@ -153,6 +153,8 @@ public class CharacterService {
 
     cacheManager.invalidateByPrefix(USER_RESOURCE + username);
 
+    characterFeatureMaterializer.syncFeatures(savedCharacter.getId());
+
     return characterMapper.toResponse(savedCharacter);
   }
 
@@ -165,6 +167,13 @@ public class CharacterService {
     DndCharacter savedCharacter = characterRepository.save(character);
 
     cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+
+    if (request.getRaceKey() != null
+        || request.getDndClassLevels() != null
+        || request.getBackgroundKey() != null
+        || request.getExperiencePoints() != null) {
+      characterFeatureMaterializer.syncFeatures(savedCharacter.getId());
+    }
 
     return characterMapper.toResponse(savedCharacter);
   }
@@ -181,67 +190,6 @@ public class CharacterService {
     characterRepository.deleteCharacterById(id);
 
     cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-  }
-
-  public CharacterResponse addEquipment(Long characterId, EquipmentRequest request,
-      String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
-
-    Equipment equipment = equipmentMapper.toEntity(request);
-    character.addEquipment(equipment);
-
-    DndCharacter savedCharacter = characterRepository.save(character);
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-
-    return characterMapper.toResponse(savedCharacter);
-  }
-
-  public CharacterResponse removeEquipment(Long characterId, Long equipmentId, String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
-
-    Equipment equipment = character.getEquipment().stream()
-        .filter(e -> e.getId().equals(equipmentId))
-        .findFirst()
-        .orElseThrow(() -> new ResourceNotFoundException("Equipment", "id", equipmentId));
-
-    character.removeEquipment(equipment);
-
-    DndCharacter savedCharacter = characterRepository.save(character);
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-
-    return characterMapper.toResponse(savedCharacter);
-  }
-
-  public CharacterResponse addSpell(Long characterId, Long spellId, String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
-
-    Spell spell = spellRepository.findById(spellId)
-        .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", spellId));
-
-    character.addSpell(spell);
-
-    DndCharacter savedCharacter = characterRepository.save(character);
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-
-    return characterMapper.toResponse(savedCharacter);
-  }
-
-  public CharacterResponse removeSpell(Long characterId, Long spellId, String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
-
-    Spell spell = spellRepository.findById(spellId)
-        .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", spellId));
-
-    character.removeSpell(spell);
-
-    DndCharacter savedCharacter = characterRepository.save(character);
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-
-    return characterMapper.toResponse(savedCharacter);
   }
 
   public int restoreAllCharactersHitPoints(String username) {
@@ -268,131 +216,6 @@ public class CharacterService {
     });
   }
 
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterWithSkills(Long id, String username) {
-    CompositeKey key = new CompositeKey("skills");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdWithSkills(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterWithSpells(Long id, String username) {
-    CompositeKey key = new CompositeKey("spells");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdWithSpells(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterWithEquipment(Long id, String username) {
-    CompositeKey key = new CompositeKey("equipment");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdWithEquipment(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterWithSavingThrows(Long id, String username) {
-    CompositeKey key = new CompositeKey("savingThrows");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdWithSavingThrows(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterSheet(Long id, String username) {
-    CompositeKey key = new CompositeKey("sheet");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdForCharacterSheet(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterForCombat(Long id, String username) {
-    CompositeKey key = new CompositeKey("combat");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdForCombat(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  @Transactional(readOnly = true)
-  public CharacterResponse getCharacterForSpellcasting(Long id, String username) {
-    CompositeKey key = new CompositeKey("spellcasting");
-    String namespace = USER_RESOURCE + username + CHARACTER_ID_SUFFIX + id;
-
-    return cacheManager.get(namespace, key, () -> {
-      DndCharacter character = characterRepository.findByIdForSpellcasting(id)
-          .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
-
-      verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
-    });
-  }
-
-  public CharacterResponse createWithStarterPack(CharacterCreateRequest request, String username,
-      Pageable pageable) {
-    User user = findUserByUsername(username);
-
-    DndCharacter character = characterMapper.toEntity(request);
-    character.setOwner(user);
-
-    addStarterWeapon(character);
-    addStarterArmor(character);
-    addStarterPack(character);
-    setStarterGold(character);
-
-    if (request.getSpellcastingAbility() != null) {
-      addStarterSpells(character, pageable);
-    }
-
-    if (request.getName().contains("FAIL")) {
-      throw new ResourceSaveFailureException("Simulated failure during starter pack creation");
-    }
-
-    DndCharacter savedCharacter = characterRepository.save(character);
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-
-    return characterMapper.toResponse(savedCharacter);
-  }
-
   private User findUserByUsername(String username) {
     return userRepository.findByUsername(username)
         .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
@@ -412,109 +235,4 @@ public class CharacterService {
     }
   }
 
-  private void addStarterWeapon(DndCharacter character) {
-    Equipment weapon = Equipment.builder()
-        .name("Longsword")
-        .type(EquipmentType.WEAPON)
-        .damage("1d8")
-        .damageType("slashing")
-        .properties("Versatile (1d10)")
-        .weight(3.0)
-        .equipped(true)
-        .build();
-    character.addEquipment(weapon);
-  }
-
-  private void addStarterArmor(DndCharacter character) {
-    Equipment armor = Equipment.builder()
-        .name("Leather Armor")
-        .type(EquipmentType.ARMOR)
-        .description("AC 11 + Dex modifier")
-        .weight(10.0)
-        .equipped(true)
-        .build();
-    character.addEquipment(armor);
-  }
-
-  private void addStarterPack(DndCharacter character) {
-    List.of(
-        Equipment.builder()
-            .name("Backpack")
-            .type(EquipmentType.GEAR)
-            .weight(5.0)
-            .build(),
-        Equipment.builder()
-            .name("Bedroll")
-            .type(EquipmentType.GEAR)
-            .weight(7.0)
-            .build(),
-        Equipment.builder()
-            .name("Rations")
-            .type(EquipmentType.CONSUMABLE)
-            .quantity(10)
-            .weight(2.0)
-            .build(),
-        Equipment.builder()
-            .name("Torch")
-            .type(EquipmentType.GEAR)
-            .quantity(5)
-            .weight(1.0)
-            .build()
-    ).forEach(character::addEquipment);
-  }
-
-  private void setStarterGold(DndCharacter character) {
-    character.getCurrency().setGold(15);
-    character.getCurrency().setSilver(10);
-  }
-
-  private void addStarterSpells(DndCharacter character, Pageable pageable) {
-    List<Spell> cantrips = spellRepository.findByLevel(0, pageable);
-    cantrips.stream()
-        .limit(2)
-        .forEach(character::addSpell);
-  }
-
-  public CharacterResponse addEquipmentBulkNoTransaction(Long characterId,
-      List<EquipmentRequest> requests, String username) {
-    DndCharacter character = characterRepository.findByIdWithEquipment(characterId)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", characterId));
-    verifyOwnership(character, username);
-
-    for (EquipmentRequest request : requests) {
-      if (request.getName().contains("FAIL")) {
-        throw new ResourceSaveFailureException(
-            "Simulated failure WITHOUT transaction! Previous items remain in DB.");
-      }
-      Equipment equipment = equipmentMapper.toEntity(request);
-      equipment.setCharacter(character);
-      equipmentRepository.save(equipment);
-    }
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-    character = characterRepository.findByIdWithEquipment(characterId).orElseThrow();
-    return characterMapper.toResponse(character);
-  }
-
-  @Transactional
-  public CharacterResponse addEquipmentBulkWithTransaction(Long characterId,
-      List<EquipmentRequest> requests, String username) {
-    DndCharacter character = characterRepository.findByIdWithEquipment(characterId)
-        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", characterId));
-    verifyOwnership(character, username);
-
-    for (EquipmentRequest request : requests) {
-      if (request.getName().contains("FAIL")) {
-        throw new ResourceSaveFailureException(
-            "Simulated failure WITH transaction! Everything should roll back.");
-      }
-      Equipment equipment = equipmentMapper.toEntity(request);
-      equipment.setCharacter(character);
-      equipmentRepository.save(equipment);
-    }
-
-    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
-    character = characterRepository.findByIdWithEquipment(characterId).orElseThrow();
-    return characterMapper.toResponse(character);
-  }
 }

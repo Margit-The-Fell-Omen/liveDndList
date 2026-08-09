@@ -1,0 +1,23 @@
+{
+  "sourceType": "FIGHTING_STYLE",
+  "sourceKey": "fighting_style",
+  "features": [
+    {
+      "key": "fighting_style_archery",
+      "name": "Fighting Style: Archery",
+      "description": "You gain a +2 bonus to attack rolls you make with ranged weapons.",
+      "gainedAtLevel": null,
+      "effects": [
+        {
+          "type": "MODIFY_ATTACK_BONUS",
+          "payload": {
+            "amount": 2,
+            "filter": {
+              "weaponRange": "RANGED"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

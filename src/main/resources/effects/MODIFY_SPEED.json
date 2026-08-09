@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "modify-speed",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "amount"
+  ],
+  "properties": {
+    "amount": {
+      "type": "integer"
+    },
+    "speedType": {
+      "type": "string",
+      "enum": [
+        "WALK",
+        "FLY",
+        "SWIM",
+        "CLIMB",
+        "BURROW"
+      ],
+      "default": "WALK"
+    }
+  }
+}

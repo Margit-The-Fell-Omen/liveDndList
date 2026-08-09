@@ -10,6 +10,7 @@ import type {
   CharacterCreateRequest,
   CharacterSummary,
   CharacterUpdateRequest,
+  DndFeat,
   EquipmentData,
   Race,
 } from '@/types';
@@ -30,21 +31,25 @@ export function CharacterProvider({children}: CharacterProviderProps) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [feats, setFeats] = useState<DndFeat[]>([]);
 
   const fetchReferenceData = useCallback(async (): Promise<void> => {
     try {
-      const [racesData, classesData, backgroundsData] = await Promise.all([
+      const [racesData, classesData, backgroundsData, featsData] = await Promise.all([
         referenceDataApi.getRaces(),
         referenceDataApi.getClasses(),
         referenceDataApi.getBackgrounds(),
+        referenceDataApi.getFeats(),
       ]);
       setRaces(racesData);
       setClasses(classesData);
       setBackgrounds(backgroundsData);
+      setFeats(featsData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load game data.');
     }
   }, []);
+
 
   const fetchCharacters = useCallback(async (): Promise<void> => {
     if (!isAuthenticated) return;
@@ -81,6 +86,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
       setCurrentCharacter(null);
       setRaces([]);
       setClasses([]);
+      setFeats([]);
       setBackgrounds([]);
       setLoading(false);
     }
@@ -258,6 +264,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     saving,
     error,
     races,
+    feats,
     classes,
     backgrounds,
     fetchCharacters,

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "set-hit-die",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "die"
+  ],
+  "properties": {
+    "die": {
+      "type": "string",
+      "enum": [
+        "d6",
+        "d8",
+        "d10",
+        "d12"
+      ]
+    }
+  }
+}

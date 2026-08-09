@@ -1,11 +1,13 @@
 package dev.ushki.livedndlist.dto.response;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.dto.DndClassLevelDto;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,13 +27,13 @@ public class CharacterResponse {
   @Schema(description = "Character name", example = "Aragorn")
   private String name;
 
-  @Schema(description = "Character race name", example = "Human")
+  @Schema(description = "Character race key", example = "srd_human")
   private String raceKey;
 
   @Schema(description = "Character alignment", example = "NEUTRAL_GOOD")
   private CharacterAlignment alignment;
 
-  @Schema(description = "Character background", example = "srg_2014_outlander")
+  @Schema(description = "Character background key", example = "srd_2014_outlander")
   private String backgroundKey;
 
   @Schema(description = "Total experience points", example = "3500")
@@ -46,7 +48,7 @@ public class CharacterResponse {
   @Schema(description = "Total level across all classes", example = "5")
   private Integer totalLevel;
 
-  @Schema(description = "Ability scores and modifiers")
+  @Schema(description = "Ability scores and modifiers (computed)")
   private AbilityScoresResponse abilityScores;
 
   @Schema(description = "Maximum hit points", example = "45")
@@ -58,23 +60,29 @@ public class CharacterResponse {
   @Schema(description = "Temporary hit points", example = "0")
   private Integer temporaryHitPoints;
 
-  @Schema(description = "Armor class", example = "18")
+  @Schema(description = "Armor class (computed)", example = "18")
   private Integer armorClass;
 
-  @Schema(description = "Armor class bonus", example = "-3")
+  @Schema(description = "Manual AC bonus (editable escape hatch)", example = "-1")
   private Integer armorClassBonus;
 
-  @Schema(description = "Initiative bonus", example = "4")
+  @Schema(description = "Initiative bonus (computed)", example = "4")
   private Integer initiative;
 
-  @Schema(description = "Movement speed", example = "30")
-  private Integer speed;
+  @Schema(description = "Speeds by movement type (computed)")
+  private Map<String, Integer> speeds;
 
-  @Schema(description = "Proficiency bonus", example = "3")
+  @Schema(description = "Proficiency bonus (computed from total level)", example = "3")
   private Integer proficiencyBonus;
 
-  @Schema(description = "Hit dice string", example = "5d10")
-  private String hitDice;
+  @Schema(description = "Hit dice grouped by die size")
+  private Map<String, HitDiceEntryResponse> hitDice;
+
+  @Schema(description = "Creature size (computed)", example = "MEDIUM")
+  private String size;
+
+  @Schema(description = "Creature type (computed)", example = "HUMANOID")
+  private String creatureType;
 
   @Schema(description = "Number of successful death saves", example = "0")
   private Integer deathSaveSuccesses;
@@ -82,11 +90,29 @@ public class CharacterResponse {
   @Schema(description = "Number of failed death saves", example = "1")
   private Integer deathSaveFailures;
 
-  @Schema(description = "List of character skills")
+  @Schema(description = "List of character skills with computed totals")
   private List<SkillResponse> skills;
 
-  @Schema(description = "Abilities proficient for saving throws")
+  @Schema(description = "Ability proficiencies for saving throws (computed)")
   private Set<AbilityType> savingThrowProficiencies;
+
+  @Schema(description = "Aggregated proficiencies (computed)")
+  private ProficienciesResponse proficiencies;
+
+  @Schema(description = "Senses granted by features (computed)")
+  private List<SenseResponse> senses;
+
+  @Schema(description = "Damage resistances (computed)")
+  private Set<String> damageResistances;
+
+  @Schema(description = "Damage immunities (computed)")
+  private Set<String> damageImmunities;
+
+  @Schema(description = "Damage vulnerabilities (computed)")
+  private Set<String> damageVulnerabilities;
+
+  @Schema(description = "Condition immunities (computed)")
+  private Set<String> conditionImmunities;
 
   @Schema(description = "Inventory of equipment")
   private List<EquipmentResponse> equipment;
@@ -100,25 +126,43 @@ public class CharacterResponse {
   @Schema(description = "Ability used for spellcasting", example = "CHARISMA")
   private AbilityType spellcastingAbility;
 
-  @Schema(description = "Features and traits description", example = "Ranger's Companion")
-  private String featuresAndTraits;
+  @Schema(description = "Spellcasting details per class (computed)")
+  private SpellcastingResponse spellcasting;
 
-  @Schema(description = "Backstory text", example = "Heir to the throne of Gondor...")
+  @Schema(description = "Character resources (spell slots, ki, rage, etc.)")
+  private List<ResourceResponse> resources;
+
+  @Schema(description = "Actions granted by features")
+  private List<ActionResponse> actions;
+
+  @Schema(description = "Attack modifiers applied to matching weapons")
+  private List<AttackModifierResponse> attackModifiers;
+
+  @Schema(description = "Aggregated features from all sources")
+  private List<CharacterFeatureResponse> features;
+
+  @Schema(description = "User-authored custom narrative features")
+  private List<CustomFeatureResponse> customFeatures;
+
+  @Schema(description = "Choices the user still needs to make")
+  private List<PendingChoiceResponse> pendingChoices;
+
+  @Schema(description = "Backstory text")
   private String backstory;
 
-  @Schema(description = "Personality traits", example = "Noble, Brave")
+  @Schema(description = "Personality traits")
   private String personalityTraits;
 
-  @Schema(description = "Ideals", example = "Duty, Honor")
+  @Schema(description = "Ideals")
   private String ideals;
 
-  @Schema(description = "Bonds", example = "Protect the Shire")
+  @Schema(description = "Bonds")
   private String bonds;
 
-  @Schema(description = "Flaws", example = "Secretly fears failure")
+  @Schema(description = "Flaws")
   private String flaws;
 
-  @Schema(description = "Additional notes", example = "Needs to refit armor.")
+  @Schema(description = "Additional notes")
   private String notes;
 
   @Schema(description = "Creation timestamp", example = "2023-01-01T10:00:00")
@@ -131,23 +175,150 @@ public class CharacterResponse {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  @Schema(description = "Represents D&D currency breakdown")
-  public static class DndCurrencyResponse {
+  public static class HitDiceEntryResponse {
 
-    @Schema(description = "Copper pieces", example = "50")
-    private Integer copper;
-
-    @Schema(description = "Silver pieces", example = "10")
-    private Integer silver;
-
-    @Schema(description = "Electrum pieces", example = "0")
-    private Integer electrum;
-
-    @Schema(description = "Gold pieces", example = "100")
-    private Integer gold;
-
-    @Schema(description = "Platinum pieces", example = "5")
-    private Integer platinum;
+    private String die;
+    private Integer count;
   }
 
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ProficienciesResponse {
+
+    private Set<String> armor;
+    private Set<String> weapons;
+    private Set<String> tools;
+    private Set<String> languages;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class SenseResponse {
+
+    private String senseType;
+    private Integer range;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class SpellcastingResponse {
+
+    private List<ClassSpellcastingResponse> classes;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ClassSpellcastingResponse {
+
+    private String classKey;
+    private String ability;
+    private String casterType;
+    private Integer spellSaveDc;
+    private Integer spellAttackBonus;
+    private Map<Integer, Integer> spellSlotsTotal;
+    private Map<Integer, Integer> spellSlotsUsed;
+    private Integer preparedSpellsCount;
+    private String spellList;
+    private Boolean ritualCasting;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ResourceResponse {
+
+    private String resourceKey;
+    private String displayName;
+    private Integer currentUses;
+    private Integer maxUses;
+    private String refreshOn;
+    private Long sourceFeatureId;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class ActionResponse {
+
+    private String kind;
+    private String name;
+    private String description;
+    private String resourceKey;
+    private Integer uses;
+    private String refresh;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AttackModifierResponse {
+
+    private Integer amount;
+    private String dice;
+    private JsonNode filter;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CharacterFeatureResponse {
+
+    private Long id;
+    private String name;
+    private String description;
+    private String source;
+    private String sourceLabel;
+    private JsonNode sourceContext;
+    private List<FeatureChoiceAnswerResponse> choices;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class FeatureChoiceAnswerResponse {
+
+    private String choiceKey;
+    private String name;
+    private JsonNode selectedValues;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CustomFeatureResponse {
+
+    private Long id;
+    private String name;
+    private String description;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class PendingChoiceResponse {
+
+    private Long characterFeatureId;
+    private String choiceKey;
+    private String name;
+    private String description;
+    private Integer chooseCount;
+    private String optionsSource;
+    private JsonNode optionsFilter;
+    private JsonNode currentSelection;
+  }
 }

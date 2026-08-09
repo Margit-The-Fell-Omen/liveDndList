@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-weapon-proficiency",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "scope"
+  ],
+  "properties": {
+    "scope": {
+      "type": "string",
+      "enum": [
+        "CATEGORY",
+        "SPECIFIC"
+      ]
+    },
+    "category": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "SIMPLE",
+        "MARTIAL",
+        null
+      ]
+    },
+    "weaponKey": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "multiclass": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "const": "CATEGORY"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "category"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "scope": {
+            "const": "SPECIFIC"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "weaponKey"
+        ]
+      }
+    }
+  ]
+}

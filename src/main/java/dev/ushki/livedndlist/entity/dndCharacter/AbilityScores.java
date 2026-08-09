@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.entity.dndCharacter;
 
 import dev.ushki.livedndlist.enums.AbilityType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,21 +20,27 @@ import lombok.ToString;
 public class AbilityScores {
 
   @Builder.Default
+  @Column(nullable = false)
   private Integer strength = 10;
 
   @Builder.Default
+  @Column(nullable = false)
   private Integer dexterity = 10;
 
   @Builder.Default
+  @Column(nullable = false)
   private Integer constitution = 10;
 
   @Builder.Default
+  @Column(nullable = false)
   private Integer intelligence = 10;
 
   @Builder.Default
+  @Column(nullable = false)
   private Integer wisdom = 10;
 
   @Builder.Default
+  @Column(nullable = false)
   private Integer charisma = 10;
 
   public int getModifier(AbilityType type) {

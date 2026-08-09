@@ -9,13 +9,19 @@ import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.DndFeatResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.DndFeat;
+import dev.ushki.livedndlist.entity.dndCharacter.feature.Feature;
+import dev.ushki.livedndlist.enums.AnnotationSource;
+import dev.ushki.livedndlist.enums.FeatureSourceType;
 import dev.ushki.livedndlist.enums.SyncAction;
 import dev.ushki.livedndlist.mapper.FeatMapper;
 import dev.ushki.livedndlist.repository.DndFeatRepository;
+import dev.ushki.livedndlist.repository.FeatureRepository;
+import dev.ushki.livedndlist.service.features.FeatureCatalogService;
 import dev.ushki.livedndlist.service.sync.SyncMetrics;
 import dev.ushki.livedndlist.service.sync.SyncProgressTracker;
 import dev.ushki.livedndlist.service.sync.SyncResult;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,11 +37,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class DndFeatService {
 
   private static final String API_PATH = "/v2/feats/";
+  private static final String FEATURE_KEY_PREFIX = "feat_";
 
   private final DndFeatRepository featRepository;
   private final FeatMapper featMapper;
   private final Open5eApiClient apiClient;
   private final SyncMetrics syncMetrics;
+  private final FeatureRepository featureRepository;
+  private final FeatureCatalogService featureCatalogService;
 
   private final SyncProgressTracker progressTracker = new SyncProgressTracker();
 
@@ -73,6 +82,8 @@ public class DndFeatService {
         progressTracker.incrementProcessed();
       }
 
+      featureCatalogService.invalidateCache();
+
       long duration = System.currentTimeMillis() - startTime;
       log.info("Sync completed in {}ms. Created: {}, Updated: {}, Failed: {}",
           duration, result.getCreated(), result.getUpdated(), result.getFailed());
@@ -93,12 +104,19 @@ public class DndFeatService {
   @Transactional
   public SyncResultDto clearAll() {
     try {
-      long count = featRepository.count();
+      long featCount = featRepository.count();
+
+      List<Feature> featFeatures = featureRepository.findAll().stream()
+          .filter(f -> f.getSourceType() == FeatureSourceType.FEAT)
+          .toList();
+      featureRepository.deleteAll(featFeatures);
+
       featRepository.deleteAll();
+      featureCatalogService.invalidateCache();
 
       return SyncResultDto.builder()
           .success(true)
-          .message("Deleted feats: " + count)
+          .message("Deleted feats: " + featCount + ", associated features: " + featFeatures.size())
           .syncedAt(LocalDateTime.now())
           .build();
     } catch (Exception e) {
@@ -135,16 +153,75 @@ public class DndFeatService {
   private SyncAction saveOrUpdate(Open5eFeatDto dto) {
     Optional<DndFeat> existing = featRepository.findByKey(dto.getKey());
 
+    DndFeat feat;
+    SyncAction action;
     if (existing.isPresent()) {
-      DndFeat feat = existing.get();
+      feat = existing.get();
       featMapper.updateEntity(feat, dto);
       featRepository.save(feat);
-      return SyncAction.UPDATED;
+      action = SyncAction.UPDATED;
     } else {
-      DndFeat feat = featMapper.toEntity(dto);
+      feat = featMapper.toEntity(dto);
       featRepository.save(feat);
-      return SyncAction.CREATED;
+      action = SyncAction.CREATED;
     }
+
+    upsertFeatureForFeat(feat);
+    return action;
+  }
+
+  private void upsertFeatureForFeat(DndFeat feat) {
+    String featureKey = FEATURE_KEY_PREFIX + feat.getKey();
+
+    Optional<Feature> existingOpt = featureRepository.findByKey(featureKey);
+
+    if (existingOpt.isPresent()) {
+      Feature existing = existingOpt.get();
+      if (existing.getEffectsAnnotatedBy() == AnnotationSource.MANUAL
+          || existing.getEffectsAnnotatedBy() == AnnotationSource.FILE_LOADER) {
+        existing.setName(feat.getName());
+        existing.setDescription(buildDescription(feat));
+        existing.setDocument(feat.getDocument());
+        existing.setPrerequisite(feat.getPrerequisite());
+        featureRepository.save(existing);
+        return;
+      }
+      existing.setName(feat.getName());
+      existing.setDescription(buildDescription(feat));
+      existing.setDocument(feat.getDocument());
+      existing.setPrerequisite(feat.getPrerequisite());
+      existing.setEffectsAnnotatedAt(OffsetDateTime.now());
+      featureRepository.save(existing);
+    } else {
+      Feature newFeature = Feature.builder()
+          .key(featureKey)
+          .name(feat.getName())
+          .description(buildDescription(feat))
+          .sourceType(FeatureSourceType.FEAT)
+          .sourceKey(feat.getKey())
+          .prerequisite(feat.getPrerequisite())
+          .document(feat.getDocument())
+          .effectsAnnotatedBy(AnnotationSource.OPEN5E_SYNC)
+          .effectsAnnotatedAt(OffsetDateTime.now())
+          .build();
+      featureRepository.save(newFeature);
+    }
+  }
+
+  private String buildDescription(DndFeat feat) {
+    StringBuilder sb = new StringBuilder();
+    if (feat.getDesc() != null && !feat.getDesc().isBlank()) {
+      sb.append(feat.getDesc());
+    }
+    if (feat.getBenefits() != null && !feat.getBenefits().isEmpty()) {
+      if (!sb.isEmpty()) {
+        sb.append("\n\n");
+      }
+      for (String benefit : feat.getBenefits()) {
+        sb.append("* ").append(benefit).append("\n");
+      }
+    }
+    return !sb.isEmpty() ? sb.toString() : null;
   }
 
   private SyncResultDto buildAlreadyInProgressResult(String taskId) {
@@ -175,6 +252,7 @@ public class DndFeatService {
   public List<DndFeatResponse> getAllFeats() {
     List<DndFeat> feats = featRepository.findAll();
     return feats.stream()
-        .map(featMapper::toDto).toList();
+        .map(featMapper::toDto)
+        .toList();
   }
 }

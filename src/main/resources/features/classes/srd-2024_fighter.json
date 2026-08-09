@@ -1,0 +1,154 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_fighter",
+  "features": [
+    {
+      "key": "fighter_class_features_l1",
+      "name": "Fighter Class Features",
+      "description": "As a fighter, you gain the following class features.",
+      "gainedAtLevel": 1,
+      "prerequisite": null,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d10"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT",
+            "multiclass": false
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM",
+            "multiclass": false
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "HEAVY",
+            "multiclass": false
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD",
+            "multiclass": false
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE",
+            "multiclass": false
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL",
+            "multiclass": false
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "STR"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CON"
+          },
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "fighter_skill_pick",
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "fighter_skill_pick",
+          "displayOrder": 10
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_skill_pick",
+          "name": "Fighter Skill Proficiencies",
+          "description": "Choose two skills from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, or Survival.",
+          "chooseCount": 2,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "INTIMIDATION",
+              "PERCEPTION",
+              "SURVIVAL"
+            ]
+          },
+          "displayOrder": 0
+        }
+      ]
+    },
+    {
+      "key": "fighter_second_wind",
+      "name": "Second Wind",
+      "description": "You have a limited well of stamina you can draw on to protect yourself...",
+      "gainedAtLevel": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "second_wind",
+            "displayName": "Second Wind",
+            "usesFormula": {
+              "perClassLevel": {
+                "1": 1,
+                "6": 2,
+                "14": 3
+              }
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Second Wind",
+            "description": "Regain 1d10 + fighter level HP.",
+            "resourceKey": "second_wind",
+            "uses": null,
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-resource",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "resourceKey",
+    "displayName",
+    "usesFormula",
+    "refresh"
+  ],
+  "properties": {
+    "resourceKey": {
+      "type": "string",
+      "minLength": 1
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "usesFormula": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "base": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "abilityMod": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "STR",
+            "DEX",
+            "CON",
+            "INT",
+            "WIS",
+            "CHA",
+            null
+          ]
+        },
+        "classLevel": {
+          "type": "boolean"
+        },
+        "perClassLevel": {
+          "type": "object",
+          "patternProperties": {
+            "^[0-9]+$": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    },
+    "refresh": {
+      "type": "string",
+      "enum": [
+        "SHORT",
+        "LONG",
+        "DAWN",
+        "NONE"
+      ]
+    }
+  }
+}

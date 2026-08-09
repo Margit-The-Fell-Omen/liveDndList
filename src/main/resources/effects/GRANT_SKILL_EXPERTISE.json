@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grant-skill-expertise",
+  "type": "object",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "required": [
+        "skill"
+      ],
+      "properties": {
+        "skill": {
+          "type": "string",
+          "enum": [
+            "ACROBATICS",
+            "ANIMAL_HANDLING",
+            "ARCANA",
+            "ATHLETICS",
+            "DECEPTION",
+            "HISTORY",
+            "INSIGHT",
+            "INTIMIDATION",
+            "INVESTIGATION",
+            "MEDICINE",
+            "NATURE",
+            "PERCEPTION",
+            "PERFORMANCE",
+            "PERSUASION",
+            "RELIGION",
+            "SLEIGHT_OF_HAND",
+            "STEALTH",
+            "SURVIVAL"
+          ]
+        }
+      }
+    },
+    {
+      "required": [],
+      "properties": {
+        "skill": {
+          "type": "null"
+        }
+      },
+      "description": "Skill will be resolved via feature_effects.choice_key"
+    }
+  ]
+}
