@@ -50,7 +50,6 @@ class Open5eBackgroundServiceTest {
   private SyncMetrics syncMetrics;
   @Mock
   private FeatureUpsertHelper featureUpsertHelper;
-
   @Mock
   private FeatureCatalogService featureCatalogService;
 
@@ -112,9 +111,6 @@ class Open5eBackgroundServiceTest {
 
   @Test
   void syncAllBackgroundsShouldHandlePaginationAndCreateNew() {
-    // Pagination is now handled entirely inside apiClient.fetchAll().
-    // The service receives all results in a single list — we just return
-    // the combined items that would have come from both pages.
     mockFetchAll(List.of(sampleDto));
     when(backgroundRepository.findByKey(anyString())).thenReturn(Optional.empty());
     when(backgroundMapper.toEntity(any())).thenReturn(sampleEntity);

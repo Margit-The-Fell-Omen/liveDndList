@@ -1,5 +1,5 @@
 name: Deploy to Dev Environment
-# NOTE: DO NOT FORGET ABOUT SECRETS IF MIGRATING TO OTHER SERVERS
+
 on:
   push:
     branches:
@@ -9,5 +9,3 @@ jobs:
   call-build-and-test:
     name: Build and Test
     uses: ./.github/workflows/build-and-test.yml
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

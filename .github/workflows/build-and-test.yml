@@ -1,14 +1,11 @@
-name: Reusable Build, Test and Analyze
+name: Reusable Build and Test
 
 on:
   workflow_call:
-    secrets:
-      SONAR_TOKEN:
-        required: true
 
 jobs:
   build-and-test:
-    name: Build, Test and Analyze
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -23,13 +20,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Cache SonarQube packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -37,7 +27,5 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Build, test, and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Margit-The-Fell-Omen_liveDndList
+      - name: Build and test
+        run: mvn -B verify
