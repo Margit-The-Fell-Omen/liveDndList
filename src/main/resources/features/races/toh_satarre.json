@@ -1,0 +1,185 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_satarre",
+  "features": [
+    {
+      "key": "race_toh_satarre_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Constitution score increases by 2, and your Intelligence score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_size",
+      "name": "Size",
+      "description": "Satarre are tall but thin, from 6 to 7 feet tall with peculiar, segmented limbs. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_darkvision",
+      "name": "Darkvision",
+      "description": "Thanks to your dark planar parentage, you have superior vision in darkness. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_friend_to_death",
+      "name": "A Friend to Death",
+      "description": "You have resistance to necrotic damage.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "NECROTIC"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_keeper_of_secrets",
+      "name": "Keeper of Secrets",
+      "description": "You have proficiency in the Arcana skill, and you have advantage on Intelligence (Arcana) checks related to the planes and planar travel. In addition, you have proficiency in one of the following skills of your choice: History, Insight, and Religion.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ARCANA"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "satarre_bonus_skill",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "satarre_bonus_skill",
+          "name": "Bonus Skill",
+          "description": "Choose one: History, Insight, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "RELIGION"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_carrier_of_rot",
+      "name": "Carrier of Rot",
+      "description": "You can use your action to inflict rot on a creature you can see within 10 feet of you. The creature must make a Constitution saving throw (DC 8 + your Constitution modifier + your proficiency bonus). A creature takes 1d4 necrotic damage on a failed save (half on success), and rots for 1 minute, taking 1d4 necrotic damage at the end of each of its turns. Damage increases at 6th, 11th, and 16th level. Once used, you can't use this again until you complete a short or long rest.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Carrier of Rot",
+            "description": "Inflict rot on a creature within 10 ft. CON save. 1d4 necrotic on fail (half on success) + rot for 1 min (1d4/turn). Scales at levels 6, 11, 16.",
+            "uses": 1,
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_satarre_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and one of the following: Abyssal, Infernal, or Void Speech.",
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "satarre_dark_lang",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "satarre_dark_lang",
+          "name": "Dark Language",
+          "description": "Choose Abyssal, Infernal, or Void Speech.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "abyssal",
+              "infernal",
+              "void_speech"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

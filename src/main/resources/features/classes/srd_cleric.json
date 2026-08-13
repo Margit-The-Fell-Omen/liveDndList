@@ -1,0 +1,525 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_cleric",
+  "features": [
+    {
+      "key": "cls_srd_cleric_starting",
+      "name": "Cleric Starting Proficiencies",
+      "description": "As a cleric, you gain the following proficiencies:\n\n**Armor:** Light armor, medium armor, shields\n**Weapons:** Simple weapons\n**Saving Throws:** Wisdom, Charisma\n**Skills:** Choose two from History, Insight, Medicine, Persuasion, and Religion",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "cleric_skill_1",
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "cleric_skill_2",
+          "displayOrder": 8
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from History, Insight, Medicine, Persuasion, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "MEDICINE",
+              "PERSUASION",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "cleric_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from History, Insight, Medicine, Persuasion, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "MEDICINE",
+              "PERSUASION",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_spellcasting",
+      "name": "Spellcasting",
+      "description": "As a conduit for divine power, you can cast cleric spells. Wisdom is your spellcasting ability. The power of your spells comes from your devotion to your deity.\n\n**Spell save DC** = 8 + your proficiency bonus + your Wisdom modifier\n**Spell attack modifier** = your proficiency bonus + your Wisdom modifier\n\nYou prepare a number of cleric spells equal to your Wisdom modifier + your cleric level (minimum 1). You can change your prepared spells after a long rest. You can cast prepared cleric spells with the ritual tag as rituals. You can use a holy symbol as a spellcasting focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "WIS",
+            "casterType": "FULL",
+            "spellList": "cleric",
+            "ritualCasting": true,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "PREPARED_SPELLS_COUNT",
+          "payload": {
+            "formula": {
+              "classLevel": true,
+              "abilityMod": "WIS",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_divine-domain",
+      "name": "Divine Domain",
+      "description": "Choose one domain related to your deity, such as Life. Your choice grants you domain spells and other features when you choose it at 1st level. It also grants you additional ways to use Channel Divinity when you gain that feature at 2nd level, and additional benefits at 6th, 8th, and 17th levels.\n\nEach domain has a list of domain spells that you always have prepared, without counting against the number of spells you can prepare each day.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_channel-divinity",
+      "name": "Channel Divinity",
+      "description": "At 2nd level, you gain the ability to channel divine energy directly from your deity. You start with two such effects: Turn Undead and an effect determined by your domain.\n\nWhen you use your Channel Divinity, you choose which effect to create. You must then finish a short or long rest to use your Channel Divinity again.\n\nChannel Divinity effects that require saving throws use your cleric spell save DC.\n\nUses: 1 at 2nd level, 2 at 6th level, 3 at 18th level. Regain expended uses on a short or long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "channel_divinity",
+            "displayName": "Channel Divinity",
+            "usesFormula": {
+              "perClassLevel": {
+                "2": 1,
+                "6": 2,
+                "18": 3
+              }
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Channel Divinity: Turn Undead",
+            "description": "As an action, present your holy symbol and speak a prayer. Each undead within 30 ft that can see or hear you must make a WIS save or be turned for 1 minute (or until it takes damage). Turned creatures must move away, can't take reactions, and can only Dash or Dodge.",
+            "resourceKey": "channel_divinity"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "cleric_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_destroy-undead",
+      "name": "Destroy Undead",
+      "description": "Starting at 5th level, when an undead fails its saving throw against your Turn Undead feature, the creature is instantly destroyed if its challenge rating is at or below a certain threshold:\n\n- 5th level: CR 1/2 or lower\n- 8th level: CR 1 or lower\n- 11th level: CR 2 or lower\n- 14th level: CR 3 or lower\n- 17th level: CR 4 or lower",
+      "gainedAtLevel": 5,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "cleric_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_divine-intervention",
+      "name": "Divine Intervention",
+      "description": "Beginning at 10th level, you can call on your deity to intervene on your behalf when your need is great.\n\nAs an action, describe the assistance you seek, and roll percentile dice. If you roll a number equal to or lower than your cleric level, your deity intervenes. The GM chooses the nature of the intervention.\n\nIf your deity intervenes, you can't use this feature again for 7 days. Otherwise, you can use it again after you finish a long rest.\n\nAt 20th level, your call for intervention succeeds automatically, no roll required.",
+      "gainedAtLevel": 10,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Divine Intervention",
+            "description": "Call on your deity to intervene. Roll percentile dice; succeed on a number ≤ your cleric level. GM chooses the intervention. On success, unusable for 7 days. On failure, unusable until long rest. Auto-succeeds at level 20."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "cleric_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "cleric_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_cleric_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "cleric_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    }
+  ]
+}

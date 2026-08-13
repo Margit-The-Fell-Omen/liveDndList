@@ -1,0 +1,477 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_warlock",
+  "features": [
+    {
+      "key": "cls_srd-2024_warlock_starting",
+      "name": "Warlock Starting Traits",
+      "description": "**Primary Ability:** Charisma\n**Hit Point Die:** d8 per Warlock level\n**Saving Throw Proficiencies:** Wisdom and Charisma\n**Skill Proficiencies:** Choose 2 from Arcana, Deception, History, Intimidation, Investigation, Nature, or Religion\n**Weapon Proficiencies:** Simple weapons\n**Armor Training:** Light armor\n**Starting Equipment:** Choose A or B: (A) Leather Armor, Sickle, 2 Daggers, Arcane Focus (orb), Book (occult lore), Scholar's Pack, and 15 GP; or (B) 100 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "warlock_2024_skill_1",
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "warlock_2024_skill_2",
+          "displayOrder": 6
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose from Arcana, Deception, History, Intimidation, Investigation, Nature, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "DECEPTION",
+              "HISTORY",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "NATURE",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "warlock_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "DECEPTION",
+              "HISTORY",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "NATURE",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_eldritch-invocations",
+      "name": "Eldritch Invocations",
+      "description": "You have unearthed Eldritch Invocations, pieces of forbidden knowledge that imbue you with an abiding magical ability. You gain one invocation of your choice, such as Pact of the Tome.\n\nInvocation count scales with level: 1 (L1), 3 (L2), 5 (L5), 6 (L7), 7 (L9-10), 8 (L12), 9 (L15), 10 (L18). Whenever you gain a Warlock level, you can replace one invocation with another you qualify for.\n\nPact Boon invocations (Pact of the Blade, Pact of the Chain, Pact of the Tome) are among your options.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_pact-magic",
+      "name": "Pact Magic",
+      "description": "Through occult ceremony, you have formed a pact with a mysterious entity to gain magical powers. Charisma is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Charisma modifier\n**Spell attack modifier** = your proficiency bonus + your Charisma modifier\n\nAll Pact Magic spell slots are the same level, scaling with warlock level: 1st (L1-2), 2nd (L3-4), 3rd (L5-6), 4th (L7-8), 5th (L9+).\n\n**Slot count:** 1 (L1), 2 (L2-10), 3 (L11-16), 4 (L17+).\n**Prepared Spells:** Fixed by class table, starting at 2 (L1), scaling to 15 (L20).\n\nYou regain all expended Pact Magic spell slots on a **Short or Long Rest**. You can use an Arcane Focus as a Spellcasting Focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "CHA",
+            "casterType": "PACT",
+            "spellList": "warlock",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 1
+              },
+              "2": {
+                "1": 2
+              },
+              "3": {
+                "2": 2
+              },
+              "4": {
+                "2": 2
+              },
+              "5": {
+                "3": 2
+              },
+              "6": {
+                "3": 2
+              },
+              "7": {
+                "4": 2
+              },
+              "8": {
+                "4": 2
+              },
+              "9": {
+                "5": 2
+              },
+              "10": {
+                "5": 2
+              },
+              "11": {
+                "5": 3
+              },
+              "12": {
+                "5": 3
+              },
+              "13": {
+                "5": 3
+              },
+              "14": {
+                "5": 3
+              },
+              "15": {
+                "5": 3
+              },
+              "16": {
+                "5": 3
+              },
+              "17": {
+                "5": 4
+              },
+              "18": {
+                "5": 4
+              },
+              "19": {
+                "5": 4
+              },
+              "20": {
+                "5": 4
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_magical-cunning",
+      "name": "Magical Cunning",
+      "description": "You can perform an esoteric rite for 1 minute. At the end of it, you regain expended Pact Magic spell slots but no more than a number equal to half your maximum (round up). Once you use this feature, you can't do so again until you finish a Long Rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "magical_cunning",
+            "displayName": "Magical Cunning",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_warlock-subclass",
+      "name": "Warlock Subclass",
+      "description": "You gain a Warlock subclass of your choice. The Fiend Patron subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "warlock_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "warlock_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_contact-patron",
+      "name": "Contact Patron",
+      "description": "You always have the *Contact Other Plane* spell prepared. With this feature, you can cast the spell without expending a spell slot to contact your patron, and you automatically succeed on the spell's saving throw.\n\nOnce you cast the spell with this feature, you can't do so in this way again until you finish a Long Rest.",
+      "gainedAtLevel": 9,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "contact_patron",
+            "displayName": "Contact Patron",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_mystic-arcanum-6th",
+      "name": "Mystic Arcanum (6th level)",
+      "description": "Your patron grants you a magical secret. Choose one level 6 Warlock spell as this arcanum. You can cast it once without expending a spell slot, then must finish a Long Rest before casting it this way again.",
+      "gainedAtLevel": 11,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_6th",
+            "displayName": "Mystic Arcanum (6th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "warlock_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_mystic-arcanum-7th",
+      "name": "Mystic Arcanum (7th level)",
+      "description": "Choose one level 7 Warlock spell. Cast once without slot, regain on Long Rest.",
+      "gainedAtLevel": 13,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_7th",
+            "displayName": "Mystic Arcanum (7th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_mystic-arcanum-8th",
+      "name": "Mystic Arcanum (8th level)",
+      "description": "Choose one level 8 Warlock spell. Cast once without slot, regain on Long Rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_8th",
+            "displayName": "Mystic Arcanum (8th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "warlock_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_mystic-arcanum-9th",
+      "name": "Mystic Arcanum (9th level)",
+      "description": "Choose one level 9 Warlock spell. Cast once without slot, regain on Long Rest.",
+      "gainedAtLevel": 17,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_9th",
+            "displayName": "Mystic Arcanum (9th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Fate is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "warlock_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_warlock_eldritch-master",
+      "name": "Eldritch Master",
+      "description": "When you use your Magical Cunning feature, you regain all your expended Pact Magic spell slots.",
+      "gainedAtLevel": 20,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

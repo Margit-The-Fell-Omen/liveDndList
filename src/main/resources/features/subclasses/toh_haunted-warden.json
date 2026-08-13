@@ -1,0 +1,102 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_haunted-warden",
+  "features": [
+    {
+      "key": "sub_toh_haunted-warden_haunted-warden-magic",
+      "name": "Haunted Warden Magic",
+      "description": "You learn additional spells at certain ranger levels (don't count against spells known):\n\n| Ranger Level | Spells |\n|---|---|\n| 3rd | false life |\n| 5th | invisibility |\n| 9th | speak with dead |\n| 13th | death ward |\n| 17th | dispel evil and good |",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_haunted-warden_spirit-usher",
+      "name": "Spirit Usher",
+      "description": "At 3rd level, you gain an undead spirit companion (Spirit Usher stat block). It is friendly, obeys commands, shares your initiative, and acts after yours. Direct it as bonus action (Attack, Dash, Disengage, Help, Hide, Search). Otherwise it Dodges (or any action of its choice if you're incapacitated).\n\nIt learns 3 cantrips you choose: one from (chill touch, ray of frost, sacred flame, vicious mockery), one from (druidcraft, prestidigitation, thaumaturgy), one from (dancing lights, message, minor illusion). Change cantrips on long rest.\n\nWhen it dies, it retreats to the Ethereal Plane and returns when you finish a long rest. Expend a 1st level+ spell slot (action) to revive it after 1 minute within the last hour.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_haunted-warden_beyond-the-pale",
+      "name": "Beyond the Pale",
+      "description": "Starting at 3rd level, as a bonus action, see into the Ethereal Plane for 1 minute. Ethereal creatures and objects appear ghostly and translucent. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "beyond_the_pale",
+            "displayName": "Beyond the Pale",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Beyond the Pale",
+            "description": "See into the Ethereal Plane for 1 minute. Ethereal creatures appear ghostly and translucent.",
+            "resourceKey": "beyond_the_pale"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_haunted-warden_merge-spirit",
+      "name": "Merge Spirit",
+      "description": "Starting at 7th level, as an action, cause your spirit usher to join its essence with you for 1 minute. While merged: gain spirit's Ethereal Sight, interact with creatures/objects on both Ethereal and Material Planes, and gain spirit's damage resistances and immunities.\n\nUsing again before a rest causes 1 level of exhaustion.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_haunted-warden_guardian-geist",
+      "name": "Guardian Geist",
+      "description": "At 11th level, when damage would reduce you to 0 HP, use your reaction to call your spirit usher. It teleports to within 5 ft and takes half the damage dealt to you. When your spirit usher dies, you have advantage on attack rolls until the end of your next turn.",
+      "gainedAtLevel": 11,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Guardian Geist",
+            "description": "When damage would reduce you to 0 HP, call your spirit usher: it teleports adjacent and takes half that damage."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_haunted-warden_true-psychopomp",
+      "name": "True Psychopomp",
+      "description": "At 15th level, you can use Merge Spirit as a bonus action instead of an action. When merged, you also gain the spirit's Incorporeal Movement trait and Etherealness action, and you count as undead for purposes of spells and magical effects.",
+      "gainedAtLevel": 15,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

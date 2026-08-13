@@ -1,0 +1,85 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_familiar-master",
+  "features": [
+    {
+      "key": "sub_toh_familiar-master_familiar-savant",
+      "name": "Familiar Savant",
+      "description": "Beginning at 2nd level, you innately know *find familiar* (no spellbook or preparation needed). Cast it as an action with no material components. Cast without a slot a number of times equal to proficiency bonus; regain all on long rest.\n\nYour familiar can be any Small or smaller beast CR 1/4 or lower (celestial, fey, or fiend type). At 6th level: CR 1 or lower, or any Tiny celestial/dragon/fey/fiend CR 1 or lower (GM discretion).",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "familiar_savant_free_cast",
+            "displayName": "Find Familiar (Free Cast)",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_familiar-master_greater-familiar",
+      "name": "Greater Familiar",
+      "description": "Also at 2nd level, your familiar gains enhanced statistics:\n\n* AC: adds your proficiency bonus. Saves/checks: uses your proficiency bonus and proficiencies.\n* HP: max(normal, 1 + INT mod + 3 × wizard level). Hit Dice = wizard level (d4s).\n* Combat: shares your initiative, acts after you. Bonus action to direct (Attack, Dash, Disengage, Help, Hide, Search).\n* Attacks: uses your spell attack bonus if higher. Hits deal 1d4 + STR/DEX mod + prof bonus force damage (plus any additional damage/effects from beast form).\n* Intelligence: minimum 8. Speaks Common + one language based on type (Celestial/Sylvan/Abyssal or Infernal).",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_familiar-master_strengthened-bond",
+      "name": "Strengthened Bond",
+      "description": "Starting at 6th level, if your familiar forces saving throws, it uses your spell save DC. You can access its senses as an action or bonus action. While within 100 ft, your familiar can use its reaction to deliver any wizard spell you cast (you must share its senses first if the spell has a range of 5+ ft). You use your statistics for attack rolls, ability checks, and saving throws.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_familiar-master_arcane-amplification",
+      "name": "Arcane Amplification",
+      "description": "Starting at 10th level, add your INT modifier to one damage roll of any wizard spell cast through your familiar. Your familiar also has advantage on saves against spells and magical effects.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_familiar-master_companion-concentration",
+      "name": "Companion Concentration",
+      "description": "Starting at 14th level, when concentrating on a spell of 3rd level or lower, as an action pass the concentration to your familiar, freeing you to concentrate on a different spell. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "companion_concentration",
+            "displayName": "Companion Concentration",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

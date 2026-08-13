@@ -1,0 +1,110 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_gnome-chassis",
+  "features": [
+    {
+      "key": "subrace_toh_gnome-chassis_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_gnome-chassis_size",
+      "name": "Size (Gnome Chassis)",
+      "description": "Your size is Small.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "SMALL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_gnome-chassis_speed",
+      "name": "Speed (Gnome Chassis)",
+      "description": "Your base walking speed is 25 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 25,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_gnome-chassis_mental_fortitude",
+      "name": "Mental Fortitude",
+      "description": "Choose Intelligence, Wisdom, or Charisma. You have advantage on saving throws made with that ability score against magic.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "gnome_chassis_fortitude"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gnome_chassis_fortitude",
+          "name": "Fortitude Ability",
+          "description": "Choose Intelligence, Wisdom, or Charisma.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "INT",
+              "WIS",
+              "CHA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_gnome-chassis_quick_fix",
+      "name": "Quick Fix",
+      "description": "When you are below half your hit point maximum, you can use a bonus action to apply a quick patch up. You gain temporary hit points equal to your proficiency bonus. Regain on short or long rest.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Quick Fix",
+            "description": "Gain temp HP equal to proficiency bonus. Only when below half max HP.",
+            "uses": 1,
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_gnome-chassis_language",
+      "name": "Race Chassis Language",
+      "description": "Gnomish (via Race Chassis).",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "gnomish"
+          }
+        }
+      ]
+    }
+  ]
+}

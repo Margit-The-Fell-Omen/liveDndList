@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_parfumier",
+  "features": [
+    {
+      "key": "bg_toh_parfumier_skills",
+      "name": "Parfumier Skill Proficiencies",
+      "description": "Skill Proficiencies: Perception, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_parfumier_tools",
+      "name": "Parfumier Tool Proficiencies",
+      "description": "Tool Proficiencies: Alchemist's Supplies, Herbalism Kit",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "alchemists_supplies"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "herbalism_kit"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_parfumier_feature",
+      "name": "Nose for Trade",
+      "description": "You can identify rare perfumes, incenses, and scented substances by smell alone. You know the great houses of parfumery and their customers. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

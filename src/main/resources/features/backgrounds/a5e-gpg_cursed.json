@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-gpg_cursed",
+  "features": [
+    {
+      "key": "bg_a5e-gpg_cursed_skills",
+      "name": "Cursed Skill Proficiencies",
+      "description": "Skill Proficiencies: Arcana, Insight",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ARCANA"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-gpg_cursed_language",
+      "name": "Cursed Language",
+      "description": "One language of your choice, often a language of the planes.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_cursed_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_cursed_lang",
+          "name": "Language",
+          "description": "Choose one language (Abyssal, Infernal, Celestial, or similar).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-gpg_cursed_feature",
+      "name": "Marked by Curse",
+      "description": "You bear a curse—magical, hereditary, or divine—that manifests in subtle ways. You have insight into curses and their nature. TODO: verify against A5E GPG book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

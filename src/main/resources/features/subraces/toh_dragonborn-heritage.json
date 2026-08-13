@@ -1,0 +1,38 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_dragonborn-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_dragonborn-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dragonborn-heritage_corrupted_bite",
+      "name": "Corrupted Bite",
+      "description": "As a bonus action, you breathe necrotic energy onto your fangs and make one bite attack. If the attack hits, it deals extra necrotic damage equal to your level. Regain on long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Corrupted Bite",
+            "description": "Necrotic bite dealing extra damage equal to your level on hit.",
+            "uses": 1,
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

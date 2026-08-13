@@ -1,0 +1,90 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_dawn-blade",
+  "features": [
+    {
+      "key": "sub_toh_dawn-blade_eyes-of-the-dawn",
+      "name": "Eyes of the Dawn",
+      "description": "At 3rd level, you gain darkvision out to 60 feet. If you already have darkvision, the range increases by 30 feet.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_dawn-blade_dawn-strike",
+      "name": "Dawn Strike",
+      "description": "Starting at 3rd level, when you deal damage with your Sneak Attack, you can magically change the extra damage to radiant damage. When you hit an undead or creature of shadow with such a Sneak Attack, you deal an extra 1d6 radiant damage.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_dawn-blade_radiant-beam",
+      "name": "Radiant Beam",
+      "description": "Beginning at 3rd level, when you deal radiant damage with a melee weapon attack, you can use a bonus action to fire a radiant beam at a different creature within 30 ft. Make a ranged spell attack (proficient, no disadvantage from being within 5 ft of the first creature). On a hit: 1d6 radiant damage (2d6 at 10th level).",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Radiant Beam",
+            "description": "After dealing radiant damage in melee: ranged spell attack vs a different creature within 30 ft. Hit: 1d6 radiant (2d6 at L10). No disadvantage from adjacency."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_dawn-blade_bolstering-light",
+      "name": "Bolstering Light",
+      "description": "Starting at 9th level, when you reduce a creature to 0 HP with radiant damage, choose one:\n\n* Gain temporary HP equal to twice your rogue level for 1 hour.\n* End one condition affecting you (blinded, deafened, or poisoned).\n* End one curse affecting you.\n* End one disease affecting you.",
+      "gainedAtLevel": 9,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_dawn-blade_sudden-illumination",
+      "name": "Sudden Illumination",
+      "description": "At 13th level, when you hit a creature with your Radiant Beam, it must succeed on a CON save (DC 8 + prof + WIS mod) or be blinded until the end of its next turn.",
+      "gainedAtLevel": 13,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_dawn-blade_dawn-flare",
+      "name": "Dawn Flare",
+      "description": "At 17th level, when you use Dawn Strike to deal radiant damage to a creature that can't see you, it must make a CON save (DC 8 + prof + WIS mod). On failure: 10d6 radiant damage and it can't regain HP until the start of your next turn. Immune to your Dawn Flare for 24 hours after being hit.",
+      "gainedAtLevel": 17,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

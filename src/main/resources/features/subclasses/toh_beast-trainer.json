@@ -1,0 +1,87 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_beast-trainer",
+  "features": [
+    {
+      "key": "sub_toh_beast-trainer_beast-whisperer",
+      "name": "Beast Whisperer",
+      "description": "Starting at 3rd level, you gain proficiency in Animal Handling. If already proficient, your proficiency bonus is doubled for Animal Handling checks.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ANIMAL_HANDLING"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_beast-trainer_trained-animals",
+      "name": "Trained Animals",
+      "description": "Beginning at 3rd level, you gain a beast companion (Medium or smaller, CR 1/4 or lower). It's friendly, obeys commands, shares your initiative, and acts after your turn. Direct it as a bonus action (Attack, Dash, Disengage, Help, Hide, Search). Otherwise it Dodges.\n\nAt 7th level, you can have multiple trained animals with combined CR up to 1/4 your level. Direct all with a bonus action (same action) or action (different actions). If a trained animal dies, expend a 1st level+ spell slot to revive it after 1 minute with full HP.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_beast-trainer_bestial-flanker",
+      "name": "Bestial Flanker",
+      "description": "At 7th level, when you hit a creature, you can choose one trained animal within 30 ft. If it attacks that creature before your next turn, it has advantage on its first attack roll. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "bestial_flanker",
+            "displayName": "Bestial Flanker",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_beast-trainer_bred-for-battle",
+      "name": "Bred for Battle",
+      "description": "Starting at 11th level, add half your proficiency bonus to each trained animal's AC, attack rolls, damage rolls, saving throws, and proficient skills. Increase each trained animal's HP maximum by twice your proficiency bonus. You can now choose Large and smaller beasts as trained animals.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_beast-trainer_primal-whirlwind",
+      "name": "Primal Whirlwind",
+      "description": "At 15th level, when you command trained animals to use the Attack action, you can choose one to attack all creatures within 5 ft of it (one attack each). Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "primal_whirlwind",
+            "displayName": "Primal Whirlwind",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "tdcs_crime-syndicate-member",
+  "features": [
+    {
+      "key": "bg_tdcs_crime-syndicate-member_skills",
+      "name": "Crime Syndicate Member Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Intimidation",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INTIMIDATION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_crime-syndicate-member_tools",
+      "name": "Crime Syndicate Tool Proficiencies",
+      "description": "Tool Proficiencies: Thieves' Tools, one type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "tdcs_crime_gaming",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tdcs_crime_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_crime-syndicate-member_feature",
+      "name": "Syndicate Contacts",
+      "description": "You have connections in a crime syndicate. Members of your syndicate will offer aid, safehouses, or information—but you owe favors in return. TODO: verify against TDCS book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

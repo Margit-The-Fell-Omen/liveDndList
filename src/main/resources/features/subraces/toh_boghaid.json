@@ -1,0 +1,92 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_boghaid",
+  "features": [
+    {
+      "key": "subrace_toh_boghaid_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Wisdom score increases by 2, and your Constitution score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_boghaid_highlander",
+      "name": "Highlander",
+      "description": "You are adapted to life at high altitudes, and you suffer no ill effects or penalties from elevations above 8,000 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_boghaid_storied_culture",
+      "name": "Storied Culture",
+      "description": "You have proficiency in the Performance skill, and you gain proficiency with one of the following musical instruments: bagpipes, drum, horn, or shawm.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERFORMANCE"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "boghaid_instrument",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "boghaid_instrument",
+          "name": "Musical Instrument",
+          "description": "Choose bagpipes, drum, horn, or shawm.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "bagpipes",
+              "drum",
+              "horn",
+              "shawm"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_boghaid_wooly",
+      "name": "Wooly",
+      "description": "Your thick, wooly coat of hair keeps you warm, allowing you to function in cold weather without special clothing or gear. You have advantage on saving throws against spells and other effects that deal cold damage.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

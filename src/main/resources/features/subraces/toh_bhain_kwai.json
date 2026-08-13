@@ -1,0 +1,57 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_bhain-kwai",
+  "features": [
+    {
+      "key": "subrace_toh_bhain-kwai_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Constitution score increases by 2, and your Strength score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_bhain-kwai_strong_back",
+      "name": "Strong Back",
+      "description": "Your carrying capacity is your Strength score multiplied by 20, instead of by 15.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_bhain-kwai_wetland_dweller",
+      "name": "Wetland Dweller",
+      "description": "You are adapted to your home terrain. Difficult terrain composed of mud or from wading through water up to waist deep doesn't cost you extra movement. You have a swimming speed of 25 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SPEED_TYPE",
+          "payload": {
+            "speedType": "SWIM",
+            "value": 25
+          }
+        }
+      ]
+    }
+  ]
+}

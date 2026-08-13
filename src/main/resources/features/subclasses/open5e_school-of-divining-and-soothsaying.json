@@ -1,0 +1,95 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_school-of-divining-and-soothsaying",
+  "features": [
+    {
+      "key": "sub_open5e_school-of-divining-and-soothsaying_expert-diviner",
+      "name": "Expert Diviner",
+      "description": "Starting at 2nd level, you only need to spend half as much time and gold as normal to copy a divination spell into your spellbook.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-divining-and-soothsaying_premonition",
+      "name": "Premonition",
+      "description": "Also at 2nd level, after finishing a long rest, roll two d20s and record the results. Before your next long rest, when you or a visible creature is about to make an ability check, attack roll, or saving throw, you can replace the roll with one of your premonition results. Once per turn only. Unused results are lost.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-divining-and-soothsaying_soothsaying-savant",
+      "name": "Soothsaying Savant",
+      "description": "Starting at 6th level, when you cast a divination spell of 2nd level+ using a spell slot, you regain one expended spell slot of lower level (below 6th) than the slot used.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-divining-and-soothsaying_extrasensory-perception",
+      "name": "Extrasensory Perception",
+      "description": "Beginning at 10th level, you can choose one of the following benefits until a short or long rest or you are incapacitated. 1/short or long rest.\n\n**Ether Sight.** See creatures/objects on the Ethereal Plane up to 60 ft.\n**Script Sight.** Comprehend writing in any language.\n**Shadow Sight.** Gain darkvision 60 ft (or extend existing to 60 ft).\n**Unseen Sight.** See invisible creatures/objects within 10 ft in line of sight.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "extrasensory_perception",
+            "displayName": "Extrasensory Perception",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "diviner_extrasensory",
+          "name": "Extrasensory Perception",
+          "description": "Choose Ether Sight, Script Sight, Shadow Sight, or Unseen Sight.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ETHER_SIGHT",
+              "SCRIPT_SIGHT",
+              "SHADOW_SIGHT",
+              "UNSEEN_SIGHT"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-divining-and-soothsaying_premonition-addition",
+      "name": "Premonition Addition",
+      "description": "Beginning at 14th level, you roll and record three d20s for your Premonition feature instead of two.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

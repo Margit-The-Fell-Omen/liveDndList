@@ -1,0 +1,81 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_wyrd-magic",
+  "features": [
+    {
+      "key": "sub_open5e_wyrd-magic_flood-of-chaos",
+      "name": "Flood of Chaos",
+      "description": "Beginning at 1st level, after you cast a sorcerer spell that is not a cantrip, the GM can ask you to roll 1d20. On a 1, roll 1d100 on the Flood of Chaos table to determine a random magical effect. A Flood of Chaos can happen at most once per turn. Spells forced by this table cast without Metamagic and without requiring concentration for their full duration.\n\nSee the full Flood of Chaos table (d100 results 01–100) for effects ranging from healing to transformation, random teleportation, summoned creatures, extra actions, altered sizes, and much more.",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_wyrd-magic_wyrd-weaver",
+      "name": "Wyrd Weaver",
+      "description": "Also beginning at 1st level, you can weave the possibilities of fate to gain advantage on a single ability check, attack roll, or saving throw. After using this feature, you cannot do so again until after a long rest. However, you immediately regain use of it if the GM has you roll on the Flood of Chaos table for casting a 1st level+ sorcerer spell.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "wyrd_weaver",
+            "displayName": "Wyrd Weaver",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_wyrd-magic_tip-the-scales-of-fate",
+      "name": "Tip the Scales of Fate",
+      "description": "At 6th level, when you see another creature make an ability check, attack roll, or saving throw, you can use 2 sorcery points as a reaction to roll 1d4. You choose to add or subtract the result from the creature's roll, after rolling but before effects occur.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Tip the Scales of Fate",
+            "description": "Spend 2 sorcery points: roll 1d4 and add or subtract from any creature's d20 roll (after roll, before effects)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_wyrd-magic_direct-the-flood-of-chaos",
+      "name": "Direct the Flood of Chaos",
+      "description": "Starting at 14th level, any time you roll on the Flood of Chaos table, you may roll twice and choose either result.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_wyrd-magic_magical-deluge",
+      "name": "Magical Deluge",
+      "description": "At 18th level, once per turn, after rolling damage from a spell, you may choose one die on which you rolled the maximum possible value. Roll that die again and add both results to the final damage total.",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

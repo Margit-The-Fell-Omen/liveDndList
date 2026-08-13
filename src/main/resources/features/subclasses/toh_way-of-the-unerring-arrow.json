@@ -1,0 +1,86 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_way-of-the-unerring-arrow",
+  "features": [
+    {
+      "key": "sub_toh_way-of-the-unerring-arrow_archery-training",
+      "name": "Archery Training",
+      "description": "When you choose this tradition at 3rd level, shortbows and longbows are monk weapons for you. Being within 5 ft of a hostile creature doesn't impose disadvantage on ranged attacks with them.\n\nWhen making an unarmed strike as part of Martial Arts or Flurry of Blows, you can choose for it to deal piercing damage (jabbing with an arrow).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortbow"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "longbow"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-unerring-arrow_flurry-of-deflection",
+      "name": "Flurry of Deflection",
+      "description": "At 3rd level, you gain additional reactions equal to your proficiency bonus, usable only for Deflect Missiles. If you reduce the ranged attack's damage to 0 and can fire the missile with a shortbow or longbow, spend 1 ki to make a ranged attack using the caught missile.\n\nAt 9th level, Deflect Missiles reduces damage by 2d10 + DEX modifier + monk level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-unerring-arrow_needle-eye-of-insight",
+      "name": "Needle Eye of Insight",
+      "description": "At 6th level, your shortbow and longbow attacks count as magical. When making a ranged attack with them, spend 1 ki to ignore half and three-quarters cover until the start of your next turn.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-unerring-arrow_steel-rain-blossom",
+      "name": "Steel Rain Blossom",
+      "description": "At 11th level, as an action, fire an arcing arrow at a point within normal range. It replicates into dozens of arrows. Each creature within 15 ft of that point: DEX save or take 2d6 + 1d6 per ki spent (max 3 ki) piercing damage (total cover = auto success).\n\nAlso, when you would make a bonus action unarmed strike via Martial Arts or Flurry of Blows, you can make a ranged shortbow or longbow attack instead.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Steel Rain Blossom",
+            "description": "Fire into a 15-ft radius within normal range: DEX save or 2d6 piercing (+1d6 per ki, max 3). Total cover = immune. Bonus action unarmed strikes can be replaced with ranged attacks."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-unerring-arrow_improbable-shot",
+      "name": "Improbable Shot",
+      "description": "At 17th level, when using Needle Eye of Insight, spend 3 ki to ignore all cover (arrow passes through solids) as long as you've seen the target within the last minute and it's within normal range.\n\nAlternatively, spend 5 ki to strike a target seen within the last minute that is now on a different plane or in an extradimensional space. 1/long rest for the planar version.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

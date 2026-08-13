@@ -1,0 +1,67 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_way-of-shadowdancing",
+  "features": [
+    {
+      "key": "sub_open5e_way-of-shadowdancing_magic-of-shadow",
+      "name": "Magic of Shadow",
+      "description": "At 3rd level, you can channel your ki to cast shadow spells. You learn the cantrip *minor illusion*. You can also use an action and spend 2 ki points to cast any of the following without material components: *darkness*, *darkvision*, *silence*, *pass without trace*.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_way-of-shadowdancing_dark-passage",
+      "name": "Dark Passage",
+      "description": "Starting at 6th level, as a bonus action you can teleport from your space to an unoccupied space you can see within 60 feet, as long as both spaces are in dim light or darkness. After using this ability, you gain advantage on your next melee attack until end of turn.",
+      "gainedAtLevel": 6,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Dark Passage",
+            "description": "Teleport up to 60 ft between dim light or darkness spaces. Gain advantage on your next melee attack this turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_way-of-shadowdancing_walk-unseen",
+      "name": "Walk Unseen",
+      "description": "Starting at 11th level, while in dim light or darkness, you can use an action to become invisible. You remain invisible until you are exposed to bright light, cast a spell, or make an attack.",
+      "gainedAtLevel": 11,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Walk Unseen",
+            "description": "While in dim light or darkness, become invisible until exposed to bright light, you attack, or cast a spell."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_way-of-shadowdancing_shadow-strike",
+      "name": "Shadow Strike",
+      "description": "When you reach 17th level, as a reaction, when a creature other than you hits a target within 5 feet of you with an attack, you may make a melee attack against the same target.",
+      "gainedAtLevel": 17,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Shadow Strike",
+            "description": "When an ally hits a creature within 5 ft of you, make a melee attack against the same target."
+          }
+        }
+      ]
+    }
+  ]
+}

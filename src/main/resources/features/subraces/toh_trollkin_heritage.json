@@ -1,0 +1,38 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_trollkin-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_trollkin-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_trollkin-heritage_regenerative_bite",
+      "name": "Regenerative Bite",
+      "description": "As an action, you can make a bite attack against a creature that isn't undead or a construct. On a hit, you regain hit points (minimum of 1) equal to half the amount of damage dealt. Regain on long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Regenerative Bite",
+            "description": "Bite non-undead/non-construct target. Regain HP equal to half damage dealt.",
+            "uses": 1,
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

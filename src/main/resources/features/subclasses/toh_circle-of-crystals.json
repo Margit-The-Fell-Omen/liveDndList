@@ -1,0 +1,80 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-crystals",
+  "features": [
+    {
+      "key": "toh_circle-of-crystals_resonant-crystal",
+      "name": "Resonant Crystal",
+      "description": "At 2nd level, create a spellcasting focus crystal. After each long rest, attune it to one harmonic frequency:\n\n- **Clarity:** Advantage vs frightened/charmed\n- **Cleansing:** Advantage vs poisoned + poison resistance\n- **Focus:** Advantage on concentration saves\n- **Healing:** +prof bonus HP when you cast healing spells\n- **Vitality:** Grant 2 × prof bonus temp HP to a creature within 30 ft when casting L1+ spells",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-crystals_crystalline-skin",
+      "name": "Crystalline Skin",
+      "description": "Starting at 6th level, when you take damage, use reaction to make your skin crystalline until end of next turn. Resistance to cold, radiant, and nonmagical B/P/S. Prof bonus uses/long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "crystalline_skin",
+            "displayName": "Crystalline Skin",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Crystalline Skin",
+            "description": "Resistance to cold, radiant, and nonmagical B/P/S until end of next turn.",
+            "resourceKey": "crystalline_skin"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-crystals_magical-resonance",
+      "name": "Magical Resonance",
+      "description": "At 10th level, as bonus action, recover one expended spell slot of 3rd level or lower from your resonant crystal. Loses harmonic frequency for 1 min. 1/long rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "magical_resonance",
+            "displayName": "Magical Resonance",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-crystals_crystalline-form",
+      "name": "Crystalline Form",
+      "description": "At 14th level, expend one Wild Shape use as bonus action to assume crystalline form for 1 min:\n- Resistance to cold, radiant, and nonmagical B/P/S\n- Advantage on saves vs spells/magic\n- Benefits of all five harmonic frequencies (choose Healing/Vitality targets per spell cast)",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

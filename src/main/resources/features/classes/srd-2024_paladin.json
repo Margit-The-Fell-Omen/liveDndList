@@ -1,0 +1,652 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_paladin",
+  "features": [
+    {
+      "key": "cls_srd-2024_paladin_starting",
+      "name": "Paladin Starting Traits",
+      "description": "**Primary Ability:** Strength and Charisma\n**Hit Point Die:** d10 per Paladin level\n**Saving Throw Proficiencies:** Wisdom and Charisma\n**Skill Proficiencies:** Choose 2 from Athletics, Insight, Intimidation, Medicine, Persuasion, or Religion\n**Weapon Proficiencies:** Simple and Martial weapons\n**Armor Training:** Light, Medium, and Heavy armor and Shields\n**Starting Equipment:** Choose A or B: (A) Chain Mail, Shield, Longsword, 6 Javelins, Holy Symbol, Priest's Pack, and 9 GP; or (B) 150 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d10"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "HEAVY"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "paladin_2024_skill_1",
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "paladin_2024_skill_2",
+          "displayOrder": 10
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Athletics, Insight, Intimidation, Medicine, Persuasion, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ATHLETICS",
+              "INSIGHT",
+              "INTIMIDATION",
+              "MEDICINE",
+              "PERSUASION",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "paladin_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the paladin skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ATHLETICS",
+              "INSIGHT",
+              "INTIMIDATION",
+              "MEDICINE",
+              "PERSUASION",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_lay-on-hands",
+      "name": "Lay on Hands",
+      "description": "Your blessed touch can heal wounds. You have a pool of healing power equal to five times your Paladin level that replenishes on a Long Rest.\n\nAs a Bonus Action, you can touch a creature (which could be yourself) and restore Hit Points from the pool. You can also expend 5 HP from the pool to remove the Poisoned condition.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "lay_on_hands",
+            "displayName": "Lay on Hands (HP Pool)",
+            "usesFormula": {
+              "perClassLevel": {
+                "1": 5,
+                "2": 10,
+                "3": 15,
+                "4": 20,
+                "5": 25,
+                "6": 30,
+                "7": 35,
+                "8": 40,
+                "9": 45,
+                "10": 50,
+                "11": 55,
+                "12": 60,
+                "13": 65,
+                "14": 70,
+                "15": 75,
+                "16": 80,
+                "17": 85,
+                "18": 90,
+                "19": 95,
+                "20": 100
+              }
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Lay on Hands",
+            "description": "Touch a creature to restore HP from pool (5 × paladin level). Or spend 5 HP to remove Poisoned condition.",
+            "resourceKey": "lay_on_hands"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_spellcasting",
+      "name": "Spellcasting",
+      "description": "You have learned to cast spells through prayer and meditation. Charisma is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Charisma modifier\n**Spell attack modifier** = your proficiency bonus + your Charisma modifier\n\n**Prepared Spells:** Fixed by class table. Starting at 2 at L1, scaling to 15 at L20. Chosen from the Paladin spell list. Changed after each Long Rest.\n\nYou can use a Holy Symbol as a Spellcasting Focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "CHA",
+            "casterType": "HALF",
+            "spellList": "paladin",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 2
+              },
+              "3": {
+                "1": 3
+              },
+              "4": {
+                "1": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 2
+              },
+              "7": {
+                "1": 4,
+                "2": 3
+              },
+              "8": {
+                "1": 4,
+                "2": 3
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_weapon-mastery",
+      "name": "Weapon Mastery",
+      "description": "Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency. Whenever you finish a Long Rest, you can change the kinds of weapons you chose.",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_fighting-style",
+      "name": "Fighting Style",
+      "description": "You gain a Fighting Style feat of your choice. Instead of choosing one of those feats, you can choose the Blessed Warrior option:\n\n**Blessed Warrior.** You learn two Cleric cantrips of your choice (Guidance and Sacred Flame recommended). The chosen cantrips count as Paladin spells for you, and Charisma is your spellcasting ability for them.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "paladin_2024_fighting_style_feat"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_fighting_style_feat",
+          "name": "Fighting Style Feat or Blessed Warrior",
+          "description": "Choose a Fighting Style feat or Blessed Warrior.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "FIGHTING_STYLE"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_paladins-smite",
+      "name": "Paladin's Smite",
+      "description": "You always have the *Divine Smite* spell prepared. In addition, you can cast it without expending a spell slot, but you must finish a Long Rest before you can cast it in this way again.",
+      "gainedAtLevel": 2,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "free_divine_smite",
+            "displayName": "Free Divine Smite",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_channel-divinity",
+      "name": "Channel Divinity",
+      "description": "You can channel divine energy directly from the Outer Planes. You start with one effect: Divine Sense. Other Paladin features give additional Channel Divinity options.\n\nUses: 2 (L3-10), 3 (L11+). Regain 1 use on Short Rest, all on Long Rest.\n\n**Divine Sense.** Bonus Action: detect Celestials, Fiends, and Undead within 60 ft for 10 minutes. Also detect consecrated/desecrated places.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "channel_divinity",
+            "displayName": "Channel Divinity",
+            "usesFormula": {
+              "perClassLevel": {
+                "3": 2,
+                "11": 3
+              }
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Channel Divinity: Divine Sense",
+            "description": "Detect Celestials, Fiends, and Undead within 60 ft for 10 minutes. Also detect consecrated/desecrated areas.",
+            "resourceKey": "channel_divinity"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_paladin-subclass",
+      "name": "Paladin Subclass",
+      "description": "You gain a Paladin subclass of your choice. The Oath of Devotion subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "paladin_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_extra-attack",
+      "name": "Extra Attack",
+      "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_faithful-steed",
+      "name": "Faithful Steed",
+      "description": "You can call on the aid of an otherworldly steed. You always have the *Find Steed* spell prepared.\n\nYou can also cast the spell once without expending a spell slot, and you regain the ability to do so when you finish a Long Rest.",
+      "gainedAtLevel": 5,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "free_find_steed",
+            "displayName": "Free Find Steed",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_aura-of-protection",
+      "name": "Aura of Protection",
+      "description": "You radiate a protective, unseeable aura in a 10-foot Emanation that originates from you. The aura is inactive while you have the Incapacitated condition.\n\nYou and your allies in the aura gain a bonus to saving throws equal to your Charisma modifier (minimum bonus of +1).",
+      "gainedAtLevel": 6,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "paladin_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_abjure-foes",
+      "name": "Abjure Foes",
+      "description": "As a Magic action, you can expend one use of Channel Divinity to overwhelm foes with awe. Target a number of creatures equal to your Charisma modifier (min 1) within 60 ft. Each target makes a WIS save or is Frightened for 1 minute or until it takes damage. While Frightened, it can do only one of the following on its turns: move, take an action, or take a Bonus Action.",
+      "gainedAtLevel": 9,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Abjure Foes",
+            "description": "Magic action using Channel Divinity. Target CHA mod creatures within 60 ft. WIS save or Frightened for 1 min.",
+            "resourceKey": "channel_divinity"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_aura-of-courage",
+      "name": "Aura of Courage",
+      "description": "You and your allies have Immunity to the Frightened condition while in your Aura of Protection. If a Frightened ally enters the aura, that condition has no effect on that ally while there.",
+      "gainedAtLevel": 10,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_radiant-strikes",
+      "name": "Radiant Strikes",
+      "description": "Your strikes now carry supernatural power. When you hit a target with an attack roll using a Melee weapon or an Unarmed Strike, the target takes an extra 1d8 Radiant damage.",
+      "gainedAtLevel": 11,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "paladin_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_restoring-touch",
+      "name": "Restoring Touch",
+      "description": "When you use Lay On Hands on a creature, you can also remove one or more of the following conditions from the creature: Blinded, Charmed, Deafened, Frightened, Paralyzed, or Stunned. You must expend 5 Hit Points from the healing pool for each condition you remove; those points don't also restore Hit Points.",
+      "gainedAtLevel": 14,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "paladin_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_aura-expansion",
+      "name": "Aura Expansion",
+      "description": "Your Aura of Protection is now a 30-foot Emanation.",
+      "gainedAtLevel": 18,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_paladin_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Truesight is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "paladin_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "paladin_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    }
+  ]
+}

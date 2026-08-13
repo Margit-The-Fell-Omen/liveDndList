@@ -1,0 +1,33 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_halfling-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_halfling-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_halfling-heritage_ill_fortune",
+      "name": "Ill Fortune",
+      "description": "Your uncanny halfling luck has taken a dark turn since your conversion to an undead creature. When a creature rolls a 20 on the d20 for an attack roll against you, the creature must reroll the attack and use the new roll. If the second attack roll misses you, the attacking creature takes necrotic damage equal to twice your Constitution modifier (minimum of 2).",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "srd-2024_soldier",
+  "features": [
+    {
+      "key": "bg_srd-2024_soldier_ability_scores",
+      "name": "Soldier Ability Scores",
+      "description": "Increase Strength, Dexterity, and Constitution by a total of +3.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "soldier_asi",
+          "displayOrder": 0
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "soldier_asi",
+          "name": "Ability Score Allocation",
+          "description": "Distribute +2/+1 or +1/+1/+1 among Strength, Dexterity, Constitution.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "STR",
+              "DEX",
+              "CON"
+            ],
+            "distributions": [
+              "2_1",
+              "1_1_1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_soldier_feat",
+      "name": "Soldier Feat: Savage Attacker",
+      "description": "You gain the Savage Attacker feat.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {
+            "featKey": "srd-2024_savage-attacker"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_soldier_skills",
+      "name": "Soldier Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Intimidation",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INTIMIDATION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_soldier_tool",
+      "name": "Soldier Tool Proficiency",
+      "description": "Tool Proficiency: Gaming Set (your choice)",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "soldier_gaming_set"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "soldier_gaming_set",
+          "name": "Gaming Set",
+          "description": "Choose one type of Gaming Set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_soldier_equipment",
+      "name": "Soldier Starting Equipment",
+      "description": "Choose A or B: (A) Spear, Shortbow, 20 Arrows, Gaming Set, Healer's Kit, Quiver, Traveler's Clothes, 14 GP; or (B) 50 GP.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,612 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_monk",
+  "features": [
+    {
+      "key": "cls_srd-2024_monk_starting",
+      "name": "Monk Starting Traits",
+      "description": "**Primary Ability:** Dexterity and Wisdom\n**Hit Point Die:** d8 per Monk level\n**Saving Throw Proficiencies:** Strength and Dexterity\n**Skill Proficiencies:** Choose 2 from Acrobatics, Athletics, History, Insight, Religion, or Stealth\n**Weapon Proficiencies:** Simple weapons and Martial weapons that have the Light property\n**Tool Proficiencies:** Choose one type of Artisan's Tools or Musical Instrument\n**Armor Training:** None\n**Starting Equipment:** Choose A or B: (A) Spear, 5 Daggers, Artisan's Tools or Musical Instrument, Explorer's Pack, and 11 GP; or (B) 50 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "STR"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "DEX"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "monk_2024_tool",
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "monk_2024_skill_1",
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "monk_2024_skill_2",
+          "displayOrder": 7
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_2024_tool",
+          "name": "Tool Proficiency",
+          "description": "Choose one type of Artisan's Tools or Musical Instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "fromCategories": [
+              "artisans_tools",
+              "musical_instrument"
+            ]
+          }
+        },
+        {
+          "choiceKey": "monk_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Acrobatics, Athletics, History, Insight, Religion, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "RELIGION",
+              "STEALTH"
+            ]
+          }
+        },
+        {
+          "choiceKey": "monk_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the monk skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "RELIGION",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_martial-arts",
+      "name": "Martial Arts",
+      "description": "Your practice of martial arts gives you mastery of combat styles using Unarmed Strikes and Monk weapons (Simple Melee + Martial Melee with Light property).\n\nWhile unarmed or wielding only Monk weapons and not wearing armor or wielding a Shield:\n\n- **Bonus Unarmed Strike:** Make an Unarmed Strike as a Bonus Action\n- **Martial Arts Die:** Roll d6 (L1), d8 (L5), d10 (L11), d12 (L17) in place of normal unarmed/monk weapon damage\n- **Dexterous Attacks:** Use DEX for attack/damage rolls of Unarmed Strikes and Monk weapons; use DEX for Grapple/Shove save DCs",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_unarmored-defense",
+      "name": "Unarmored Defense",
+      "description": "While you aren't wearing armor or wielding a Shield, your base Armor Class equals 10 plus your Dexterity and Wisdom modifiers.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 10,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "DEX"
+                },
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "WIS"
+                }
+              ],
+              "requiresNoArmor": true,
+              "requiresNoShield": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_monks-focus",
+      "name": "Monk's Focus",
+      "description": "Your focus and martial training allow you to harness a well of extraordinary energy within yourself. This energy is represented by Focus Points equal to your Monk level. Regain all on Short or Long Rest.\n\n**Focus save DC** = 8 + your Wisdom modifier + Proficiency Bonus\n\n- **Flurry of Blows** (1 Focus): Make two Unarmed Strikes as a Bonus Action\n- **Patient Defense** (free Disengage as Bonus Action, or 1 Focus for Disengage + Dodge as Bonus Action)\n- **Step of the Wind** (free Dash as Bonus Action, or 1 Focus for Disengage + Dash + doubled jump distance)",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "focus_points",
+            "displayName": "Focus Points",
+            "usesFormula": {
+              "classLevel": true
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Flurry of Blows",
+            "description": "Spend 1 Focus to make two Unarmed Strikes as Bonus Action.",
+            "resourceKey": "focus_points"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Patient Defense",
+            "description": "Free: Disengage as Bonus Action. Or spend 1 Focus for Disengage + Dodge.",
+            "resourceKey": "focus_points"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Step of the Wind",
+            "description": "Free: Dash as Bonus Action. Or spend 1 Focus for Disengage + Dash + doubled jump.",
+            "resourceKey": "focus_points"
+          },
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_unarmored-movement",
+      "name": "Unarmored Movement",
+      "description": "Your speed increases by 10 feet while you aren't wearing armor or wielding a Shield. This bonus increases at higher levels: +15 ft (L6), +20 ft (L10), +25 ft (L14), +30 ft (L18).",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 10,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_uncanny-metabolism",
+      "name": "Uncanny Metabolism",
+      "description": "When you roll Initiative, you can regain all expended Focus Points. When you do so, roll your Martial Arts die and regain a number of Hit Points equal to your Monk level plus the number rolled.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "uncanny_metabolism",
+            "displayName": "Uncanny Metabolism",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_deflect-attacks",
+      "name": "Deflect Attacks",
+      "description": "When an attack roll hits you and its damage includes Bludgeoning, Piercing, or Slashing damage, you can take a Reaction to reduce the attack's total damage against you. The reduction equals 1d10 + your Dexterity modifier + Monk level.\n\nIf you reduce the damage to 0, you can expend 1 Focus Point to redirect force at a creature (melee: 5 ft; ranged: 60 ft). Target makes DEX save or takes two Martial Arts dice + DEX mod damage of the attack's type.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Deflect Attacks",
+            "description": "Reduce B/P/S attack damage by 1d10 + DEX mod + Monk level. If reduced to 0, spend 1 Focus to counter-attack."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_monk-subclass",
+      "name": "Monk Subclass",
+      "description": "You gain a Monk subclass of your choice. The Warrior of the Open Hand subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "monk_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_slow-fall",
+      "name": "Slow Fall",
+      "description": "You can take a Reaction when you fall to reduce any damage you take from the fall by an amount equal to five times your Monk level.",
+      "gainedAtLevel": 4,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Slow Fall",
+            "description": "Reduce falling damage by 5 × Monk level."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_extra-attack",
+      "name": "Extra Attack",
+      "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_stunning-strike",
+      "name": "Stunning Strike",
+      "description": "Once per turn when you hit a creature with a Monk weapon or an Unarmed Strike, you can expend 1 Focus Point. The target makes a CON save. On failure: Stunned until the start of your next turn. On success: Speed halved until start of your next turn, and next attack against it has Advantage.",
+      "gainedAtLevel": 5,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_empowered-strikes",
+      "name": "Empowered Strikes",
+      "description": "Whenever you deal damage with your Unarmed Strike, it can deal your choice of Force damage or its normal damage type.",
+      "gainedAtLevel": 6,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_evasion",
+      "name": "Evasion",
+      "description": "When you're subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed and only half damage if you fail. You don't benefit from this if you have the Incapacitated condition.",
+      "gainedAtLevel": 7,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "monk_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_acrobatic-movement",
+      "name": "Acrobatic Movement",
+      "description": "While you aren't wearing armor or wielding a Shield, you gain the ability to move along vertical surfaces and across liquids on your turn without falling during the movement.",
+      "gainedAtLevel": 9,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_heightened-focus",
+      "name": "Heightened Focus",
+      "description": "Your Flurry of Blows, Patient Defense, and Step of the Wind gain enhanced benefits.\n\n**Flurry of Blows:** Spend 1 Focus to make three Unarmed Strikes instead of two.\n**Patient Defense:** Gain Temp HP equal to two Martial Arts dice when spending Focus.\n**Step of the Wind:** Move a willing Large-or-smaller creature within 5 ft with you.",
+      "gainedAtLevel": 10,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_self-restoration",
+      "name": "Self-Restoration",
+      "description": "Through sheer force of will, you can remove one of the following conditions from yourself at the end of each of your turns: Charmed, Frightened, or Poisoned.\n\nIn addition, forgoing food and drink doesn't give you levels of Exhaustion.",
+      "gainedAtLevel": 10,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "monk_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_deflect-energy",
+      "name": "Deflect Energy",
+      "description": "You can now use your Deflect Attacks feature against attacks that deal any damage type, not just Bludgeoning, Piercing, or Slashing.",
+      "gainedAtLevel": 13,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_disciplined-survivor",
+      "name": "Disciplined Survivor",
+      "description": "Your physical and mental discipline grant you proficiency in all saving throws.\n\nAdditionally, whenever you make a saving throw and fail, you can expend 1 Focus Point to reroll it, and you must use the new roll.",
+      "gainedAtLevel": 14,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CON"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_perfect-focus",
+      "name": "Perfect Focus",
+      "description": "When you roll Initiative and don't use Uncanny Metabolism, you regain expended Focus Points until you have 4 if you have 3 or fewer.",
+      "gainedAtLevel": 15,
+      "displayOrder": 21,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 22,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "monk_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_superior-defense",
+      "name": "Superior Defense",
+      "description": "At the start of your turn, you can expend 3 Focus Points to bolster yourself against harm for 1 minute or until you have the Incapacitated condition. During that time, you have Resistance to all damage except Force damage.",
+      "gainedAtLevel": 18,
+      "displayOrder": 23,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Irresistible Offense is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 24,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "monk_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_monk_body-and-mind",
+      "name": "Body and Mind",
+      "description": "You have developed your body and mind to new heights. Your Dexterity and Wisdom scores increase by 4, to a maximum of 25.",
+      "gainedAtLevel": 20,
+      "displayOrder": 25,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 4,
+            "max": 25
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 4,
+            "max": 25
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

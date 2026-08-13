@@ -1,0 +1,76 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_way-of-the-wildcat",
+  "features": [
+    {
+      "key": "sub_toh_way-of-the-wildcat_enhanced-agility",
+      "name": "Enhanced Agility",
+      "description": "When you choose this tradition at 3rd level, you gain proficiency in Acrobatics if you don't already have it. When you move at least 10 feet on your turn, you have advantage on the next DEX (Acrobatics) check before the start of your next turn.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ACROBATICS"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-wildcat_feline-reflexes",
+      "name": "Feline Reflexes",
+      "description": "Also at 3rd level, when a creature you can see misses you with an attack, the next attack against you before the start of your next turn is made with disadvantage (once per turn). If you spend 2 ki points when missed, you can take the Dodge action as a reaction instead. You can't benefit from this feature if your speed is 0.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-wildcat_springing-pounce",
+      "name": "Springing Pounce",
+      "description": "Starting at 6th level, when you move at least 10 ft straight toward a creature and hit it with an attack on the same turn, spend 1 ki to channel momentum: deal extra damage equal to Martial Arts die + WIS modifier, OR push the target (STR save or pushed 10 ft; disadvantage if you used Step of the Wind to Dash first). Once per turn.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-wildcat_improved-feline-reflexes",
+      "name": "Improved Feline Reflexes",
+      "description": "Starting at 11th level, when you take no damage from a DEX save via Evasion, you can use your reaction to move up to half your speed toward the source. If you end within 5 ft of the source, you can spend 3 ki to make one unarmed strike against it.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Improved Feline Reflexes",
+            "description": "After Evasion (no damage): move up to half speed toward the source. If within 5 ft, spend 3 ki to make one unarmed strike against it."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-wildcat_hundred-step-strike",
+      "name": "Hundred Step Strike",
+      "description": "At 17th level, you can use Springing Pounce as many times per turn as you have movement and attacks (each still costs 1 ki). After hitting via Springing Pounce, further movement doesn't provoke opportunity attacks (until you miss). If you use Flurry of Blows with Springing Pounce and hit different creatures with each attack, you can make one additional Springing Pounce attack for free (if you have movement).",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

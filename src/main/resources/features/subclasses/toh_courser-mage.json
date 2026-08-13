@@ -1,0 +1,96 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_courser-mage",
+  "features": [
+    {
+      "key": "sub_toh_courser-mage_stalking-savant",
+      "name": "Stalking Savant",
+      "description": "At 2nd level, you gain proficiency with longbows and shortbows and with the Stealth skill. You can still perform somatic components of wizard spells while holding a longbow or shortbow in one or both hands.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "longbow"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortbow"
+          },
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_courser-mage_unseen-assailant",
+      "name": "Unseen Assailant",
+      "description": "Starting at 2nd level, as a bonus action, choose a target within 60 ft you can see and become invisible to that target until the start of your next turn. Once used on a target, you can't use this feature on it again until you finish a long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Unseen Assailant",
+            "description": "Become invisible to one target within 60 ft until start of your next turn. 1/long rest per target."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_courser-mage_spell-arrow",
+      "name": "Spell Arrow",
+      "description": "Beginning at 6th level, as a bonus action, expend a 1st level+ spell slot to imbue your next longbow or shortbow arrow with magic. On a hit, the arrow deals +2d4 force damage (+1d4 per slot level above 1st).",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Spell Arrow",
+            "description": "Expend a spell slot: next longbow/shortbow arrow deals +2d4 force damage (+1d4 per slot level above 1st)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_courser-mage_pinpoint-weakness",
+      "name": "Pinpoint Weakness",
+      "description": "At 10th level, when you hit a creature with a Spell Arrow-imbued arrow, your next ranged weapon attack against that creature has advantage.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_courser-mage_multitudinous-arrows",
+      "name": "Multitudinous Arrows",
+      "description": "Starting at 14th level, when you take the Attack action with a longbow or shortbow, you can attack twice instead of once. When using Spell Arrow, you can imbue both arrows with one slot. If you imbue two arrows, you can't cast spells other than cantrips until the end of your next turn.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

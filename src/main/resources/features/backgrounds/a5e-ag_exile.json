@@ -1,0 +1,80 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_exile",
+  "features": [
+    {
+      "key": "bg_a5e-ag_exile_skills",
+      "name": "Exile Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_exile_languages",
+      "name": "Exile Languages",
+      "description": "Two languages of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_exile_lang_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_exile_lang_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_exile_lang_1",
+          "name": "First Language",
+          "description": "Choose a language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "a5e_exile_lang_2",
+          "name": "Second Language",
+          "description": "Choose another language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_exile_feature",
+      "name": "Homeland Ties",
+      "description": "You still have contacts and knowledge of your homeland who may aid you. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

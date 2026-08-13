@@ -1,0 +1,103 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_life-domain",
+  "features": [
+    {
+      "key": "srd_life-domain_life-domain-spells",
+      "name": "Life Domain Spells",
+      "description": "You gain domain spells at the listed cleric levels. They are always prepared.\n\n| Level | Spells |\n|---|---|\n| 1st | bless, cure wounds |\n| 3rd | lesser restoration, spiritual weapon |\n| 5th | beacon of hope, revivify |\n| 7th | death ward, guardian of faith |\n| 9th | mass cure wounds, raise dead |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_life-domain_bonus-proficiency",
+      "name": "Bonus Proficiency",
+      "description": "When you choose this domain at 1st level, you gain proficiency with heavy armor.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "HEAVY"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_life-domain_disciple-of-life",
+      "name": "Disciple of Life",
+      "description": "Also starting at 1st level, your healing spells are more effective. Whenever you use a spell of 1st level or higher to restore hit points to a creature, the creature regains additional hit points equal to 2 + the spell's level.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_life-domain_channel-divinity-preserve-life",
+      "name": "Channel Divinity: Preserve Life",
+      "description": "Starting at 2nd level, as an action, present your holy symbol to restore HP equal to 5 × your cleric level. Divide among creatures within 30 ft. Can't restore above half HP max. Doesn't work on undead/constructs.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Preserve Life",
+            "description": "Heal total HP = 5 × cleric level, divided among creatures within 30 ft (max half their HP max). Not undead/constructs.",
+            "resourceKey": "channel_divinity"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_life-domain_blessed-healer",
+      "name": "Blessed Healer",
+      "description": "Beginning at 6th level, when you cast a spell of 1st level or higher that restores HP to a creature other than you, you regain HP equal to 2 + the spell's level.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_life-domain_divine-strike",
+      "name": "Divine Strike",
+      "description": "At 8th level, once per turn when you hit with a weapon attack, deal an extra 1d8 radiant damage. Increases to 2d8 at 14th level.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_life-domain_supreme-healing",
+      "name": "Supreme Healing",
+      "description": "Starting at 17th level, when you would normally roll one or more dice to restore hit points with a spell, you instead use the highest number possible for each die.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

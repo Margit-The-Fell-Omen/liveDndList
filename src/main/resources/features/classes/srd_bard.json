@@ -1,0 +1,747 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_bard",
+  "features": [
+    {
+      "key": "cls_srd_bard_starting",
+      "name": "Bard Starting Proficiencies",
+      "description": "As a bard, you gain the following proficiencies:\n\n**Armor:** Light armor\n**Weapons:** Simple weapons, hand crossbows, longswords, rapiers, shortswords\n**Tools:** Three musical instruments of your choice\n**Saving Throws:** Dexterity, Charisma\n**Skills:** Choose any three",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "hand_crossbow"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "longsword"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "rapier"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortsword"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "DEX"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "bard_instrument_1",
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "bard_instrument_2",
+          "displayOrder": 10
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "bard_instrument_3",
+          "displayOrder": 11
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "bard_skill_1",
+          "displayOrder": 12
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "bard_skill_2",
+          "displayOrder": 13
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "bard_skill_3",
+          "displayOrder": 14
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_instrument_1",
+          "name": "First Musical Instrument",
+          "description": "Choose one musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "musical_instrument"
+          }
+        },
+        {
+          "choiceKey": "bard_instrument_2",
+          "name": "Second Musical Instrument",
+          "description": "Choose another musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "musical_instrument",
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "bard_instrument_3",
+          "name": "Third Musical Instrument",
+          "description": "Choose a third musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "musical_instrument",
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "bard_skill_1",
+          "name": "First Skill",
+          "description": "Choose any skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "bard_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "bard_skill_3",
+          "name": "Third Skill",
+          "description": "Choose a third skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_spellcasting",
+      "name": "Spellcasting",
+      "description": "You have learned to untangle and reshape the fabric of reality in harmony with your wishes and music. Your spells are part of your vast repertoire, magic that you can tune to different situations.\n\nCharisma is your spellcasting ability for your bard spells.\n\n**Spell save DC** = 8 + your proficiency bonus + your Charisma modifier\n**Spell attack modifier** = your proficiency bonus + your Charisma modifier\n\nYou can cast any bard spell you know as a ritual if that spell has the ritual tag. You can use a musical instrument as a spellcasting focus for your bard spells.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "CHA",
+            "casterType": "FULL",
+            "spellList": "bard",
+            "ritualCasting": true,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_bardic-inspiration",
+      "name": "Bardic Inspiration",
+      "description": "You can inspire others through stirring words or music. As a bonus action, choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die: a d6 (or d8 at level 5, d10 at 10, d12 at 15).\n\nOnce within the next 10 minutes, the creature can add the rolled die to one ability check, attack roll, or saving throw. Uses = Charisma modifier (minimum 1). Regain on long rest.\n\nAt 5th level (Font of Inspiration), regain on short rest instead.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "bardic_inspiration",
+            "displayName": "Bardic Inspiration",
+            "usesFormula": {
+              "abilityMod": "CHA"
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Bardic Inspiration",
+            "description": "Grant a creature within 60 ft (who can hear you) a Bardic Inspiration die (d6/d8/d10/d12 by level) to add to one ability check, attack roll, or saving throw within 10 minutes.",
+            "resourceKey": "bardic_inspiration"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_jack-of-all-trades",
+      "name": "Jack of All Trades",
+      "description": "Starting at 2nd level, you can add half your proficiency bonus, rounded down, to any ability check you make that doesn't already include your proficiency bonus.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_song-of-rest",
+      "name": "Song of Rest",
+      "description": "Beginning at 2nd level, you can use soothing music or oration to help revitalize your wounded allies during a short rest. If you or any friendly creatures who can hear your performance regain hit points at the end of the short rest by spending one or more Hit Dice, each of those creatures regains an extra 1d6 hit points.\n\nThe extra hit points increase when you reach certain levels in this class: to 1d8 at 9th level, to 1d10 at 13th level, and to 1d12 at 17th level.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_bard-college",
+      "name": "Bard College",
+      "description": "At 3rd level, you delve into the advanced techniques of a bard college of your choice: the College of Lore or the College of Valor. Your choice grants you features at 3rd level and again at 6th and 14th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_expertise_l3",
+      "name": "Expertise (Level 3)",
+      "description": "At 3rd level, choose two of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "bard_expertise_l3_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "bard_expertise_l3_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_expertise_l3_1",
+          "name": "First Expertise",
+          "description": "Choose one of your skill proficiencies to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true
+          }
+        },
+        {
+          "choiceKey": "bard_expertise_l3_2",
+          "name": "Second Expertise",
+          "description": "Choose another of your skill proficiencies to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "bard_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_font-of-inspiration",
+      "name": "Font of Inspiration",
+      "description": "Beginning when you reach 5th level, you regain all of your expended uses of Bardic Inspiration when you finish a short or long rest.",
+      "gainedAtLevel": 5,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_countercharm",
+      "name": "Countercharm",
+      "description": "At 6th level, you gain the ability to use musical notes or words of power to disrupt mind-influencing effects. As an action, you can start a performance that lasts until the end of your next turn. During that time, you and any friendly creatures within 30 feet of you have advantage on saving throws against being frightened or charmed. A creature must be able to hear you to gain this benefit.",
+      "gainedAtLevel": 6,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Countercharm",
+            "description": "Start a performance lasting until the end of your next turn. You and friendly creatures within 30 ft gain advantage on saves vs frightened or charmed. Must be audible."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "bard_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_expertise_l10",
+      "name": "Expertise (Level 10)",
+      "description": "At 10th level, choose two more of your skill proficiencies. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies.",
+      "gainedAtLevel": 10,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "bard_expertise_l10_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "bard_expertise_l10_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_expertise_l10_1",
+          "name": "First Expertise",
+          "description": "Choose one of your skill proficiencies to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "bard_expertise_l10_2",
+          "name": "Second Expertise",
+          "description": "Choose another of your skill proficiencies to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_magical-secrets-10",
+      "name": "Magical Secrets (Level 10)",
+      "description": "By 10th level, you have plundered magical knowledge from a wide spectrum of disciplines. Choose two spells from any class, including this one. A spell you choose must be of a level you can cast, as shown on the Bard table, or a cantrip. The chosen spells count as bard spells for you and are included in the number in the Spells Known column of the Bard table.",
+      "gainedAtLevel": 10,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "bard_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_magical-secrets-14",
+      "name": "Magical Secrets (Level 14)",
+      "description": "At 14th level, you learn two additional spells from any class. Each must be of a level you can cast or a cantrip. They count as bard spells for you.",
+      "gainedAtLevel": 14,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "bard_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_magical-secrets-18",
+      "name": "Magical Secrets (Level 18)",
+      "description": "At 18th level, you learn two additional spells from any class. Each must be of a level you can cast or a cantrip. They count as bard spells for you.",
+      "gainedAtLevel": 18,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "bard_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "bard_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_bard_superior-inspiration",
+      "name": "Superior Inspiration",
+      "description": "At 20th level, when you roll initiative and have no uses of Bardic Inspiration left, you regain one use.",
+      "gainedAtLevel": 20,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

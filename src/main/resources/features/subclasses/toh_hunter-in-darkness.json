@@ -1,0 +1,120 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_hunter-in-darkness",
+  "features": [
+    {
+      "key": "sub_toh_hunter-in-darkness_expanded-spell-list",
+      "name": "Expanded Spell List",
+      "description": "The Hunter in Darkness adds spells to your warlock spell list:\n\n| Spell Level | Spells |\n|---|---|\n| 1st | bloodhound, hunter's endurance |\n| 2nd | instant snare, mark prey |\n| 3rd | clairvoyance, nondetection |\n| 4th | harry, heart-seeking arrow |\n| 5th | killing fields, legend lore |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hunter-in-darkness_savage-hunter",
+      "name": "Savage Hunter",
+      "description": "Starting at 1st level, when you reduce a hostile creature to 0 HP, its nearest ally within 30 ft must make a WIS save vs your warlock spell save DC or be frightened of you until the end of its next turn.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hunter-in-darkness_pact-boon-modifications",
+      "name": "The Hunter in Darkness and Your Pact Boons",
+      "description": "At 3rd level, your pact boon is altered:\n\n**Pact of the Chain.** Your familiar is a shadow hunting hound (wolf statistics).\n**Pact of the Blade.** Your pact weapon can be a longbow or shortbow (you must provide arrows).\n**Pact of the Tome.** Your tome contains creature track descriptions. Consulting it for 1 minute while inspecting tracks reveals the creature type.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hunter-in-darkness_step-into-shadow",
+      "name": "Step Into Shadow",
+      "description": "Beginning at 6th level, as a bonus action while in dim light or darkness, disappear in inky smoke and reappear in dim light or darkness within 5 ft of a creature within 30 ft of you. If that creature is frightened and you attack it, you have advantage on the attack roll. 1/short or long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "step_into_shadow",
+            "displayName": "Step Into Shadow",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Step Into Shadow",
+            "description": "While in dim light/darkness: teleport to dim light/darkness within 5 ft of a creature within 30 ft. Advantage on attacks vs frightened targets.",
+            "resourceKey": "step_into_shadow"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hunter-in-darkness_strike-from-the-dark",
+      "name": "Strike from the Dark",
+      "description": "Beginning at 10th level, you are immune to the frightened condition. When in dim light or darkness and you hit a creature with a weapon attack, it must make a WIS save vs your spell save DC or be frightened of you for 1 minute or until it takes damage.",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "FRIGHTENED"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hunter-in-darkness_avatar-of-death",
+      "name": "Avatar of Death",
+      "description": "Starting at 14th level, when you reduce a target to 0 HP with a weapon attack, use a bonus action to force each ally of the target within 30 ft to make a WIS save vs your spell save DC. Fail: frightened for 1 min or until they take damage. If immune to frightened: stunned until end of its next turn. 1/short or long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "avatar_of_death_hid",
+            "displayName": "Avatar of Death",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Avatar of Death",
+            "description": "After reducing a target to 0 HP with a weapon attack: WIS save or allies within 30 ft are frightened 1 min (stunned if immune).",
+            "resourceKey": "avatar_of_death_hid"
+          }
+        }
+      ]
+    }
+  ]
+}

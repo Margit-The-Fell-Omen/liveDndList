@@ -1,0 +1,555 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_warlock",
+  "features": [
+    {
+      "key": "cls_srd_warlock_starting",
+      "name": "Warlock Starting Proficiencies",
+      "description": "As a warlock, you gain the following proficiencies:\n\n**Armor:** Light armor\n**Weapons:** Simple weapons\n**Saving Throws:** Wisdom, Charisma\n**Skills:** Choose two skills from Arcana, Deception, History, Intimidation, Investigation, Nature, and Religion",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "warlock_skill_1",
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "warlock_skill_2",
+          "displayOrder": 6
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Arcana, Deception, History, Intimidation, Investigation, Nature, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "DECEPTION",
+              "HISTORY",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "NATURE",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "warlock_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the warlock skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "DECEPTION",
+              "HISTORY",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "NATURE",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_otherworldly-patron",
+      "name": "Otherworldly Patron",
+      "description": "At 1st level, you have struck a bargain with an otherworldly being of your choice: the Archfey, the Fiend, or the Great Old One. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_pact-magic",
+      "name": "Pact Magic",
+      "description": "Your arcane research and the magic bestowed on you by your patron have given you facility with spells. Charisma is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Charisma modifier\n**Spell attack modifier** = your proficiency bonus + your Charisma modifier\n\nAll your Pact Magic spell slots are the same level, and the slot level scales with your warlock level: 1st (L1-2), 2nd (L3-4), 3rd (L5-6), 4th (L7-8), 5th (L9+).\n\nYou regain all expended spell slots when you finish a **short or long rest**. You know a set number of warlock spells from the Spells Known column. You can use an arcane focus as a spellcasting focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "CHA",
+            "casterType": "PACT",
+            "spellList": "warlock",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 1
+              },
+              "2": {
+                "1": 2
+              },
+              "3": {
+                "2": 2
+              },
+              "4": {
+                "2": 2
+              },
+              "5": {
+                "3": 2
+              },
+              "6": {
+                "3": 2
+              },
+              "7": {
+                "4": 2
+              },
+              "8": {
+                "4": 2
+              },
+              "9": {
+                "5": 2
+              },
+              "10": {
+                "5": 2
+              },
+              "11": {
+                "5": 3
+              },
+              "12": {
+                "5": 3
+              },
+              "13": {
+                "5": 3
+              },
+              "14": {
+                "5": 3
+              },
+              "15": {
+                "5": 3
+              },
+              "16": {
+                "5": 3
+              },
+              "17": {
+                "5": 4
+              },
+              "18": {
+                "5": 4
+              },
+              "19": {
+                "5": 4
+              },
+              "20": {
+                "5": 4
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_eldritch-invocations",
+      "name": "Eldritch Invocations",
+      "description": "In your study of occult lore, you have unearthed eldritch invocations, fragments of forbidden knowledge that imbue you with an abiding magical ability.\n\nAt 2nd level, you gain two eldritch invocations of your choice. When you gain certain warlock levels, you gain additional invocations: total known by level = 2 (L2), 3 (L5-6), 4 (L7-8), 5 (L9-10), 6 (L11-12), 7 (L13-14), 7 (L15-16), 8 (L17-19), 8 (L20).\n\nAdditionally, when you gain a level in this class, you can replace one invocation with another you could learn at that level. See Eldritch Invocation List for options and prerequisites.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "warlock_invocation_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "warlock_invocation_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_invocation_1",
+          "name": "First Invocation",
+          "description": "Choose one eldritch invocation.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "AGONIZING_BLAST",
+              "ARMOR_OF_SHADOWS",
+              "BEAST_SPEECH",
+              "BEGUILING_INFLUENCE",
+              "DEVILS_SIGHT",
+              "ELDRITCH_SIGHT",
+              "ELDRITCH_SPEAR",
+              "EYES_OF_THE_RUNE_KEEPER",
+              "FIENDISH_VIGOR",
+              "GAZE_OF_TWO_MINDS",
+              "MASK_OF_MANY_FACES",
+              "MISTY_VISIONS",
+              "REPELLING_BLAST",
+              "THIEF_OF_FIVE_FATES",
+              "VOICE_OF_THE_CHAIN_MASTER"
+            ]
+          }
+        },
+        {
+          "choiceKey": "warlock_invocation_2",
+          "name": "Second Invocation",
+          "description": "Choose another eldritch invocation.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "AGONIZING_BLAST",
+              "ARMOR_OF_SHADOWS",
+              "BEAST_SPEECH",
+              "BEGUILING_INFLUENCE",
+              "DEVILS_SIGHT",
+              "ELDRITCH_SIGHT",
+              "ELDRITCH_SPEAR",
+              "EYES_OF_THE_RUNE_KEEPER",
+              "FIENDISH_VIGOR",
+              "GAZE_OF_TWO_MINDS",
+              "MASK_OF_MANY_FACES",
+              "MISTY_VISIONS",
+              "REPELLING_BLAST",
+              "THIEF_OF_FIVE_FATES",
+              "VOICE_OF_THE_CHAIN_MASTER"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_pact-boon",
+      "name": "Pact Boon",
+      "description": "At 3rd level, your otherworldly patron bestows a gift upon you for your loyal service. You gain one of the following pact boons:\n\n**Pact of the Chain:** Learn find familiar and cast it as a ritual. Special familiar forms: imp, pseudodragon, quasit, or sprite. Can allow familiar to attack via your reaction.\n\n**Pact of the Blade:** Create a pact weapon in your empty hand as an action. You are proficient with it. It counts as magical. Can bind an existing magic weapon to serve as your pact weapon.\n\n**Pact of the Tome:** Receive a Book of Shadows. Choose three cantrips from any class's spell list; you can cast them at will while you have the book.",
+      "gainedAtLevel": 3,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "warlock_pact_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_pact_boon",
+          "name": "Pact Boon",
+          "description": "Choose Pact of the Chain, Pact of the Blade, or Pact of the Tome.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "PACT_OF_THE_CHAIN",
+              "PACT_OF_THE_BLADE",
+              "PACT_OF_THE_TOME"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "warlock_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "warlock_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_mystic-arcanum-6th",
+      "name": "Mystic Arcanum (6th level)",
+      "description": "At 11th level, your patron bestows upon you a magical secret called an arcanum. Choose one 6th-level spell from the warlock spell list as this arcanum.\n\nYou can cast your arcanum spell once without expending a spell slot. You must finish a long rest before you can do so again.",
+      "gainedAtLevel": 11,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_6th",
+            "displayName": "Mystic Arcanum (6th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "warlock_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_mystic-arcanum-7th",
+      "name": "Mystic Arcanum (7th level)",
+      "description": "At 13th level, choose one 7th-level spell from the warlock spell list as your arcanum. Cast once without expending a spell slot. Regain use on a long rest.",
+      "gainedAtLevel": 13,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_7th",
+            "displayName": "Mystic Arcanum (7th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_mystic-arcanum-8th",
+      "name": "Mystic Arcanum (8th level)",
+      "description": "At 15th level, choose one 8th-level spell from the warlock spell list as your arcanum. Cast once without expending a spell slot. Regain use on a long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_8th",
+            "displayName": "Mystic Arcanum (8th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "warlock_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_mystic-arcanum-9th",
+      "name": "Mystic Arcanum (9th level)",
+      "description": "At 17th level, choose one 9th-level spell from the warlock spell list as your arcanum. Cast once without expending a spell slot. Regain use on a long rest.",
+      "gainedAtLevel": 17,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mystic_arcanum_9th",
+            "displayName": "Mystic Arcanum (9th)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "warlock_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "warlock_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_warlock_eldritch-master",
+      "name": "Eldritch Master",
+      "description": "At 20th level, you can draw on your inner reserve of mystical power while entreating your patron to regain expended spell slots. You can spend 1 minute entreating your patron for aid to regain all your expended spell slots from your Pact Magic feature. Once you regain spell slots with this feature, you must finish a long rest before you can do so again.",
+      "gainedAtLevel": 20,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_orc",
+  "features": [
+    {
+      "key": "race_srd-2024_orc_size",
+      "name": "Size",
+      "description": "You are Medium (about 5–7 feet tall).",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_darkvision",
+      "name": "Darkvision",
+      "description": "You have Darkvision with a range of 120 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 120
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_adrenaline_rush",
+      "name": "Adrenaline Rush",
+      "description": "You can take the Dash action as a Bonus Action. When you do so, you gain a number of Temporary Hit Points equal to your Proficiency Bonus. You can use this trait a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Short or Long Rest.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "adrenaline_rush",
+            "displayName": "Adrenaline Rush",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Adrenaline Rush",
+            "description": "Take the Dash action as a Bonus Action and gain temporary HP equal to your Proficiency Bonus.",
+            "resourceKey": "adrenaline_rush"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_relentless_endurance",
+      "name": "Relentless Endurance",
+      "description": "When you take damage that would reduce you to 0 Hit Points, you can drop to 1 Hit Point instead. Once you use this trait, you can't do so again until you finish a Long Rest.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "orc_relentless_endurance",
+            "displayName": "Relentless Endurance",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_powerful_build",
+      "name": "Powerful Build",
+      "description": "You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift. In addition, you have Advantage on any ability check you make to end the Grappled condition.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

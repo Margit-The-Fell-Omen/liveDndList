@@ -1,0 +1,118 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_draconic-bloodline",
+  "features": [
+    {
+      "key": "srd_draconic-bloodline_dragon-ancestor",
+      "name": "Dragon Ancestor",
+      "description": "At 1st level, choose one type of dragon as your ancestor (Black=Acid, Blue=Lightning, Brass=Fire, Bronze=Lightning, Copper=Acid, Gold=Fire, Green=Poison, Red=Fire, Silver=Cold, White=Cold). You can speak, read, and write Draconic. Your proficiency bonus is doubled for Charisma checks when interacting with dragons.",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "draconic"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "draconic_ancestor_type"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "draconic_ancestor_type",
+          "name": "Draconic Ancestry",
+          "description": "Choose your dragon ancestor's damage type.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ACID",
+              "LIGHTNING",
+              "FIRE",
+              "POISON",
+              "COLD"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_draconic-bloodline_draconic-resilience",
+      "name": "Draconic Resilience",
+      "description": "At 1st level, your HP maximum increases by 1 and by 1 again each time you gain a sorcerer level. When you aren't wearing armor, your AC equals 13 + your Dexterity modifier.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_HIT_POINTS_PER_LEVEL",
+          "payload": {
+            "amount": 1
+          }
+        },
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 13,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "DEX"
+                }
+              ],
+              "requiresNoArmor": true,
+              "requiresNoShield": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_draconic-bloodline_elemental-affinity",
+      "name": "Elemental Affinity",
+      "description": "Starting at 6th level, when you cast a spell that deals damage of your draconic ancestry type, add your Charisma modifier to one damage roll. You can also spend 1 sorcery point to gain resistance to that damage type for 1 hour.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_draconic-bloodline_dragon-wings",
+      "name": "Dragon Wings",
+      "description": "At 14th level, you gain the ability to sprout dragon wings from your back as a bonus action, gaining a flying speed equal to your current speed. They last until you dismiss them as a bonus action. You can't manifest them while wearing incompatible armor.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SPEED_TYPE",
+          "payload": {
+            "speedType": "FLY",
+            "matchWalking": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_draconic-bloodline_draconic-presence",
+      "name": "Draconic Presence",
+      "description": "Beginning at 18th level, spend 5 sorcery points as an action to exude an aura of awe or fear (your choice) to 60 feet for 1 minute (concentration). Each hostile creature starting its turn in the aura makes WIS save or is charmed (awe) or frightened (fear) until the aura ends. Success = immune for 24 hours.",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

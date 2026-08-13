@@ -1,0 +1,116 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_gearforged",
+  "features": [
+    {
+      "key": "race_toh_gearforged_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Two different ability scores of your choice increase by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "gearforged_asi_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "gearforged_asi_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gearforged_asi_1",
+          "name": "First +1",
+          "description": "Choose one ability score to increase by 1.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "gearforged_asi_2",
+          "name": "Second +1",
+          "description": "Choose a different ability score to increase by 1.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_gearforged_construct_resilience",
+      "name": "Construct Resilience",
+      "description": "Your body is constructed, which frees you from some of the limits of flesh-and-blood creatures. You have resistance to poison damage, you are immune to disease, and you have advantage on saving throws against being poisoned.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "POISON"
+          }
+        },
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "DISEASE"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_gearforged_construct_vitality",
+      "name": "Construct Vitality",
+      "description": "You don't need to eat, drink, or breathe, and you don't sleep the way most creatures do. Instead, you enter a dormant state where you resemble a statue and remain semiconscious for 6 hours a day. While in this dormant state, you have disadvantage on Wisdom (Perception) checks. After resting in this way, you gain the same benefit that a human does from 8 hours of sleep.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_gearforged_living_construct",
+      "name": "Living Construct",
+      "description": "Your consciousness and soul reside within a soul gem to animate your mechanical body. You are a living creature with some of the benefits and drawbacks of a construct. You can regain hit points from spells like cure wounds, but you can also be affected by game effects that specifically target constructs, such as the shatter spell.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_gearforged_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common, Machine Speech, and a language associated with your Race Chassis.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "machine_speech"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

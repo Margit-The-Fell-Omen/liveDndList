@@ -1,0 +1,203 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_half-elf",
+  "features": [
+    {
+      "key": "race_srd_half-elf_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Charisma score increases by 2, and two other ability scores of your choice increase by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "halfelf_asi_1",
+          "displayOrder": 1
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "halfelf_asi_2",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "halfelf_asi_1",
+          "name": "First Additional +1",
+          "description": "Choose one ability score (other than Charisma) to increase by 1.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "excludeAbilities": [
+              "CHA"
+            ]
+          }
+        },
+        {
+          "choiceKey": "halfelf_asi_2",
+          "name": "Second Additional +1",
+          "description": "Choose another ability score (different from the first) to increase by 1.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "excludeAbilities": [
+              "CHA"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-elf_size",
+      "name": "Size",
+      "description": "Half-elves are about the same size as humans, ranging from 5 to 6 feet tall. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-elf_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-elf_darkvision",
+      "name": "Darkvision",
+      "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-elf_fey_ancestry",
+      "name": "Fey Ancestry",
+      "description": "You have advantage on saving throws against being charmed, and magic can't put you to sleep.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-elf_versatility",
+      "name": "Skill Versatility",
+      "description": "You gain proficiency in two skills of your choice.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "halfelf_skill_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "halfelf_skill_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "halfelf_skill_1",
+          "name": "First Skill",
+          "description": "Choose one skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "halfelf_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another skill proficiency (different from the first).",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-elf_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common, Elvish, and one extra language of your choice.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "elvish"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "halfelf_extra_lang",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "halfelf_extra_lang",
+          "name": "Extra Language",
+          "description": "Choose one additional language of your choice.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    }
+  ]
+}

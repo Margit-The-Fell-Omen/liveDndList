@@ -1,0 +1,71 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_farmer",
+  "features": [
+    {
+      "key": "bg_a5e-ag_farmer_skills",
+      "name": "Farmer Skill Proficiencies",
+      "description": "Skill Proficiencies: Animal Handling, Nature",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ANIMAL_HANDLING"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "NATURE"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_farmer_tools",
+      "name": "Farmer Tool Proficiencies",
+      "description": "Tool Proficiencies: Land Vehicles, one type of artisan's tools related to farming.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "land_vehicles"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_farmer_tool",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_farmer_tool",
+          "name": "Farming Tool",
+          "description": "Choose one type of artisan's tools relevant to farming (e.g., brewer's supplies, cook's utensils, herbalism kit).",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_farmer_feature",
+      "name": "Salt of the Earth",
+      "description": "Rural folk are inclined to trust and shelter you. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

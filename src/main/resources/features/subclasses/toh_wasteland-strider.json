@@ -1,0 +1,96 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_wasteland-strider",
+  "features": [
+    {
+      "key": "sub_toh_wasteland-strider_wasteland-strider-magic",
+      "name": "Wasteland Strider Magic",
+      "description": "Also starting at 3rd level, you learn additional spells at certain ranger levels (don't count against spells known):\n\n| Ranger Level | Spells |\n|---|---|\n| 3rd | protection from the void |\n| 5th | calm emotions |\n| 9th | dispel magic |\n| 13th | banishment |\n| 17th | hold monster |",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_wasteland-strider_chaotic-strikes",
+      "name": "Chaotic Strikes",
+      "description": "When you choose this archetype at 3rd level, as a bonus action, imbue your weapon with chaotic energy for 1 minute. Roll 1d8: 1=Fire, 2=Cold, 3=Lightning, 4=Psychic, 5=Necrotic, 6=Poison, 7=Radiant, 8=Force. While imbued, your weapon deals +1d4 of the rolled damage type on each hit. Ends if you drop the weapon or fall unconscious.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Chaotic Strikes",
+            "description": "Imbue weapon for 1 min: roll d8 for damage type (1=Fire, 2=Cold, 3=Lightning, 4=Psychic, 5=Necrotic, 6=Poison, 7=Radiant, 8=Force). Deals +1d4 of that type per hit."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_wasteland-strider_stalwart-psyche",
+      "name": "Stalwart Psyche",
+      "description": "Starting at 7th level, you have advantage on saving throws against being charmed or frightened and on ability checks and saving throws to discern illusions.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_wasteland-strider_call-the-otherworldly",
+      "name": "Call the Otherworldly",
+      "description": "At 11th level, as an action, summon a friendly fiend or aberration of CR 2 or lower in an unoccupied space within 30 ft. Obeys verbal commands, rolls its own initiative. Disappears after 1 hour, on your incapacitation, or at 0 HP. 1/short or long rest.\n\nAt 17th level, can summon CR 5 or lower.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "call_the_otherworldly",
+            "displayName": "Call the Otherworldly",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Call the Otherworldly",
+            "description": "Summon friendly fiend or aberration CR 2 or lower (CR 5 at L17) within 30 ft for 1 hour.",
+            "resourceKey": "call_the_otherworldly"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_wasteland-strider_dimensional-step",
+      "name": "Dimensional Step",
+      "description": "At 15th level, you can cast *dimension door* without expending a spell slot. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "dimensional_step",
+            "displayName": "Dimensional Step",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_cat-burglar",
+  "features": [
+    {
+      "key": "sub_toh_cat-burglar_up-over-and-in",
+      "name": "Up, Over, and In",
+      "description": "Beginning at 3rd level, you have a climbing speed equal to your walking speed (or +5 ft if you already have an equal or greater climbing speed). When falling, you can use your reaction to reduce falling damage by your proficiency bonus + rogue level. You don't land prone unless this reduced damage would still leave you below half your HP maximum.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SPEED_TYPE",
+          "payload": {
+            "speedType": "CLIMB",
+            "matchWalking": true
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Soft Landing",
+            "description": "When falling, reduce falling damage by proficiency bonus + rogue level. Don't land prone unless remaining damage leaves you below half HP."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cat-burglar_artful-dodger",
+      "name": "Artful Dodger",
+      "description": "At 3rd level, you have advantage on saving throws made to avoid or resist traps and magic effects with a trigger (such as *glyph of warding*). You also have resistance to damage dealt by such effects.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cat-burglar_cats-eye",
+      "name": "Cat's Eye",
+      "description": "Starting at 9th level, you have advantage on Perception and Investigation checks to find/disarm traps, locate secret or hidden doors, discern illusions, or spot *glyph of warding*. You can search for traps at a normal travel pace instead of only at a slow pace.",
+      "gainedAtLevel": 9,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cat-burglar_breaking-and-entering",
+      "name": "Breaking and Entering",
+      "description": "At 13th level, when you attack a door, gate, window, bars, or similar blocking object or structure, you have advantage on the attack roll and can add Sneak Attack damage. You can choose the volume and appearance of the damage.\n\nYou also don't need advantage to use Sneak Attack against constructs and undead (unless you have disadvantage).",
+      "gainedAtLevel": 13,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cat-burglar_master-burglar",
+      "name": "Master Burglar",
+      "description": "At 17th level, the first time on each of your turns that you would trigger a trap or magic trigger effect, you can choose not to trigger it.\n\nAs a bonus action, grant this benefit to a number of creatures equal to your proficiency bonus within 30 ft for 1 hour. 1/long rest to grant to others.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

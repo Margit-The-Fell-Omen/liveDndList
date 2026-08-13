@@ -1,0 +1,125 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_the-ancient-fey-court",
+  "features": [
+    {
+      "key": "sub_open5e_the-ancient-fey-court_expanded-spell-list",
+      "name": "Expanded Spell List",
+      "description": "The Ancient Fey Court adds spells to your warlock spell list.\n\n| Spell Level | Spells |\n|---|---|\n| 1st | faerie fire, sleep |\n| 2nd | calm emotions, phantasmal force |\n| 3rd | blink, plant growth |\n| 4th | dominate beast, greater invisibility |\n| 5th | dominate person, seeming |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-ancient-fey-court_courtiers-aspect",
+      "name": "Courtier's Aspect",
+      "description": "Beginning at 1st level, as an action, force all creatures in a 10-ft cube originating from you to make a WIS save (your warlock spell save DC). Until the end of your next turn, creatures that fail are either charmed by you or frightened of you (your choice). 1/short or long rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "courtiers_aspect",
+            "displayName": "Courtier's Aspect",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Courtier's Aspect",
+            "description": "Force creatures in 10-ft cube to WIS save or be charmed or frightened until end of your next turn.",
+            "resourceKey": "courtiers_aspect"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-ancient-fey-court_shroud-of-mists",
+      "name": "Shroud of Mists",
+      "description": "At 6th level, as a reaction after suffering damage, you can teleport up to 60 feet to an unoccupied space you can see. You become invisible until you attack, cast a spell, or until the start of your next turn. 1/short or long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "shroud_of_mists",
+            "displayName": "Shroud of Mists",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Shroud of Mists",
+            "description": "After taking damage, teleport up to 60 ft and become invisible until you attack, cast, or start of your next turn.",
+            "resourceKey": "shroud_of_mists"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-ancient-fey-court_counter-enchantment",
+      "name": "Counter Enchantment",
+      "description": "Starting at 10th level, you gain immunity to the charmed condition. When a creature targets you with a charm effect, you can use your reaction to force it to make a WIS save (your warlock spell save DC). On a failure, it becomes charmed by you for 1 minute, ending if it takes damage.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "CHARMED"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Counter Enchantment",
+            "description": "When targeted by a charm effect, force the caster to WIS save or become charmed by you for 1 minute (ends if damaged)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-ancient-fey-court_waking-dream",
+      "name": "Waking Dream",
+      "description": "Beginning at 14th level, as an action, target a creature within 60 ft (WIS save vs your spell save DC). On failure, it is charmed or frightened (your choice) while you concentrate for up to 1 minute or until it takes damage. The target cannot see or hear other creatures and perceives its surroundings as an illusory realm you control. 1/short or long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "waking_dream",
+            "displayName": "Waking Dream",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Waking Dream",
+            "description": "Target within 60 ft: WIS save or charmed/frightened (concentration, 1 min). Target perceives illusory realm of your design.",
+            "resourceKey": "waking_dream"
+          }
+        }
+      ]
+    }
+  ]
+}

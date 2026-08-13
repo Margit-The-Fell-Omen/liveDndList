@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_urchin",
+  "features": [
+    {
+      "key": "bg_a5e-ag_urchin_skills",
+      "name": "Urchin Skill Proficiencies",
+      "description": "Skill Proficiencies: Sleight of Hand, Stealth",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SLEIGHT_OF_HAND"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_urchin_tools",
+      "name": "Urchin Tool Proficiencies",
+      "description": "Tool Proficiencies: Disguise Kit, Thieves' Tools",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "disguise_kit"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_urchin_feature",
+      "name": "City Secrets",
+      "description": "You know the secret patterns and flow of cities; can find passages through the urban sprawl at double your normal travel pace. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

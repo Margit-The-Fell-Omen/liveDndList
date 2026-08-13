@@ -1,0 +1,76 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_school-of-necrotic-arts",
+  "features": [
+    {
+      "key": "sub_open5e_school-of-necrotic-arts_expert-necromancer",
+      "name": "Expert Necromancer",
+      "description": "Starting at 2nd level, you only need to spend half as much time and gold as normal to copy a necromancy spell into your spellbook.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-necrotic-arts_dark-reaper",
+      "name": "Dark Reaper",
+      "description": "Already at 2nd level, up to once per turn, when you use a spell of 1st level+ to kill at least one creature, you regain lost HP up to twice the level of the spell used. If the spell is from the necromancy school, you regain HP up to three times the level. Does not trigger on constructs or undead.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-necrotic-arts_undead-minions",
+      "name": "Undead Minions",
+      "description": "At 6th level, if you don't already know *animate dead*, you add it to your spellbook. When you cast it, you can target one additional corpse or pile of bones beyond the spell's normal limit.\n\nUndead you create with necromancy spells gain: +wizard class levels to HP maximum, and your proficiency bonus added to weapon damage rolls.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-necrotic-arts_necrotic-acclimation",
+      "name": "Necrotic Acclimation",
+      "description": "At 10th level, you gain resistance against necrotic damage, and your hit point maximum can never be reduced.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "NECROTIC"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-necrotic-arts_control-undead",
+      "name": "Control Undead",
+      "description": "Beginning at 14th level, as an action, target one undead creature within 60 ft you can see. If it fails a CHA save vs your wizard spell save DC, it becomes friendly and obeys your commands until you use this feature again. On a success, it is permanently immune to this effect. INT 8+ saves with advantage; INT 12+ can re-save to break free once per hour.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Control Undead",
+            "description": "Target undead within 60 ft: CHA save or obeys you indefinitely. INT 8+ saves with advantage. INT 12+ can retry hourly."
+          }
+        }
+      ]
+    }
+  ]
+}

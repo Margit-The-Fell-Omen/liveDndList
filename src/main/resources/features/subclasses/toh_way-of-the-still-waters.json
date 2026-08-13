@@ -1,0 +1,77 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_way-of-the-still-waters",
+  "features": [
+    {
+      "key": "sub_toh_way-of-the-still-waters_turbulent-waters",
+      "name": "Turbulent Waters",
+      "description": "Starting at 3rd level, when an attack by a hostile creature misses you or you succeed on a saving throw, you can use your reaction to gain a Turbulence die (same type as your Martial Arts die). Max Turbulence dice equal to proficiency bonus.\n\nWhen you hit with an attack, roll any number of Turbulence dice and add the total to damage. Dice showing 1 or 2 are expended; others are retained. You lose all Turbulence dice if you go 1 minute without attacking or being attacked by a hostile creature.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Turbulent Waters",
+            "description": "When a hostile attack misses you or you succeed on a save: gain a Turbulence die. Add any number to damage on hit (dice showing 1–2 expended, others retained)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-still-waters_perfect-calm",
+      "name": "Perfect Calm",
+      "description": "Starting when you choose this tradition at 3rd level, when you spend a ki point on Flurry of Blows, Patient Defense, or Step of the Wind, you also have advantage on one saving throw of your choice that you make before the end of your next turn.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-still-waters_spreading-ripples",
+      "name": "Spreading Ripples",
+      "description": "At 6th level, when a friendly creature within 10 ft is hit by an attack or fails a saving throw, you can use your reaction to gain a Turbulence die.\n\nWhen you hit with an attack using two or more Turbulence dice, one creature within 10 ft of your target takes damage equal to one Turbulence die roll. For 1 ki point, any number of creatures within 10 ft instead take that damage.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Spreading Ripples",
+            "description": "When a friendly within 10 ft is hit or fails a save: gain a Turbulence die. When hitting with 2+ Turbulence dice: splash one die's damage to a creature within 10 ft of target (or spend 1 ki for multiple targets)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-still-waters_duality-of-water",
+      "name": "Duality of Water",
+      "description": "Beginning at 11th level:\n\n**No Turbulence dice:** Advantage on saves vs frightened; resistance to fire damage.\n\n**1+ Turbulence dice:** Advantage on saves vs charmed; resistance to cold damage.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-still-waters_tempestuous-waters",
+      "name": "Tempestuous Waters",
+      "description": "At 17th level, when you spend any number of ki points, you can also gain an equal number of Turbulence dice (up to your proficiency bonus).",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

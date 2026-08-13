@@ -1,0 +1,80 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_underfoot",
+  "features": [
+    {
+      "key": "sub_toh_underfoot_spellcasting",
+      "name": "Spellcasting",
+      "description": "When you reach 3rd level, you gain druidic spellcasting. WIS is your spellcasting ability.\n\n**Spell save DC** = 8 + prof + WIS modifier.\n**Spell attack modifier** = prof + WIS modifier.\n\nYou learn *shillelagh* plus two other druid cantrips (another at 10th level). You know 3 1st-level druid spells (2 must be divination or transmutation). See the Underfoot Spellcasting table for spell slots and spells known (up to 4th-level slots at Rogue 19).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "WIS",
+            "casterType": "THIRD",
+            "spellList": "druid",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_underfoot_versatile-shillelagh",
+      "name": "Versatile Shillelagh",
+      "description": "Beginning at 3rd level, when you cast *shillelagh*, it lasts 1 hour and ends early only if another creature holds the weapon or it's more than 5 feet away from you for 1 minute. Your Sneak Attack feature can be applied to attack rolls made with your *shillelagh* weapon.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_underfoot_undermine",
+      "name": "Undermine",
+      "description": "Beginning at 9th level, as an action, dig a hole under a Large or smaller creature within 5 ft. DEX save (DC 8 + prof + DEX mod) or it falls prone. On failure, you can make one weapon attack as a bonus action against it.",
+      "gainedAtLevel": 9,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Undermine",
+            "description": "Dig hole under Large or smaller creature within 5 ft: DEX save or prone. On failure: bonus action weapon attack against it."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_underfoot_death-from-below",
+      "name": "Death From Below",
+      "description": "Beginning at 13th level, when you move at least 10 feet underground toward a target, your next attack against it with your *shillelagh* weapon has advantage.",
+      "gainedAtLevel": 13,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_underfoot_vicious",
+      "name": "Vicious",
+      "description": "At 17th level, when you use your Death From Below feature and hit the target with your *shillelagh* weapon, the target is restrained by vegetation and soil until the end of its next turn.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

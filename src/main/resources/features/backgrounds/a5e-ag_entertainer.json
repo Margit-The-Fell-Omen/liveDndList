@@ -1,0 +1,73 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_entertainer",
+  "features": [
+    {
+      "key": "bg_a5e-ag_entertainer_skills",
+      "name": "Entertainer Skill Proficiencies",
+      "description": "Skill Proficiencies: Acrobatics, Performance",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ACROBATICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERFORMANCE"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_entertainer_tools",
+      "name": "Entertainer Tool Proficiencies",
+      "description": "Tool Proficiencies: Disguise Kit, one type of musical instrument.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "disguise_kit"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_entertainer_instrument",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_entertainer_instrument",
+          "name": "Musical Instrument",
+          "description": "Choose one type of musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "musical_instrument"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_entertainer_feature",
+      "name": "By Popular Demand",
+      "description": "You can always find a place to perform in taverns, inns, or courts. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

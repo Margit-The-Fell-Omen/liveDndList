@@ -1,0 +1,135 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_dragonborn",
+  "features": [
+    {
+      "key": "race_srd_dragonborn_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 2, and your Charisma score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_srd_dragonborn_size",
+      "name": "Size",
+      "description": "Dragonborn are Medium creatures, standing well over 6 feet tall and weighing an average of 250 pounds.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_dragonborn_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_dragonborn_draconic_ancestry",
+      "name": "Draconic Ancestry",
+      "description": "You have draconic ancestry. Choose one type of dragon; your breath weapon and damage resistance are determined by the dragon type.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {},
+          "choiceKey": "dragonborn_ancestry"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "dragonborn_ancestry",
+          "name": "Draconic Ancestry",
+          "description": "Choose your draconic ancestor: Black (Acid), Blue (Lightning), Brass (Fire), Bronze (Lightning), Copper (Acid), Gold (Fire), Green (Poison), Red (Fire), Silver (Cold), White (Cold).",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ACID",
+              "LIGHTNING",
+              "FIRE",
+              "POISON",
+              "COLD"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_dragonborn_breath_weapon",
+      "name": "Breath Weapon",
+      "description": "You can use your action to exhale destructive energy. Your draconic ancestry determines the size, shape, and damage type of the exhalation. A creature caught in the area must make a saving throw (Dex or Con, depending on ancestry), taking 2d6 damage on a failed save, or half as much on a success. The damage increases at higher levels. You can use this once per short or long rest.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Breath Weapon",
+            "description": "Exhale energy determined by your Draconic Ancestry; save DC = 8 + CON mod + prof bonus. 2d6 damage at 1st, 3d6 at 6th, 4d6 at 11th, 5d6 at 16th.",
+            "uses": 1,
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_dragonborn_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Draconic.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "draconic"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

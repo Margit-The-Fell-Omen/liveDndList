@@ -1,0 +1,116 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "srd_high-elf",
+  "features": [
+    {
+      "key": "subrace_srd_high-elf_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_srd_high-elf_weapon_training",
+      "name": "Elf Weapon Training",
+      "description": "You have proficiency with the longsword, shortsword, shortbow, and longbow.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "longsword"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortsword"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortbow"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "longbow"
+          },
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "subrace_srd_high-elf_cantrip",
+      "name": "Cantrip",
+      "description": "You know one cantrip of your choice from the wizard spell list. Intelligence is your spellcasting ability for it.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "",
+            "atWill": true,
+            "castingAbilityOverride": "INT"
+          },
+          "choiceKey": "high_elf_cantrip"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "high_elf_cantrip",
+          "name": "Wizard Cantrip",
+          "description": "Choose one wizard cantrip.",
+          "chooseCount": 1,
+          "optionsSource": "SPELL_LIST",
+          "optionsFilter": {
+            "casterList": "wizard",
+            "maxLevel": 0
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_srd_high-elf_extra_language",
+      "name": "Extra Language",
+      "description": "You can speak, read, and write one extra language of your choice.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "high_elf_extra_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "high_elf_extra_lang",
+          "name": "Extra Language",
+          "description": "Choose one additional language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    }
+  ]
+}

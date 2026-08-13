@@ -1,0 +1,87 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_mischief-domain",
+  "features": [
+    {
+      "key": "sub_open5e_mischief-domain_domain-spells",
+      "name": "Mischief Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | charm person, disguise self |\n| 3rd | mirror image, pass without trace |\n| 5th | blink, dispel magic |\n| 7th | dimension door, polymorph |\n| 9th | dominate person, modify memory |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_mischief-domain_spreader-of-mischief",
+      "name": "Spreader of Mischief",
+      "description": "At 1st level, as an action you can touch a willing creature to grant it advantage on Dexterity (Stealth) checks for the next hour. Ends early if you use on a different creature. Cannot target yourself.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Spreader of Mischief",
+            "description": "Touch a willing creature: advantage on Stealth checks for 1 hour. Ends if used on another creature. Cannot target self."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_mischief-domain_channel-divinity-double-trouble",
+      "name": "Channel Divinity: Double Trouble",
+      "description": "At 2nd level, as an action you manifest an illusion in an unoccupied space within 30 ft. Requires concentration (up to 1 min). Move it up to 30 ft as a bonus action (max 120 ft from you). You can cast spells from its position. You have advantage on attacks against any creature that can see the illusion if both you and the illusion are within 5 ft of it.",
+      "gainedAtLevel": 2,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_mischief-domain_channel-divinity-walk-unseen",
+      "name": "Channel Divinity: Walk Unseen",
+      "description": "Beginning at 6th level, you can use Channel Divinity as an action to become invisible until the end of your next turn, or until you cast a spell or attack.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_mischief-domain_divine-strike",
+      "name": "Divine Strike",
+      "description": "At 8th level, once on each of your turns when you hit a creature with a weapon attack, you deal an extra 1d8 poison damage. At 14th level, the extra damage increases to 2d8.",
+      "gainedAtLevel": 8,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_mischief-domain_double-trouble-doubled",
+      "name": "Double Trouble Doubled",
+      "description": "Starting at 17th level, you can create up to four illusory doubles with Double Trouble instead of one. You can move as many as you like on your turn with a bonus action.",
+      "gainedAtLevel": 17,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

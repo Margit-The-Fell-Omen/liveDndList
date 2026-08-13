@@ -1,0 +1,48 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_derro-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_derro-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Charisma score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_derro-heritage_calculating_insanity",
+      "name": "Calculating Insanity",
+      "description": "You know the true strike cantrip. Charisma is your spellcasting ability for it. You can cast true strike as a bonus action a number of times equal to your Charisma modifier (minimum of once). Regain all uses on a long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "true_strike",
+            "atWill": true,
+            "castingAbilityOverride": "CHA"
+          }
+        },
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "calculating_insanity",
+            "displayName": "Calculating Insanity (True Strike as bonus action)",
+            "usesFormula": {
+              "abilityMod": "CHA"
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

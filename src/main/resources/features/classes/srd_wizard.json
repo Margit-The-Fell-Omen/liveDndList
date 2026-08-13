@@ -1,0 +1,543 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_wizard",
+  "features": [
+    {
+      "key": "cls_srd_wizard_starting",
+      "name": "Wizard Starting Proficiencies",
+      "description": "As a wizard, you gain the following proficiencies:\n\n**Armor:** None\n**Weapons:** Daggers, darts, slings, quarterstaffs, light crossbows\n**Saving Throws:** Intelligence, Wisdom\n**Skills:** Choose two from Arcana, History, Insight, Investigation, Medicine, and Religion",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d6"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "dagger"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "dart"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "sling"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "quarterstaff"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "light_crossbow"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "wizard_skill_1",
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "wizard_skill_2",
+          "displayOrder": 9
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Arcana, History, Insight, Investigation, Medicine, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "HISTORY",
+              "INSIGHT",
+              "INVESTIGATION",
+              "MEDICINE",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "wizard_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the wizard skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "HISTORY",
+              "INSIGHT",
+              "INVESTIGATION",
+              "MEDICINE",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_spellcasting",
+      "name": "Spellcasting",
+      "description": "As a student of arcane magic, you have a spellbook containing spells that show the first glimmerings of your true power. Intelligence is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Intelligence modifier\n**Spell attack modifier** = your proficiency bonus + your Intelligence modifier\n\nYou start with a spellbook containing 6 1st-level wizard spells. You add 2 wizard spells to your spellbook each level.\n\nYou prepare a number of wizard spells equal to your Intelligence modifier + your wizard level (minimum 1). Prepared spells are chosen from your spellbook; you can change them after a long rest. You can cast any wizard spell in your spellbook as a ritual if it has the ritual tag (no preparation needed). You can use an arcane focus as a spellcasting focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "INT",
+            "casterType": "FULL",
+            "spellList": "wizard",
+            "ritualCasting": true,
+            "spellbook": true
+          }
+        },
+        {
+          "type": "PREPARED_SPELLS_COUNT",
+          "payload": {
+            "formula": {
+              "classLevel": true,
+              "abilityMod": "INT",
+              "minimum": 1
+            }
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_arcane-recovery",
+      "name": "Arcane Recovery",
+      "description": "You have learned to regain some of your magical energy by studying your spellbook. Once per day when you finish a short rest, you can choose expended spell slots to recover. The spell slots can have a combined level that is equal to or less than half your wizard level (rounded up), and none of the slots can be 6th level or higher.\n\nFor example, if you're a 4th-level wizard, you can recover up to two levels worth of spell slots. You can recover either a 2nd-level spell slot or two 1st-level spell slots.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "arcane_recovery",
+            "displayName": "Arcane Recovery",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_arcane-tradition",
+      "name": "Arcane Tradition",
+      "description": "When you reach 2nd level, you choose an arcane tradition, shaping your practice of magic through one of eight schools: Abjuration, Conjuration, Divination, Enchantment, Evocation, Illusion, Necromancy, or Transmutation.\n\nYour choice grants you features at 2nd level and again at 6th, 10th, and 14th level.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "wizard_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "wizard_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "wizard_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "wizard_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_spell-mastery",
+      "name": "Spell Mastery",
+      "description": "At 18th level, you have achieved such mastery over certain spells that you can cast them at will. Choose a 1st-level wizard spell and a 2nd-level wizard spell that are in your spellbook. You can cast those spells at their lowest level without expending a spell slot when you have them prepared. If you want to cast either spell at a higher level, you must expend a spell slot as normal.\n\nBy spending 8 hours in study, you can exchange one or both of the spells you chose for different spells of the same levels.",
+      "gainedAtLevel": 18,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "wizard_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_wizard_signature-spells",
+      "name": "Signature Spells",
+      "description": "When you reach 20th level, you gain mastery over two powerful spells and can cast them with little effort. Choose two 3rd-level wizard spells in your spellbook as your signature spells. You always have these spells prepared, they don't count against the number of spells you have prepared, and you can cast each of them once at 3rd level without expending a spell slot. When you do so, you can't do so again until you finish a short or long rest.\n\nIf you want to cast either spell at a higher level, you must expend a spell slot as normal.",
+      "gainedAtLevel": 20,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "signature_spell_1",
+            "displayName": "Signature Spell 1",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "signature_spell_2",
+            "displayName": "Signature Spell 2",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

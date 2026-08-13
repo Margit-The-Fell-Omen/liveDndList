@@ -1,0 +1,103 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_college-of-shadows",
+  "features": [
+    {
+      "key": "sub_toh_college-of-shadows_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "When you join the College of Shadows at 3rd level, you gain proficiency in Stealth and in two other skills of your choice.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "shadows_bonus_skill_1",
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "shadows_bonus_skill_2",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "shadows_bonus_skill_1",
+          "name": "Bonus Skill 1",
+          "description": "Choose one skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "shadows_bonus_skill_2",
+          "name": "Bonus Skill 2",
+          "description": "Choose another skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-shadows_mantle-of-shadows",
+      "name": "Mantle of Shadows",
+      "description": "Starting at 3rd level, while in dim light or darkness, you can use an action to twist the shadows around you for 1 minute or until your concentration ends. For the duration, you have advantage on Dexterity (Stealth) checks and can take the Dash action as a bonus action each turn.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Mantle of Shadows",
+            "description": "While in dim light or darkness: concentrate for 1 min. Advantage on Stealth checks; Dash as bonus action each turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-shadows_cunning-insight",
+      "name": "Cunning Insight",
+      "description": "Starting at 6th level, as an action, focus on a creature within 60 ft (WIS save vs your spell save DC). Can be used as a bonus action by expending Bardic Inspiration (subtract die roll from save). On failure, choose one:\n\n* Advantage on your next attack roll vs the target\n* Know target's damage vulnerabilities\n* Know target's damage resistances and immunities\n* Know target's condition immunities\n* See through illusions on the target for 1 minute",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-shadows_shadowed-performance",
+      "name": "Shadowed Performance",
+      "description": "Starting at 14th level, after performing for at least 1 minute, choose up to 1 + CHA modifier humanoids who witnessed the whole performance. Each makes a WIS save vs your spell save DC. On failure, choose one effect:\n\n* Target believes your tale as truth for 24 hours and spreads it.\n* Target believes someone nearby knows their darkest secret for 1 hour: disadvantage on CHA/WIS/INT checks and saves.\n* Target is frightened of you (or an ally) for 1 minute; you/ally have advantage on attacks against it. Ends early on *remove curse* or *greater restoration*.\n\n1/short or long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "shadowed_performance",
+            "displayName": "Shadowed Performance",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-the-green",
+  "features": [
+    {
+      "key": "toh_circle-of-the-green_circle-spells",
+      "name": "Circle Spells",
+      "description": "Circle spells: entangle/goodberry (L2), barkskin/spike growth (L3), speak with plants/vine carpet (L5), dreamwine/hallucinatory terrain (L7), enchanted bloom/tree stride (L9). Always prepared.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-green_summon-green-spirit",
+      "name": "Summon Green Spirit",
+      "description": "At 2nd level, expend one Wild Shape to summon a Green Spirit within 30 ft. Friendly, obeys your commands, shares initiative (acts after you). Uses your PB. Lasts 1 hour. Bears 10 goodberry-like fruit. See stat block for details.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-green_gift-of-the-green",
+      "name": "Gift of the Green",
+      "description": "At 6th level, once per spirit summon, cast one of: locate animals or plants, pass without trace, plant growth, or speak with plants without slot/components. When you cast a healing spell while spirit is summoned, +1d8 to healing. Spells can originate from you or your spirit.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-green_verdant-interference",
+      "name": "Verdant Interference",
+      "description": "Starting at 10th level, when a creature within 30 ft of you or your green spirit is attacked, use reaction to cause vines to give the attacker disadvantage until your next turn. Prof bonus uses/long rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "verdant_interference",
+            "displayName": "Verdant Interference",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Verdant Interference",
+            "description": "Give an attacker disadvantage until your next turn when ally within 30 ft is attacked.",
+            "resourceKey": "verdant_interference"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-green_spirit-symbiosis",
+      "name": "Spirit Symbiosis",
+      "description": "At 14th level, join with your green spirit as action while it's within 30 ft. Gain temp HP = spirit's current HP, 30 ft climb speed, advantage on CON saves, hostile creatures within 10 ft have difficult terrain, tendril attack as bonus action (2d8 + WIS bludgeoning, 10 ft). Lasts until temp HP = 0 or spirit duration ends.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

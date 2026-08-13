@@ -1,0 +1,133 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_dwarf-chassis",
+  "features": [
+    {
+      "key": "subrace_toh_dwarf-chassis_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Constitution score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dwarf-chassis_size",
+      "name": "Size (Dwarf Chassis)",
+      "description": "Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dwarf-chassis_speed",
+      "name": "Speed (Dwarf Chassis)",
+      "description": "Your base walking speed is 25 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 25,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dwarf-chassis_always_armed",
+      "name": "Always Armed",
+      "description": "You can integrate a chosen weapon (not two-handed) into one of your arms. You can't be disarmed of it. Draw or sheathe as normal. You have advantage on Dexterity (Sleight of Hand) checks to conceal it. You can have up to two integrated weapons, one per arm.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dwarf-chassis_remembered_training",
+      "name": "Remembered Training",
+      "description": "You have proficiency with two martial weapons of your choice and with light and medium armor.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "dwarf_chassis_martial_1",
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "dwarf_chassis_martial_2",
+          "displayOrder": 3
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "dwarf_chassis_martial_1",
+          "name": "First Martial Weapon",
+          "description": "Choose one martial weapon.",
+          "chooseCount": 1,
+          "optionsSource": "WEAPON_LIST",
+          "optionsFilter": {
+            "category": "MARTIAL"
+          }
+        },
+        {
+          "choiceKey": "dwarf_chassis_martial_2",
+          "name": "Second Martial Weapon",
+          "description": "Choose another martial weapon.",
+          "chooseCount": 1,
+          "optionsSource": "WEAPON_LIST",
+          "optionsFilter": {
+            "category": "MARTIAL",
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dwarf-chassis_language",
+      "name": "Race Chassis Language",
+      "description": "Dwarvish (via Race Chassis).",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "dwarvish"
+          }
+        }
+      ]
+    }
+  ]
+}

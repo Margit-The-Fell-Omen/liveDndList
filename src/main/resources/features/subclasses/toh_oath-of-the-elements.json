@@ -1,0 +1,116 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_oath-of-the-elements",
+  "features": [
+    {
+      "key": "sub_toh_oath-of-the-elements_oath-spells-and-tenets",
+      "name": "Oath Spells & Tenets",
+      "description": "**Oath of the Elements Spells**\n\n| Paladin Level | Spells |\n|---|---|\n| 3rd | burning hands, thunderwave |\n| 5th | acid arrow, flaming sphere |\n| 9th | call lightning, protection from energy |\n| 13th | conjure minor elementals, ice storm |\n| 17th | conjure elemental, wall of stone |\n\n**Tenets:** Defend the Natural World. Lead the Line. Act Wisely, Act Decisively. Integrity.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_oath-of-the-elements_elemental-language",
+      "name": "Elemental Language",
+      "description": "When you take this oath at 3rd level, you learn to speak, read, and write Primordial.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "primordial"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_oath-of-the-elements_channel-divinity",
+      "name": "Channel Divinity",
+      "description": "At 3rd level, you gain two Channel Divinity options:\n\n**Abjure the Otherworldly.** As an action, present your holy symbol. Each elemental or fiend within 30 ft that can see or hear you must make a WIS save or be turned for 1 minute or until it takes damage.\n\n**Elemental Strike.** As a bonus action, imbue one held weapon with elemental power. Choose air, earth, fire, or water. For 1 minute, gain CHA modifier bonus (min +1) to damage with that weapon. Damage type: lightning or thunder (air), acid (earth), fire (fire), cold (water). While imbued, you can use this damage type instead of radiant on Divine Smite.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_oath-of-the-elements_aura-of-resistance",
+      "name": "Aura of Resistance",
+      "description": "Beginning at 7th level, choose acid, cold, fire, lightning, or thunder when you finish a short or long rest. You and friendly creatures within 10 ft have resistance to that damage type. At 18th level, range increases to 30 ft.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_oath-of-the-elements_elemental-companion",
+      "name": "Elemental Companion",
+      "description": "At 15th level, as an action, summon a friendly elemental of CR 2 or lower in an unoccupied space within 30 ft. It obeys verbal commands, has its own initiative, and defends itself if given no commands. Only one at a time; disappears if you summon another or it drops to 0 HP. Dismiss as bonus action. 1/long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "elemental_companion",
+            "displayName": "Elemental Companion",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Elemental Companion",
+            "description": "Summon a CR 2 or lower friendly elemental within 30 ft. Obeys commands. Dismiss as bonus action.",
+            "resourceKey": "elemental_companion"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_oath-of-the-elements_elemental-champion",
+      "name": "Elemental Champion",
+      "description": "At 20th level, as a bonus action, manifest elemental power for 1 minute:\n\n* Choose one: fly speed 90 ft (hover) like air elemental, Earth Glide + burrow 30 ft like earth elemental, or swim speed 90 ft like water elemental.\n* Resistance to acid, cold, fire, lightning, and thunder damage.\n* Imbue your weapon with 3d6 extra elemental damage (type per element: lightning/thunder for air, acid for earth, fire for fire, cold for water). Can use this type instead of radiant on Divine Smite.\n\n1/long rest.",
+      "gainedAtLevel": 20,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "elemental_champion",
+            "displayName": "Elemental Champion",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Elemental Champion",
+            "description": "For 1 min: elemental movement (fly 90 / burrow 30 / swim 90), resistance to all elemental damage, weapon deals +3d6 elemental damage.",
+            "resourceKey": "elemental_champion"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,134 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_human-chassis",
+  "features": [
+    {
+      "key": "subrace_toh_human-chassis_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "One ability score of your choice increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "human_chassis_asi"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "human_chassis_asi",
+          "name": "+1 Ability",
+          "description": "Choose one ability score to increase by 1.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_human-chassis_size",
+      "name": "Size (Human Chassis)",
+      "description": "Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_human-chassis_speed",
+      "name": "Speed (Human Chassis)",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_human-chassis_adaptable_acumen",
+      "name": "Adaptable Acumen",
+      "description": "You gain proficiency in two skills or tools of your choice. Choose one of those skills or tools or another skill or tool proficiency you have. Your proficiency bonus is doubled for any ability check you make that uses the chosen skill or tool.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "human_chassis_skill_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "human_chassis_skill_2",
+          "displayOrder": 1
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "human_chassis_skill_1",
+          "name": "First Skill or Tool",
+          "description": "Choose one skill or tool proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "human_chassis_skill_2",
+          "name": "Second Skill or Tool",
+          "description": "Choose another skill or tool proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_human-chassis_inspired_ingenuity",
+      "name": "Inspired Ingenuity",
+      "description": "When you roll a 9 or lower on the d20 for an ability check, you can use a reaction to change the roll to a 10. Regain on short or long rest.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Inspired Ingenuity",
+            "description": "Change an ability check roll of 9 or lower to a 10.",
+            "uses": 1,
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_human-chassis_language",
+      "name": "Race Chassis Language",
+      "description": "Common (via Race Chassis).",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          }
+        }
+      ]
+    }
+  ]
+}

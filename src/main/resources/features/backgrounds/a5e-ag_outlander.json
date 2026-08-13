@@ -1,0 +1,88 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_outlander",
+  "features": [
+    {
+      "key": "bg_a5e-ag_outlander_skills",
+      "name": "Outlander Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_outlander_tools",
+      "name": "Outlander Tool Proficiency",
+      "description": "Tool Proficiency: One type of musical instrument.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_outlander_instrument"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_outlander_instrument",
+          "name": "Musical Instrument",
+          "description": "Choose one type of musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "musical_instrument"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_outlander_language",
+      "name": "Outlander Language",
+      "description": "One language of your choice.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_outlander_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_outlander_lang",
+          "name": "Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_outlander_feature",
+      "name": "Wanderer",
+      "description": "You have an excellent memory for maps and geography and can always recall the layout of terrain. TODO: verify against A5E book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

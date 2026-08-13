@@ -1,0 +1,125 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_mercy-domain",
+  "features": [
+    {
+      "key": "sub_toh_mercy-domain_domain-spells",
+      "name": "Mercy Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | divine favor, healing word |\n| 3rd | aid, ray of enfeeblement |\n| 5th | bardo, revivify |\n| 7th | death ward, sacrificial healing |\n| 9th | antilife shell, raise dead |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_mercy-domain_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "When you choose this domain at 1st level, you gain proficiency in Medicine and with the poisoner's kit. You also gain proficiency with heavy armor and martial weapons.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "MEDICINE"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "poisoners_kit"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "HEAVY"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_mercy-domain_threshold-guardian",
+      "name": "Threshold Guardian",
+      "description": "Also at 1st level, when you hit a creature that doesn't have all of its HP with a melee weapon attack, the weapon deals extra radiant or necrotic damage (your choice) equal to half your proficiency bonus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_mercy-domain_channel-divinity-involuntary-aid",
+      "name": "Channel Divinity: Involuntary Aid",
+      "description": "Starting at 2nd level, as an action, present your holy symbol to one creature within 30 ft that doesn't have all its HP. WIS save: fail = takes radiant or necrotic damage (your choice) equal to 3 × cleric level; success = half damage. Then one friendly creature within 30 ft you can see regains HP equal to the damage dealt.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_mercy-domain_bolster-the-living",
+      "name": "Bolster the Living",
+      "description": "At 6th level, when a creature you can see dies within 30 feet of you, you can use your reaction to channel a portion of that energy into a friendly creature within 30 ft. That creature gains a bonus to attack and damage rolls equal to half your proficiency bonus until the end of its next turn.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Bolster the Living",
+            "description": "When a creature dies within 30 ft, channel its energy into a friendly creature within 30 ft: bonus to attack and damage rolls equal to half prof bonus until end of its next turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_mercy-domain_divine-strike-of-mercy",
+      "name": "Divine Strike of Mercy",
+      "description": "At 8th level, once per turn when you hit with a weapon attack, deal extra 1d6 radiant or necrotic damage (your choice). If the target dies from this attack, a friendly creature within 5 ft regains HP equal to half the damage dealt (or you regain if none are within 5 ft). Increases to 2d6 at 14th level.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_mercy-domain_hand-of-grace-and-execution",
+      "name": "Hand of Grace and Execution",
+      "description": "At 17th level, once per turn, if you cast a spell that restores HP to one creature or deals damage to one creature, add your proficiency bonus to the HP restored or damage dealt.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

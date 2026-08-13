@@ -1,0 +1,102 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "srd-2024_criminal",
+  "features": [
+    {
+      "key": "bg_srd-2024_criminal_ability_scores",
+      "name": "Criminal Ability Scores",
+      "description": "Increase Dexterity, Constitution, and Intelligence by a total of +3.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "criminal_asi",
+          "displayOrder": 0
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "criminal_asi",
+          "name": "Ability Score Allocation",
+          "description": "Distribute +2/+1 or +1/+1/+1 among Dexterity, Constitution, Intelligence.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "DEX",
+              "CON",
+              "INT"
+            ],
+            "distributions": [
+              "2_1",
+              "1_1_1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_criminal_feat",
+      "name": "Criminal Feat: Alert",
+      "description": "You gain the Alert feat.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {
+            "featKey": "srd-2024_alert"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_criminal_skills",
+      "name": "Criminal Skill Proficiencies",
+      "description": "Skill Proficiencies: Sleight of Hand, Stealth",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SLEIGHT_OF_HAND"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_criminal_tool",
+      "name": "Criminal Tool Proficiency",
+      "description": "Tool Proficiency: Thieves' Tools",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_criminal_equipment",
+      "name": "Criminal Starting Equipment",
+      "description": "Choose A or B: (A) 2 Daggers, Thieves' Tools, Crowbar, 2 Pouches, Traveler's Clothes, 16 GP; or (B) 50 GP.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

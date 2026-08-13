@@ -1,0 +1,108 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "tdcs_runechild",
+  "features": [
+    {
+      "key": "sub_tdcs_runechild_essence-runes",
+      "name": "Essence Runes",
+      "description": "At 1st level, your body expresses innate magical energy as natural runes beneath your skin. You begin with 1 Essence Rune, gaining one per sorcerer level.\n\nAt the end of a turn where you spent sorcery points, an equal number of essence runes become charged runes. Expending a charged rune for a Runechild feature returns it to an inert essence rune.\n\nAs a bonus action, spend any number of sorcery points to charge that many runes. If you have no sorcery points and no charged runes, you can charge one rune as an action.\n\nIf you have 5+ charged runes, you emit bright light in a 5-ft radius and dim light 5 ft beyond. Charged runes revert to inert after a long rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_runechild_glyphs-of-aegis",
+      "name": "Glyphs of Aegis",
+      "description": "Beginning at 1st level, when you take damage from an attack, hazard, or spell, you can use a reaction to expend any number of charged runes, rolling 1d6 per rune and subtracting the total from the damage.\n\nAt 6th level, you can use an action to expend a charged rune to transfer a Glyph of Aegis to a creature you touch. It lasts 1 hour or until triggered: the next time the creature takes damage, roll 1d6 and subtract from that damage, then the glyph is lost.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Glyphs of Aegis",
+            "description": "When taking damage, expend charged runes: roll 1d6 per rune and subtract from damage taken."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_runechild_manifest-inscriptions",
+      "name": "Manifest Inscriptions",
+      "description": "At 6th level, as an action, expend a charged rune to reveal any hidden magical marks, runes, wards, or glyphs within 15 feet of you for 1 round. Revealed marks glow with dim light in a 5-ft radius.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Manifest Inscriptions",
+            "description": "Expend a charged rune: hidden magical marks within 15 ft glow for 1 round (dim light, 5-ft radius)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_runechild_sigilic-augmentation",
+      "name": "Sigilic Augmentation",
+      "description": "Upon reaching 6th level, expend a charged rune as a bonus action to gain advantage on ability checks with STR, DEX, or CON (your choice) until the start of your next turn. Maintain by expending a charged rune at the start of each following turn.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Sigilic Augmentation",
+            "description": "Expend a charged rune: advantage on STR, DEX, or CON checks until start of your next turn. Maintain by expending another rune each turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_runechild_runic-torrent",
+      "name": "Runic Torrent",
+      "description": "Upon reaching 14th level, when you cast a spell, you can expend a number of charged runes equal to the spell's level to allow the spell to ignore any resistance or immunity to its damage type.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_runechild_arcane-exemplar-form",
+      "name": "Arcane Exemplar Form",
+      "description": "Beginning at 18th level, as a bonus action, expend 6 or more charged runes to become a being of pure magical energy for 3 rounds + 1 round per rune beyond 6. During this time:\n\n* Fly Speed 40 ft\n* Spell save DC +2\n* Resistance to spell damage\n* Regain HP equal to spell level when you cast a 1st level+ spell\n\nWhen the form ends, you cannot move or take actions until after your next turn. 1/long rest.",
+      "gainedAtLevel": 18,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "arcane_exemplar_form",
+            "displayName": "Arcane Exemplar Form",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Arcane Exemplar Form",
+            "description": "Expend 6+ charged runes: fly 40 ft, spell save DC +2, resist spell damage, regain HP equal to spell level on casting. Duration 3+ rounds. Stunned after.",
+            "resourceKey": "arcane_exemplar_form"
+          }
+        }
+      ]
+    }
+  ]
+}

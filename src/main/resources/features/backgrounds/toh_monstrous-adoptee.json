@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_monstrous-adoptee",
+  "features": [
+    {
+      "key": "bg_toh_monstrous-adoptee_skills",
+      "name": "Monstrous Adoptee Skill Proficiencies",
+      "description": "Skill Proficiencies: Nature, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "NATURE"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_monstrous-adoptee_language",
+      "name": "Monstrous Adoptee Language",
+      "description": "One language of your choice, typically the tongue of your adoptive kin (Goblin, Draconic, Giant, or similar).",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_monstrous_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_monstrous_lang",
+          "name": "Language",
+          "description": "Choose one language spoken by your adoptive kin.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_monstrous-adoptee_feature",
+      "name": "Kin Among Monsters",
+      "description": "You were raised by a monstrous people—orcs, goblins, giants, or dragons. Members of that kind may recognize you and are less likely to attack you on sight. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

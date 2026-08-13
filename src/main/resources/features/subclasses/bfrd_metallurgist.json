@@ -1,0 +1,120 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "bfrd_metallurgist",
+  "features": [
+    {
+      "key": "bfrd_metallurgist_augment-absorbing",
+      "name": "Augment: Absorbing",
+      "description": "You gain a unique Augment effect (doesn't count against effects known).\n\n**Absorbing** (Armor or Shield): When you take acid, cold, fire, force, lightning, poison, or thunder damage while wearing/wielding the item, use your reaction to reduce damage by 2 × INT mod. You then gain resistance to that damage type for 1 minute or until you absorb a different type.\n\nUses: proficiency bonus per long rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Absorbing",
+            "description": "Reduce elemental/force damage by 2 × INT mod, then gain resistance to that type for 1 min.",
+            "resourceKey": "absorbing_uses"
+          }
+        },
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "absorbing_uses",
+            "displayName": "Absorbing",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bfrd_metallurgist_mystic-metal",
+      "name": "Mystic Metal",
+      "description": "You can spend 1 hour transmuting a nonmagical suit of armor into mystic metal. It lasts until you end it or transmute different armor.\n\nMystic metal is not natural material (immune to heat metal, rust monsters). You are proficient with it.\n\n- Each gauntlet is a simple melee weapon (Light, 1d6 + STR or INT mod bludgeoning, magical)\n- Summon armor as a bonus action (appears on you or within 5 ft)\n- Can't be removed against your will while worn\n- AC = 13 + INT modifier",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 13,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "INT"
+                }
+              ],
+              "requiresNoArmor": false,
+              "requiresNoShield": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "bfrd_metallurgist_heavy-hitter",
+      "name": "Heavy Hitter",
+      "description": "While wearing mystic metal:\n\n- Weapon attacks deal extra force damage: 1d6 (L7), 1d8 (L9), 1d10 (L15)\n- Critical hit on 19 or 20",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "bfrd_metallurgist_juggernaut",
+      "name": "Juggernaut",
+      "description": "While wearing mystic metal:\n\n- Proficiency in Athletics\n- Advantage on grapple, shove, and STR-based weapon option checks\n- If you move at least 15 feet before a melee weapon attack, you have advantage on the attack roll",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "bfrd_metallurgist_full-metal",
+      "name": "Full Metal",
+      "description": "While wearing mystic metal, you can use a bonus action to enter a nigh-impervious state for 1 minute. Also activates automatically at 0 HP.\n\nWhile active: immune to B/P/S damage, resistance to all other damage types.\n\n1/long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "full_metal",
+            "displayName": "Full Metal",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Full Metal",
+            "description": "Activate for 1 min: immune to B/P/S, resistance to all other damage. Auto-activates at 0 HP.",
+            "resourceKey": "full_metal"
+          }
+        }
+      ]
+    }
+  ]
+}

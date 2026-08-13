@@ -1,0 +1,86 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_school-of-illusions-and-phantasms",
+  "features": [
+    {
+      "key": "sub_open5e_school-of-illusions-and-phantasms_expert-illusionist",
+      "name": "Expert Illusionist",
+      "description": "Starting at 2nd level, you only need to spend half as much time and gold as normal to copy a spell into your spellbook if the spell is from the illusion school.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-illusions-and-phantasms_enhanced-cantrip",
+      "name": "Enhanced Cantrip",
+      "description": "At 2nd level, you gain one additional cantrip: *minor illusion*, or another of your choice if you already know it. Your mastery of this spell allows you to create both an illusory image and a sound with the same casting. This cantrip does not count against your cantrips known total.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-illusions-and-phantasms_mutable-mirage",
+      "name": "Mutable Mirage",
+      "description": "At 6th level, you can use your action to alter an illusion created by a spell you previously cast. You can only use this feature on spells with a duration of at least 1 minute, and you must be able to see the illusion. You cannot change it in a way not allowed by the initial casting.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-illusions-and-phantasms_second-semblance",
+      "name": "Second Semblance",
+      "description": "Starting at 10th level, if you are the target of an attack roll, you can use your reaction to substitute an illusion of yourself. The attack misses you and hits the illusion, which then vanishes. 1/short or long rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "second_semblance",
+            "displayName": "Second Semblance",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Second Semblance",
+            "description": "When targeted by an attack roll, substitute an illusion of yourself. The attack misses you and destroys the illusion.",
+            "resourceKey": "second_semblance"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-illusions-and-phantasms_phantasmagoria",
+      "name": "Phantasmagoria",
+      "description": "Starting at 14th level, after casting an illusion spell of 1st level+, you can use a bonus action to give a single nonmagical inanimate object within the illusion temporary physical substance for 1 minute. This object can be physically interacted with but cannot deal damage.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

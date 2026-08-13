@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ddg_imposter",
+  "features": [
+    {
+      "key": "bg_a5e-ddg_imposter_skills",
+      "name": "Imposter Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Insight",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_imposter_tools",
+      "name": "Imposter Tool Proficiencies",
+      "description": "Tool Proficiencies: Disguise Kit, Forgery Kit",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "disguise_kit"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "forgery_kit"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_imposter_feature",
+      "name": "Perfect Disguise",
+      "description": "You can seamlessly assume another identity and blend into social settings where you don't belong. TODO: verify against A5E DDG book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

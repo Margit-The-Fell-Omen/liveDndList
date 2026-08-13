@@ -1,0 +1,23 @@
+{
+  "sourceType": "FIGHTING_STYLE",
+  "sourceKey": "fighting_style",
+  "features": [
+    {
+      "key": "fighting_style_thrown_weapon_fighting",
+      "name": "Fighting Style: Thrown Weapon Fighting",
+      "description": "You can draw a weapon that has the thrown property as part of the attack you make with the weapon. In addition, when you hit with a ranged attack using a thrown weapon, you gain a +2 bonus to the damage roll.",
+      "effects": [
+        {
+          "type": "MODIFY_DAMAGE",
+          "payload": {
+            "amount": 2,
+            "filter": {
+              "weaponRange": "RANGED",
+              "hasProperty": "THROWN"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

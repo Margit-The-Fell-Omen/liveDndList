@@ -1,0 +1,125 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_hunter",
+  "features": [
+    {
+      "key": "srd_hunter_hunters-prey",
+      "name": "Hunter's Prey",
+      "description": "At 3rd level, choose one:\n\n**Colossus Slayer.** Once per turn, +1d8 damage on a hit if the creature is below its HP max.\n**Giant Killer.** When a Large+ creature within 5 ft hits/misses you, use reaction to attack it.\n**Horde Breaker.** Once per turn, when you make a weapon attack, make another attack with the same weapon against a different creature within 5 ft of the original target.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "hunter_prey"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "hunter_prey",
+          "name": "Hunter's Prey",
+          "description": "Choose Colossus Slayer, Giant Killer, or Horde Breaker.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "COLOSSUS_SLAYER",
+              "GIANT_KILLER",
+              "HORDE_BREAKER"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_hunter_defensive-tactics",
+      "name": "Defensive Tactics",
+      "description": "At 7th level, choose one:\n\n**Escape the Horde.** Opportunity attacks against you have disadvantage.\n**Multiattack Defense.** When hit by a creature, +4 AC against all subsequent attacks from that creature this turn.\n**Steel Will.** Advantage on saves against being frightened.",
+      "gainedAtLevel": 7,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "hunter_defensive"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "hunter_defensive",
+          "name": "Defensive Tactics",
+          "description": "Choose Escape the Horde, Multiattack Defense, or Steel Will.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ESCAPE_THE_HORDE",
+              "MULTIATTACK_DEFENSE",
+              "STEEL_WILL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_hunter_multiattack",
+      "name": "Multiattack",
+      "description": "At 11th level, choose one:\n\n**Volley.** Action: ranged attack against any number of creatures within 10 ft of a point in range (separate attack rolls, need ammo per target).\n**Whirlwind Attack.** Action: melee attack against any number of creatures within 5 ft (separate attack rolls).",
+      "gainedAtLevel": 11,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "hunter_multiattack"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "hunter_multiattack",
+          "name": "Multiattack",
+          "description": "Choose Volley or Whirlwind Attack.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "VOLLEY",
+              "WHIRLWIND_ATTACK"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_hunter_superior-hunters-defense",
+      "name": "Superior Hunter's Defense",
+      "description": "At 15th level, choose one:\n\n**Evasion.** DEX saves for half damage: take none on success, half on fail.\n**Stand Against the Tide.** When a hostile creature misses you with a melee attack, use reaction to force it to repeat the attack against another creature of your choice.\n**Uncanny Dodge.** When an attacker you can see hits you, use reaction to halve the damage.",
+      "gainedAtLevel": 15,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "hunter_defense"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "hunter_defense",
+          "name": "Superior Hunter's Defense",
+          "description": "Choose Evasion, Stand Against the Tide, or Uncanny Dodge.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "EVASION",
+              "STAND_AGAINST_THE_TIDE",
+              "UNCANNY_DODGE"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

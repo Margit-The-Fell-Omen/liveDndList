@@ -1,0 +1,38 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_gnome-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_gnome-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_gnome-heritage_magical_hunger",
+      "name": "Magical Hunger",
+      "description": "When a creature you can see within 30 feet of you casts a spell, you can use your reaction to consume the spell's residual magic. Your consumption doesn't counter or affect the spell. You gain temporary hit points (minimum 1) equal to your Constitution modifier. Regain on short or long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Magical Hunger",
+            "description": "React to a spell cast within 30 ft; gain temp HP equal to CON modifier.",
+            "uses": 1,
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    }
+  ]
+}

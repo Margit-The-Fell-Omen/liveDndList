@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_sailor",
+  "features": [
+    {
+      "key": "bg_a5e-ag_sailor_skills",
+      "name": "Sailor Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Perception",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_sailor_tools",
+      "name": "Sailor Tool Proficiencies",
+      "description": "Tool Proficiencies: Navigator's Tools, Water Vehicles",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "navigators_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "water_vehicles"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_sailor_feature",
+      "name": "Ship's Passage",
+      "description": "You can secure free passage on a sailing ship for yourself and your companions in exchange for labor. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

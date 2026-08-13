@@ -1,0 +1,117 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_delver",
+  "features": [
+    {
+      "key": "subrace_toh_delver_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength or Dexterity score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "delver_asi"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "delver_asi",
+          "name": "+1",
+          "description": "Choose Strength or Dexterity.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "STR",
+              "DEX"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_delver_rapport",
+      "name": "Rapport with Insects",
+      "description": "You can communicate simple ideas with insect-like beasts with an Intelligence of 3 or lower (spiders, beetles, wasps, scorpions, centipedes). Their responses are limited to simple states like 'hungry', 'content', or 'in danger'.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_delver_specialized_training",
+      "name": "Specialized Training",
+      "description": "You are proficient in one skill and one tool of your choice.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "delver_skill",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "delver_tool",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "delver_skill",
+          "name": "Skill",
+          "description": "Choose one skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "delver_tool",
+          "name": "Tool",
+          "description": "Choose one tool proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_delver_martial_excellence",
+      "name": "Martial Excellence",
+      "description": "You are proficient with one martial weapon of your choice and with light armor.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "delver_martial",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "delver_martial",
+          "name": "Martial Weapon",
+          "description": "Choose one martial weapon.",
+          "chooseCount": 1,
+          "optionsSource": "WEAPON_LIST",
+          "optionsFilter": {
+            "category": "MARTIAL"
+          }
+        }
+      ]
+    }
+  ]
+}

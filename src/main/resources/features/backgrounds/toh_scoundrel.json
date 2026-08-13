@@ -1,0 +1,73 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_scoundrel",
+  "features": [
+    {
+      "key": "bg_toh_scoundrel_skills",
+      "name": "Scoundrel Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Sleight of Hand",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SLEIGHT_OF_HAND"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_scoundrel_tools",
+      "name": "Scoundrel Tool Proficiencies",
+      "description": "Tool Proficiencies: Thieves' Tools, one type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_scoundrel_gaming",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_scoundrel_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_scoundrel_feature",
+      "name": "Street Wise",
+      "description": "You know the streets and back alleys of cities. You can find safe passage through hostile neighborhoods and know who to bribe for information. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

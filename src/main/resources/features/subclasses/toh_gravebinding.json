@@ -1,0 +1,129 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_gravebinding",
+  "features": [
+    {
+      "key": "sub_toh_gravebinding_restriction",
+      "name": "Restriction: The Dead Must Rest",
+      "description": "When you choose this tradition, you can no longer cast spells that animate, conjure, or create undead. Any such spells in your spellbook fade within 24 hours.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_gravebinding_gravebinder-lore",
+      "name": "Gravebinder Lore",
+      "description": "At 2nd level, as an action, inscribe a rune on a corpse preventing it from becoming undead. Uses equal to INT modifier (min 1); regain all on long rest.\n\nYou also gain proficiency in Religion (if not already), and have advantage on Religion checks about deities of death, burial practices, and the afterlife.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "RELIGION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "gravebinder_rune",
+            "displayName": "Gravebinder Rune",
+            "usesFormula": {
+              "abilityMod": "INT"
+            },
+            "refresh": "LONG"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_gravebinding_hunter-of-the-dead",
+      "name": "Hunter of the Dead",
+      "description": "Starting at 2nd level, you gain access to gravebinder spells (heart to heart L2, dead walking L3, gird the spirit L3, life from death L5, lay to rest L9). They are always prepared and don't count against your daily preparation limit.\n\nAlso, as an action, expend a wizard spell slot to sense undead within 1 mile for 1 minute per slot level. You know the general direction of undead and the direction of the most powerful one in range.",
+      "gainedAtLevel": 2,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_gravebinding_ward-against-the-risen",
+      "name": "Ward Against the Risen",
+      "description": "Starting at 6th level, when an undead within 30 ft targets an ally with an attack or spell, use your reaction to hamper it: disadvantage on the attack roll or advantage for your ally on the saving throw. Uses equal to INT modifier (min 1); regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "ward_against_risen",
+            "displayName": "Ward Against the Risen",
+            "usesFormula": {
+              "abilityMod": "INT"
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Ward Against the Risen",
+            "description": "When undead within 30 ft targets an ally: impose disadvantage on attack or grant ally advantage on save.",
+            "resourceKey": "ward_against_risen"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_gravebinding_disruptive-touch",
+      "name": "Disruptive Touch",
+      "description": "Beginning at 10th level, when an undead creature takes damage from a 1st level+ spell you cast, it takes an extra 4d6 radiant damage. Undead killed by this feature are destroyed in a puff of golden motes.",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_gravebinding_radiant-nimbus",
+      "name": "Radiant Nimbus",
+      "description": "At 14th level, as an action, envelope yourself in golden flames for 1 minute:\n\n* On activation and as an action each turn: each undead within 30 ft makes a WIS save or is frightened until flames fade or takes damage. Undead with sunlight sensitivity also take 4d6 radiant on failure.\n* Shed sunlight: bright 30-ft radius, dim 30 ft further.\n* When undead hits you with a melee attack: 2d10 radiant damage to the attacker.\n\n1/long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "radiant_nimbus",
+            "displayName": "Radiant Nimbus",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Radiant Nimbus",
+            "description": "Golden flames for 1 min: undead WIS save or frightened; sunlight 30-ft radius; undead melee attackers take 2d10 radiant.",
+            "resourceKey": "radiant_nimbus"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_pugilist",
+  "features": [
+    {
+      "key": "sub_toh_pugilist_unarmed-warrior",
+      "name": "Unarmed Warrior",
+      "description": "When you choose this archetype at 3rd level, while not wearing heavy armor and not wielding weapons or a shield:\n\n* Unarmed strikes deal 1d6 + STR bludgeoning damage (1d8 at 10th level, 1d10 at 18th level).\n* When you use the Attack action with one or more unarmed strikes, you can make one unarmed strike as a bonus action.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_pugilist_resilient-fighter",
+      "name": "Resilient Fighter",
+      "description": "Starting at 3rd level, you add your CON modifier (min 1) to any death saving throw. Also, you can use Second Wind a number of times equal to your proficiency bonus. Regain all uses on short or long rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_pugilist_uncanny-fortitude",
+      "name": "Uncanny Fortitude",
+      "description": "Beginning at 7th level, if damage reduces you to 0 HP, you can make a CON save (DC 5 + damage taken) — on success, drop to 1 HP instead (doesn't apply to critical hits). Uses equal to proficiency bonus; regain all on long rest.\n\nAlso, when you use Second Wind, you now regain HP equal to 1d10 + fighter level + CON modifier.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "uncanny_fortitude",
+            "displayName": "Uncanny Fortitude",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_pugilist_debilitating-blow",
+      "name": "Debilitating Blow",
+      "description": "At 10th level, when you hit one target with two unarmed strikes on the same turn, you can use a bonus action to force a CON save (DC 8 + prof + STR mod). On failure, the target has disadvantage on the next attack roll, ability check, or saving throw it makes before the start of your next turn.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Debilitating Blow",
+            "description": "After hitting one target with two unarmed strikes this turn: CON save or target has disadvantage on its next attack roll, ability check, or saving throw."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_pugilist_withstand-death",
+      "name": "Withstand Death",
+      "description": "At 15th level, when you are reduced to 0 HP, you can use Second Wind as a reaction (if uses remain). You can choose whether to do this before or after Uncanny Fortitude triggers.\n\nAlso, when you roll a 1 on a death saving throw, it counts as one failure instead of two.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Withstand Death",
+            "description": "When reduced to 0 HP, use Second Wind as a reaction (if uses remain). Can be used before or after Uncanny Fortitude."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_pugilist_opportunistic-brawler",
+      "name": "Opportunistic Brawler",
+      "description": "Starting at 18th level, you have advantage on initiative rolls. When a creature enters a space within 5 feet of you, you can make one opportunity attack against it with an unarmed strike. You have a number of reactions per turn equal to your proficiency bonus, but these extra reactions can only be used for these opportunity attacks.",
+      "gainedAtLevel": 18,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

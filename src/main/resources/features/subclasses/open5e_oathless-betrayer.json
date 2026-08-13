@@ -1,0 +1,99 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_oathless-betrayer",
+  "features": [
+    {
+      "key": "sub_open5e_oathless-betrayer_tenets",
+      "name": "Tenets of the Betrayer",
+      "description": "By their very nature, Oathless Betrayers do not share any common ideals, but may hold to one of the following tenets:\n\n**Twisted Honor.** You still cling to your former oath, but distorted to serve your new purpose.\n\n**Utter Depravity.** You follow some part of your former oath to the opposite extreme.\n\n**Misguided Revenge.** You blame your fall on the actions of another and dedicate yourself to revenge at any cost.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_oathless-betrayer_oath-spells",
+      "name": "Oath Spells",
+      "description": "| Level | Paladin Spells |\n|---|---|\n| 3rd | hellish rebuke, inflict wounds |\n| 5th | crown of madness, darkness |\n| 9th | animate dead, bestow curse |\n| 13th | blight, confusion |\n| 17th | contagion, dominate person |",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_oathless-betrayer_channel-divinity",
+      "name": "Channel Divinity",
+      "description": "At 3rd level, you gain two Channel Divinity options:\n\n**Command the Undead.** As an action, target one undead within 30 ft. WIS save or it obeys you for 24 hours. CR must be less than your paladin level.\n\n**Frightful Bearing.** As an action, any number of creatures within 30 ft that can see you make a WIS save or are frightened for 1 minute (re-save at end of turn if >30 ft away).",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_oathless-betrayer_aura-of-loathing",
+      "name": "Aura of Loathing",
+      "description": "Starting at 7th level, you add your Charisma modifier to melee weapon damage rolls (minimum +1). Fiend and undead creatures within 10 ft also gain this bonus. At 18th level, the range increases to 30 ft.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_oathless-betrayer_unearthly-barrier",
+      "name": "Unearthly Barrier",
+      "description": "Beginning at 15th level, you have resistance to nonmagical bludgeoning, piercing, and slashing damage.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_oathless-betrayer_master-of-doom",
+      "name": "Master of Doom",
+      "description": "At 20th level, as an action cloak yourself and chosen allies within 30 ft in darkness for 1 minute. Bright light becomes dim light. Primarily-sight creatures have disadvantage on attacks vs you and cloaked allies. Frightened enemies in the aura take 4d10 psychic at start of turn. Bonus action: melee spell attack for 3d10 + CHA necrotic. 1/long rest.",
+      "gainedAtLevel": 20,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "master_of_doom",
+            "displayName": "Master of Doom",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Master of Doom",
+            "description": "Cloak allies in darkness for 1 min. Disadvantage on attacks vs you. Frightened enemies take 4d10 psychic. Bonus action: 3d10 + CHA necrotic melee spell attack.",
+            "resourceKey": "master_of_doom"
+          }
+        }
+      ]
+    }
+  ]
+}

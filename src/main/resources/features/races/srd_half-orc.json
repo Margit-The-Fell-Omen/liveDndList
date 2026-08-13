@@ -1,0 +1,147 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_half-orc",
+  "features": [
+    {
+      "key": "race_srd_half-orc_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 2, and your Constitution score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_size",
+      "name": "Size",
+      "description": "Half-orcs are somewhat larger and bulkier than humans, ranging from 5 to well over 6 feet tall. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_darkvision",
+      "name": "Darkvision",
+      "description": "Thanks to your orc blood, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_menacing",
+      "name": "Menacing",
+      "description": "You gain proficiency in the Intimidation skill.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INTIMIDATION"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_relentless_endurance",
+      "name": "Relentless Endurance",
+      "description": "When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. You can't use this feature again until you finish a long rest.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "relentless_endurance",
+            "displayName": "Relentless Endurance",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_savage_attacks",
+      "name": "Savage Attacks",
+      "description": "When you score a critical hit with a melee weapon attack, you can roll one of the weapon's damage dice one additional time and add it to the extra damage of the critical hit.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_half-orc_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Orc.",
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "orc"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "srd-2024_sage",
+  "features": [
+    {
+      "key": "bg_srd-2024_sage_ability_scores",
+      "name": "Sage Ability Scores",
+      "description": "Increase Constitution, Intelligence, and Wisdom by a total of +3.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "sage_asi",
+          "displayOrder": 0
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sage_asi",
+          "name": "Ability Score Allocation",
+          "description": "Distribute +2/+1 or +1/+1/+1 among Constitution, Intelligence, Wisdom.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "CON",
+              "INT",
+              "WIS"
+            ],
+            "distributions": [
+              "2_1",
+              "1_1_1"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_sage_feat",
+      "name": "Sage Feat: Magic Initiate (Wizard)",
+      "description": "You gain the Magic Initiate feat, treating the Wizard spell list as your source list.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {
+            "featKey": "srd-2024_magic-initiate"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_sage_skills",
+      "name": "Sage Skill Proficiencies",
+      "description": "Skill Proficiencies: Arcana, History",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ARCANA"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "HISTORY"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_sage_tool",
+      "name": "Sage Tool Proficiency",
+      "description": "Tool Proficiency: Calligrapher's Supplies",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "calligraphers_supplies"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_sage_equipment",
+      "name": "Sage Starting Equipment",
+      "description": "Choose A or B: (A) Quarterstaff, Calligrapher's Supplies, Book (history), Parchment (8 sheets), Robe, and 8 GP; or (B) 50 GP.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

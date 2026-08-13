@@ -1,0 +1,111 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_oath-of-devotion",
+  "features": [
+    {
+      "key": "srd_oath-of-devotion_tenets-of-devotion",
+      "name": "Tenets of Devotion",
+      "description": "Honesty. Courage. Compassion. Honor. Duty.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_oath-of-devotion_oath-spells",
+      "name": "Oath Spells",
+      "description": "You gain oath spells at the listed paladin levels. They are always prepared and don't count against your prepared spells.\n\n| Level | Spells |\n|---|---|\n| 3rd | protection from evil and good, sanctuary |\n| 5th | lesser restoration, zone of truth |\n| 9th | beacon of hope, dispel magic |\n| 13th | freedom of movement, guardian of faith |\n| 17th | commune, flame strike |",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_oath-of-devotion_channel-divinity",
+      "name": "Channel Divinity",
+      "description": "At 3rd level, you gain two Channel Divinity options:\n\n**Sacred Weapon.** Action: imbue one held weapon for 1 minute. Add CHA mod to attack rolls (min +1). Weapon emits bright light 20 ft + dim 20 ft. Becomes magical if it wasn't.\n\n**Turn the Unholy.** Action: each fiend or undead within 30 ft that can see/hear you makes WIS save or is turned for 1 minute (or until it takes damage).",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Sacred Weapon",
+            "description": "Imbue weapon: +CHA to attacks, bright light 20 ft, magical for 1 min.",
+            "resourceKey": "channel_divinity"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Turn the Unholy",
+            "description": "Fiends and undead within 30 ft make WIS save or are turned for 1 min.",
+            "resourceKey": "channel_divinity"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_oath-of-devotion_aura-of-devotion",
+      "name": "Aura of Devotion",
+      "description": "Starting at 7th level, you and friendly creatures within 10 feet of you can't be charmed while you are conscious. At 18th level, the range increases to 30 feet.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_oath-of-devotion_purity-of-spirit",
+      "name": "Purity of Spirit",
+      "description": "Beginning at 15th level, you are always under the effects of a *protection from evil and good* spell.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_oath-of-devotion_holy-nimbus",
+      "name": "Holy Nimbus",
+      "description": "At 20th level, as an action, you emanate an aura of sunlight for 1 minute. Bright light 30 ft + dim 30 ft. Enemy creatures starting their turn in the bright light take 10 radiant damage. Advantage on saves vs fiend/undead spells. 1/long rest.",
+      "gainedAtLevel": 20,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "holy_nimbus",
+            "displayName": "Holy Nimbus",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Holy Nimbus",
+            "description": "Emanate sunlight aura for 1 min: 10 radiant damage to enemies in bright light, advantage on saves vs fiend/undead spells.",
+            "resourceKey": "holy_nimbus"
+          }
+        }
+      ]
+    }
+  ]
+}

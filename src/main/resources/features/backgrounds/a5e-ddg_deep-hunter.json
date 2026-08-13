@@ -1,0 +1,96 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ddg_deep-hunter",
+  "features": [
+    {
+      "key": "bg_a5e-ddg_deep-hunter_skills",
+      "name": "Deep Hunter Skill Proficiencies",
+      "description": "Skill Proficiencies: Perception, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_deep-hunter_tools",
+      "name": "Deep Hunter Tool Proficiencies",
+      "description": "Tool Proficiencies: Herbalism Kit, one type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "herbalism_kit"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_deephunter_gaming",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_deephunter_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_deep-hunter_language",
+      "name": "Deep Hunter Language",
+      "description": "One language of your choice, typically an Underdark tongue.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_deephunter_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_deephunter_lang",
+          "name": "Language",
+          "description": "Choose one language (Undercommon, Deep Speech, or similar).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_deep-hunter_feature",
+      "name": "Depths Adept",
+      "description": "You know the ways of the deep underground: safe routes, dangerous denizens, and how to survive with minimal light and supplies. TODO: verify against A5E DDG book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

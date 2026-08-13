@@ -1,0 +1,130 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_human",
+  "features": [
+    {
+      "key": "race_srd_human_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your ability scores each increase by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 1
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 1
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 1
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 1
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 1
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 1
+          },
+          "displayOrder": 5
+        }
+      ]
+    },
+    {
+      "key": "race_srd_human_size",
+      "name": "Size",
+      "description": "Humans vary widely in height and build, from barely 5 feet to well over 6 feet tall. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_human_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_human_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and one extra language of your choice.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "human_extra_lang",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "human_extra_lang",
+          "name": "Extra Language",
+          "description": "Choose one additional language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    }
+  ]
+}

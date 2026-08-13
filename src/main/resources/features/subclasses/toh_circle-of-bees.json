@@ -1,0 +1,128 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-bees",
+  "features": [
+    {
+      "key": "toh_circle-of-bees_bee-bond",
+      "name": "Bee Bond",
+      "description": "At 2nd level, gain proficiency in Acrobatics or Stealth. You can speak/understand Bee Dance. Bees refuse to attack you. When a poison-dealing beast attacks you, it makes CHA save or has disadvantage on attack rolls against you until its next turn.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_bees_skill"
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "bee_dance"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_bees_skill",
+          "name": "Bee Bond Skill",
+          "description": "Choose Acrobatics or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "STEALTH"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-bees_bee-stinger",
+      "name": "Bee Stinger",
+      "description": "At 2nd level, expend one Wild Shape use as action to grow a stinger. Unarmed strikes use WIS: 1d4 + WIS mod piercing + half prof bonus poison damage. Lasts half druid level hours. Scales: 1d6 at L6, 1d8 at L10, 1d10 at L14. Magical from L6.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-bees_circle-spells",
+      "name": "Circle Spells",
+      "description": "At 2nd level, learn true strike. Circle spells at L3/5/7/9: blur/bombardment of stings, fly/haste, giant insect/locate creature, insect plague/telepathic bond. Always prepared.",
+      "gainedAtLevel": 2,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-bees_bumblebee-rush",
+      "name": "Bumblebee Rush",
+      "description": "At 6th level, Dash as bonus action; creatures have disadvantage on attacks against you until your next turn. Prof bonus uses/long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "bumblebee_rush",
+            "displayName": "Bumblebee Rush",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Bumblebee Rush",
+            "description": "Dash as bonus action; attackers have disadvantage until your next turn.",
+            "resourceKey": "bumblebee_rush"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-bees_hive-mind",
+      "name": "Hive Mind",
+      "description": "At 10th level, telepathic bond grants linked creatures advantage on INT/WIS/CHA checks if one is proficient. Shared Perception/Insight successes. Advantage on attacks if another linked creature assists.",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-bees_mantle-of-bees",
+      "name": "Mantle of Bees",
+      "description": "At 14th level, cover yourself in bees for 1 hour: +2 AC, advantage on Intimidation. Melee attackers within 5 ft take 1d8 piercing + 1d8 poison and are poisoned (CON save). Can direct bees to swarm 10-ft radius (4d6 piercing + 4d6 poison, CON save). 1/short or long rest (or 5th+ slot).",
+      "gainedAtLevel": 14,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mantle_of_bees",
+            "displayName": "Mantle of Bees",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    }
+  ]
+}

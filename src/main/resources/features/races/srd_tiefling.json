@@ -1,0 +1,136 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_tiefling",
+  "features": [
+    {
+      "key": "race_srd_tiefling_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 1, and your Charisma score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 1
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 2
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_srd_tiefling_size",
+      "name": "Size",
+      "description": "Tieflings are about the same size and build as humans. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_tiefling_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_tiefling_darkvision",
+      "name": "Darkvision",
+      "description": "Thanks to your infernal heritage, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_tiefling_hellish_resistance",
+      "name": "Hellish Resistance",
+      "description": "You have resistance to fire damage.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "FIRE"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_tiefling_infernal_legacy",
+      "name": "Infernal Legacy",
+      "description": "You know the thaumaturgy cantrip. Once you reach 3rd level, you can cast the hellish rebuke spell as a 2nd-level spell once with this trait and regain the ability to do so when you finish a long rest. Once you reach 5th level, you can also cast the darkness spell once with this trait and regain the ability to do so when you finish a long rest. Charisma is your spellcasting ability for these spells.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "thaumaturgy",
+            "atWill": true,
+            "castingAbilityOverride": "CHA"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_tiefling_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Infernal.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "infernal"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

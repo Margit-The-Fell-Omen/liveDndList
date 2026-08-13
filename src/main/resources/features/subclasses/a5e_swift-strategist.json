@@ -1,0 +1,162 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "a5e_swift-strategist",
+  "features": [
+    {
+      "key": "sub_a5e_swift-strategist_make-haste",
+      "name": "Make Haste",
+      "description": "At 3rd level, choose one of the following:\n\n**Fast Feet.** Whenever a creature starts its turn within your Commanding Presence, you can choose to increase that creature's Speed by 5 feet until the end of its turn.\n\n**Fast Retreat.** Once per round when you take the Attack action, you can forgo making one attack to allow a creature within your Commanding Presence to move up to half its Speed without provoking opportunity attacks.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "swift_strategist_make_haste",
+          "name": "Make Haste",
+          "description": "Choose Fast Feet or Fast Retreat.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "FAST_FEET",
+              "FAST_RETREAT"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_swift-strategist_skirmisher",
+      "name": "Skirmisher",
+      "description": "Also at 3rd level, you increase your speed by 10 feet whenever you're wearing light or no armor and not wielding a shield. In addition, when your movement would provoke an opportunity attack, you impose disadvantage on the attack roll made against you.\n\nAt 15th level, the increase to your speed becomes 20 feet.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 10,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_swift-strategist_nimble-troops",
+      "name": "Nimble Troops",
+      "description": "At 7th level, choose either Acrobatics or Athletics. Creatures you choose within your Commanding Presence add your Charisma modifier (minimum +1) to checks using the chosen skill.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "swift_strategist_nimble_troops",
+          "name": "Nimble Troops Skill",
+          "description": "Choose Acrobatics or Athletics.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ACROBATICS",
+              "ATHLETICS"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_swift-strategist_glorious-sacrifice",
+      "name": "Glorious Sacrifice",
+      "description": "At 11th level, choose one of the following:\n\n**Miraculous Protector.** When a creature within your Commanding Presence is critically hit, you can use your reaction to become the target of the attack instead. Once you have used this feature, you cannot do so again until you finish a rest.\n\n**Take Cover.** When you and at least one other creature within your Commanding Presence would make a saving throw, you can choose to make your saving throw with disadvantage. If you do, creatures you choose within your Commanding Presence make that saving throw with advantage.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "swift_strategist_glorious_sacrifice",
+          "name": "Glorious Sacrifice",
+          "description": "Choose Miraculous Protector or Take Cover.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "MIRACULOUS_PROTECTOR",
+              "TAKE_COVER"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_swift-strategist_portentous-escape",
+      "name": "Portentous Escape",
+      "description": "At 15th level, choose one of the following:\n\n**Fortifying Encouragement.** Whenever you succeed on a saving throw, you can choose one friendly creature within 60 feet of you. If the target can see or hear you, the target gains temporary hit points equal to 5 + your Charisma modifier.\n\n**Get Them Out.** When a creature within your Commanding Presence would make a saving throw against an area effect, you can use your reaction to shout at them, and that creature can use its reaction to move up to half its Speed. If the creature ends its movement outside the area, the area effect has no effect on them. Once you use this feature, you can't do so again until you finish a long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "swift_strategist_portentous_escape",
+          "name": "Portentous Escape",
+          "description": "Choose Fortifying Encouragement or Get Them Out.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "FORTIFYING_ENCOURAGEMENT",
+              "GET_THEM_OUT"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_swift-strategist_unbound-horde",
+      "name": "Unbound Horde",
+      "description": "At 18th level, choose one of the following:\n\n**Among the Ranks.** Creatures you choose have disadvantage on opportunity attacks made against creatures within your Commanding Presence.\n\n**March Together.** The first time you move on your turn, each creature you choose that is within your Commanding Presence can use its reaction to move up to 10 feet, provided the creature's Speed is at least 10 feet.",
+      "gainedAtLevel": 18,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "swift_strategist_unbound_horde",
+          "name": "Unbound Horde",
+          "description": "Choose Among the Ranks or March Together.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "AMONG_THE_RANKS",
+              "MARCH_TOGETHER"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

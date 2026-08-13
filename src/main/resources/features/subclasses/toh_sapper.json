@@ -1,0 +1,117 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_sapper",
+  "features": [
+    {
+      "key": "sub_toh_sapper_combat-engineer",
+      "name": "Combat Engineer",
+      "description": "When you select this archetype at 3rd level, you gain proficiency with alchemist's supplies, carpenter's tools, mason's tools, and tinker's tools.\n\n**Alchemical Bomb.** As an action, mix volatile chemicals and throw at a point within 30 ft. Each creature within 10 ft: DEX save (DC 8 + prof + INT mod) or 1d6 force damage (half on success). Inert after 1 minute. Constructs and structures also take Sneak Attack damage on failed save. Damage scales: 2d6 (L5), 3d6 (L11), 4d6 (L17).\n\n**Jury Rig Fortification.** With 1 minute of work, create a low wall (half cover for Medium), a 5×3×3 ft trench, or a 5-ft ladder (extendable by 5 ft per additional minute).\n\n**Hastily Trap an Area.** Build and set traps quickly (Collapsing Roof, Falling Net, Hunting Trap, Pit). See feature description for build/set times.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "alchemists_supplies"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "carpenters_tools"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "masons_tools"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "tinkers_tools"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Alchemical Bomb",
+            "description": "Throw explosive compound at a point within 30 ft. 10-ft radius DEX save or 1d6 force (scales to 4d6 at L17). Constructs/structures also take Sneak Attack on fail."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_sapper_sculpt-terrain",
+      "name": "Sculpt Terrain",
+      "description": "At 3rd level, when you throw your alchemical bomb, you can choose for it to deal no damage. If you do, the area within 10 feet of the point of impact becomes difficult terrain. You don't need advantage on the attack roll to use Sneak Attack against a creature within the difficult terrain created by your bomb.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_sapper_breach-defenses",
+      "name": "Breach Defenses",
+      "description": "Starting at 9th level, your attacks treat a structure or unattended object's damage threshold as 5 lower. If it has no threshold or would be reduced to 0 or lower, your attack also deals Sneak Attack damage.\n\nThreshold reduction increases: 10 at 13th level, 15 at 17th level.",
+      "gainedAtLevel": 9,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_sapper_clear-the-path",
+      "name": "Clear the Path",
+      "description": "At 13th level, you have advantage on checks to disarm traps. If you fail a check to disarm a trap, the trap doesn't trigger anyway. You can also disarm a trap as a bonus action.",
+      "gainedAtLevel": 13,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_sapper_all-clear",
+      "name": "All Clear",
+      "description": "Beginning at 17th level, as an action, declare a 50-ft-square area safe for travel for 1 minute. Mechanical and magical traps in the area don't trigger. You and designated creatures (who can see or hear you) ignore difficult terrain in the area. 1/short or long rest.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "all_clear",
+            "displayName": "All Clear",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "All Clear",
+            "description": "Declare 50-ft square safe for 1 min: traps don't trigger; you and designated creatures ignore difficult terrain.",
+            "resourceKey": "all_clear"
+          }
+        }
+      ]
+    }
+  ]
+}

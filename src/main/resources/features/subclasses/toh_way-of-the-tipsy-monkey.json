@@ -1,0 +1,74 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_way-of-the-tipsy-monkey",
+  "features": [
+    {
+      "key": "sub_toh_way-of-the-tipsy-monkey_adaptive-fighting",
+      "name": "Adaptive Fighting",
+      "description": "Starting when you choose this tradition at 3rd level, you are proficient with improvised weapons and can treat them as monk weapons. When using a magic item as an improvised weapon, gain a bonus to attack and damage rolls based on rarity: +1 (uncommon), +2 (rare), +3 (very rare).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-tipsy-monkey_sway-and-strike",
+      "name": "Sway and Strike",
+      "description": "At 3rd level, once per round when an enemy provokes an opportunity attack from you, you can spend 1 ki point to make the opportunity attack without spending your reaction. If this attack hits, the target must make a STR save or fall prone.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-tipsy-monkey_jester-style",
+      "name": "Jester Style",
+      "description": "Beginning at 6th level, when an attacker you can see hits you with a weapon attack, you can use your reaction to halve the damage.\n\nWhile prone: no disadvantage on your attack rolls, and enemies within 5 ft don't have advantage on attacks vs you. You can stand up without spending movement whenever you spend ki on your turn.\n\nAdvantage on ability checks and saves to escape grapples. If you fail, spend 1 ki to succeed instead.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Jester Style — Damage Reduction",
+            "description": "When hit by a weapon attack you can see: use reaction to halve the damage."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-tipsy-monkey_fortune-favors-the-fool",
+      "name": "Fortune Favors the Fool",
+      "description": "Starting at 11th level, when you miss with an attack on your turn, the next attack that hits before the end of your turn deals an extra 1d6 damage of the weapon's type (or 1d10 if using an improvised weapon).",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-tipsy-monkey_stumbling-stance",
+      "name": "Stumbling Stance",
+      "description": "At 17th level, if your speed is not 0, your reach is extended by 5 feet and you have advantage on opportunity attacks.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

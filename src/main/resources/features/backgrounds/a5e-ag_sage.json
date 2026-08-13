@@ -1,0 +1,80 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_sage",
+  "features": [
+    {
+      "key": "bg_a5e-ag_sage_skills",
+      "name": "Sage Skill Proficiencies",
+      "description": "Skill Proficiencies: Arcana, History",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ARCANA"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "HISTORY"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_sage_languages",
+      "name": "Sage Languages",
+      "description": "Two languages of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_sage_lang_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_sage_lang_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_sage_lang_1",
+          "name": "First Language",
+          "description": "Choose a language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "a5e_sage_lang_2",
+          "name": "Second Language",
+          "description": "Choose another language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_sage_feature",
+      "name": "Researcher",
+      "description": "When you attempt to learn or recall a piece of lore, if you don't know it, you know where and from whom you can obtain it. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

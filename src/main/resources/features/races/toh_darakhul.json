@@ -1,0 +1,152 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_darakhul",
+  "features": [
+    {
+      "key": "race_toh_darakhul_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Constitution score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_darkvision",
+      "name": "Darkvision",
+      "description": "You can see in dim light within 60 feet as though it were bright light and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_hunger_for_flesh",
+      "name": "Hunger for Flesh",
+      "description": "You must consume 1 pound of raw meat each day or suffer the effects of starvation. If you go 24 hours without such a meal, you gain one level of exhaustion. While you have any levels of exhaustion from this trait, you can't regain hit points or remove levels of exhaustion until you spend at least 1 hour consuming 10 pounds of raw meat.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_imperfect_undeath",
+      "name": "Imperfect Undeath",
+      "description": "Though you are a humanoid, you are susceptible to effects that target undead. You can regain hit points from spells like cure wounds, but you can also be affected by game effects that specifically target undead, such as a cleric's Turn Undead feature.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_powerful_jaw",
+      "name": "Powerful Jaw",
+      "description": "Your heavy jaw is powerful enough to crush bones to powder. Your bite is a natural melee weapon, which you can use to make unarmed strikes. When you hit with it, your bite deals piercing damage equal to 1d4 + your Strength modifier.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_sunlight_sensitivity",
+      "name": "Sunlight Sensitivity",
+      "description": "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_undead_resilience",
+      "name": "Undead Resilience",
+      "description": "You have resistance to necrotic damage and poison damage, you are immune to disease, and you have advantage on saving throws against being charmed or poisoned. When you finish a short rest, you can reduce your exhaustion level by 1, provided you have ingested at least 1 pound of raw meat in the last 24 hours.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "NECROTIC"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "POISON"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "DISEASE"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_undead_vitality",
+      "name": "Undead Vitality",
+      "description": "You don't need to breathe, and you don't sleep the way most creatures do. Instead, you enter a dormant state that resembles death, remaining semiconscious, for 6 hours a day. While dormant, you have disadvantage on Wisdom (Perception) checks.",
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_darakhul_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common, Darakhul, and a language associated with your Heritage Subrace.",
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "darakhul"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

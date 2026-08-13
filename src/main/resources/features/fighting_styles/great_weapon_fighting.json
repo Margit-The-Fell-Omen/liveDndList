@@ -1,0 +1,17 @@
+{
+  "sourceType": "FIGHTING_STYLE",
+  "sourceKey": "fighting_style",
+  "features": [
+    {
+      "key": "fighting_style_great_weapon_fighting",
+      "name": "Fighting Style: Great Weapon Fighting",
+      "description": "When you roll a 1 or 2 on a damage die for an attack with a two-handed melee weapon, you can reroll the die. Weapon must be wielded with two hands.",
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

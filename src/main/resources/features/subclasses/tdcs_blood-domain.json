@@ -1,0 +1,130 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "tdcs_blood-domain",
+  "features": [
+    {
+      "key": "sub_tdcs_blood-domain_domain-spells",
+      "name": "Blood Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | sleep, ray of sickness |\n| 3rd | ray of enfeeblement, crown of madness |\n| 5th | haste, slow |\n| 7th | blight, stoneskin |\n| 9th | dominate person, hold monster |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_blood-domain_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "At 1st level, you gain proficiency with martial weapons.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_blood-domain_bloodletting-focus",
+      "name": "Bloodletting Focus",
+      "description": "From 1st level, when you use a spell of 1st level or higher to deal damage to any creatures that have blood, those creatures suffer additional necrotic damage equal to 2 + the spell's level.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_blood-domain_channel-divinity-blood-puppet",
+      "name": "Channel Divinity: Blood Puppet",
+      "description": "Starting at 2nd level, as an action, target a Large or smaller creature with blood within 60 feet. It must succeed on a CON save vs your spell save DC or immediately move up to half its movement in a direction of your choice and make a single weapon attack against a creature of your choice within range. Dead or unconscious creatures auto-fail. At 8th level, you can target Huge or smaller creatures.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_blood-domain_channel-divinity-crimson-bond",
+      "name": "Channel Divinity: Crimson Bond",
+      "description": "Starting at 6th level, as an action, focus on at least 2 ounces of blood spilt within the last week. For up to 1 hour (concentration), you know the target's approximate distance, direction, and general health state (if within 10 miles).\n\nDuring the bond, you can spend an action to attempt to connect with the creature's senses. It makes a CON save vs your spell save DC. Failure: you see through its eyes or hear through its ears for rounds equal to your WIS modifier (min 1), but are blinded or deafened respectively. The bond ends after the connection. On success, the bond is lost and you take 2d6 necrotic damage.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_blood-domain_sanguine-recall",
+      "name": "Sanguine Recall",
+      "description": "At 8th level, as an action, sacrifice vitality to recover spell slots. Recover slots with a combined level equal to or less than half your cleric level (rounded up); none can be 6th level or higher. You immediately take 1d6 damage per spell slot level recovered. 1/long rest.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "sanguine_recall",
+            "displayName": "Sanguine Recall",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Sanguine Recall",
+            "description": "Recover expended spell slots (combined level ≤ half cleric level, no 6th+). Take 1d6 necrotic per slot level recovered.",
+            "resourceKey": "sanguine_recall"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_blood-domain_vascular-corruption-aura",
+      "name": "Vascular Corruption Aura",
+      "description": "At 17th level, as an action, emit a 30-foot aura for 1 minute. Enemies with blood that start their turn in or enter the aura take 2d6 necrotic damage. Enemies with blood that would regain HP while in the aura only regain half (rounded up). 1/long rest.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "vascular_corruption_aura",
+            "displayName": "Vascular Corruption Aura",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Vascular Corruption Aura",
+            "description": "Emit 30-ft aura for 1 min: enemies with blood take 2d6 necrotic on entering or starting turn within; healing halved.",
+            "resourceKey": "vascular_corruption_aura"
+          }
+        }
+      ]
+    }
+  ]
+}

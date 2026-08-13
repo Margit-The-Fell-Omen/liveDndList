@@ -1,0 +1,58 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_college-of-sincerity",
+  "features": [
+    {
+      "key": "sub_toh_college-of-sincerity_entourage",
+      "name": "Entourage",
+      "description": "When you join the College of Sincerity at 3rd level, you gain the service of two commoners charmed by you. They see to mundane needs, act as messengers in urban areas, and rouse crowds during performances. You must provide lodging and maintain their lifestyle.\n\nThey won't enter combat or obvious danger. Abuse ends their service immediately.\n\nAt 6th level, gain another commoner (or upgrade one to a guard). At 14th level, gain another commoner (or upgrade the guard to a spy or veteran).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-sincerity_kind-eyed-smile",
+      "name": "Kind-Eyed Smile",
+      "description": "Also at 3rd level, when you cast an enchantment spell, your target remains unaware of your attempt to affect its mind regardless of the saving throw result. When the spell's duration ends, the target also remains unaware you enchanted it. If the spell states the creature knows it was influenced, it must succeed on a CHA save vs your spell save DC to realize it.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-sincerity_lingering-presence",
+      "name": "Lingering Presence",
+      "description": "Starting at 6th level, if a creature fails a saving throw against an enchantment or illusion spell you cast, it has disadvantage on subsequent saving throws to overcome that spell's effects.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-sincerity_artist-of-renown",
+      "name": "Artist of Renown",
+      "description": "At 14th level, you can expend a Bardic Inspiration die to cast an enchantment spell you don't know using one of your spell slots. You must meet all requirements and have an available slot of sufficient level.\n\nBardic Inspiration dice spent this way are only regained after a long rest (not on short rests via Font of Inspiration).",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

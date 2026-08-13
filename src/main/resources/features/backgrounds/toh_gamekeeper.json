@@ -1,0 +1,54 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_gamekeeper",
+  "features": [
+    {
+      "key": "bg_toh_gamekeeper_skills",
+      "name": "Gamekeeper Skill Proficiencies",
+      "description": "Skill Proficiencies: Animal Handling, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ANIMAL_HANDLING"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_gamekeeper_tools",
+      "name": "Gamekeeper Tool Proficiency",
+      "description": "Tool Proficiency: Herbalism Kit",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "herbalism_kit"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_gamekeeper_feature",
+      "name": "Warden's Eye",
+      "description": "You know the flora and fauna of your gamelands intimately. You can identify tracks, spot poachers, and predict animal behavior. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

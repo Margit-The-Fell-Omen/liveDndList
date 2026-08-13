@@ -1,0 +1,94 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "srd_acolyte",
+  "features": [
+    {
+      "key": "bg_srd_acolyte_skills",
+      "name": "Acolyte Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Religion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "RELIGION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_srd_acolyte_languages",
+      "name": "Acolyte Languages",
+      "description": "You gain proficiency in two languages of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "acolyte_language_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "acolyte_language_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "acolyte_language_1",
+          "name": "First Language",
+          "description": "Choose one language of your choice.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {},
+          "displayOrder": 0
+        },
+        {
+          "choiceKey": "acolyte_language_2",
+          "name": "Second Language",
+          "description": "Choose one language of your choice (different from the first).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_srd_acolyte_equipment",
+      "name": "Acolyte Starting Equipment",
+      "description": "Equipment: A holy symbol (a gift to you when you entered the priesthood), a prayer book or prayer wheel, 5 sticks of incense, vestments, a set of common clothes, and a belt pouch containing 15 gp.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_srd_acolyte_feature_shelter",
+      "name": "Shelter of the Faithful",
+      "description": "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle. You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

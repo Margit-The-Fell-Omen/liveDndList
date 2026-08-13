@@ -1,0 +1,76 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_college-of-skalds",
+  "features": [
+    {
+      "key": "sub_open5e_college-of-skalds_combat-aptitude",
+      "name": "Combat Aptitude",
+      "description": "When you choose the College of Skalds at 3rd level, you become proficient in all martial weapons, as well as in the use of medium armor and shields.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_college-of-skalds_saga-of-deeds",
+      "name": "Saga of Deeds",
+      "description": "Starting at 3rd level, the dice gained from your Bardic Inspiration feature can be used in the following ways:\n\n* After rolling damage for a successful weapon attack, a creature can roll a Bardic Inspiration die and add the result to the damage.\n* When a creature is the target of an attack roll, before knowing the result, it may roll a Bardic Inspiration die as a reaction and add the result to its AC for that specific attack only.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_college-of-skalds_battle-fury",
+      "name": "Battle Fury",
+      "description": "At 6th level, when you use the attack action, you can make two attacks instead of one.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_college-of-skalds_song-and-strike",
+      "name": "Song and Strike",
+      "description": "Starting at 14th level, any time you cast a bard spell as an action, you can use your bonus action to make a single weapon attack.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

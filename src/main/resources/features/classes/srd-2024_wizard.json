@@ -1,0 +1,538 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_wizard",
+  "features": [
+    {
+      "key": "cls_srd-2024_wizard_starting",
+      "name": "Wizard Starting Traits",
+      "description": "**Primary Ability:** Intelligence\n**Hit Point Die:** d6 per Wizard level\n**Saving Throw Proficiencies:** Intelligence and Wisdom\n**Skill Proficiencies:** Choose 2 from Arcana, History, Insight, Investigation, Medicine, Nature, or Religion\n**Weapon Proficiencies:** Simple weapons\n**Armor Training:** None\n**Starting Equipment:** Choose A or B: (A) 2 Daggers, Arcane Focus (Quarterstaff), Robe, Spellbook, Scholar's Pack, and 5 GP; or (B) 55 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d6"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "wizard_2024_skill_1",
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "wizard_2024_skill_2",
+          "displayOrder": 5
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose from Arcana, History, Insight, Investigation, Medicine, Nature, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "HISTORY",
+              "INSIGHT",
+              "INVESTIGATION",
+              "MEDICINE",
+              "NATURE",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "wizard_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "HISTORY",
+              "INSIGHT",
+              "INVESTIGATION",
+              "MEDICINE",
+              "NATURE",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_spellcasting",
+      "name": "Spellcasting",
+      "description": "As a student of arcane magic, you have learned to cast spells. Intelligence is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Intelligence modifier\n**Spell attack modifier** = your proficiency bonus + your Intelligence modifier\n\nYou start with a spellbook containing 6 level 1 Wizard spells. You add 2 Wizard spells to your spellbook each level.\n\n**Cantrips:** 3 (L1), 4 (L4), 5 (L10).\n**Prepared Spells:** Fixed by class table. Starting at 4 at L1, scaling to 25 at L20. Chosen from your spellbook. Changed after each Long Rest.\n\nYou can use an Arcane Focus or your spellbook as a Spellcasting Focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "INT",
+            "casterType": "FULL",
+            "spellList": "wizard",
+            "ritualCasting": false,
+            "spellbook": true
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_ritual-adept",
+      "name": "Ritual Adept",
+      "description": "You can cast any spell as a Ritual if that spell has the Ritual tag and the spell is in your spellbook. You needn't have the spell prepared, but you must read from the book to cast a spell in this way.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_arcane-recovery",
+      "name": "Arcane Recovery",
+      "description": "You can regain some of your magical energy by studying your spellbook. When you finish a Short Rest, you can choose expended spell slots to recover. The spell slots can have a combined level equal to no more than half your Wizard level (round up), and none of the slots can be level 6 or higher.\n\nOnce you use this feature, you can't do so again until you finish a Long Rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "arcane_recovery",
+            "displayName": "Arcane Recovery",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_scholar",
+      "name": "Scholar",
+      "description": "While studying magic, you also specialized in another field of study. Choose one of the following skills in which you have proficiency: Arcana, History, Investigation, Medicine, Nature, or Religion. You have Expertise in the chosen skill.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "wizard_2024_scholar_expertise"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_scholar_expertise",
+          "name": "Scholar Expertise",
+          "description": "Choose one of your proficient skills: Arcana, History, Investigation, Medicine, Nature, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "HISTORY",
+              "INVESTIGATION",
+              "MEDICINE",
+              "NATURE",
+              "RELIGION"
+            ],
+            "onlyProficient": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_wizard-subclass",
+      "name": "Wizard Subclass",
+      "description": "You gain a Wizard subclass of your choice. The Evoker subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "wizard_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_memorize-spell",
+      "name": "Memorize Spell",
+      "description": "Whenever you finish a Short Rest, you can study your spellbook and replace one of the level 1+ Wizard spells you have prepared for your Spellcasting feature with another level 1+ spell from the book.",
+      "gainedAtLevel": 5,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "wizard_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "wizard_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "wizard_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose a feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_spell-mastery",
+      "name": "Spell Mastery",
+      "description": "You have achieved such mastery over certain spells that you can cast them at will. Choose a level 1 and a level 2 spell in your spellbook that have a casting time of an action. You always have those spells prepared, and you can cast them at their lowest level without expending a spell slot. To cast either spell at a higher level, you must expend a spell slot.\n\nWhenever you finish a Long Rest, you can study your spellbook and replace one of those spells with an eligible spell of the same level from the book.",
+      "gainedAtLevel": 18,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Spell Recall is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "wizard_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "wizard_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_wizard_signature-spells",
+      "name": "Signature Spells",
+      "description": "Choose two level 3 spells in your spellbook as your signature spells. You always have these spells prepared, and you can cast each of them once at level 3 without expending a spell slot. When you do so, you can't cast them in this way again until you finish a Short or Long Rest. To cast either spell at a higher level, you must expend a spell slot.",
+      "gainedAtLevel": 20,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "signature_spell_1",
+            "displayName": "Signature Spell 1",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "signature_spell_2",
+            "displayName": "Signature Spell 2",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

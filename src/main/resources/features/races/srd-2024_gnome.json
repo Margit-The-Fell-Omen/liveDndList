@@ -1,0 +1,96 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_gnome",
+  "features": [
+    {
+      "key": "race_srd-2024_gnome_size",
+      "name": "Size",
+      "description": "You are Small (about 3–4 feet tall).",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "SMALL"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_gnome_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_gnome_darkvision",
+      "name": "Darkvision",
+      "description": "You have Darkvision with a range of 60 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_gnome_cunning",
+      "name": "Gnomish Cunning",
+      "description": "You have Advantage on Intelligence, Wisdom, and Charisma saving throws.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_gnome_lineage",
+      "name": "Gnomish Lineage",
+      "description": "You have a magical lineage. Choose one of the following options: Forest Gnome, Rock Gnome. You gain the associated benefit. When you finish a Long Rest, you can replace your Lineage with the other option.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "gnome_lineage"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gnome_lineage",
+          "name": "Gnomish Lineage",
+          "description": "Forest Gnome: You know the Minor Illusion cantrip; Intelligence is your spellcasting ability for it. When you reach character level 3 you learn Speak with Animals as a spell you can cast without material components (once per Long Rest, or with a 1st-level+ slot). Rock Gnome: You know the Mending and Prestidigitation cantrips; Intelligence is your spellcasting ability. As a Bonus Action, you can create a Tiny clockwork device.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "FOREST_GNOME",
+              "ROCK_GNOME"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

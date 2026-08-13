@@ -1,0 +1,65 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-ash",
+  "features": [
+    {
+      "key": "toh_circle-of-ash_ash-cloud",
+      "name": "Ash Cloud",
+      "description": "At 2nd level, you can expend one use of Wild Shape to create a volcanic eruption at a point within 30 ft. Creatures within 5 ft make DEX save: 2d8 bludgeoning on fail (half on success). Creates a 20-ft-radius heavily obscured ash cloud. Creatures entering or starting turn in it make CON save or have disadvantage on ability checks and saves. You auto-succeed on your own cloud. Lasts 1 minute or until dismissed/dispersed.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-ash_firesight",
+      "name": "Firesight",
+      "description": "Starting at 2nd level, your vision can't be obscured by ash, fire, smoke, fog, or your Ash Cloud. Advantage on saves against gas/cloud effects.\n\n**Covered in Ash (L6):** When a creature within 30 ft takes damage, use reaction to give it temp HP = 2 × proficiency bonus (before damage). Prof bonus uses/long rest. Also, teleport within your ash cloud as a bonus action (1/min).",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-ash_feed-the-earth",
+      "name": "Feed the Earth",
+      "description": "At 10th level, your Ash Cloud becomes more potent: 10-ft radius eruption dealing 2d8 bludgeoning + 2d8 fire damage. Creatures in the cloud have disadvantage on checks/saves even without breathing. If damage is dealt, you can use reaction to create difficult terrain in the cloud. Lasts 10 minutes.",
+      "gainedAtLevel": 10,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-ash_from-the-ashes",
+      "name": "From the Ashes",
+      "description": "Beginning at 14th level, when reduced to 0 HP, your body explodes. Chosen creatures within 30 ft make DEX save: 6d6 fire on fail (half on success). You become ashes. At end of your next turn, you reform with half max HP. 1/long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "from_the_ashes",
+            "displayName": "From the Ashes",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_morel",
+  "features": [
+    {
+      "key": "subrace_toh_morel_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_morel_adaptable_camouflage",
+      "name": "Adaptable Camouflage",
+      "description": "If you spend at least 1 minute in an environment with ample naturally occurring plants or fungi, you can adjust your natural coloration to blend in with the local plant life. You have advantage on Dexterity (Stealth) checks for the next 24 hours while in that environment.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_morel_clan_scout",
+      "name": "Clan Scout",
+      "description": "You have proficiency in the Stealth skill.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          }
+        }
+      ]
+    }
+  ]
+}

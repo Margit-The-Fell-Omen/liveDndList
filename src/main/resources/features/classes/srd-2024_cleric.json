@@ -1,0 +1,594 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_cleric",
+  "features": [
+    {
+      "key": "cls_srd-2024_cleric_starting",
+      "name": "Cleric Starting Traits",
+      "description": "**Primary Ability:** Wisdom\n**Hit Point Die:** d8 per Cleric level\n**Saving Throw Proficiencies:** Wisdom and Charisma\n**Skill Proficiencies:** Choose 2 from History, Insight, Medicine, Persuasion, or Religion\n**Weapon Proficiencies:** Simple weapons\n**Armor Training:** Light and Medium armor and Shields\n**Starting Equipment:** Choose A or B: (A) Chain Shirt, Shield, Mace, Holy Symbol, Priest's Pack, and 7 GP; or (B) 110 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "cleric_2024_skill_1",
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "cleric_2024_skill_2",
+          "displayOrder": 8
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from History, Insight, Medicine, Persuasion, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "MEDICINE",
+              "PERSUASION",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "cleric_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the cleric skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "MEDICINE",
+              "PERSUASION",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_spellcasting",
+      "name": "Spellcasting",
+      "description": "You have learned to cast spells through prayer and meditation. Wisdom is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Wisdom modifier\n**Spell attack modifier** = your proficiency bonus + your Wisdom modifier\n\n**Cantrips:** 3 (L1), 4 (L4), 5 (L10). Chosen from the Cleric spell list.\n**Prepared Spells:** Fixed by class table. Starting at 4 at L1, scaling to 22 at L20. Chosen from the Cleric spell list. Changed after each Long Rest.\n\nYou can use a Holy Symbol as a Spellcasting Focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "WIS",
+            "casterType": "FULL",
+            "spellList": "cleric",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_divine-order",
+      "name": "Divine Order",
+      "description": "You have dedicated yourself to one of the following sacred roles of your choice.\n\n**Protector.** Trained for battle, you gain proficiency with Martial weapons and training with Heavy armor.\n\n**Thaumaturge.** You know one extra cantrip from the Cleric spell list. In addition, your mystical connection to the divine gives you a bonus to your Intelligence (Arcana or Religion) checks. The bonus equals your Wisdom modifier (minimum of +1).",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "cleric_2024_divine_order"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_divine_order",
+          "name": "Divine Order",
+          "description": "Choose Protector (martial weapons + heavy armor) or Thaumaturge (extra cantrip + WIS bonus to Arcana/Religion).",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "PROTECTOR",
+              "THAUMATURGE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_channel-divinity",
+      "name": "Channel Divinity",
+      "description": "You can channel divine energy directly from the Outer Planes to fuel magical effects. You start with two effects: Divine Spark and Turn Undead.\n\nUses: 2 (L2-5), 3 (L6-17), 4 (L18+). Regain 1 use on Short Rest, all on Long Rest.\n\n**Divine Spark.** Magic action: point Holy Symbol at creature within 30 ft. Roll 1d8 + WIS mod. Either restore that many HP or force CON save, dealing Necrotic/Radiant damage on failed save (half on success). Scales: 2d8 (L7), 3d8 (L13), 4d8 (L18).\n\n**Turn Undead.** Magic action: present Holy Symbol. Each Undead within 30 ft makes WIS save or becomes Frightened + Incapacitated for 1 minute.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "channel_divinity",
+            "displayName": "Channel Divinity",
+            "usesFormula": {
+              "perClassLevel": {
+                "2": 2,
+                "6": 3,
+                "18": 4
+              }
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Channel Divinity: Divine Spark",
+            "description": "Magic action: roll 1d8 + WIS mod. Heal an ally that amount, or force CON save on a creature within 30 ft dealing Necrotic/Radiant damage. Scales at L7/13/18.",
+            "resourceKey": "channel_divinity"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Channel Divinity: Turn Undead",
+            "description": "Magic action: each Undead within 30 ft makes WIS save or is Frightened + Incapacitated for 1 minute.",
+            "resourceKey": "channel_divinity"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_cleric-subclass",
+      "name": "Cleric Subclass",
+      "description": "You gain a Cleric subclass of your choice. The Life Domain subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "cleric_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_sear-undead",
+      "name": "Sear Undead",
+      "description": "Whenever you use Turn Undead, you can roll a number of d8s equal to your Wisdom modifier (minimum of 1d8) and add the rolls together. Each Undead that fails its saving throw against that use of Turn Undead takes Radiant damage equal to the roll's total. This damage doesn't end the turn effect.",
+      "gainedAtLevel": 5,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_blessed-strikes",
+      "name": "Blessed Strikes",
+      "description": "Divine power infuses you in battle. Choose one option:\n\n**Divine Strike.** Once per turn when you hit a creature with a weapon attack, deal an extra 1d8 Necrotic or Radiant damage (your choice).\n\n**Potent Spellcasting.** Add your Wisdom modifier to the damage you deal with any Cleric cantrip.",
+      "gainedAtLevel": 7,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "cleric_2024_blessed_strikes"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_blessed_strikes",
+          "name": "Blessed Strikes",
+          "description": "Choose Divine Strike (+1d8 weapon damage) or Potent Spellcasting (+WIS mod to cantrip damage).",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "DIVINE_STRIKE",
+              "POTENT_SPELLCASTING"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "cleric_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_divine-intervention",
+      "name": "Divine Intervention",
+      "description": "You can call on your deity or pantheon to intervene on your behalf. As a Magic action, choose any Cleric spell of level 5 or lower that doesn't require a Reaction to cast. As part of the same action, you cast that spell without expending a spell slot or needing Material components. You can't use this feature again until you finish a Long Rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "divine_intervention",
+            "displayName": "Divine Intervention",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Divine Intervention",
+            "description": "Magic action: cast any Cleric spell ≤5th level without expending a slot or material components.",
+            "resourceKey": "divine_intervention"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "cleric_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_improved-blessed-strikes",
+      "name": "Improved Blessed Strikes",
+      "description": "The option you chose for Blessed Strikes grows more powerful.\n\n**Divine Strike.** The extra damage increases to 2d8.\n\n**Potent Spellcasting.** When you cast a Cleric cantrip and deal damage, you can give vitality to yourself or another creature within 60 feet, granting Temporary Hit Points equal to twice your Wisdom modifier.",
+      "gainedAtLevel": 14,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "cleric_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Fate is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "cleric_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cleric_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_cleric_greater-divine-intervention",
+      "name": "Greater Divine Intervention",
+      "description": "You can call on even more powerful divine intervention. When you use your Divine Intervention feature, you can choose *Wish* when you select a spell. If you do so, you can't use Divine Intervention again until you finish 2d4 Long Rests.",
+      "gainedAtLevel": 20,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_folk-hero",
+  "features": [
+    {
+      "key": "bg_a5e-ag_folk-hero_skills",
+      "name": "Folk Hero Skill Proficiencies",
+      "description": "Skill Proficiencies: Animal Handling, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ANIMAL_HANDLING"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_folk-hero_tools",
+      "name": "Folk Hero Tool Proficiencies",
+      "description": "Tool Proficiencies: Land Vehicles, one type of artisan's tools.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "land_vehicles"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_folkhero_tool",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_folkhero_tool",
+          "name": "Artisan's Tools",
+          "description": "Choose one type of artisan's tools.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "artisans_tools"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_folk-hero_feature",
+      "name": "Rustic Hospitality",
+      "description": "Common folk will provide you with shelter, though not at the risk of their lives. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

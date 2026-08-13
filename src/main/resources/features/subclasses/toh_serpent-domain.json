@@ -1,0 +1,125 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_serpent-domain",
+  "features": [
+    {
+      "key": "sub_toh_serpent-domain_domain-spells",
+      "name": "Serpent Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | charm person, find familiar (snakes only) |\n| 3rd | enthrall, protection from poison |\n| 5th | conjure animals (snakes only), hypnotic pattern |\n| 7th | freedom of movement, polymorph (snakes only) |\n| 9th | dominate person, mislead |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_serpent-domain_envenomed",
+      "name": "Envenomed",
+      "description": "When you choose this domain at 1st level, you learn the *poison spray* cantrip. You gain proficiency in Deception, with a poisoner's kit, and with martial weapons that have the Finesse property. You can apply poison to a melee weapon or three pieces of ammunition as a bonus action.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "poisoners_kit"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_serpent-domain_ophidian-tongue",
+      "name": "Ophidian Tongue",
+      "description": "Also at 1st level, you can communicate telepathically with serpents, snakes, and reptiles within 100 feet. Their responses are limited by intelligence and convey current state (e.g., \"hungry,\" \"in danger\").",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_serpent-domain_channel-divinity-serpent-stealth",
+      "name": "Channel Divinity: Serpent Stealth",
+      "description": "Beginning at 2nd level, as an action, choose up to five creatures within 30 ft you can see. You and each target have advantage on Dexterity (Stealth) checks for 10 minutes.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_serpent-domain_serpents-blood",
+      "name": "Serpent's Blood",
+      "description": "Starting at 6th level, you are immune to the poisoned condition and have resistance to poison damage.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "POISON"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "POISONED"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_serpent-domain_divine-strike",
+      "name": "Divine Strike",
+      "description": "Beginning at 8th level, once per turn when you hit with a weapon attack, deal an extra 1d8 poison damage. Increases to 2d8 at 14th level.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_serpent-domain_transformative-molt",
+      "name": "Transformative Molt",
+      "description": "Beginning at 17th level, as part of a short or long rest, shed your skin and assume a new appearance (height, weight, facial features, voice, coloration — as *alter self* Change Appearance). Lasts until your next short or long rest.\n\nWhen reduced below half your HP maximum, you can end this transformation as a reaction to regain HP equal to 3 × cleric level. After using the reaction, you can't change appearance again until you finish a long rest.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Transformative Molt",
+            "description": "When reduced below half HP, end your current appearance transformation to regain HP equal to 3 × cleric level."
+          }
+        }
+      ]
+    }
+  ]
+}

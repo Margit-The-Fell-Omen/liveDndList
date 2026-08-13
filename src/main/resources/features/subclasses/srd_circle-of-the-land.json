@@ -1,0 +1,103 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_circle-of-the-land",
+  "features": [
+    {
+      "key": "srd_circle-of-the-land_bonus-cantrip",
+      "name": "Bonus Cantrip",
+      "description": "When you choose this circle at 2nd level, you learn one additional druid cantrip of your choice.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_circle-of-the-land_natural-recovery",
+      "name": "Natural Recovery",
+      "description": "Starting at 2nd level, during a short rest, you can recover expended spell slots with a combined level equal to or less than half your druid level (rounded up), and none of the slots can be 6th level or higher. 1/long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "natural_recovery",
+            "displayName": "Natural Recovery",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_circle-of-the-land_circle-spells",
+      "name": "Circle Spells",
+      "description": "Your mystical connection to the land infuses you with the ability to cast certain spells. Choose a land type (arctic, coast, desert, forest, grassland, mountain, or swamp) and gain access to circle spells at druid levels 3, 5, 7, and 9. Once gained, circle spells are always prepared and don't count against your prepared spell limit.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_circle-of-the-land_lands-stride",
+      "name": "Land's Stride",
+      "description": "Starting at 6th level, moving through nonmagical difficult terrain costs you no extra movement. You can also pass through nonmagical plants without being slowed or taking damage. You have advantage on saving throws against plants that impede movement.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_circle-of-the-land_natures-ward",
+      "name": "Nature's Ward",
+      "description": "When you reach 10th level, you can't be charmed or frightened by elementals or fey, and you are immune to poison and disease.",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "DISEASE"
+          }
+        },
+        {
+          "type": "GRANT_DAMAGE_IMMUNITY",
+          "payload": {
+            "damageType": "POISON"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_circle-of-the-land_natures-sanctuary",
+      "name": "Nature's Sanctuary",
+      "description": "When you reach 14th level, creatures of the natural world sense your connection to nature. When a beast or plant creature attacks you, it must make a Wisdom saving throw against your druid spell save DC. On a failed save, it must choose a different target or its attack automatically misses. On success, it's immune for 24 hours.",
+      "gainedAtLevel": 14,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

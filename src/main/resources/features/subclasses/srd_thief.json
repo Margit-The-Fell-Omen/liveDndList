@@ -1,0 +1,77 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_thief",
+  "features": [
+    {
+      "key": "sub_srd_thief_fast-hands",
+      "name": "Fast Hands",
+      "description": "Starting at 3rd level, you can use the bonus action granted by your Cunning Action to make a Dexterity (Sleight of Hand) check, use your thieves' tools to disarm a trap or open a lock, or take the Use an Object action.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Fast Hands",
+            "description": "Sleight of Hand check, use thieves' tools (disarm trap / open lock), or Use an Object as a bonus action via Cunning Action."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_thief_second-story-work",
+      "name": "Second-Story Work",
+      "description": "When you choose this archetype at 3rd level, you gain the ability to climb faster than normal; climbing no longer costs you extra movement.\n\nIn addition, when you make a running jump, the distance you cover increases by a number of feet equal to your Dexterity modifier.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPEED_TYPE",
+          "payload": {
+            "speedType": "CLIMB",
+            "matchWalking": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_thief_supreme-sneak",
+      "name": "Supreme Sneak",
+      "description": "Starting at 9th level, you have advantage on a Dexterity (Stealth) check if you move no more than half your speed on the same turn.",
+      "gainedAtLevel": 9,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_thief_use-magic-device",
+      "name": "Use Magic Device",
+      "description": "By 13th level, you have learned enough about the workings of magic that you can improvise the use of items even when they are not intended for you. You ignore all class, race, and level requirements on the use of magic items.",
+      "gainedAtLevel": 13,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_thief_thiefs-reflexes",
+      "name": "Thief's Reflexes",
+      "description": "When you reach 17th level, you have become adept at laying ambushes and quickly escaping danger. You can take two turns during the first round of any combat. You take your first turn at your normal initiative and your second turn at your initiative minus 10. You can't use this feature when you are surprised.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

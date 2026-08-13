@@ -1,0 +1,85 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-the-shapeless",
+  "features": [
+    {
+      "key": "toh_circle-of-the-shapeless_circle-spells",
+      "name": "Circle Spells",
+      "description": "At 2nd level, learn acid splash. Circle spells at L3/5/7/9: enlarge/reduce + spider climb, iron gut + meld into stone, blight + freedom of movement, contagion + seeming. Always prepared.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-shapeless_ooze-form",
+      "name": "Ooze Form",
+      "description": "At 2nd level, expend one Wild Shape as bonus action to become ooze-like for 10 min (1 hour at L10). Retain game stats.\n- **Acid Weapons:** +1d6 acid on melee hits (2d6 at L10)\n- **Amorphous:** Move through 1-inch spaces\n- **Climber:** 20 ft climb speed\n- **Oozing Form:** Reaction when touched/hit within 5 ft: 1d6 acid (2d6 at L10)",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-shapeless_slimy-pseudopod",
+      "name": "Slimy Pseudopod",
+      "description": "At 6th level, bonus action to grow pseudopod for 1 min. Make melee spell attack as bonus action each turn: 1d6 acid (2d6 at L10). Prof bonus uses/long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "slimy_pseudopod",
+            "displayName": "Slimy Pseudopod",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-shapeless_improved-ooze-form",
+      "name": "Improved Ooze Form",
+      "description": "At 10th level, ooze form lasts 1 hour. Acid damage from Acid Weapons and Oozing Form increases to 2d6.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-the-shapeless_engulfing-embrace",
+      "name": "Engulfing Embrace",
+      "description": "At 14th level, while in ooze form, action to engulf a same-size-or-smaller creature within 5 ft. DEX save or engulfed: restrained, total cover from outside, 2d6 acid initially + 4d6 acid at start of your turns. Escape: STR (Athletics) vs spell save DC. 1/long rest (or 5th+ slot).",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "engulfing_embrace",
+            "displayName": "Engulfing Embrace",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

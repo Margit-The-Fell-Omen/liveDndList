@@ -1,0 +1,125 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_vermin-domain",
+  "features": [
+    {
+      "key": "sub_toh_vermin-domain_vermin-domain-spells",
+      "name": "Vermin Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | detect poison and disease, speak with animals (vermin only) |\n| 3rd | spider climb, web |\n| 5th | conjure animals (vermin only), fear |\n| 7th | dominate beast (vermin only), giant insect |\n| 9th | contagion, insect plague |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_vermin-domain_the-unseen",
+      "name": "The Unseen",
+      "description": "When you choose this domain at 1st level, you gain proficiency with shortswords and hand crossbows, and proficiency in Stealth and Survival. You can communicate simple ideas telepathically with vermin (mice, spiders, ants, etc.) within 100 feet. Their responses are limited by intelligence and convey current state (e.g., \"hungry,\" \"in danger\").",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortsword"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "hand_crossbow"
+          },
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_vermin-domain_channel-divinity-swarm-step",
+      "name": "Channel Divinity: Swarm Step",
+      "description": "Starting at 2nd level, as a bonus action or as a reaction when you are attacked, you transform into a swarm of vermin and move up to 30 feet to an unoccupied space you can see (no opportunity attacks). You then revert to your normal form.",
+      "gainedAtLevel": 2,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_vermin-domain_legion-of-bites",
+      "name": "Legion of Bites",
+      "description": "At 6th level, as an action, choose a creature within 30 ft you can see. CON save vs your spell save DC or it is covered in spectral vermin for 1 minute. Each time an ally hits the target with a weapon attack, it takes an extra 1d4 poison damage. Immune creatures (disease immunity) are unaffected.\n\nUses equal to WIS modifier (min 1); regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "legion_of_bites",
+            "displayName": "Legion of Bites",
+            "usesFormula": {
+              "abilityMod": "WIS"
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Legion of Bites",
+            "description": "CON save or target covered in vermin for 1 min: allies deal +1d4 poison on weapon hits vs target.",
+            "resourceKey": "legion_of_bites"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_vermin-domain_divine-strike",
+      "name": "Divine Strike",
+      "description": "At 8th level, once on each of your turns when you hit a creature with a weapon attack, deal an extra 1d8 poison damage. Increases to 2d8 at 14th level.",
+      "gainedAtLevel": 8,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_vermin-domain_verminform-blessing",
+      "name": "Verminform Blessing",
+      "description": "At 17th level, you become a natural lycanthrope using wererat statistics, though your form can take on insectoid aspects (mandibles, compound eyes, antennae). Your alignment doesn't change, and you cannot spread lycanthropy.",
+      "gainedAtLevel": 17,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

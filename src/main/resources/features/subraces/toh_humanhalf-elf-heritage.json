@@ -1,0 +1,87 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_humanhalf-elf-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_humanhalf-elf-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "One ability score of your choice, other than Constitution, increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "humanhalfelf_asi"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "humanhalfelf_asi",
+          "name": "+2 Ability",
+          "description": "Choose one ability score (other than Constitution) to increase by 2.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "excludeAbilities": [
+              "CON"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_humanhalf-elf-heritage_versatility",
+      "name": "Versatility",
+      "description": "The training and experience of your early years was not lost when you became a darakhul. You have proficiency in two skills and one tool of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "humanhalfelf_skill_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "humanhalfelf_skill_2",
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "humanhalfelf_tool",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "humanhalfelf_skill_1",
+          "name": "First Skill",
+          "description": "Choose one skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "humanhalfelf_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "humanhalfelf_tool",
+          "name": "Tool",
+          "description": "Choose one tool proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    }
+  ]
+}

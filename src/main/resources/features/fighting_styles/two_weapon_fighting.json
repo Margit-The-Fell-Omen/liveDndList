@@ -1,0 +1,22 @@
+{
+  "sourceType": "FIGHTING_STYLE",
+  "sourceKey": "fighting_style",
+  "features": [
+    {
+      "key": "fighting_style_two_weapon_fighting",
+      "name": "Fighting Style: Two-Weapon Fighting",
+      "description": "When you engage in two-weapon fighting, add your ability modifier to the damage of the second attack.",
+      "effects": [
+        {
+          "type": "ADD_ABILITY_MODIFIER_TO_DAMAGE",
+          "payload": {
+            "ability": "STR",
+            "filter": {
+              "isOffHand": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

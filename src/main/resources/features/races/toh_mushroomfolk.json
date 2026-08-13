@@ -1,0 +1,125 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_mushroomfolk",
+  "features": [
+    {
+      "key": "race_toh_mushroomfolk_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Wisdom score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_mushroomfolk_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_mushroomfolk_darkvision",
+      "name": "Darkvision",
+      "description": "Accustomed to life underground, you can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_mushroomfolk_fungoid_form",
+      "name": "Fungoid Form",
+      "description": "You are a humanoid, though the fungal nature of your body marks you with some plant-like characteristics. You have advantage on saving throws against poison, and you have resistance to poison damage. In addition, you are immune to disease.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "POISON"
+          }
+        },
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "DISEASE"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_mushroomfolk_hardy_survivor",
+      "name": "Hardy Survivor",
+      "description": "Your upbringing in mushroomfolk society has taught you how to defend yourself and find food. You have proficiency in the Survival skill.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_mushroomfolk_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Mushroomfolk and your choice of Common or Undercommon.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "mushroomfolk"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "mushroomfolk_lang",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "mushroomfolk_lang",
+          "name": "Language",
+          "description": "Choose Common or Undercommon.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "common",
+              "undercommon"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

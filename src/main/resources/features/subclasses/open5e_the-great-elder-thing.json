@@ -1,0 +1,95 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_the-great-elder-thing",
+  "features": [
+    {
+      "key": "sub_open5e_the-great-elder-thing_expanded-spell-list",
+      "name": "Expanded Spell List",
+      "description": "The Great Elder Thing adds spells to your warlock spell list.\n\n| Spell Level | Spells |\n|---|---|\n| 1st | dissonant whispers, hideous laughter |\n| 2nd | detect thoughts, phantasmal force |\n| 3rd | clairvoyance, sending |\n| 4th | dominate beast, black tentacles |\n| 5th | dominate person, telekinesis |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-great-elder-thing_outward-cerebration",
+      "name": "Outward Cerebration",
+      "description": "Beginning at 1st level, you can push your thoughts into other minds, speaking telepathically to a creature within 30 feet that you can see. The creature must know some language to hear your projections, but it need not share your language.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-great-elder-thing_inhuman-reflex",
+      "name": "Inhuman Reflex",
+      "description": "Starting at 6th level, as a reaction triggered by an enemy attack roll targeting you, you force the attacker to make the roll with disadvantage. If the attack misses, you gain advantage on the next attack roll you make against that creature until the end of your next turn. 1/short or long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "inhuman_reflex",
+            "displayName": "Inhuman Reflex",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Inhuman Reflex",
+            "description": "Force an attacker to roll with disadvantage. If they miss, gain advantage on your next attack against them.",
+            "resourceKey": "inhuman_reflex"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-great-elder-thing_mental-barrier",
+      "name": "Mental Barrier",
+      "description": "At 10th level, your mind cannot be read by magic, telepathy, or other methods without your consent. You gain resistance to psychic damage. When you take psychic damage, you deal the same amount of psychic damage back to the creature that dealt it.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "PSYCHIC"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_the-great-elder-thing_cosmic-enthrallment",
+      "name": "Cosmic Enthrallment",
+      "description": "Starting at 14th level, as an action, touch an incapacitated humanoid to charm it permanently. You can speak to this thrall telepathically on the same plane. The charm ends if removed by *remove curse* or similar, or when you use this feature on another creature.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Cosmic Enthrallment",
+            "description": "Touch an incapacitated humanoid: it becomes permanently charmed by you. Telepathic communication on same plane. Ends on remove curse or when used on another."
+          }
+        }
+      ]
+    }
+  ]
+}

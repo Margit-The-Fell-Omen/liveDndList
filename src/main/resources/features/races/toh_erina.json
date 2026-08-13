@@ -1,0 +1,188 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_erina",
+  "features": [
+    {
+      "key": "race_toh_erina_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2, and you can choose to increase either your Wisdom or Charisma score by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "erina_asi",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "erina_asi",
+          "name": "Second +1",
+          "description": "Increase either Wisdom or Charisma by 1.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "WIS",
+              "CHA"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_size",
+      "name": "Size",
+      "description": "Erina average about 3 feet tall and weigh about 50 pounds. Your size is Small.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "SMALL"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 25 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 25,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_digger",
+      "name": "Digger",
+      "description": "You have a burrowing speed of 20 feet, but you can use it to move through only earth and sand, not mud, ice, or rock.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SPEED_TYPE",
+          "payload": {
+            "speedType": "BURROW",
+            "value": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_darkvision",
+      "name": "Darkvision",
+      "description": "Accustomed to life in the dark burrows of your people, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_hardy",
+      "name": "Hardy",
+      "description": "The erina diet of snakes and venomous insects has made them hardy. You have advantage on saving throws against poison, and you have resistance against poison damage.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "POISON"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_spines",
+      "name": "Spines",
+      "description": "Erina grow needle-sharp spines in small clusters atop their heads and along their backs. While you are grappling a creature or while a creature is grappling you, the creature takes 1d4 piercing damage at the start of your turn.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_keen_senses",
+      "name": "Keen Senses",
+      "description": "You have proficiency in the Perception skill.",
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_erina_languages",
+      "name": "Languages",
+      "description": "You can speak Erina and either Common or Sylvan.",
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "erina"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "erina_second_lang",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "erina_second_lang",
+          "name": "Second Language",
+          "description": "Choose Common or Sylvan.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "common",
+              "sylvan"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

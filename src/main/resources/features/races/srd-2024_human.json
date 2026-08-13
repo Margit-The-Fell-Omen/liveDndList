@@ -1,0 +1,115 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_human",
+  "features": [
+    {
+      "key": "race_srd-2024_human_size",
+      "name": "Size",
+      "description": "You are Medium or Small. You choose the size when you select this Species.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {},
+          "choiceKey": "human_size"
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "human_size",
+          "name": "Size",
+          "description": "Choose Medium or Small.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "MEDIUM",
+              "SMALL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_human_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_human_resourceful",
+      "name": "Resourceful",
+      "description": "You gain Heroic Inspiration whenever you finish a Long Rest.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_human_skillful",
+      "name": "Skillful",
+      "description": "You gain proficiency in one skill of your choice.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "human_skill"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "human_skill",
+          "name": "Skill Proficiency",
+          "description": "Choose one skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_human_versatile",
+      "name": "Versatile",
+      "description": "You gain an Origin feat of your choice.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "human_origin_feat"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "human_origin_feat",
+          "name": "Origin Feat",
+          "description": "Choose one Origin feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "ORIGIN"
+          }
+        }
+      ]
+    }
+  ]
+}

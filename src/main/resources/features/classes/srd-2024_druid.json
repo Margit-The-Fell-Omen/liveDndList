@@ -1,0 +1,605 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_druid",
+  "features": [
+    {
+      "key": "cls_srd-2024_druid_starting",
+      "name": "Druid Starting Traits",
+      "description": "**Primary Ability:** Wisdom\n**Hit Point Die:** d8 per Druid level\n**Saving Throw Proficiencies:** Intelligence and Wisdom\n**Skill Proficiencies:** Choose 2 from Animal Handling, Arcana, Insight, Medicine, Nature, Perception, Religion, or Survival\n**Weapon Proficiencies:** Simple weapons\n**Tool Proficiencies:** Herbalism Kit\n**Armor Training:** Light armor and Shields\n**Starting Equipment:** Choose A or B: (A) Leather Armor, Shield, Sickle, Druidic Focus (Quarterstaff), Explorer's Pack, Herbalism Kit, and 9 GP; or (B) 50 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "herbalism_kit"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "druid_2024_skill_1",
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "druid_2024_skill_2",
+          "displayOrder": 8
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Animal Handling, Arcana, Insight, Medicine, Nature, Perception, Religion, or Survival.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ARCANA",
+              "INSIGHT",
+              "MEDICINE",
+              "NATURE",
+              "PERCEPTION",
+              "RELIGION",
+              "SURVIVAL"
+            ]
+          }
+        },
+        {
+          "choiceKey": "druid_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the druid skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ARCANA",
+              "INSIGHT",
+              "MEDICINE",
+              "NATURE",
+              "PERCEPTION",
+              "RELIGION",
+              "SURVIVAL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_druidic",
+      "name": "Druidic",
+      "description": "You know Druidic, the secret language of Druids. While learning this ancient tongue, you also unlocked the magic of communicating with animals; you always have the *Speak with Animals* spell prepared.\n\nYou can use Druidic to leave hidden messages. You and others who know Druidic automatically spot such a message. Others spot the message's presence with a successful DC 15 Intelligence (Investigation) check but can't decipher it without magic.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "druidic"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_primal-order",
+      "name": "Primal Order",
+      "description": "You have dedicated yourself to one of the following sacred roles of your choice.\n\n**Magician.** You know one extra cantrip from the Druid spell list. In addition, your mystical connection to nature gives you a bonus to your Intelligence (Arcana or Nature) checks. The bonus equals your Wisdom modifier (minimum bonus of +1).\n\n**Warden.** Trained for battle, you gain proficiency with Martial weapons and training with Medium armor.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "druid_2024_primal_order"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_primal_order",
+          "name": "Primal Order",
+          "description": "Choose Magician (extra cantrip + WIS bonus to Arcana/Nature) or Warden (martial weapons + medium armor).",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "MAGICIAN",
+              "WARDEN"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_spellcasting",
+      "name": "Spellcasting",
+      "description": "You have learned to cast spells through studying the mystical forces of nature. Wisdom is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Wisdom modifier\n**Spell attack modifier** = your proficiency bonus + your Wisdom modifier\n\n**Cantrips:** 2 (L1), 3 (L4), 4 (L10). Chosen from the Druid spell list.\n**Prepared Spells:** Fixed by class table. Starting at 4 at L1, scaling to 22 at L20. Chosen from the Druid spell list. Changed after each Long Rest.\n\nYou can use a Druidic Focus as a Spellcasting Focus.",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "WIS",
+            "casterType": "FULL",
+            "spellList": "druid",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_wild-shape",
+      "name": "Wild Shape",
+      "description": "As a Bonus Action, you shape-shift into a Beast form that you have learned. You stay in that form for a number of hours equal to half your Druid level or until you use Wild Shape again, have the Incapacitated condition, or die.\n\n**Uses:** 2 (L2-5), 3 (L6-16), 4 (L17+). Regain 1 use on Short Rest, all on Long Rest.\n**Temporary Hit Points:** When you assume a form, gain Temp HP = your Druid level.\n**Known Forms:** 4 (L2), 6 (L4), 8 (L8). Max CR 1/4 (L2), 1/2 (L4), 1 (L8). Fly Speed allowed from L8.\n\nWhile shape-shifted: your stats are replaced by the beast's (keep INT/WIS/CHA, class features, languages, feats). Can't cast spells but doesn't break Concentration.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "wild_shape",
+            "displayName": "Wild Shape",
+            "usesFormula": {
+              "perClassLevel": {
+                "2": 2,
+                "6": 3,
+                "17": 4
+              }
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Wild Shape",
+            "description": "Transform into a known Beast form. Gain Temp HP = Druid level. Duration: half Druid level in hours.",
+            "resourceKey": "wild_shape"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_wild-companion",
+      "name": "Wild Companion",
+      "description": "You can summon a nature spirit that assumes an animal form to aid you. As a Magic action, you can expend a spell slot or a use of Wild Shape to cast the *Find Familiar* spell without Material components.\n\nWhen you cast the spell in this way, the familiar is Fey and disappears when you finish a Long Rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_druid-subclass",
+      "name": "Druid Subclass",
+      "description": "You gain a Druid subclass of your choice. The Circle of the Land subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "druid_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_wild-resurgence",
+      "name": "Wild Resurgence",
+      "description": "Once on each of your turns, if you have no uses of Wild Shape left, you can give yourself one use by expending a spell slot (no action required).\n\nIn addition, you can expend one use of Wild Shape (no action required) to give yourself a level 1 spell slot, but you can't do so again until you finish a Long Rest.",
+      "gainedAtLevel": 5,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_elemental-fury",
+      "name": "Elemental Fury",
+      "description": "The might of the elements flows through you. Choose one option:\n\n**Potent Spellcasting.** Add your Wisdom modifier to the damage you deal with any Druid cantrip.\n\n**Primal Strike.** Once per turn when you hit with a weapon or Beast form attack, deal an extra 1d8 Cold, Fire, Lightning, or Thunder damage (your choice).",
+      "gainedAtLevel": 7,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "druid_2024_elemental_fury"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_elemental_fury",
+          "name": "Elemental Fury",
+          "description": "Choose Potent Spellcasting (+WIS to cantrip damage) or Primal Strike (+1d8 elemental on weapon/beast hit).",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "POTENT_SPELLCASTING",
+              "PRIMAL_STRIKE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "druid_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "druid_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_improved-elemental-fury",
+      "name": "Improved Elemental Fury",
+      "description": "The option you chose for Elemental Fury grows more powerful.\n\n**Potent Spellcasting.** When you cast a Druid cantrip with a range of 10 feet or greater, the spell's range increases by 300 feet.\n\n**Primal Strike.** The extra damage increases to 2d8.",
+      "gainedAtLevel": 15,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "druid_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_beast-spells",
+      "name": "Beast Spells",
+      "description": "While using Wild Shape, you can cast spells in Beast form, except for any spell that has a Material component with a cost specified or that consumes its Material component.",
+      "gainedAtLevel": 18,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Dimensional Travel is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "druid_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "druid_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_druid_archdruid",
+      "name": "Archdruid",
+      "description": "The vitality of nature constantly blooms within you, granting you the following benefits.\n\n**Evergreen Wild Shape.** Whenever you roll Initiative and have no uses of Wild Shape left, you regain one expended use of it.\n\n**Nature Magician.** You can convert uses of Wild Shape into a spell slot (no action required). Choose a number of your unexpended uses of Wild Shape and convert them into a single spell slot, with each use contributing 2 spell levels. Once you use this benefit, you can't do so again until you finish a Long Rest.\n\n**Longevity.** The primal magic that you wield causes you to age more slowly. For every ten years that pass, your body ages only one year.",
+      "gainedAtLevel": 20,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

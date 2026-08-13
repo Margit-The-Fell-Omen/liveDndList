@@ -1,0 +1,106 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_smuggler",
+  "features": [
+    {
+      "key": "sub_toh_smuggler_dab-handed-dealer",
+      "name": "Dab-Handed Dealer",
+      "description": "When you choose this archetype at 3rd level, you gain proficiency with vehicles (land and water) and your choice of disguise kit or navigator's tools. You count as one size larger for carrying capacity.\n\nAdvantage on Sleight of Hand checks to hide objects on vehicles. Cunning Action can be used to control a vehicle or to make a Sleight of Hand check to conceal a light weapon on yourself (contested by Perception of nearby creatures). On success, you have advantage on your next attack with that weapon (including ranged within 5 ft).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "smuggler_tool",
+          "displayOrder": 0
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "smuggler_tool",
+          "name": "Smuggler Tool",
+          "description": "Choose disguise kit or navigator's tools.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "disguise_kit",
+              "navigators_tools"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_smuggler_smugglers-legerdemain",
+      "name": "Smuggler's Legerdemain",
+      "description": "Also at 3rd level, you learn two cantrips and (at 7th level) one 1st-level spell from illusion or transmutation on the wizard spell list. INT is your spellcasting ability.\n\nCast cantrips at will. Cast the 1st-level spell once per long rest at its lowest level (or using spell slots you have).",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "INT",
+            "casterType": "THIRD",
+            "spellList": "wizard",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_smuggler_hypervigilance",
+      "name": "Hypervigilance",
+      "description": "Starting at 9th level, you have advantage on WIS (Perception) checks relying on sight or hearing, and you can't be surprised while conscious. You also have advantage on INT (Investigation) checks to find loopholes in legal documents and on WIS (Insight) checks to detect social or legal manipulation.",
+      "gainedAtLevel": 9,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_smuggler_improved-smugglers-legerdemain",
+      "name": "Improved Smuggler's Legerdemain",
+      "description": "At 13th level, learn a second illusion or transmutation spell (your choice from: *arcanist's magic aura*, *blur*, *darkvision*, *enlarge/reduce*, *invisibility*, *knock*, *levitate*, *magic mouth*, *mirror image*, *rope trick*, or *spider climb*). 1/long rest at lowest level (or using 2nd level+ slots). INT is spellcasting ability.\n\nYour 1st-level Smuggler's Legerdemain spells are now cast as if using a 2nd-level slot unless you choose otherwise.",
+      "gainedAtLevel": 13,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_smuggler_slippery-as-an-eel",
+      "name": "Slippery as an Eel",
+      "description": "Starting at 17th level, your speed increases by 10 feet, you ignore difficult terrain, and you have advantage on initiative rolls.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 10,
+            "speedType": "WALK"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

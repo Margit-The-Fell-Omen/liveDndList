@@ -1,0 +1,85 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_college-of-the-cat",
+  "features": [
+    {
+      "key": "sub_toh_college-of-the-cat_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "When you join the College of the Cat at 3rd level, you gain proficiency with Acrobatics, Stealth, and thieves' tools if you don't already have them. If proficient with a simple or martial melee weapon, you can use it as a spellcasting focus for your bard spells.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ACROBATICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-the-cat_inspired-pounce",
+      "name": "Inspired Pounce",
+      "description": "Also at 3rd level, when an ally you can see uses one of your Bardic Inspiration dice on a weapon attack roll, you can use your reaction to move up to half your speed and make one melee weapon attack against that creature, gaining a bonus to your attack roll equal to the result of the spent die.\n\nAt 6th level, you gain a climbing speed equal to your walking speed, and when you use Inspired Pounce you can move up to your full speed as part of the reaction.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Inspired Pounce",
+            "description": "When an ally spends your Bardic Inspiration on a weapon attack, move up to half speed and make a melee attack vs that creature. Bonus to attack = die result. At L6: move full speed and gain climb speed."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-the-cat_my-claws-are-sharp",
+      "name": "My Claws Are Sharp",
+      "description": "Beginning at 6th level, you can attack twice instead of once when you take the Attack action. You also gain a climbing speed equal to your walking speed.\n\nWhen you use two-weapon fighting to make a bonus action attack, you can give a Bardic Inspiration die to a friendly creature within 60 feet as part of that same bonus action.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SPEED_TYPE",
+          "payload": {
+            "speedType": "CLIMB",
+            "matchWalking": true
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-the-cat_catlike-tread",
+      "name": "Catlike Tread",
+      "description": "Starting at 14th level, while a creature has one of your Bardic Inspiration dice, it has advantage on Dexterity (Stealth) checks. When you have no uses of Bardic Inspiration left, you have advantage on Dexterity (Stealth) checks.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

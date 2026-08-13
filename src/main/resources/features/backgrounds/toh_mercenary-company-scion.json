@@ -1,0 +1,88 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_mercenary-company-scion",
+  "features": [
+    {
+      "key": "bg_toh_mercenary-company-scion_skills",
+      "name": "Mercenary Company Scion Skill Proficiencies",
+      "description": "Skill Proficiencies: History, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "HISTORY"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_mercenary-company-scion_tools",
+      "name": "Mercenary Company Scion Tool Proficiency",
+      "description": "Tool Proficiency: One type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_mcscion_gaming"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_mcscion_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_mercenary-company-scion_language",
+      "name": "Mercenary Company Scion Language",
+      "description": "One language of your choice.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_mcscion_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_mcscion_lang",
+          "name": "Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_mercenary-company-scion_feature",
+      "name": "Family Reputation",
+      "description": "Your family's mercenary company is known across the region. You can call on their reputation for favors, information, or safe passage. TODO: verify against TOH book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

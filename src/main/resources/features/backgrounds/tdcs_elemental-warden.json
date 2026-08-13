@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "tdcs_elemental-warden",
+  "features": [
+    {
+      "key": "bg_tdcs_elemental-warden_skills",
+      "name": "Elemental Warden Skill Proficiencies",
+      "description": "Skill Proficiencies: Arcana, Nature",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ARCANA"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "NATURE"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_elemental-warden_language",
+      "name": "Elemental Warden Language",
+      "description": "One language of your choice, typically Primordial or one of its dialects.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "tdcs_elemwarden_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tdcs_elemwarden_lang",
+          "name": "Language",
+          "description": "Choose one language (Primordial, Aquan, Auran, Ignan, or Terran recommended).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_elemental-warden_feature",
+      "name": "Bond with the Elements",
+      "description": "You are attuned to elemental spirits. Elementals recognize your bond and are less likely to attack you unbidden; elemental creatures may communicate with you in simple concepts. TODO: verify against TDCS book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

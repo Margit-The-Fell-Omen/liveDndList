@@ -1,0 +1,145 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_minotaur",
+  "features": [
+    {
+      "key": "race_toh_minotaur_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 2, and your Constitution score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_size",
+      "name": "Size",
+      "description": "Adult males can reach a height of 7 feet, with females averaging 3 inches shorter. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_darkvision",
+      "name": "Darkvision",
+      "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_natural_attacks",
+      "name": "Natural Attacks",
+      "description": "Your horns are sturdy and sharp. Your horns are a natural melee weapon, which you can use to make unarmed strikes. When you hit with your horns, they deal piercing damage equal to 1d6 + your Strength modifier, instead of the bludgeoning damage normal for an unarmed strike.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_charge",
+      "name": "Charge",
+      "description": "Once per turn, if you move at least 10 feet toward a target and hit it with a horn attack in the same turn, you deal an extra 1d6 piercing damage and you can shove the target up to 5 feet as a bonus action. At 11th level, when you shove a creature with Charge, you can push it up to 10 feet instead. You can use this trait a number of times per day equal to your Constitution modifier (minimum of once), and you regain all expended uses when you finish a long rest.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "minotaur_charge",
+            "displayName": "Charge",
+            "usesFormula": {
+              "abilityMod": "CON"
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_labyrinth_sense",
+      "name": "Labyrinth Sense",
+      "description": "You can retrace without error any path you have previously taken, with no ability check.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_minotaur_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Minotaur.",
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "minotaur"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

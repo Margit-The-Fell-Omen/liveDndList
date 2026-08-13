@@ -1,0 +1,123 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_shadow-domain",
+  "features": [
+    {
+      "key": "sub_toh_shadow-domain_domain-spells",
+      "name": "Shadow Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | bane, false life |\n| 3rd | blindness/deafness, darkness |\n| 5th | blink, fear |\n| 7th | black tentacles, greater invisibility |\n| 9th | cone of cold, dream |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_shadow-domain_cover-of-night",
+      "name": "Cover of Night",
+      "description": "When you choose this domain at 1st level, you gain proficiency in Stealth and darkvision out to 60 feet (or +30 ft if you already have darkvision). While in dim light or darkness, you can use a bonus action to Hide.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_shadow-domain_lengthen-shadow",
+      "name": "Lengthen Shadow",
+      "description": "Starting at 1st level, when you cast a cleric spell with range of touch, your shadow can deliver the spell as if you had cast it. Target must be within 15 ft and you must see it. At 10th level, range extends to 30 ft to any target you can see.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_shadow-domain_channel-divinity-shadow-grasp",
+      "name": "Channel Divinity: Shadow Grasp",
+      "description": "Starting at 2nd level, as an action, choose one creature within 30 ft you can see. STR save: fail = restrained by its shadow until end of your next turn; success = grappled until end of your next turn. Works even if the target casts no shadow.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_shadow-domain_fade-to-black",
+      "name": "Fade to Black",
+      "description": "At 6th level, as a bonus action while in dim light or darkness, become magically invisible for 1 minute. Ends early if you attack or cast a spell.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "fade_to_black",
+            "displayName": "Fade to Black",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Fade to Black",
+            "description": "While in dim light or darkness, become invisible for 1 minute (ends on attack or spell).",
+            "resourceKey": "fade_to_black"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_shadow-domain_potent-spellcasting",
+      "name": "Potent Spellcasting",
+      "description": "Starting at 8th level, you add your Wisdom modifier to the damage you deal with any cleric cantrip.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_shadow-domain_army-of-shadow",
+      "name": "Army of Shadow",
+      "description": "At 17th level, when you use Shadow Grasp, you can affect a number of creatures equal to your proficiency bonus simultaneously.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

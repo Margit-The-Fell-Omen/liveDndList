@@ -1,0 +1,110 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_tunnel-watcher",
+  "features": [
+    {
+      "key": "sub_toh_tunnel-watcher_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "At 3rd level, you gain proficiency with thieves' tools and mason's tools.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "masons_tools"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_tunnel-watcher_fight-for-every-step",
+      "name": "Fight for Every Step",
+      "description": "At 3rd level, when you take damage from a melee attack, you can use your reaction to move 5 feet away from the attacker (no opportunity attacks), reducing the damage by 1d6 + the number of hostile creatures within 5 feet of the space you left. The attacker can immediately move into your vacated space (no reaction, no opportunity attacks, once per turn).",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Fight for Every Step",
+            "description": "When hit by melee attack, move 5 ft away (no OA): reduce damage by 1d6 + number of hostile creatures in the space you left."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_tunnel-watcher_first-line-of-defense",
+      "name": "First Line of Defense",
+      "description": "Starting at 3rd level, a creature you hit with a melee weapon attack has its speed reduced by 5 feet (max 10 ft total reduction) and can't Disengage until the start of your next turn.\n\nAlso, when you hit a creature with an opportunity attack, deal an extra 1d8 damage of the weapon's type.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_tunnel-watcher_safe-passage",
+      "name": "Safe Passage",
+      "description": "Starting at 7th level, you have advantage on saving throws against traps, natural hazards, and lair actions. Traps, natural hazards, and lair actions have disadvantage on attack rolls against you.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_tunnel-watcher_steadfast",
+      "name": "Steadfast",
+      "description": "At 10th level, you have advantage on saving throws against the frightened condition and effects that move you against your will (including teleportation). When a hostile creature forces you to make a STR save and you succeed, you deal an extra 1d8 damage of the weapon's type on your next weapon attack before the end of your next turn.",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_tunnel-watcher_cave-in",
+      "name": "Cave-In",
+      "description": "Starting at 15th level, once per turn as part of the Attack action, you can replace one attack with a strike against a wall or ceiling within reach. Creatures other than you within 5 ft of the struck section: DEX save (DC 8 + prof + STR or DEX mod) or take 2d10 bludgeoning and be restrained until end of their next turn (half damage, not restrained on success). Restrained creatures have three-quarters cover vs non-you creatures. The space becomes difficult terrain when the effect ends.",
+      "gainedAtLevel": 15,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_tunnel-watcher_against-the-tide",
+      "name": "Against the Tide",
+      "description": "Beginning at 18th level, when you use the Attack action and hit more than one creature with a weapon on your turn, you can use a bonus action to gain resistance to bludgeoning, piercing, and slashing damage until the start of your next turn. When you shove more than one creature on your turn, you can use a bonus action to shove one creature within 5 ft of a creature you successfully shoved.",
+      "gainedAtLevel": 18,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

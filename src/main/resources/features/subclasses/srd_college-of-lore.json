@@ -1,0 +1,106 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_college-of-lore",
+  "features": [
+    {
+      "key": "srd_college-of-lore_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "When you join the College of Lore at 3rd level, you gain proficiency with three skills of your choice.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "lore_skill_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "lore_skill_2",
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "lore_skill_3",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "lore_skill_1",
+          "name": "First Skill",
+          "description": "Choose one skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "lore_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "lore_skill_3",
+          "name": "Third Skill",
+          "description": "Choose a third skill proficiency.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_college-of-lore_cutting-words",
+      "name": "Cutting Words",
+      "description": "Also at 3rd level, you learn how to use your wit to distract, confuse, and otherwise sap the confidence and competence of others. When a creature that you can see within 60 feet of you makes an attack roll, an ability check, or a damage roll, you can use your reaction to expend one of your uses of Bardic Inspiration, rolling a Bardic Inspiration die and subtracting the number rolled from the creature's roll.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Cutting Words",
+            "description": "React to a creature within 60 ft making an attack roll, ability check, or damage roll. Expend one Bardic Inspiration die and subtract it from the creature's roll. Creature is immune if it can't hear you or is immune to charmed.",
+            "resourceKey": "bardic_inspiration"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_college-of-lore_additional-magical-secrets",
+      "name": "Additional Magical Secrets",
+      "description": "At 6th level, you learn two spells of your choice from any class. A spell you choose must be of a level you can cast, as shown on the Bard table, or a cantrip. The chosen spells count as bard spells for you but don't count against the number of bard spells you know.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_college-of-lore_peerless-skill",
+      "name": "Peerless Skill",
+      "description": "Starting at 14th level, when you make an ability check, you can expend one use of Bardic Inspiration. Roll a Bardic Inspiration die and add the number rolled to your ability check. You can choose to do so after you roll the die for the ability check, but before the GM tells you whether you succeed or fail.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

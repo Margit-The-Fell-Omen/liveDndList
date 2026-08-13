@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-gpg_haunted",
+  "features": [
+    {
+      "key": "bg_a5e-gpg_haunted_skills",
+      "name": "Haunted Skill Proficiencies",
+      "description": "Skill Proficiencies: Perception, Religion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "RELIGION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-gpg_haunted_language",
+      "name": "Haunted Language",
+      "description": "One language of your choice, often associated with the dead or spirits.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_haunted_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_haunted_lang",
+          "name": "Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-gpg_haunted_feature",
+      "name": "Spirit's Companion",
+      "description": "A spirit follows you, offering warnings, glimpses of the past, or unsettling insights. TODO: verify against A5E GPG book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

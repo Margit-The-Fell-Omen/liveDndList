@@ -1,0 +1,107 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-sand",
+  "features": [
+    {
+      "key": "toh_circle-of-sand_sand-form",
+      "name": "Sand Form",
+      "description": "At 2nd level, expend one Wild Shape as bonus action to become animated sand for 10 min (1 hour at L10). Move through 1-inch spaces. Advantage to escape grapple/restrained.\n\nBonus actions while in sand form:\n- **Abrasive Blast:** Ranged spell attack, 30 ft, 1d8 + WIS slashing (2d8 at L10)\n- **Stinging Cloud:** Creature within 5 ft (10 ft at L10) makes CON save or is blinded until end of next turn",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-sand_diffuse-form",
+      "name": "Diffuse Form",
+      "description": "Also at 2nd level, while in Sand Form, when hit by a weapon attack, use reaction to gain resistance to nonmagical B/P/S until start of next turn. Prof bonus uses/long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "diffuse_form",
+            "displayName": "Diffuse Form",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Diffuse Form",
+            "description": "Gain resistance to nonmagical B/P/S until start of next turn (Sand Form only).",
+            "resourceKey": "diffuse_form"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-sand_sand-dervish",
+      "name": "Sand Dervish",
+      "description": "At 6th level, create a 10-ft tall, 5-ft wide cylinder of whirling sand within 30 ft. Creatures ending turn within 5 ft make STR save: 1d8 slashing (2d8 at L10) and pushed 10 ft on fail (half, no push on success). Move it 30 ft as bonus action. 1/short or long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "sand_dervish",
+            "displayName": "Sand Dervish",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-sand_echo-of-the-dunes",
+      "name": "Echo of the Dunes",
+      "description": "At 10th level, choose one (1/short or long rest):\n- **Sand Sphere:** 20-ft radius heavily obscured sphere, 3 ft movement per 1 ft, 1 min\n- **Whirlwind:** Transform until start of next turn; doubled speed, no OA, resistance to all damage, can't be grappled/petrified/prone/restrained/stunned, but can't attack or cast",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "echo_of_the_dunes",
+            "displayName": "Echo of the Dunes",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-sand_sandstorm",
+      "name": "Sandstorm",
+      "description": "At 14th level, create a 30-ft radius, 10-ft tall cylinder of sandstorm within 120 ft. Heavily obscured, difficult terrain. Creatures entering or starting turn: STR save, 2d8 slashing + prone on fail (half, no prone on success). You and chosen allies (prof bonus) are immune. 1 min. 1/long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "sandstorm",
+            "displayName": "Sandstorm",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

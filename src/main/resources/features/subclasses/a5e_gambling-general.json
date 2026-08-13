@@ -1,0 +1,146 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "a5e_gambling-general",
+  "features": [
+    {
+      "key": "sub_a5e_gambling-general_daring-commander",
+      "name": "Daring Commander",
+      "description": "At 3rd level, choose one of the following:\n\n**Daring Assault.** While you are conscious, any ally within your Commanding Presence that makes an attack roll can choose to roll with a -5 penalty. If the attack hits, the attack deals an extra 2d6 damage. At 15th level, the extra damage increases to 3d6.\n\n**Daring Charge.** While you are conscious, an ally that starts its turn within your Commanding Presence can use an action to move up to twice its Speed in a straight line and take the Attack action. Until the end of that ally's next turn, creatures they did not attack on their turn have advantage on attack rolls against them.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gambling_general_daring_commander",
+          "name": "Daring Commander",
+          "description": "Choose Daring Assault or Daring Charge.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "DARING_ASSAULT",
+              "DARING_CHARGE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_gambling-general_defensive-measures",
+      "name": "Defensive Measures",
+      "description": "At 7th level, choose one of the following:\n\n**Desperate Avoidance.** When you make a saving throw, you can choose to make it with advantage. If you do, you make attack rolls with disadvantage until the end of your next turn. Once you use this feature, you can't do so again until you finish a rest.\n\n**Frantic Avoidance.** When you would make a saving throw against an area effect, you can use your reaction to move up to half your Speed. If you end your movement outside the area, it has no effect on you. Once you use this feature, you can't do so again until you finish a long rest.",
+      "gainedAtLevel": 7,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gambling_general_defensive_measures",
+          "name": "Defensive Measures",
+          "description": "Choose Desperate Avoidance or Frantic Avoidance.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "DESPERATE_AVOIDANCE",
+              "FRANTIC_AVOIDANCE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_gambling-general_hold-the-line",
+      "name": "Hold the Line",
+      "description": "At 11th level, choose one of the following:\n\n**Stand Firm.** While you are conscious, when an ally within your Commanding Presence would make a saving throw against an effect that deals half damage on a success, that ally can choose to make the saving throw with disadvantage. If they do and the saving throw succeeds, the ally takes no damage instead.\n\n**Stand Strong.** While you are conscious, when an ally within your Commanding Presence is hit by a melee weapon attack, they can use their reaction to make a melee weapon attack against the creature that attacked them.",
+      "gainedAtLevel": 11,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gambling_general_hold_the_line",
+          "name": "Hold the Line",
+          "description": "Choose Stand Firm or Stand Strong.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "STAND_FIRM",
+              "STAND_STRONG"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_gambling-general_risky-tactics",
+      "name": "Risky Tactics",
+      "description": "At 15th level, choose one of the following:\n\n**Risky Gambit.** You can use a bonus action to choose one willing creature within your Commanding Presence. The target immediately provokes an opportunity attack from one creature that can reach it. If the creature makes the opportunity attack, attack rolls against that creature are made with advantage until the start of your next turn.\n\n**Risky Foray.** When a creature starts its turn within your Commanding Presence, you can use your reaction to spur them into violent action. Until the start of its next turn, your ally gains an expertise die on melee weapon attacks, and creatures gain an expertise die on melee weapon attack rolls against it.",
+      "gainedAtLevel": 15,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gambling_general_risky_tactics",
+          "name": "Risky Tactics",
+          "description": "Choose Risky Gambit or Risky Foray.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "RISKY_GAMBIT",
+              "RISKY_FORAY"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_a5e_gambling-general_canny-adversary",
+      "name": "Canny Adversary",
+      "description": "At 18th level, choose one of the following:\n\n**Feinting Retreat.** When you take the Disengage action, until the start of your next turn, whenever a creature you choose ends its movement within your Commanding Presence, it provokes an opportunity attack.\n\n**Lay the Trap.** While you are conscious, whenever a creature makes an attack roll against you and misses, you and one creature you choose have advantage on the next attack roll they make against the triggering creature before the end of your next turn.",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "gambling_general_canny_adversary",
+          "name": "Canny Adversary",
+          "description": "Choose Feinting Retreat or Lay the Trap.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "FEINTING_RETREAT",
+              "LAY_THE_TRAP"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

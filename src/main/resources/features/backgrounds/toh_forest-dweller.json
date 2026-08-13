@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_forest-dweller",
+  "features": [
+    {
+      "key": "bg_toh_forest-dweller_skills",
+      "name": "Forest Dweller Skill Proficiencies",
+      "description": "Skill Proficiencies: Nature, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "NATURE"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_forest-dweller_language",
+      "name": "Forest Dweller Language",
+      "description": "One language of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_forestdweller_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_forestdweller_lang",
+          "name": "Language",
+          "description": "Choose one language, typically Elvish, Sylvan, or similar.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_forest-dweller_feature",
+      "name": "One with the Woods",
+      "description": "You have an innate understanding of woodland. You can move through forests without leaving a trail and always find food and shelter beneath the canopy. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

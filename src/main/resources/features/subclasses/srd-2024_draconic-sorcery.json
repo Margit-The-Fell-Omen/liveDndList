@@ -1,0 +1,135 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd-2024_draconic-sorcery",
+  "features": [
+    {
+      "key": "sub_srd-2024_draconic-sorcery_draconic-resilience",
+      "name": "Draconic Resilience",
+      "description": "The magic in your body manifests physical traits of your draconic gift. Your Hit Point maximum increases by 3, and it increases by 1 whenever you gain another Sorcerer level.\n\nParts of you are also covered by dragon-like scales. While you aren't wearing armor, your base Armor Class equals 10 plus your Dexterity and Charisma modifiers.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_HIT_POINTS_PER_LEVEL",
+          "payload": {
+            "amount": 1
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 10,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "DEX"
+                },
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "CHA"
+                }
+              ],
+              "requiresNoArmor": true,
+              "requiresNoShield": false
+            }
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_draconic-sorcery_draconic-spells",
+      "name": "Draconic Spells",
+      "description": "When you reach a Sorcerer level specified in the Draconic Spells table, you thereafter always have the listed spells prepared.\n\n| Sorcerer Level | Spells |\n|---|---|\n| 3 | Alter Self, Chromatic Orb, Command, Dragon's Breath |\n| 5 | Fear, Fly |\n| 7 | Arcane Eye, Charm Monster |\n| 9 | Legend Lore, Summon Dragon |",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_draconic-sorcery_elemental-affinity",
+      "name": "Elemental Affinity",
+      "description": "Your draconic magic has an affinity with a damage type associated with dragons. Choose one of those types: Acid, Cold, Fire, Lightning, or Poison.\n\nYou have Resistance to that damage type, and when you cast a spell that deals damage of that type, you can add your Charisma modifier to one damage roll of that spell.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "draconic_sorcery_2024_element",
+          "name": "Draconic Element",
+          "description": "Choose one damage type: Acid, Cold, Fire, Lightning, or Poison.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ACID",
+              "COLD",
+              "FIRE",
+              "LIGHTNING",
+              "POISON"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_draconic-sorcery_dragon-wings",
+      "name": "Dragon Wings",
+      "description": "As a Bonus Action, you can cause draconic wings to appear on your back. The wings last for 1 hour or until you dismiss them (no action required). For the duration, you have a Fly Speed of 60 feet.\n\nOnce you use this feature, you can't use it again until you finish a Long Rest unless you spend 3 Sorcery Points (no action required) to restore your use of it.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "dragon_wings",
+            "displayName": "Dragon Wings",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Dragon Wings",
+            "description": "Sprout draconic wings for 1 hour granting 60 ft Fly Speed. Can spend 3 Sorcery Points to restore use."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_draconic-sorcery_dragon-companion",
+      "name": "Dragon Companion",
+      "description": "You can cast *Summon Dragon* without a Material component. You can also cast it once without a spell slot, and you regain the ability to cast it in this way when you finish a Long Rest.\n\nWhenever you start casting the spell, you can modify it so that it doesn't require Concentration. If you do so, the spell's duration becomes 1 minute for that casting.",
+      "gainedAtLevel": 19,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "dragon_companion_free_cast",
+            "displayName": "Dragon Companion (Free Cast)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

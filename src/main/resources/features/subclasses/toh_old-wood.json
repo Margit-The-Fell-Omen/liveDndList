@@ -1,0 +1,124 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_old-wood",
+  "features": [
+    {
+      "key": "sub_toh_old-wood_expanded-spell-list",
+      "name": "Expanded Spell List",
+      "description": "The Old Wood adds spells to your warlock spell list:\n\n| Spell Level | Spells |\n|---|---|\n| 1st | animal friendship, faerie fire |\n| 2nd | animal messenger, spike growth |\n| 3rd | conjure animals, protection from energy |\n| 4th | conjure woodland beings, giant insect |\n| 5th | greater restoration, tree stride |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_old-wood_forests-defender",
+      "name": "Forest's Defender",
+      "description": "At 1st level, your patron gifts you proficiency with shields and the *shillelagh* cantrip (counts as a warlock cantrip, doesn't count against cantrips known).",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_old-wood_sap-magic",
+      "name": "Sap Magic",
+      "description": "At 1st level, when a creature casts a spell of a level you can cast or lower within 30 ft of you, use your reaction to synthesize the magic. The spell resolves normally, but you have a 25% chance of regaining HP equal to your warlock level + CHA modifier (min 1).",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Sap Magic",
+            "description": "When a creature within 30 ft casts a spell of a level you can cast: 25% chance to regain HP equal to warlock level + CHA mod."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_old-wood_pact-boon-modifications",
+      "name": "The Old Wood and Your Pact Boons",
+      "description": "At 3rd level, your pact boon is altered:\n\n**Pact of the Chain.** Familiar can be an awakened shrub or child of the briar.\n**Pact of the Blade.** When you cast *shillelagh*, your Pact Blade is affected regardless of its form.\n**Pact of the Tome.** Your tome's cover is hardened bark; pages are seasonal leaves. To add a new spell, plant the tome for 1 hour; it emerges with the spell inscribed.",
+      "gainedAtLevel": 3,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_old-wood_predatory-grace",
+      "name": "Predatory Grace",
+      "description": "Starting at 6th level, cast *pass without trace* without expending a spell slot. 1/short or long rest. Natural forest difficult terrain (roots, underbrush) costs you no extra movement. You can pass through nonmagical plants without being slowed or taking damage from thorns.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "predatory_grace",
+            "displayName": "Predatory Grace (Pass Without Trace)",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_old-wood_natures-endurance",
+      "name": "Nature's Endurance",
+      "description": "At 10th level, you gain resistance to damage from spells of a level you can cast or lower.",
+      "gainedAtLevel": 10,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_old-wood_avatar-of-the-wood",
+      "name": "Avatar of the Wood",
+      "description": "Starting at 14th level, as a bonus action, transform for 1 minute:\n\n* AC = 16 + DEX modifier.\n* Tremorsense 30 ft; attacks reach +5 ft.\n* Claw attacks (proficient, magical, CHA to attack/damage, 1d6 slashing; benefits from Pact of the Blade invocations).\n* Sap Magic upgrades to Arcasynthesis: when a 5th level or lower spell is cast within 60 ft, use reaction to synthesize — 50% chance to regain 1d10 HP per spell level.\n\n1/short or long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "avatar_of_the_wood",
+            "displayName": "Avatar of the Wood",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Avatar of the Wood",
+            "description": "Transform for 1 min: AC 16+DEX, tremorsense 30 ft, reach +5 ft, claw attacks, Arcasynthesis (50% regain 1d10 HP/spell level on nearby casts).",
+            "resourceKey": "avatar_of_the_wood"
+          }
+        }
+      ]
+    }
+  ]
+}

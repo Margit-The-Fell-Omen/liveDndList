@@ -1,0 +1,65 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_sentry",
+  "features": [
+    {
+      "key": "bg_toh_sentry_skills",
+      "name": "Sentry Skill Proficiencies",
+      "description": "Skill Proficiencies: Perception, Investigation",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INVESTIGATION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_sentry_tools",
+      "name": "Sentry Tool Proficiency",
+      "description": "Tool Proficiency: One type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_sentry_gaming"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_sentry_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_sentry_feature",
+      "name": "Ever Vigilant",
+      "description": "You are trained to remain alert during long watches. Other sentries and guards recognize your discipline and grant you professional courtesy. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

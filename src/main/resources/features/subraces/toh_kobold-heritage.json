@@ -1,0 +1,33 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_kobold-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_kobold-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_kobold-heritage_devious_bite",
+      "name": "Devious Bite",
+      "description": "When you hit a creature with your bite attack and you have advantage on the attack roll, your bite deals an extra 1d4 piercing damage.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

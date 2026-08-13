@@ -1,0 +1,97 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd-2024_champion",
+  "features": [
+    {
+      "key": "srd-2024_fighter_champion_improved-critical",
+      "name": "Improved Critical",
+      "description": "Your attack rolls with weapons and Unarmed Strikes can score a Critical Hit on a roll of 19 or 20 on the d20.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_champion_remarkable-athlete",
+      "name": "Remarkable Athlete",
+      "description": "Thanks to your athleticism, you have Advantage on Initiative rolls and Strength (Athletics) checks.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_champion_additional-fighting-style",
+      "name": "Additional Fighting Style",
+      "description": "You gain another Fighting Style feat of your choice.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "champion_2024_second_fighting_style"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "champion_2024_second_fighting_style",
+          "name": "Additional Fighting Style",
+          "description": "Choose another Fighting Style feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "FIGHTING_STYLE"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_champion_heroic-warrior",
+      "name": "Heroic Warrior",
+      "description": "The thrill of battle drives you toward victory. During combat, you can give yourself Heroic Inspiration whenever you start your turn without it.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_champion_superior-critical",
+      "name": "Superior Critical",
+      "description": "Your attack rolls with weapons and Unarmed Strikes can now score a Critical Hit on a roll of 18–20 on the d20.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_champion_survivor",
+      "name": "Survivor",
+      "description": "You attain the pinnacle of resilience in battle.\n\n**Defy Death.** Advantage on Death Saving Throws. Rolling 18–20 counts as rolling a 20.\n\n**Heroic Rally.** At the start of each turn, regain HP equal to 5 + CON mod if you are Bloodied and have at least 1 HP.",
+      "gainedAtLevel": 18,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

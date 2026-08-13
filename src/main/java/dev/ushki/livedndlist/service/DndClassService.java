@@ -196,7 +196,7 @@ public class DndClassService {
 
     int order = 0;
     for (DndClassFeature feature : dndClass.getFeatures()) {
-      String featureKey = "subclass_" + dndClass.getKey() + "_" + slug(feature.getKey(), order);
+      String featureKey = "sub_" + dndClass.getKey() + "_" + slug(feature.getKey(), order);
       order = deriveOrder(dndClass, order, feature, featureKey);
     }
   }

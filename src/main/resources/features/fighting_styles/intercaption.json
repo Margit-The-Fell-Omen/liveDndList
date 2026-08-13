@@ -1,0 +1,20 @@
+{
+  "sourceType": "FIGHTING_STYLE",
+  "sourceKey": "fighting_style",
+  "features": [
+    {
+      "key": "fighting_style_interception",
+      "name": "Fighting Style: Interception",
+      "description": "When a creature you can see hits a target, other than you, within 5 feet of you with an attack, you can use your reaction to reduce the damage the target takes by 1d10 + your proficiency bonus (to a minimum of 0 damage). You must be wielding a shield or a simple or martial weapon to use this reaction.",
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Interception",
+            "description": "Reduce damage to an ally within 5 feet by 1d10 + proficiency bonus. Must be wielding a shield or simple/martial weapon."
+          }
+        }
+      ]
+    }
+  ]
+}

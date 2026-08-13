@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_charlatan",
+  "features": [
+    {
+      "key": "bg_a5e-ag_charlatan_skills",
+      "name": "Charlatan Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Sleight of Hand",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SLEIGHT_OF_HAND"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_charlatan_tools",
+      "name": "Charlatan Tool Proficiencies",
+      "description": "Tool Proficiencies: Disguise Kit, Forgery Kit",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "disguise_kit"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "forgery_kit"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_charlatan_feature",
+      "name": "False Identity",
+      "description": "You have created a second identity that includes documentation, established acquaintances, and disguises. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "open5e_con-artist",
+  "features": [
+    {
+      "key": "bg_open5e_con-artist_skills",
+      "name": "Con Artist Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_open5e_con-artist_tools",
+      "name": "Con Artist Tool Proficiencies",
+      "description": "Tool Proficiencies: Disguise Kit, Forgery Kit",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "disguise_kit"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "forgery_kit"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_open5e_con-artist_feature",
+      "name": "Fast Talker",
+      "description": "You can talk your way out of most trouble by shifting blame or spinning elaborate lies. People remember what you want them to. TODO: verify against Open5e",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

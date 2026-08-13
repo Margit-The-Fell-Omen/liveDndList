@@ -1,0 +1,80 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_cultist",
+  "features": [
+    {
+      "key": "bg_a5e-ag_cultist_skills",
+      "name": "Cultist Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Religion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "RELIGION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_cultist_languages",
+      "name": "Cultist Languages",
+      "description": "Two languages of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_cultist_lang_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_cultist_lang_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_cultist_lang_1",
+          "name": "First Language",
+          "description": "Choose a language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "a5e_cultist_lang_2",
+          "name": "Second Language",
+          "description": "Choose another language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_cultist_feature",
+      "name": "Fellow Believers",
+      "description": "You can find and identify other cult members. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

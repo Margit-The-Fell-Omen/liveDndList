@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "tdcs_recovered-cultist",
+  "features": [
+    {
+      "key": "bg_tdcs_recovered-cultist_skills",
+      "name": "Recovered Cultist Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Religion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "RELIGION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_recovered-cultist_language",
+      "name": "Recovered Cultist Language",
+      "description": "One language of your choice, typically associated with the cult you left.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "tdcs_recovered_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tdcs_recovered_lang",
+          "name": "Language",
+          "description": "Choose one language (Abyssal, Infernal, Celestial, or another arcane tongue recommended).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_recovered-cultist_feature",
+      "name": "Insider Knowledge",
+      "description": "You know the doctrines, rituals, and inner workings of the cult you escaped. You can recognize cult signs, safehouses, and other members—for good or ill. TODO: verify against TDCS book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

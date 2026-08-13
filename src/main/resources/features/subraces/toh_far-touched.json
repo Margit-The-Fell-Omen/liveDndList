@@ -1,0 +1,59 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_far-touched",
+  "features": [
+    {
+      "key": "subrace_toh_far-touched_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Charisma score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_far-touched_insanity",
+      "name": "Insanity",
+      "description": "You have advantage on saving throws against being charmed or frightened. You can read and understand Void Speech but can speak only a few words of it.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "void_speech"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_far-touched_mad_fervor",
+      "name": "Mad Fervor",
+      "description": "You know the vicious mockery cantrip. At 3rd level, you can cast enthrall with this trait. At 5th level, you can cast fear. Once you cast a non-cantrip spell with this trait, regain it on long rest. Charisma is your spellcasting ability.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "vicious_mockery",
+            "atWill": true,
+            "castingAbilityOverride": "CHA"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

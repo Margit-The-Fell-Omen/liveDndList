@@ -1,0 +1,486 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_barbarian",
+  "features": [
+    {
+      "key": "cls_srd_barbarian_starting",
+      "name": "Barbarian Starting Proficiencies",
+      "description": "As a barbarian, you gain the following proficiencies:\n\n**Armor:** Light armor, medium armor, shields\n**Weapons:** Simple weapons, martial weapons\n**Saving Throws:** Strength, Constitution\n**Skills:** Choose two from Animal Handling, Athletics, Intimidation, Nature, Perception, and Survival",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d12"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "STR"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CON"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "barbarian_skill_pick",
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "barbarian_skill_pick",
+          "displayOrder": 9
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_skill_pick",
+          "name": "Barbarian Skill Proficiencies",
+          "description": "Choose two skills from Animal Handling, Athletics, Intimidation, Nature, Perception, or Survival.",
+          "chooseCount": 2,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INTIMIDATION",
+              "NATURE",
+              "PERCEPTION",
+              "SURVIVAL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_rage",
+      "name": "Rage",
+      "description": "In battle, you fight with primal ferocity. On your turn, you can enter a rage as a bonus action.\n\nWhile raging, you gain the following benefits if you aren't wearing heavy armor:\n\n- You have advantage on Strength checks and Strength saving throws.\n- When you make a melee weapon attack using Strength, you gain a bonus to the damage roll that increases as you gain levels as a barbarian.\n- You have resistance to bludgeoning, piercing, and slashing damage.\n\nIf you are able to cast spells, you can't cast them or concentrate on them while raging.\n\nYour rage lasts for 1 minute. It ends early if you are knocked unconscious or if your turn ends and you haven't attacked a hostile creature since your last turn or taken damage since then. You can also end your rage on your turn as a bonus action.\n\nYou regain expended uses of Rage when you finish a long rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "rage",
+            "displayName": "Rage",
+            "usesFormula": {
+              "perClassLevel": {
+                "1": 2,
+                "3": 3,
+                "6": 4,
+                "12": 5,
+                "17": 6,
+                "20": 999
+              }
+            },
+            "refresh": "LONG"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Enter Rage",
+            "description": "Enter Rage. While raging (up to 1 minute), gain advantage on STR checks/saves, bonus damage on STR melee attacks, and resistance to bludgeoning/piercing/slashing damage. Not usable in heavy armor.",
+            "resourceKey": "rage"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_unarmored-defense",
+      "name": "Unarmored Defense",
+      "description": "While you are not wearing any armor, your Armor Class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 10,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "DEX"
+                },
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "CON"
+                }
+              ],
+              "requiresNoArmor": true,
+              "requiresNoShield": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_reckless-attack",
+      "name": "Reckless Attack",
+      "description": "Starting at 2nd level, you can throw aside all concern for defense to attack with fierce desperation. When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_danger-sense",
+      "name": "Danger Sense",
+      "description": "At 2nd level, you gain an uncanny sense of when things nearby aren't as they should be, giving you an edge when you dodge away from danger.\n\nYou have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. To gain this benefit, you can't be blinded, deafened, or incapacitated.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_primal-path",
+      "name": "Primal Path",
+      "description": "At 3rd level, you choose a path that shapes the nature of your rage. Choose the Path of the Berserker or the Path of the Totem Warrior. Your choice grants you features at 3rd level and again at 6th, 10th, and 14th levels.",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "When you reach 4th level, you can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "barbarian_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two ability scores by 1 (max 20). Alternatively, take a feat if your DM allows.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_extra-attack",
+      "name": "Extra Attack",
+      "description": "Beginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_fast-movement",
+      "name": "Fast Movement",
+      "description": "Starting at 5th level, your speed increases by 10 feet while you aren't wearing heavy armor.",
+      "gainedAtLevel": 5,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 10,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_feral-instinct",
+      "name": "Feral Instinct",
+      "description": "By 7th level, your instincts are so honed that you have advantage on initiative rolls.\n\nAdditionally, if you are surprised at the beginning of combat and aren't incapacitated, you can act normally on your first turn, but only if you enter your rage before doing anything else on that turn.",
+      "gainedAtLevel": 7,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "barbarian_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two ability scores by 1 (max 20). Alternatively, take a feat if your DM allows.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_brutal-critical",
+      "name": "Brutal Critical",
+      "description": "Beginning at 9th level, you can roll one additional weapon damage die when determining the extra damage for a critical hit with a melee attack.\n\nThis increases to two additional dice at 13th level and three additional dice at 17th level.",
+      "gainedAtLevel": 9,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_relentless-rage",
+      "name": "Relentless Rage",
+      "description": "Starting at 11th level, your rage can keep you fighting despite grievous wounds. If you drop to 0 hit points while you're raging and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, you drop to 1 hit point instead.\n\nEach time you use this feature after the first, the DC increases by 5. When you finish a short or long rest, the DC resets to 10.",
+      "gainedAtLevel": 11,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "barbarian_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two ability scores by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_persistent-rage",
+      "name": "Persistent Rage",
+      "description": "Beginning at 15th level, your rage is so fierce that it ends early only if you fall unconscious or if you choose to end it.",
+      "gainedAtLevel": 15,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "barbarian_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two ability scores by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_indomitable-might",
+      "name": "Indomitable Might",
+      "description": "Beginning at 18th level, if your total for a Strength check is less than your Strength score, you can use that score in place of the total.",
+      "gainedAtLevel": 18,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "barbarian_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2, or two ability scores by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_barbarian_primal-champion",
+      "name": "Primal Champion",
+      "description": "At 20th level, you embody the power of the wilds. Your Strength and Constitution scores increase by 4. Your maximum for those scores is now 24.",
+      "gainedAtLevel": 20,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 4,
+            "max": 24
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 4,
+            "max": 24
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

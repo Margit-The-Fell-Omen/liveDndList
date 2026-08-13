@@ -1,0 +1,102 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_champion",
+  "features": [
+    {
+      "key": "srd_champion_improved-critical",
+      "name": "Improved Critical",
+      "description": "Beginning when you choose this archetype at 3rd level, your weapon attacks score a critical hit on a roll of 19 or 20.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_champion_remarkable-athlete",
+      "name": "Remarkable Athlete",
+      "description": "Starting at 7th level, you can add half your proficiency bonus (round up) to any Strength, Dexterity, or Constitution check you make that doesn't already use your proficiency bonus.\n\nIn addition, when you make a running long jump, the distance you can cover increases by a number of feet equal to your Strength modifier.",
+      "gainedAtLevel": 7,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_champion_additional-fighting-style",
+      "name": "Additional Fighting Style",
+      "description": "At 10th level, you can choose a second option from the Fighting Style class feature.",
+      "gainedAtLevel": 10,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_FIGHTING_STYLE",
+          "payload": {
+            "choiceKey": "champion_second_fighting_style",
+            "options": [
+              "ARCHERY",
+              "DEFENSE",
+              "DUELING",
+              "GREAT_WEAPON_FIGHTING",
+              "PROTECTION",
+              "TWO_WEAPON_FIGHTING"
+            ]
+          },
+          "choiceKey": "champion_second_fighting_style"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "champion_second_fighting_style",
+          "name": "Additional Fighting Style",
+          "description": "Choose a second fighting style.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ARCHERY",
+              "DEFENSE",
+              "DUELING",
+              "GREAT_WEAPON_FIGHTING",
+              "PROTECTION",
+              "TWO_WEAPON_FIGHTING"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_champion_superior-critical",
+      "name": "Superior Critical",
+      "description": "Starting at 15th level, your weapon attacks score a critical hit on a roll of 18–20.",
+      "gainedAtLevel": 15,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_champion_survivor",
+      "name": "Survivor",
+      "description": "At 18th level, you attain the pinnacle of resilience in battle. At the start of each of your turns, you regain hit points equal to 5 + your Constitution modifier if you have no more than half of your hit points left. You don't gain this benefit if you have 0 hit points.",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

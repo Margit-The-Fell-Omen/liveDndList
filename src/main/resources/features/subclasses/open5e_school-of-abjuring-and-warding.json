@@ -1,0 +1,74 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_school-of-abjuring-and-warding",
+  "features": [
+    {
+      "key": "sub_open5e_school-of-abjuring-and-warding_expert-abjurer",
+      "name": "Expert Abjurer",
+      "description": "Starting at 2nd level, you only need to spend half as much time and gold as normal to copy an abjuration spell into your spellbook.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-abjuring-and-warding_arcane-aegis",
+      "name": "Arcane Aegis",
+      "description": "Beginning at 2nd level, when you cast an abjuration spell of 1st level+, you create an Arcane Aegis that absorbs damage directed at you. HP max = 2 × wizard level + INT modifier. Casting another abjuration spell of 1st+ restores aegis HP equal to spell level × 2. Lasts until your next long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-abjuring-and-warding_aegis-extension",
+      "name": "Aegis Extension",
+      "description": "At 6th level, you can use your reaction to have the Arcane Aegis absorb damage dealt to a creature up to 30 feet from you that you can see.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Aegis Extension",
+            "description": "Redirect damage from an ally within 30 ft to your Arcane Aegis."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-abjuring-and-warding_abjuration-proficiency",
+      "name": "Abjuration Proficiency",
+      "description": "Starting at 10th level, add your proficiency bonus to any ability checks made as part of casting an abjuration spell (such as *counterspell* and *dispel magic*).",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_school-of-abjuring-and-warding_resistance-to-magic",
+      "name": "Resistance to Magic",
+      "description": "Beginning at 14th level, you have resistance to all damage from spells and advantage on any saving throw to resist a spell's effects.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

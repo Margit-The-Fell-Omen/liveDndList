@@ -1,0 +1,614 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_monk",
+  "features": [
+    {
+      "key": "cls_srd_monk_starting",
+      "name": "Monk Starting Proficiencies",
+      "description": "As a monk, you gain the following proficiencies:\n\n**Armor:** None\n**Weapons:** Simple weapons, shortswords\n**Tools:** Choose one type of artisan's tools or one musical instrument\n**Saving Throws:** Strength, Dexterity\n**Skills:** Choose two from Acrobatics, Athletics, History, Insight, Religion, and Stealth",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortsword"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "STR"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "DEX"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "monk_tool",
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "monk_skill_1",
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "monk_skill_2",
+          "displayOrder": 7
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_tool",
+          "name": "Tool Proficiency",
+          "description": "Choose one type of artisan's tools or one musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "fromCategories": [
+              "artisans_tools",
+              "musical_instrument"
+            ]
+          }
+        },
+        {
+          "choiceKey": "monk_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Acrobatics, Athletics, History, Insight, Religion, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "RELIGION",
+              "STEALTH"
+            ]
+          }
+        },
+        {
+          "choiceKey": "monk_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from Acrobatics, Athletics, History, Insight, Religion, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "RELIGION",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_unarmored-defense",
+      "name": "Unarmored Defense",
+      "description": "Beginning at 1st level, while you are wearing no armor and not wielding a shield, your AC equals 10 + your Dexterity modifier + your Wisdom modifier.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 10,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "DEX"
+                },
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "WIS"
+                }
+              ],
+              "requiresNoArmor": true,
+              "requiresNoShield": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_martial-arts",
+      "name": "Martial Arts",
+      "description": "At 1st level, your practice of martial arts gives you mastery of combat styles that use unarmed strikes and monk weapons (shortswords and any simple melee weapons without two-handed or heavy).\n\nWhile unarmed or wielding only monk weapons, and not wearing armor or wielding a shield:\n\n- You can use Dexterity instead of Strength for attack and damage rolls of unarmed strikes and monk weapons.\n- You can roll a Martial Arts die (d4/d6/d8/d10 by level) in place of normal damage for unarmed strikes and monk weapons. Die progression: 1d4 at L1, 1d6 at L5, 1d8 at L11, 1d10 at L17.\n- When you take the Attack action with an unarmed strike or monk weapon, you can make one unarmed strike as a bonus action.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ki",
+      "name": "Ki",
+      "description": "Starting at 2nd level, your training allows you to harness the mystic energy of ki. Your access to this energy is represented by ki points equal to your monk level. You regain all expended ki when you finish a short or long rest (must spend at least 30 minutes meditating).\n\n**Ki save DC** = 8 + your proficiency bonus + your Wisdom modifier\n\nStarting ki features:\n- **Flurry of Blows** (1 ki, bonus action): Make two unarmed strikes as a bonus action immediately after taking the Attack action.\n- **Patient Defense** (1 ki, bonus action): Take the Dodge action as a bonus action.\n- **Step of the Wind** (1 ki, bonus action): Take Disengage or Dash as a bonus action, and double your jump distance for the turn.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "ki",
+            "displayName": "Ki Points",
+            "usesFormula": {
+              "classLevel": true
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Flurry of Blows",
+            "description": "Spend 1 ki to make two unarmed strikes as a bonus action after Attack action.",
+            "resourceKey": "ki"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Patient Defense",
+            "description": "Spend 1 ki to take Dodge as a bonus action.",
+            "resourceKey": "ki"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Step of the Wind",
+            "description": "Spend 1 ki to take Disengage or Dash as a bonus action; jump distance doubled.",
+            "resourceKey": "ki"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_unarmored-movement",
+      "name": "Unarmored Movement",
+      "description": "Starting at 2nd level, your speed increases by 10 feet while you are not wearing armor or wielding a shield. This bonus increases at higher levels: +15 ft at L6, +20 ft at L10, +25 ft at L14, +30 ft at L18.\n\nAt 9th level, you gain the ability to move along vertical surfaces and across liquids on your turn without falling during the move.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 10,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_deflect-missiles",
+      "name": "Deflect Missiles",
+      "description": "Starting at 3rd level, you can use your reaction to deflect or catch the missile when you are hit by a ranged weapon attack. Damage reduced by 1d10 + your Dexterity modifier + your monk level.\n\nIf you reduce the damage to 0, you can catch the missile if small enough. If caught, spend 1 ki to make a ranged attack with it (range 20/60, monk weapon, always proficient).",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Deflect Missiles",
+            "description": "Reduce ranged weapon damage by 1d10 + DEX mod + monk level. If reduced to 0, catch and optionally spend 1 ki to counter-attack (range 20/60)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_monastic-tradition",
+      "name": "Monastic Tradition",
+      "description": "When you reach 3rd level, you commit yourself to a monastic tradition such as the Way of the Open Hand. Your tradition grants you features at 3rd level and again at 6th, 11th, and 17th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "monk_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_slow-fall",
+      "name": "Slow Fall",
+      "description": "Beginning at 4th level, you can use your reaction when you fall to reduce any falling damage you take by an amount equal to five times your monk level.",
+      "gainedAtLevel": 4,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Slow Fall",
+            "description": "Reduce falling damage by 5 × monk level."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_extra-attack",
+      "name": "Extra Attack",
+      "description": "Beginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_stunning-strike",
+      "name": "Stunning Strike",
+      "description": "Starting at 5th level, you can interfere with the flow of ki in an opponent's body. When you hit another creature with a melee weapon attack, you can spend 1 ki point to attempt a stunning strike. The target must succeed on a Constitution saving throw or be stunned until the end of your next turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ki-empowered-strikes",
+      "name": "Ki-Empowered Strikes",
+      "description": "Starting at 6th level, your unarmed strikes count as magical for the purpose of overcoming resistance and immunity to nonmagical attacks and damage.",
+      "gainedAtLevel": 6,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_evasion",
+      "name": "Evasion",
+      "description": "At 7th level, your instinctive agility lets you dodge out of the way of certain area effects. When you are subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed and only half damage on a failed save.",
+      "gainedAtLevel": 7,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_stillness-of-mind",
+      "name": "Stillness of Mind",
+      "description": "Starting at 7th level, you can use your action to end one effect on yourself that is causing you to be charmed or frightened.",
+      "gainedAtLevel": 7,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Stillness of Mind",
+            "description": "End one effect causing you to be charmed or frightened."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "monk_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_purity-of-body",
+      "name": "Purity of Body",
+      "description": "At 10th level, your mastery of the ki flowing through you makes you immune to disease and poison.",
+      "gainedAtLevel": 10,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "DISEASE"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_CONDITION_IMMUNITY",
+          "payload": {
+            "condition": "POISONED"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_DAMAGE_IMMUNITY",
+          "payload": {
+            "damageType": "POISON"
+          },
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "monk_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_tongue-of-the-sun-and-moon",
+      "name": "Tongue of the Sun and Moon",
+      "description": "Starting at 13th level, you learn to touch the ki of other minds so that you understand all spoken languages. Moreover, any creature that can understand a language can understand what you say.",
+      "gainedAtLevel": 13,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_diamond-soul",
+      "name": "Diamond Soul",
+      "description": "Beginning at 14th level, your mastery of ki grants you proficiency in all saving throws.\n\nAdditionally, whenever you make a saving throw and fail, you can spend 1 ki point to reroll it and take the second result.",
+      "gainedAtLevel": 14,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CON"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 3
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_timeless-body",
+      "name": "Timeless Body",
+      "description": "At 15th level, your ki sustains you so that you suffer none of the frailty of old age, and you can't be aged magically. You can still die of old age, however. In addition, you no longer need food or water.",
+      "gainedAtLevel": 15,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "monk_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_empty-body",
+      "name": "Empty Body",
+      "description": "Beginning at 18th level, you can use your action to spend 4 ki points to become invisible for 1 minute. During that time, you also have resistance to all damage but force damage.\n\nAdditionally, you can spend 8 ki points to cast the astral projection spell, without needing material components. When you do so, you can't take any other creatures with you.",
+      "gainedAtLevel": 18,
+      "displayOrder": 21,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Empty Body",
+            "description": "Spend 4 ki: become invisible for 1 minute + resistance to all damage except force. Or spend 8 ki: cast astral projection (self only).",
+            "resourceKey": "ki"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 22,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "monk_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "monk_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_monk_perfect-self",
+      "name": "Perfect Self",
+      "description": "At 20th level, when you roll for initiative and have no ki points remaining, you regain 4 ki points.",
+      "gainedAtLevel": 20,
+      "displayOrder": 23,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_way-of-the-humble-elephant",
+  "features": [
+    {
+      "key": "sub_toh_way-of-the-humble-elephant_slow-to-anger",
+      "name": "Slow to Anger",
+      "description": "Starting at 3rd level, when you use Patient Defense and an attack hits you, you can use your reaction to halve the damage taken. When Patient Defense is active and a melee attack within your reach misses you, you can use your reaction to force the attacker to make a STR save; on failure it is knocked prone.\n\nWhen using either reaction, you can spend 1 ki point: your first melee hit before the end of your next turn deals extra damage equal to one Martial Arts die + WIS modifier.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Slow to Anger",
+            "description": "Patient Defense active: reaction to halve damage when hit, or force STR save (prone on fail) when missed in melee. Spend 1 ki: next melee hit deals extra Martial Arts die + WIS mod damage."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-humble-elephant_unyielding-step",
+      "name": "Unyielding Step",
+      "description": "Starting at 6th level, spend 1 ki point on your turn to ignore difficult terrain for 1 minute or until incapacitated. Your speed can't be reduced below 15 ft during this time. If grappled, the grappler moves with you; otherwise the grapple ends. If restrained but not grappled (e.g., by a web), you break free unless the restraint can move with you.",
+      "gainedAtLevel": 6,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-humble-elephant_decisive-in-wrath",
+      "name": "Decisive in Wrath",
+      "description": "At 11th level, when you spend 1 ki point as part of your Slow to Anger feature, all of your melee weapon attacks that hit before the end of your next turn deal extra damage equal to one roll of your Martial Arts die + your Wisdom modifier.",
+      "gainedAtLevel": 11,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_way-of-the-humble-elephant_thick-hide",
+      "name": "Thick Hide",
+      "description": "At 17th level, spend 5 ki points as a bonus action to gain resistance to bludgeoning, piercing, and slashing damage for 10 minutes.",
+      "gainedAtLevel": 17,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Thick Hide",
+            "description": "Spend 5 ki: gain resistance to bludgeoning, piercing, and slashing damage for 10 minutes."
+          }
+        }
+      ]
+    }
+  ]
+}

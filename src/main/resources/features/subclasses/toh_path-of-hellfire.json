@@ -1,0 +1,21 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_path-of-hellfire",
+  "features": [
+    {
+      "key": "sub_toh_path-of-hellfire_narrative",
+      "name": "Path of Hellfire",
+      "description": "Barbarians who follow the Path of Hellfire channel the fires of the Lower Planes through a pact or bargain with devils. They become powerful and furious fighting machines fueled by infernal flame. While some serve as soldiers or enforcers for their devilish patrons, others escape their fate or are released after their service ends.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "FIRE"
+          }
+        }
+      ]
+    }
+  ]
+}

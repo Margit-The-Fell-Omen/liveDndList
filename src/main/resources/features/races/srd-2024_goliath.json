@@ -1,0 +1,105 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_goliath",
+  "features": [
+    {
+      "key": "race_srd-2024_goliath_size",
+      "name": "Size",
+      "description": "You are Medium (about 7–8 feet tall).",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_goliath_speed",
+      "name": "Speed",
+      "description": "Your Speed is 35 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 35,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_goliath_giant_ancestry",
+      "name": "Giant Ancestry",
+      "description": "You are descended from Giants. Choose one of the following supernatural benefits, which is fueled by primordial power. You can use the chosen benefit a number of times equal to your Proficiency Bonus, regaining all uses on a Long Rest.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "giant_ancestry",
+            "displayName": "Giant Ancestry",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          },
+          "choiceKey": "goliath_ancestry"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "goliath_ancestry",
+          "name": "Giant Ancestry",
+          "description": "Choose one: Cloud's Jaunt (teleport 30 ft as Bonus Action), Fire's Burn (extra 1d10 fire damage on hit), Frost's Chill (target has Disadvantage on next attack; slowed 10 ft), Hill's Tumble (knock Large or smaller target Prone), Stone's Endurance (reduce damage by 1d12 + CON mod), Storm's Thunder (thunder damage to attacker after being hit), or Wind's Whisper (frighten target within 60 ft).",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "CLOUDS_JAUNT",
+              "FIRES_BURN",
+              "FROSTS_CHILL",
+              "HILLS_TUMBLE",
+              "STONES_ENDURANCE",
+              "STORMS_THUNDER",
+              "WINDS_WHISPER"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_goliath_large_form",
+      "name": "Large Form",
+      "description": "Starting at character level 5, you can change your size to Large as a Bonus Action if you're in a big enough space. You have Advantage on Strength checks and your Speed increases by 10 feet. This lasts for 10 minutes or until you end it (no action required). Once you use this trait, you can't use it again until you finish a Long Rest.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_goliath_powerful_build",
+      "name": "Powerful Build",
+      "description": "You count as one size larger when determining your carrying capacity and the weight you can push, drag, or lift. In addition, you have Advantage on any ability check you make to end the Grappled condition.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

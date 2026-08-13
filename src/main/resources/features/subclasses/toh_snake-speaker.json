@@ -1,0 +1,114 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_snake-speaker",
+  "features": [
+    {
+      "key": "sub_toh_snake-speaker_snake-speaker-magic",
+      "name": "Snake Speaker Magic",
+      "description": "Starting at 3rd level, you learn additional spells at certain ranger levels (don't count against spells known):\n\n| Ranger Level | Spells |\n|---|---|\n| 3rd | charm person |\n| 5th | suggestion |\n| 9th | tongues |\n| 13th | confusion |\n| 17th | dominate person |",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_snake-speaker_speak-with-snakes",
+      "name": "Speak with Snakes",
+      "description": "Starting at 3rd level, you can comprehend and verbally communicate with snakes. Their knowledge is limited by their Intelligence, but they can relay information about things perceived in the last day. You can persuade them to perform small favors.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_snake-speaker_scaly-transition",
+      "name": "Scaly Transition",
+      "description": "Beginning at 3rd level, when you finish a long rest, choose one serpentine aspect (two at 11th level):\n\n**Bite.** Bonus action fangs attack (1d4 + STR/DEX piercing + 1d8 poison) when you use the Attack action.\n**Keen Smell.** Advantage on Perception (scent) and Insight checks.\n**Poison Resistance.** Resistance to poison damage.\n**Scales.** Without armor: AC = 13 + DEX modifier.\n**Serpentine Movement.** Climbing speed 30 ft.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_snake-speaker_serpent-shape",
+      "name": "Serpent Shape",
+      "description": "At 7th level, as an action, cast *polymorph* on yourself assuming the form of a giant constrictor snake, flying snake, or giant poisonous snake. Retain INT, WIS, and CHA scores. 1/long rest.\n\nAt 15th level, retain Scaly Transition benefits in snake form and can use this feature twice between rests.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "serpent_shape",
+            "displayName": "Serpent Shape",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Serpent Shape",
+            "description": "Polymorph into giant constrictor snake, flying snake, or giant poisonous snake. Retain INT/WIS/CHA. At L15: 2 uses and retain Scaly Transition benefits.",
+            "resourceKey": "serpent_shape"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_snake-speaker_sinuous-dance",
+      "name": "Sinuous Dance",
+      "description": "Beginning at 11th level, you can use DEX as your spellcasting ability instead of WIS. Additionally, when you cast a spell, you can add both DEX and WIS modifiers together as your spellcasting modifier for that spell's DC or attack bonus. 1/short or long rest for the combined modifier.",
+      "gainedAtLevel": 11,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_snake-speaker_decoy-skin",
+      "name": "Decoy Skin",
+      "description": "Starting at 15th level, as an action, shed your skin to create a duplicate of yourself in an unoccupied space within 10 ft. It has your AC, saving throw bonuses, and HP equal to 3 × ranger level. Lasts 10 minutes or until 0 HP. As a bonus action, command it to move up to your speed (must stay within 120 ft). Can't take actions or use class features. While within 5 ft of you, attacks that can reach both have a 50% chance of hitting the decoy instead. A creature can identify it with an INT (Investigation) check vs your spell save DC. 1/long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "decoy_skin",
+            "displayName": "Decoy Skin",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Decoy Skin",
+            "description": "Shed skin: create a duplicate (your AC/saves, HP = 3× ranger level, 10 min). Move it as bonus action. 50% chance of intercepting attacks within 5 ft.",
+            "resourceKey": "decoy_skin"
+          }
+        }
+      ]
+    }
+  ]
+}

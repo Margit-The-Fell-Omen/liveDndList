@@ -1,0 +1,57 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_uncorrupted",
+  "features": [
+    {
+      "key": "subrace_toh_uncorrupted_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Wisdom score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_uncorrupted_psychic_barrier",
+      "name": "Psychic Barrier",
+      "description": "You have resistance to psychic damage, and you have advantage on ability checks and saving throws made against effects that inflict insanity, such as spells like contact other plane and symbol, and effects that cause short-term, long-term, or indefinite madness.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "PSYCHIC"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_uncorrupted_studied_insight",
+      "name": "Studied Insight",
+      "description": "You have proficiency in the Insight skill, and, if you study a creature for at least 1 minute, you have advantage on any initiative checks in combat against that creature for the next hour.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

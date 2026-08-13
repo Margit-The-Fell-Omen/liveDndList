@@ -1,0 +1,76 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd-2024_path-of-the-berserker",
+  "features": [
+    {
+      "key": "srd-2024_path-of-the-berserker_frenzy",
+      "name": "Frenzy",
+      "description": "If you use Reckless Attack while your Rage is active, you deal extra damage to the first target you hit on your turn with a Strength-based attack. Roll a number of d6s equal to your Rage Damage bonus and add them together. Damage type matches the weapon or Unarmed Strike used.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_path-of-the-berserker_mindless-rage",
+      "name": "Mindless Rage",
+      "description": "You have Immunity to the Charmed and Frightened conditions while your Rage is active. If you're Charmed or Frightened when you enter your Rage, the condition ends on you.",
+      "gainedAtLevel": 6,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_path-of-the-berserker_retaliation",
+      "name": "Retaliation",
+      "description": "When you take damage from a creature that is within 5 feet of you, you can take a Reaction to make one melee attack against that creature, using a weapon or an Unarmed Strike.",
+      "gainedAtLevel": 10,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Retaliation",
+            "description": "When a creature within 5 ft deals damage to you, make one melee attack against it."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_path-of-the-berserker_intimidating-presence",
+      "name": "Intimidating Presence",
+      "description": "As a Bonus Action, each creature of your choice in a 30-foot Emanation makes WIS save (DC 8 + STR mod + PB). On fail: Frightened for 1 minute (repeat save at end of each turn). 1/long rest or spend a Rage use to restore.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "intimidating_presence",
+            "displayName": "Intimidating Presence",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Intimidating Presence",
+            "description": "Creatures in 30-ft emanation make WIS save or are Frightened for 1 min. Restore use by spending a Rage.",
+            "resourceKey": "intimidating_presence"
+          }
+        }
+      ]
+    }
+  ]
+}

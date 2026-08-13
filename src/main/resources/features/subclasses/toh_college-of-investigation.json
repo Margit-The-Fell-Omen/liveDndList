@@ -1,0 +1,110 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_college-of-investigation",
+  "features": [
+    {
+      "key": "sub_toh_college-of-investigation_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "When you join the College of Investigation at 3rd level, you gain proficiency in Insight and in two of the following skills of your choice: Acrobatics, Deception, Investigation, Performance, Sleight of Hand, or Stealth.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "investigation_bonus_skill_1",
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "investigation_bonus_skill_2",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "investigation_bonus_skill_1",
+          "name": "Bonus Skill 1",
+          "description": "Choose from Acrobatics, Deception, Investigation, Performance, Sleight of Hand, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ACROBATICS",
+              "DECEPTION",
+              "INVESTIGATION",
+              "PERFORMANCE",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ]
+          }
+        },
+        {
+          "choiceKey": "investigation_bonus_skill_2",
+          "name": "Bonus Skill 2",
+          "description": "Choose from Acrobatics, Deception, Investigation, Performance, Sleight of Hand, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ACROBATICS",
+              "DECEPTION",
+              "INVESTIGATION",
+              "PERFORMANCE",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-investigation_quick-read",
+      "name": "Quick Read",
+      "description": "At 3rd level, as a bonus action, expend one use of Bardic Inspiration to make a WIS (Insight) check against a creature within 30 ft contested by its CHA (Deception). Add the Bardic Inspiration die to your check. Disadvantage if target is not humanoid; auto-fails vs INT 3 or lower. On success, choose one for 1 minute:\n\n* Target has disadvantage on attack rolls against you.\n* You have advantage on saves vs target's spells and magical effects.\n* You have advantage on attack rolls against the target.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-investigation_bardic-instinct",
+      "name": "Bardic Instinct",
+      "description": "Starting at 6th level, when a creature that has your Bardic Inspiration is damaged by a hostile attack, it can use its reaction to roll the die and reduce the damage by twice the number rolled. If this reduces damage to 0, the inspired creature can make one melee attack against its attacker as part of the same reaction.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-investigation_hot-pursuit",
+      "name": "Hot Pursuit",
+      "description": "Starting at 14th level, when a creature fails a save against one of your bard spells, you can designate it as your mark for 24 hours. You always know the direction to your mark (unless blocked by antimagic, nondetection, or 1 in. of lead).\n\nWhen your mark attacks, you can expend Bardic Inspiration to subtract the die from its attack roll. When you make a save against your mark's spell or effect, you can expend Bardic Inspiration to add the die to your save. Both can be used after the roll but before the outcome.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

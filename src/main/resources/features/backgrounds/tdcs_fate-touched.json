@@ -1,0 +1,80 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "tdcs_fate-touched",
+  "features": [
+    {
+      "key": "bg_tdcs_fate-touched_skills",
+      "name": "Fate-Touched Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Religion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "RELIGION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_fate-touched_languages",
+      "name": "Fate-Touched Languages",
+      "description": "Two languages of your choice, often archaic or divine tongues.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "tdcs_fatetouched_lang_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "tdcs_fatetouched_lang_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tdcs_fatetouched_lang_1",
+          "name": "First Language",
+          "description": "Choose a language (Celestial or an ancient tongue recommended).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "tdcs_fatetouched_lang_2",
+          "name": "Second Language",
+          "description": "Choose another language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_fate-touched_feature",
+      "name": "Fate's Favor",
+      "description": "You have been touched by fate itself. You experience visions and moments of foresight. Seers, prophets, and diviners recognize you as one marked, and treat you with reverence—or wariness. TODO: verify against TDCS book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

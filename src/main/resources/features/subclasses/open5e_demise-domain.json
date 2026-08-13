@@ -1,0 +1,100 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_demise-domain",
+  "features": [
+    {
+      "key": "sub_open5e_demise-domain_death-domain-spells",
+      "name": "Death Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | false life, ray of sickness |\n| 3rd | blindness/deafness, ray of enfeeblement |\n| 5th | animate dead, vampiric touch |\n| 7th | blight, death ward |\n| 9th | antilife shell, cloudkill |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_demise-domain_bonus-proficiency",
+      "name": "Bonus Proficiency",
+      "description": "When you choose this domain at 1st level, you gain martial weapon proficiency.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_demise-domain_deaths-cut",
+      "name": "Death's Cut",
+      "description": "You learn an additional cantrip of the necromancy school from any class spell list. When you cast any necromancy cantrip that targets a single creature, you can target a second creature within the spell's range if it is within 5 feet of the first target.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_demise-domain_channel-divinity-killing-touch",
+      "name": "Channel Divinity: Killing Touch",
+      "description": "Beginning at 2nd level, when one of your melee attacks hits a creature, you can use your Channel Divinity to add necrotic damage equal to your cleric level × 2 + 5.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_demise-domain_death-comes-for-all",
+      "name": "Death Comes for All",
+      "description": "At 6th level, you ignore a creature's necrotic resistance when you deal damage via spells or your Channel Divinity.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_demise-domain_divine-strike",
+      "name": "Divine Strike",
+      "description": "At 8th level, once on each of your turns when you hit a creature with a weapon attack, you deal an extra 1d8 necrotic damage. At 14th level, the extra damage increases to 2d8.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_demise-domain_improved-deaths-cut",
+      "name": "Improved Death's Cut",
+      "description": "Beginning at 17th level, your Death's Cut feature applies to necromancy spells of up to 5th level in addition to cantrips. You must double the material components used if the spell requires them.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

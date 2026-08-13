@@ -1,0 +1,90 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_arcane-warrior",
+  "features": [
+    {
+      "key": "sub_open5e_arcane-warrior_spellcasting",
+      "name": "Spellcasting",
+      "description": "Beginning at 3rd level, you can cast spells from the wizard spell list. Intelligence is your spellcasting ability.\n\n**Spell save DC** = 8 + proficiency bonus + INT modifier\n**Spell attack modifier** = proficiency bonus + INT modifier\n\nYou learn 2 cantrips and 3 first-level spells (at least 2 from abjuration or evocation). See the Arcane Warrior Spells table for slots and spells known progression up to 4th-level slots at Fighter 19.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "INT",
+            "casterType": "THIRD",
+            "spellList": "wizard",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_arcane-warrior_bonded-weapon",
+      "name": "Bonded Weapon",
+      "description": "Starting at 3rd level, you can create a magical bond with a weapon via a 1-hour ritual. You can't be disarmed of it (unless incapacitated), and you can summon it to your hand as a bonus action via teleportation (unless it's on another plane). You can bond with up to two weapons at a time.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_arcane-warrior_battle-magic",
+      "name": "Battle Magic",
+      "description": "At 7th level, you can use your bonus action to make a weapon attack on a turn that you use an action to cast a cantrip.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_arcane-warrior_arcane-strike",
+      "name": "Arcane Strike",
+      "description": "Starting at 10th level, creatures suffer disadvantage on a saving throw against your spells if you have hit them with a weapon attack. This lasts until the end of your next turn after hitting and applies only to the first saving throw.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_arcane-warrior_eldritch-charge",
+      "name": "Eldritch Charge",
+      "description": "Starting at 15th level, when you use an Action Surge, you can also teleport to any unoccupied space that you can see within 30 feet. This teleportation and your extra action can be used in either order.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_arcane-warrior_improved-battle-magic",
+      "name": "Improved Battle Magic",
+      "description": "At 18th level, you can use your bonus action to make a weapon attack after using your action to cast a spell of any level, not just cantrips.",
+      "gainedAtLevel": 18,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

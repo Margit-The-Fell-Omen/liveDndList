@@ -1,0 +1,88 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_spellsmith",
+  "features": [
+    {
+      "key": "sub_toh_spellsmith_arcane-emendation",
+      "name": "Arcane Emendation",
+      "description": "Beginning at 2nd level, while holding a scroll, you can spend 1 hour per spell level to change the spell on the scroll to another wizard spell of the same school, same or lower level. If the new spell has costly material components, you must provide them; they are consumed.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_spellsmith_spell-transformation",
+      "name": "Spell Transformation",
+      "description": "At 2nd level, while concentrating on a wizard spell cast with a slot, use an action to end your concentration and cast another prepared wizard spell without expending a slot. The new spell must be half the level (min 1st) of the old spell and have a 1-action cast time. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "spell_transformation",
+            "displayName": "Spell Transformation",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_spellsmith_spell-honing",
+      "name": "Spell Honing",
+      "description": "At 6th level, when your concentration breaks (willingly or not), the spell's effects linger until the end of your next turn.\n\nWhile concentrating on a spell (duration up to 1 min or 10 min), you can amplify a 1st level+ wizard spell you cast by reducing the concentration spell's duration by rounds (if 1 min) or minutes (if 10 min) equal to the amplified spell's level. Choose one amplification:\n\n* +2 to saving throw DC\n* +2 to spell attack bonus\n* Add INT modifier to one damage roll\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "spell_honing",
+            "displayName": "Spell Honing",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_spellsmith_spell-reversion",
+      "name": "Spell Reversion",
+      "description": "At 10th level, you have advantage on saving throws to end ongoing conditions.\n\nWhen you successfully end an ongoing condition from a spell cast by a visible creature, use your reaction to force that creature to make the same save vs your spell save DC. On failure, it suffers the condition you just ended until the end of its next turn.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Spell Reversion",
+            "description": "After ending an ongoing spell condition on yourself: force the visible caster to save vs your spell save DC or suffer the same condition until end of their next turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_spellsmith_spell-duality",
+      "name": "Spell Duality",
+      "description": "At 14th level, you can concentrate on two spells simultaneously. If you cast a third, you lose concentration on the oldest. CON saves are made per damage source, not per spell. If you fail a CON save, you lose concentration on the oldest spell. If you lose concentration on both spells in 1 round, you suffer one level of exhaustion.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

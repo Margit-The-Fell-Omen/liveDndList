@@ -1,0 +1,73 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_marauder",
+  "features": [
+    {
+      "key": "bg_a5e-ag_marauder_skills",
+      "name": "Marauder Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Intimidation",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INTIMIDATION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_marauder_tools",
+      "name": "Marauder Tool Proficiencies",
+      "description": "Tool Proficiencies: Land Vehicles, one type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "land_vehicles"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_marauder_gaming",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_marauder_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_marauder_feature",
+      "name": "Raider's Reputation",
+      "description": "Your reputation precedes you among those who fear raiders like yourself. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

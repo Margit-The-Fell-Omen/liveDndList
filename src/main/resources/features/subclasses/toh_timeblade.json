@@ -1,0 +1,115 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_timeblade",
+  "features": [
+    {
+      "key": "sub_toh_timeblade_temporal-strike",
+      "name": "Temporal Strike",
+      "description": "Starting at 3rd level, when you hit a creature with a weapon attack, you can use a bonus action to trigger one of the following:\n\n**Dislocative Step.** You move to an unoccupied space within 15 ft (no opportunity attacks). At 10th level: up to 30 ft.\n\n**Dislocative Shove.** Push the target to an unoccupied space within 15 ft (horizontal only). Before damaging terrain, target can STR save (DC 8 + prof + STR mod) to stop in an adjacent safe space. At 10th level: up to 30 ft.\n\nUses equal to proficiency bonus; regain all on short or long rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "temporal_strike",
+            "displayName": "Temporal Strike",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Temporal Strike",
+            "description": "After hitting with a weapon: Dislocative Step (teleport 15 ft, no OA) or Dislocative Shove (push target 15 ft). Both extend to 30 ft at 10th level.",
+            "resourceKey": "temporal_strike"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_timeblade_chronologic-echo",
+      "name": "Chronologic Echo",
+      "description": "At 7th level, immediately after you use Second Wind, you can trigger a temporal echo to use it twice (roll separately for each use). 1/long rest.",
+      "gainedAtLevel": 7,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "chronologic_echo",
+            "displayName": "Chronologic Echo",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_timeblade_improved-temporal-strike",
+      "name": "Improved Temporal Strike",
+      "description": "At 10th level, when you use Temporal Strike, you can choose one additional option:\n\n**Chronal Cleave.** Immediately make a weapon attack against a different target within range.\n\n**Chronal Shield.** Add your proficiency bonus to your AC until the beginning of your next turn.",
+      "gainedAtLevel": 10,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_timeblade_continuity-rift",
+      "name": "Continuity Rift",
+      "description": "At 15th level, when you hit a creature with a weapon attack, you can open a spacetime rupture. The creature disappears until the end of your next turn, then returns to its space (or nearest unoccupied). It takes 8d8 psychic damage and must make an INT save (DC 8 + prof + INT mod) or act randomly for 1 minute as if under *confusion* (repeatable at end of each of its turns). 1/long rest.",
+      "gainedAtLevel": 15,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "continuity_rift",
+            "displayName": "Continuity Rift",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_timeblade_temporal-warrior",
+      "name": "Temporal Warrior",
+      "description": "Starting at 18th level, as an action, briefly stop time for all creatures except yourself. Take 1d4 + 1 turns in a row during which you can move and act normally. Unlike *time stop*, you can make one attack per turn without ending the effect. 1/long rest.",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "temporal_warrior",
+            "displayName": "Temporal Warrior",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Temporal Warrior",
+            "description": "Stop time for all others: take 1d4+1 turns in a row. Can make one attack per turn without ending the effect.",
+            "resourceKey": "temporal_warrior"
+          }
+        }
+      ]
+    }
+  ]
+}

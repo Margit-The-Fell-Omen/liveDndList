@@ -1,0 +1,640 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_sorcerer",
+  "features": [
+    {
+      "key": "cls_srd_sorcerer_starting",
+      "name": "Sorcerer Starting Proficiencies",
+      "description": "As a sorcerer, you gain the following proficiencies:\n\n**Armor:** None\n**Weapons:** Daggers, darts, slings, quarterstaffs, light crossbows\n**Saving Throws:** Constitution, Charisma\n**Skills:** Choose two from Arcana, Deception, Insight, Intimidation, Persuasion, and Religion",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d6"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "dagger"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "dart"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "sling"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "quarterstaff"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "light_crossbow"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CON"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "sorcerer_skill_1",
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "sorcerer_skill_2",
+          "displayOrder": 9
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Arcana, Deception, Insight, Intimidation, Persuasion, or Religion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "PERSUASION",
+              "RELIGION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "sorcerer_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the sorcerer skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ARCANA",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "PERSUASION",
+              "RELIGION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_spellcasting",
+      "name": "Spellcasting",
+      "description": "An event in your past, or in the life of a parent or ancestor, left an indelible mark on you, infusing you with arcane magic. Charisma is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Charisma modifier\n**Spell attack modifier** = your proficiency bonus + your Charisma modifier\n\nYou know a set number of sorcerer spells from the Sorcerer table's Spells Known column. Each learned spell must be of a level for which you have spell slots. You can replace one known spell when you gain a sorcerer level. You can use an arcane focus as a spellcasting focus for your sorcerer spells.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "CHA",
+            "casterType": "FULL",
+            "spellList": "sorcerer",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "1": {
+                "1": 2
+              },
+              "2": {
+                "1": 3
+              },
+              "3": {
+                "1": 4,
+                "2": 2
+              },
+              "4": {
+                "1": 4,
+                "2": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "7": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "8": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 1,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 1,
+                "8": 1,
+                "9": 1
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 1,
+                "9": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_sorcerous-origin",
+      "name": "Sorcerous Origin",
+      "description": "Choose a sorcerous origin, which describes the source of your innate magical power: Draconic Bloodline or Wild Magic. Your choice grants you features when you choose it at 1st level and again at 6th, 14th, and 18th level.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_font-of-magic",
+      "name": "Font of Magic",
+      "description": "At 2nd level, you tap into a deep wellspring of magic within yourself, represented by sorcery points. You have a number of sorcery points equal to your sorcerer level (max 20). Regain all spent points on a long rest.\n\n**Flexible Casting:** As a bonus action, you can transform sorcery points into spell slots (up to 5th level) or convert a spell slot into sorcery points equal to its level.\n\nSpell slot creation costs: 1st = 2 pts, 2nd = 3 pts, 3rd = 5 pts, 4th = 6 pts, 5th = 7 pts. Slots created this way vanish on a long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "sorcery_points",
+            "displayName": "Sorcery Points",
+            "usesFormula": {
+              "classLevel": true
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Flexible Casting",
+            "description": "Convert sorcery points into spell slots (up to 5th, cost 2/3/5/6/7) or convert a spell slot into sorcery points equal to slot level.",
+            "resourceKey": "sorcery_points"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_metamagic",
+      "name": "Metamagic (Level 3)",
+      "description": "At 3rd level, you gain the ability to twist your spells to suit your needs. You gain two Metamagic options of your choice: Careful Spell, Distant Spell, Empowered Spell, Extended Spell, Heightened Spell, Quickened Spell, Subtle Spell, or Twinned Spell.\n\nYou can use only one Metamagic option on a spell when you cast it, unless otherwise noted.",
+      "gainedAtLevel": 3,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "sorcerer_metamagic_l3_1"
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "sorcerer_metamagic_l3_2"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_metamagic_l3_1",
+          "name": "First Metamagic",
+          "description": "Choose one Metamagic option.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "CAREFUL_SPELL",
+              "DISTANT_SPELL",
+              "EMPOWERED_SPELL",
+              "EXTENDED_SPELL",
+              "HEIGHTENED_SPELL",
+              "QUICKENED_SPELL",
+              "SUBTLE_SPELL",
+              "TWINNED_SPELL"
+            ]
+          }
+        },
+        {
+          "choiceKey": "sorcerer_metamagic_l3_2",
+          "name": "Second Metamagic",
+          "description": "Choose another Metamagic option.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "CAREFUL_SPELL",
+              "DISTANT_SPELL",
+              "EMPOWERED_SPELL",
+              "EXTENDED_SPELL",
+              "HEIGHTENED_SPELL",
+              "QUICKENED_SPELL",
+              "SUBTLE_SPELL",
+              "TWINNED_SPELL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "sorcerer_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "sorcerer_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_metamagic-10",
+      "name": "Metamagic (Level 10)",
+      "description": "At 10th level, you gain an additional Metamagic option of your choice.",
+      "gainedAtLevel": 10,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "sorcerer_metamagic_l10"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_metamagic_l10",
+          "name": "Metamagic",
+          "description": "Choose another Metamagic option.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "CAREFUL_SPELL",
+              "DISTANT_SPELL",
+              "EMPOWERED_SPELL",
+              "EXTENDED_SPELL",
+              "HEIGHTENED_SPELL",
+              "QUICKENED_SPELL",
+              "SUBTLE_SPELL",
+              "TWINNED_SPELL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "sorcerer_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "sorcerer_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_metamagic-17",
+      "name": "Metamagic (Level 17)",
+      "description": "At 17th level, you gain an additional Metamagic option of your choice.",
+      "gainedAtLevel": 17,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "sorcerer_metamagic_l17"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_metamagic_l17",
+          "name": "Metamagic",
+          "description": "Choose another Metamagic option.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "CAREFUL_SPELL",
+              "DISTANT_SPELL",
+              "EMPOWERED_SPELL",
+              "EXTENDED_SPELL",
+              "HEIGHTENED_SPELL",
+              "QUICKENED_SPELL",
+              "SUBTLE_SPELL",
+              "TWINNED_SPELL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "sorcerer_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "sorcerer_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_sorcerer_sorcerous-restoration",
+      "name": "Sorcerous Restoration",
+      "description": "At 20th level, you regain 4 expended sorcery points whenever you finish a short rest.",
+      "gainedAtLevel": 20,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

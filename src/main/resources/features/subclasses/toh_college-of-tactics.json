@@ -1,0 +1,104 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_college-of-tactics",
+  "features": [
+    {
+      "key": "sub_toh_college-of-tactics_combat-tactician",
+      "name": "Combat Tactician",
+      "description": "When you join the College of Tactics at 3rd level, you gain proficiency with medium armor, shields, and one martial weapon of your choice.\n\nYou can use Bardic Inspiration a number of times equal to your CHA modifier (min 1) + proficiency bonus. Regain uses on long rest (or short rest with Font of Inspiration).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "tactics_martial_weapon",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tactics_martial_weapon",
+          "name": "Martial Weapon Proficiency",
+          "description": "Choose one martial weapon.",
+          "chooseCount": 1,
+          "optionsSource": "WEAPON_LIST",
+          "optionsFilter": {
+            "category": "MARTIAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-tactics_setting-the-board",
+      "name": "Setting the Board",
+      "description": "Also at 3rd level, as a bonus action, command up to three willing allies who can see or hear you to use a reaction to move up to half their speed. This movement doesn't provoke opportunity attacks.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "setting_the_board",
+            "displayName": "Setting the Board",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Setting the Board",
+            "description": "Command up to 3 willing allies to each move up to half their speed (no opportunity attacks) as a reaction.",
+            "resourceKey": "setting_the_board"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-tactics_song-of-strategy",
+      "name": "Song of Strategy",
+      "description": "Beginning at 6th level, a creature with your Bardic Inspiration can roll the die and perform one tactical strategy:\n\n**Bait and Bleed.** After Dodge, make one melee attack adding the die to the roll.\n**Counter Offensive.** Reaction attack against attacker, adding the die to the roll.\n**Distraction.** Disengage as bonus action, speed +5 ft × die result.\n**Frightening Charge.** After Dash, melee attack adding the die; crit = target frightened until start of your next turn.\n**Hold Steady.** After a readied action trigger doesn't occur, attack adding the die.\n**Indirect Approach.** Help + target in 5 ft: ally adds die to attack; other allies within 5 ft have advantage on first attack vs target.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-tactics_ablative-inspiration",
+      "name": "Ablative Inspiration",
+      "description": "Starting at 14th level, when you take damage from an area spell or effect, you can use a reaction and expend Bardic Inspiration to roll the die and add it to your save. If you succeed, each friendly creature within 10 feet is also treated as if it succeeded.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Ablative Inspiration",
+            "description": "When taking damage from an area effect, expend Bardic Inspiration and add die to your save. On success, friendly creatures within 10 ft also succeed."
+          }
+        }
+      ]
+    }
+  ]
+}

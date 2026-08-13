@@ -1,0 +1,85 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd_the-fiend",
+  "features": [
+    {
+      "key": "sub_srd_the-fiend_expanded-spell-list",
+      "name": "Expanded Spell List",
+      "description": "The Fiend lets you choose from an expanded list of spells when you learn a warlock spell. The following spells are added to the warlock spell list for you.\n\n| Spell Level | Spells |\n|---|---|\n| 1st | burning hands, command |\n| 2nd | blindness/deafness, scorching ray |\n| 3rd | fireball, stinking cloud |\n| 4th | fire shield, wall of fire |\n| 5th | flame strike, hallow |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_the-fiend_dark-ones-blessing",
+      "name": "Dark One's Blessing",
+      "description": "Starting at 1st level, when you reduce a hostile creature to 0 hit points, you gain temporary hit points equal to your Charisma modifier + your warlock level (minimum of 1).",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_the-fiend_dark-ones-own-luck",
+      "name": "Dark One's Own Luck",
+      "description": "Starting at 6th level, you can call on your patron to alter fate in your favor. When you make an ability check or a saving throw, you can use this feature to add a d10 to your roll. You can do so after seeing the initial roll but before any of the roll's effects occur.\n\nOnce you use this feature, you can't use it again until you finish a short or long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "dark_ones_own_luck_srd",
+            "displayName": "Dark One's Own Luck",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_the-fiend_fiendish-resilience",
+      "name": "Fiendish Resilience",
+      "description": "Starting at 10th level, you can choose one damage type when you finish a short or long rest. You gain resistance to that damage type until you choose a different one with this feature. Damage from magical weapons or silver weapons ignores this resistance.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd_the-fiend_hurl-through-hell",
+      "name": "Hurl Through Hell",
+      "description": "Starting at 14th level, when you hit a creature with an attack, you can use this feature to instantly transport the target through the lower planes. The creature disappears and hurtles through a nightmare landscape.\n\nAt the end of your next turn, the target returns to the space it previously occupied, or the nearest unoccupied space. If the target is not a fiend, it takes 10d10 psychic damage as it reels from its horrific experience.\n\nOnce you use this feature, you can't use it again until you finish a long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "hurl_through_hell_srd",
+            "displayName": "Hurl Through Hell",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

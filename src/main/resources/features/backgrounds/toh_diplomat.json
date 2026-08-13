@@ -1,0 +1,80 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_diplomat",
+  "features": [
+    {
+      "key": "bg_toh_diplomat_skills",
+      "name": "Diplomat Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_diplomat_languages",
+      "name": "Diplomat Languages",
+      "description": "Two languages of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_diplomat_lang_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_diplomat_lang_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_diplomat_lang_1",
+          "name": "First Language",
+          "description": "Choose a language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "toh_diplomat_lang_2",
+          "name": "Second Language",
+          "description": "Choose another language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_diplomat_feature",
+      "name": "Diplomatic Immunity",
+      "description": "You represent a government or organization officially. Local authorities are reluctant to arrest or detain you without cause. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

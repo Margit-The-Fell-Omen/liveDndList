@@ -3,11 +3,10 @@
   "sourceKey": "srd-2024_fighter",
   "features": [
     {
-      "key": "fighter_class_features_l1",
-      "name": "Fighter Class Features",
-      "description": "As a fighter, you gain the following class features.",
+      "key": "cls_srd-2024_fighter_starting",
+      "name": "Fighter Starting Traits",
+      "description": "**Primary Ability:** Strength or Dexterity\n**Hit Point Die:** d10 per Fighter level\n**Saving Throw Proficiencies:** Strength and Dexterity\n**Skill Proficiencies:** Choose 2 from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Persuasion, Perception, or Survival\n**Weapon Proficiencies:** Simple and Martial weapons\n**Armor Training:** Light, Medium, and Heavy armor and Shields\n**Starting Equipment:** Choose A, B, or C: (A) Chain Mail, Greatsword, Flail, 8 Javelins, Dungeoneer's Pack, and 4 GP; (B) Studded Leather, Scimitar, Shortsword, Longbow, 20 Arrows, Quiver, Dungeoneer's Pack, and 11 GP; or (C) 155 GP",
       "gainedAtLevel": 1,
-      "prerequisite": null,
       "displayOrder": 0,
       "effects": [
         {
@@ -20,32 +19,28 @@
         {
           "type": "GRANT_ARMOR_PROFICIENCY",
           "payload": {
-            "category": "LIGHT",
-            "multiclass": false
+            "category": "LIGHT"
           },
           "displayOrder": 1
         },
         {
           "type": "GRANT_ARMOR_PROFICIENCY",
           "payload": {
-            "category": "MEDIUM",
-            "multiclass": false
+            "category": "MEDIUM"
           },
           "displayOrder": 2
         },
         {
           "type": "GRANT_ARMOR_PROFICIENCY",
           "payload": {
-            "category": "HEAVY",
-            "multiclass": false
+            "category": "HEAVY"
           },
           "displayOrder": 3
         },
         {
           "type": "GRANT_ARMOR_PROFICIENCY",
           "payload": {
-            "category": "SHIELD",
-            "multiclass": false
+            "category": "SHIELD"
           },
           "displayOrder": 4
         },
@@ -53,8 +48,7 @@
           "type": "GRANT_WEAPON_PROFICIENCY",
           "payload": {
             "scope": "CATEGORY",
-            "category": "SIMPLE",
-            "multiclass": false
+            "category": "SIMPLE"
           },
           "displayOrder": 5
         },
@@ -62,8 +56,7 @@
           "type": "GRANT_WEAPON_PROFICIENCY",
           "payload": {
             "scope": "CATEGORY",
-            "category": "MARTIAL",
-            "multiclass": false
+            "category": "MARTIAL"
           },
           "displayOrder": 6
         },
@@ -77,29 +70,29 @@
         {
           "type": "GRANT_SAVING_THROW_PROFICIENCY",
           "payload": {
-            "ability": "CON"
+            "ability": "DEX"
           },
           "displayOrder": 8
         },
         {
           "type": "GRANT_SKILL_PROFICIENCY",
           "payload": {},
-          "choiceKey": "fighter_skill_pick",
+          "choiceKey": "fighter_2024_skill_1",
           "displayOrder": 9
         },
         {
           "type": "GRANT_SKILL_PROFICIENCY",
           "payload": {},
-          "choiceKey": "fighter_skill_pick",
+          "choiceKey": "fighter_2024_skill_2",
           "displayOrder": 10
         }
       ],
       "choices": [
         {
-          "choiceKey": "fighter_skill_pick",
-          "name": "Fighter Skill Proficiencies",
-          "description": "Choose two skills from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, or Survival.",
-          "chooseCount": 2,
+          "choiceKey": "fighter_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Persuasion, Perception, or Survival.",
+          "chooseCount": 1,
           "optionsSource": "SKILL_LIST",
           "optionsFilter": {
             "fromList": [
@@ -109,19 +102,67 @@
               "HISTORY",
               "INSIGHT",
               "INTIMIDATION",
+              "PERSUASION",
               "PERCEPTION",
               "SURVIVAL"
             ]
-          },
-          "displayOrder": 0
+          }
+        },
+        {
+          "choiceKey": "fighter_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the fighter skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "INTIMIDATION",
+              "PERSUASION",
+              "PERCEPTION",
+              "SURVIVAL"
+            ],
+            "excludeChosen": true
+          }
         }
       ]
     },
     {
-      "key": "fighter_second_wind",
-      "name": "Second Wind",
-      "description": "You have a limited well of stamina you can draw on to protect yourself...",
+      "key": "srd-2024_fighter_fighting-style",
+      "name": "Fighting Style",
+      "description": "You have honed your martial prowess and gain a Fighting Style feat of your choice. Defense is recommended.\n\nWhenever you gain a Fighter level, you can replace the feat you chose with a different Fighting Style feat.",
       "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_fighting_style_feat"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_fighting_style_feat",
+          "name": "Fighting Style Feat",
+          "description": "Choose a Fighting Style feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "FIGHTING_STYLE"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_second-wind",
+      "name": "Second Wind",
+      "description": "You have a limited well of physical and mental stamina that you can draw on. As a Bonus Action, you can use it to regain Hit Points equal to 1d10 plus your Fighter level.\n\nUses: 2 (L1-3), 3 (L4-9), 4 (L10+). Regain 1 use on Short Rest, all on Long Rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
       "effects": [
         {
           "type": "GRANT_RESOURCE",
@@ -130,23 +171,367 @@
             "displayName": "Second Wind",
             "usesFormula": {
               "perClassLevel": {
-                "1": 1,
-                "6": 2,
-                "14": 3
+                "1": 2,
+                "4": 3,
+                "10": 4
               }
             },
-            "refresh": "SHORT"
+            "refresh": "LONG"
           }
         },
         {
           "type": "GRANT_BONUS_ACTION",
           "payload": {
             "name": "Second Wind",
-            "description": "Regain 1d10 + fighter level HP.",
-            "resourceKey": "second_wind",
-            "uses": null,
+            "description": "Regain HP equal to 1d10 + your Fighter level. Regain 1 use on Short Rest.",
+            "resourceKey": "second_wind"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_weapon-mastery",
+      "name": "Weapon Mastery",
+      "description": "Your training with weapons allows you to use the mastery properties of three kinds of Simple or Martial weapons of your choice. Whenever you finish a Long Rest, you can change one of those weapon choices.\n\nMastery count scales: 3 (L1), 4 (L4), 5 (L10), 6 (L16).",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_action-surge",
+      "name": "Action Surge",
+      "description": "You can push yourself beyond your normal limits for a moment. On your turn, you can take one additional action, except the Magic action.\n\nOnce you use this feature, you can't do so again until you finish a Short or Long Rest. Starting at level 17, you can use it twice before a rest but only once on a turn.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "action_surge",
+            "displayName": "Action Surge",
+            "usesFormula": {
+              "perClassLevel": {
+                "2": 1,
+                "17": 2
+              }
+            },
             "refresh": "SHORT"
           }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_tactical-mind",
+      "name": "Tactical Mind",
+      "description": "You have a mind for tactics on and off the battlefield. When you fail an ability check, you can expend a use of your Second Wind to push yourself toward success. Rather than regaining Hit Points, you roll 1d10 and add the number rolled to the ability check, potentially turning it into a success. If the check still fails, this use of Second Wind isn't expended.",
+      "gainedAtLevel": 2,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_fighter-subclass",
+      "name": "Fighter Subclass",
+      "description": "You gain a Fighter subclass of your choice. The Champion subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_extra-attack",
+      "name": "Extra Attack",
+      "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_tactical-shift",
+      "name": "Tactical Shift",
+      "description": "Whenever you activate your Second Wind with a Bonus Action, you can move up to half your Speed without provoking Opportunity Attacks.",
+      "gainedAtLevel": 5,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_ability-score-improvement-6",
+      "name": "Ability Score Improvement (Level 6)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 6,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_asi_feat_l6"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_asi_feat_l6",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_indomitable",
+      "name": "Indomitable",
+      "description": "If you fail a saving throw, you can reroll it with a bonus equal to your Fighter level. You must use the new roll, and you can't use this feature again until you finish a Long Rest.\n\nUses: 1 (L9), 2 (L13), 3 (L17).",
+      "gainedAtLevel": 9,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "indomitable",
+            "displayName": "Indomitable",
+            "usesFormula": {
+              "perClassLevel": {
+                "9": 1,
+                "13": 2,
+                "17": 3
+              }
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_tactical-master",
+      "name": "Tactical Master",
+      "description": "When you attack with a weapon whose mastery property you can use, you can replace that property with the Push, Sap, or Slow property for that attack.",
+      "gainedAtLevel": 9,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_two-extra-attacks",
+      "name": "Two Extra Attacks",
+      "description": "You can attack three times instead of once whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 11,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_studied-attacks",
+      "name": "Studied Attacks",
+      "description": "You study your opponents and learn from each attack you make. If you make an attack roll against a creature and miss, you have Advantage on your next attack roll against that creature before the end of your next turn.",
+      "gainedAtLevel": 13,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_ability-score-improvement-14",
+      "name": "Ability Score Improvement (Level 14)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 14,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_asi_feat_l14"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_asi_feat_l14",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of Combat Prowess is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "fighter_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "fighter_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_fighter_three-extra-attacks",
+      "name": "Three Extra Attacks",
+      "description": "You can attack four times instead of once whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 20,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
         }
       ]
     }

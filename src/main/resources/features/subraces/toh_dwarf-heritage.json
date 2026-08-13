@@ -1,0 +1,35 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_dwarf-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_dwarf-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Wisdom score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_dwarf-heritage_stoutness",
+      "name": "Dwarven Stoutness",
+      "description": "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_HIT_POINTS_PER_LEVEL",
+          "payload": {
+            "amount": 1
+          }
+        }
+      ]
+    }
+  ]
+}

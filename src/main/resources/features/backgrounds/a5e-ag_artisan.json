@@ -1,0 +1,65 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_artisan",
+  "features": [
+    {
+      "key": "bg_a5e-ag_artisan_skills",
+      "name": "Artisan Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_artisan_tools",
+      "name": "Artisan Tool Proficiency",
+      "description": "Tool Proficiency: One type of artisan's tools of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_artisan_tool"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_artisan_tool",
+          "name": "Artisan's Tools",
+          "description": "Choose one type of artisan's tools.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "artisans_tools"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_artisan_feature",
+      "name": "Guild Membership",
+      "description": "As a member of an artisan's guild, you can rely on your guild for support and lodging. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

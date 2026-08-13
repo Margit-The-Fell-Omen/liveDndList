@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_former-adventurer",
+  "features": [
+    {
+      "key": "bg_toh_former-adventurer_skills",
+      "name": "Former Adventurer Skill Proficiencies",
+      "description": "Skill Proficiencies: Investigation, Perception",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INVESTIGATION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_former-adventurer_tools",
+      "name": "Former Adventurer Tool Proficiency",
+      "description": "Tool Proficiency: One type of gaming set or one type of artisan's tools.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_formeradv_tool"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_formeradv_tool",
+          "name": "Tool",
+          "description": "Choose one gaming set or artisan's tools.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_former-adventurer_feature",
+      "name": "Old Comrades",
+      "description": "You retain contacts from your adventuring days: fellow retired adventurers, guild members, or old rivals. They may extend aid, favors, or information. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,698 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "a5e_marshal",
+  "features": [
+    {
+      "key": "cls_a5e_marshal_starting",
+      "name": "Marshal Starting Proficiencies",
+      "description": "**Armor:** Light armor, medium armor, heavy armor, shields\n**Weapons:** Simple weapons, martial weapons\n**Saving Throws:** Wisdom, Charisma\n**Skills:** Choose two from Athletics, History, Insight, Intimidation, Medicine, Perception, and Persuasion",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d10"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "HEAVY"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "marshal_skill_1",
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "marshal_skill_2",
+          "displayOrder": 10
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_skill_1",
+          "name": "First Skill",
+          "description": "Choose from Athletics, History, Insight, Intimidation, Medicine, Perception, or Persuasion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "INTIMIDATION",
+              "MEDICINE",
+              "PERCEPTION",
+              "PERSUASION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "marshal_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ATHLETICS",
+              "HISTORY",
+              "INSIGHT",
+              "INTIMIDATION",
+              "MEDICINE",
+              "PERCEPTION",
+              "PERSUASION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_commanding-presence",
+      "name": "Commanding Presence",
+      "description": "Starting at 1st level, you have a Commanding Presence that extends from you in a 10-foot radius.\n\nWhen you take the Attack action, you can forgo making one attack to allow a creature within range to make an attack instead using its reaction (cast a cantrip or make one weapon attack).\n\nRadius scales: 10 ft (L1), 20 ft (L5), 30 ft (L10), 45 ft (L15), 60 ft (L20).",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_rallying-surge",
+      "name": "Rallying Surge",
+      "description": "Also at 1st level, you can use a bonus action to choose a creature within 30 feet. If the target can hear or see you, it regains hit points equal to 1d8 + your marshal level. Once per long rest.\n\nAt 3rd level, you can target two creatures simultaneously. At 7th level, regain use after a short or long rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "rallying_surge",
+            "displayName": "Rallying Surge",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Rallying Surge",
+            "description": "Heal one creature (two at L3) within 30 ft for 1d8 + marshal level HP. Short rest recovery at L7.",
+            "resourceKey": "rallying_surge"
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_combat-maneuvers",
+      "name": "Combat Maneuvers",
+      "description": "At 2nd level, you gain the ability to use combat maneuvers. You gain proficiency in two combat traditions and learn two maneuvers.\n\nExertion pool = twice your proficiency bonus, regained on any rest. Maneuvers Known and Maneuver Degree scale per the Marshal table.\n\nYou can replace one known maneuver whenever you learn a new one.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "exertion_pool",
+            "displayName": "Exertion Pool",
+            "usesFormula": {
+              "base": 4
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_lessons-of-war",
+      "name": "Lessons of War",
+      "description": "Also at 2nd level, you learn a lesson of war of your choice. Options include: Exacting, Keep Walking, Lay of the Land, Rewarding Repute, Soldier Kitting, Team Tactics, Teamwork.\n\nLessons Known scale per the Marshal table. At L6, you can instead choose fighter soldiering knacks.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_marshal-archetype",
+      "name": "Marshal Archetype",
+      "description": "At 3rd level, you choose an archetype that focuses on the military stratagems you devise. Your choice grants you features at 3rd level and again at 7th, 11th, 15th, and 18th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_mark-foe",
+      "name": "Mark Foe",
+      "description": "Also at 3rd level, you can use a bonus action to choose a creature you can see within 30 feet. Until the start of your next turn, creatures able to hear or see you gain an expertise die on attacks made against that creature.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Mark Foe",
+            "description": "Choose a creature within 30 ft. Allies who can hear/see you gain an expertise die on attacks against it until your next turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score by 2 or two ability scores by 1, to a maximum of 20.",
+      "gainedAtLevel": 4,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "marshal_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_asi_l4",
+          "name": "ASI",
+          "description": "+2 to one or +1 to two (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_combat-directives",
+      "name": "Combat Directives",
+      "description": "Starting at 5th level, you learn one Sanguine Knot combat maneuver (doesn't count against maneuvers known). When a creature makes an attack via your Commanding Presence, it can simultaneously use one Sanguine Knot maneuver you know (free if it has no exertion points, but can't benefit again until a rest).",
+      "gainedAtLevel": 5,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_extra-attack",
+      "name": "Extra Attack",
+      "description": "Starting at 5th level, you can attack twice instead of once when you take the Attack action. At 11th level, you can attack three times.",
+      "gainedAtLevel": 5,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_followers",
+      "name": "Followers",
+      "description": "At 5th level, you gain one inexperienced follower. At 10th, 15th, and 20th level, you gain an additional follower or one becomes more experienced. If a follower dies, a replacement arrives after 1 month.",
+      "gainedAtLevel": 5,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_call-to-arms",
+      "name": "Call to Arms",
+      "description": "Beginning at 6th level, when you roll initiative, you and each creature you choose within your Commanding Presence gains an expertise die to their initiative roll. Additionally, you can switch your initiative result with an ally's.",
+      "gainedAtLevel": 6,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_marshal-renown",
+      "name": "Marshal Renown",
+      "description": "At 6th level, you add half your proficiency bonus to your Prestige rating. Choose one:\n\n**Famous.** Local authority figures seek you out when you arrive.\n**Infamous.** Commoners hurry away or tell you what you want to know. Expertise die on Intimidation checks.\n**Maverick.** The local watch keeps an eye on you. Heads of illegal organizations may introduce themselves.",
+      "gainedAtLevel": 6,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "marshal_renown"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_renown",
+          "name": "Marshal Renown",
+          "description": "Choose Famous, Infamous, or Maverick.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "FAMOUS",
+              "INFAMOUS",
+              "MAVERICK"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_versatile-exploration",
+      "name": "Versatile Exploration",
+      "description": "Also at 6th level, whenever you learn a new lesson of war or replace an existing one, you can instead choose from fighter soldiering knacks.",
+      "gainedAtLevel": 6,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score by 2 or two ability scores by 1, to a maximum of 20.",
+      "gainedAtLevel": 8,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "marshal_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_asi_l8",
+          "name": "ASI",
+          "description": "+2 to one or +1 to two (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_spur-ally",
+      "name": "Spur Ally",
+      "description": "Beginning at 9th level, once per long rest, when a creature you can see that can hear or see you fails an ability check or saving throw, you can use your reaction to allow them to reroll. At 13th level, regain on short or long rest.",
+      "gainedAtLevel": 9,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "spur_ally",
+            "displayName": "Spur Ally",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Spur Ally",
+            "description": "Allow an ally who can hear/see you to reroll a failed ability check or saving throw.",
+            "resourceKey": "spur_ally"
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_expanded-directives",
+      "name": "Expanded Directives",
+      "description": "Starting at 10th level, choose one tradition you know combat maneuvers from. You can use Combat Directives to grant uses of maneuvers from that tradition. At 15th level, choose a second tradition.",
+      "gainedAtLevel": 10,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_rouse-the-troops",
+      "name": "Rouse the Troops",
+      "description": "Also at 10th level, you can spend 1 minute speaking words of encouragement. Each creature of your choice that can hear or understand you can spend any number of Hit Dice to regain HP without finishing a short rest, and if they spend at least one Hit Die they can remove one level of fatigue or strife (once per long rest).",
+      "gainedAtLevel": 10,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score by 2 or two ability scores by 1, to a maximum of 20.",
+      "gainedAtLevel": 12,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "marshal_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_asi_l12",
+          "name": "ASI",
+          "description": "+2 to one or +1 to two (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_commanding-demeanor",
+      "name": "Commanding Demeanor",
+      "description": "Starting at 12th level, choose one:\n\n**Calm.** Nonverbal intimidation vs NPCs with CR < your level. Expertise die on Insight checks.\n**Resolute.** Expertise die on next INT/WIS/CHA check against a creature after you fail one.\n**Responsive.** Interject in NPC conversations seamlessly. Expertise die on Persuasion checks.",
+      "gainedAtLevel": 12,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "marshal_demeanor"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_demeanor",
+          "name": "Commanding Demeanor",
+          "description": "Choose Calm, Resolute, or Responsive.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "CALM",
+              "RESOLUTE",
+              "RESPONSIVE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_dauntless",
+      "name": "Dauntless",
+      "description": "Starting at 13th level, you and creatures you choose have advantage on saving throws against the charmed or frightened conditions while within your Commanding Presence.",
+      "gainedAtLevel": 13,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_stronghold",
+      "name": "Stronghold",
+      "description": "At 13th level, you gain an average, grade 4 stronghold (castle, house, or training hall). Unlike normal strongholds, you can't sell this stronghold. Upgraded to grade 5 at L16 and grade 6 at L20.",
+      "gainedAtLevel": 13,
+      "displayOrder": 21,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_advantageous-action",
+      "name": "Advantageous Action",
+      "description": "Starting at 14th level, you can use the Help action as a bonus action. When you take the Help action, choose one:\n\n- One frightened creature within 30 ft is no longer frightened\n- One creature within 5 ft gains temporary HP equal to CHA mod (min 1)\n- Touch a living creature at 0 HP; it regains 1 HP",
+      "gainedAtLevel": 14,
+      "displayOrder": 22,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Advantageous Action (Help)",
+            "description": "Use Help as a bonus action. Additionally choose: remove frightened from ally (30 ft), grant temp HP to ally (5 ft), or stabilize at 0 HP (touch)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score by 2 or two ability scores by 1, to a maximum of 20.",
+      "gainedAtLevel": 16,
+      "displayOrder": 23,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "marshal_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_asi_l16",
+          "name": "ASI",
+          "description": "+2 to one or +1 to two (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_critical-weakness",
+      "name": "Critical Weakness",
+      "description": "Beginning at 17th level, once per rest, you can use a bonus action to choose one creature you can see within 60 feet and expose a flaw in its defenses. Until the end of your next turn, any creature that can hear or see you has advantage on attack rolls against it, and their attacks and spells deal an extra 6 damage to it.",
+      "gainedAtLevel": 17,
+      "displayOrder": 24,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "critical_weakness",
+            "displayName": "Critical Weakness",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Critical Weakness",
+            "description": "Choose one creature within 60 ft. Until end of your next turn, allies gain advantage on attacks vs it and deal +6 damage.",
+            "resourceKey": "critical_weakness"
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_impressive-reputation",
+      "name": "Impressive Reputation",
+      "description": "Starting at 18th level, choose one:\n\n**Hero.** Nobles and royalty treat you as an equal, granting free food, lodging, and a place in their court.\n**Iconoclast.** 1d4+1 bards/scholars/sages seek you out in settlements to hear your exploits and share information.\n**Slaughterer.** Bandit captains, crimelords, and fiends know your prowess and offer alliances.",
+      "gainedAtLevel": 18,
+      "displayOrder": 25,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "marshal_reputation"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_reputation",
+          "name": "Impressive Reputation",
+          "description": "Choose Hero, Iconoclast, or Slaughterer.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "HERO",
+              "ICONOCLAST",
+              "SLAUGHTERER"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score by 2 or two ability scores by 1, to a maximum of 20.",
+      "gainedAtLevel": 19,
+      "displayOrder": 26,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "marshal_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_asi_l19",
+          "name": "ASI",
+          "description": "+2 to one or +1 to two (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "a5e_marshal_legendary-commander",
+      "name": "Legendary Commander",
+      "description": "At 20th level, creatures within your Commanding Presence add your Charisma modifier (min 1) to saving throws. Additionally, choose one:\n\n**Commander's Expertise.** Creatures using your Commanding Presence gain an expertise die on attacks/maneuvers.\n**Feedback Loop.** When a creature using your Commanding Presence hits, you gain a reaction (use before next turn).\n**Rapid Deployment.** After initiative is rolled, your Speed and chosen allies' Speed increases by 20 ft until combat ends.",
+      "gainedAtLevel": 20,
+      "displayOrder": 27,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "marshal_legendary"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "marshal_legendary",
+          "name": "Legendary Commander",
+          "description": "Choose Commander's Expertise, Feedback Loop, or Rapid Deployment.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "COMMANDERS_EXPERTISE",
+              "FEEDBACK_LOOP",
+              "RAPID_DEPLOYMENT"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

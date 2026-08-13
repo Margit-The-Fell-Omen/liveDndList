@@ -1,0 +1,114 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_halfling",
+  "features": [
+    {
+      "key": "race_srd_halfling_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_halfling_size",
+      "name": "Size",
+      "description": "Halflings average about 3 feet tall and weigh about 40 pounds. Your size is Small.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "SMALL"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_halfling_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 25 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 25,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_halfling_lucky",
+      "name": "Lucky",
+      "description": "When you roll a 1 on an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_halfling_brave",
+      "name": "Brave",
+      "description": "You have advantage on saving throws against being frightened.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_halfling_nimbleness",
+      "name": "Halfling Nimbleness",
+      "description": "You can move through the space of any creature that is of a size larger than yours.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_halfling_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Halfling.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "halfling"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

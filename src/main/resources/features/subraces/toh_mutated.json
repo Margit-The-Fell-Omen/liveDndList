@@ -1,0 +1,100 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_mutated",
+  "features": [
+    {
+      "key": "subrace_toh_mutated_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_mutated_athletic_training",
+      "name": "Athletic Training",
+      "description": "You have proficiency in the Athletics skill, and you are proficient with two martial weapons of your choice.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "mutated_martial_1",
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "mutated_martial_2",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "mutated_martial_1",
+          "name": "First Martial Weapon",
+          "description": "Choose one martial weapon.",
+          "chooseCount": 1,
+          "optionsSource": "WEAPON_LIST",
+          "optionsFilter": {
+            "category": "MARTIAL"
+          }
+        },
+        {
+          "choiceKey": "mutated_martial_2",
+          "name": "Second Martial Weapon",
+          "description": "Choose another martial weapon.",
+          "chooseCount": 1,
+          "optionsSource": "WEAPON_LIST",
+          "optionsFilter": {
+            "category": "MARTIAL",
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_mutated_otherworldly_influence",
+      "name": "Otherworldly Influence",
+      "description": "Your close connection to strange powers has mutated your form. Choose one: Alien Appendage (a tentacle natural weapon dealing 1d4 + STR bludgeoning, 5 ft reach, can perform simple tasks). Tainted Blood (reaction when taking piercing/slashing damage: you and all within 5 ft take necrotic damage equal to your level; regain on short or long rest). Tenebrous Flesh (rubbery skin grants +1 to AC).",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "mutated_influence"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "mutated_influence",
+          "name": "Otherworldly Mutation",
+          "description": "Choose Alien Appendage, Tainted Blood, or Tenebrous Flesh.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ALIEN_APPENDAGE",
+              "TAINTED_BLOOD",
+              "TENEBROUS_FLESH"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "open5e_scoundrel",
+  "features": [
+    {
+      "key": "bg_open5e_scoundrel_skills",
+      "name": "Scoundrel Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Sleight of Hand",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SLEIGHT_OF_HAND"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_open5e_scoundrel_tools",
+      "name": "Scoundrel Tool Proficiencies",
+      "description": "Tool Proficiencies: Thieves' Tools, one type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "open5e_scoundrel_gaming",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "open5e_scoundrel_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_open5e_scoundrel_feature",
+      "name": "Underworld Connections",
+      "description": "You have contacts in the criminal underworld who can pass messages, hide you, or fence stolen goods. TODO: verify against Open5e",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

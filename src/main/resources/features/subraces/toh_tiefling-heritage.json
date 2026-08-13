@@ -1,0 +1,38 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_tiefling-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_tiefling-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Charisma score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_tiefling-heritage_necrotic_rebuke",
+      "name": "Necrotic Rebuke",
+      "description": "When you are hit by a weapon attack, you can use a reaction to envelop the attacker in shadowy flames. The attacker takes necrotic damage equal to your Charisma modifier (minimum 1), and it has disadvantage on attack rolls until the end of its next turn. Regain on long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Necrotic Rebuke",
+            "description": "React to being hit by weapon attack; attacker takes necrotic damage equal to CHA mod and has disadvantage on next attacks.",
+            "uses": 1,
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

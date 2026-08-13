@@ -1,0 +1,71 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_circle-of-the-many",
+  "features": [
+    {
+      "key": "sub_open5e_circle-of-the-many_strengthened-transformation",
+      "name": "Strengthened Transformation",
+      "description": "At 2nd level, you can choose a beast with CR up to 1 when you use Wild Shape (following normal movement restrictions). At 3rd level and beyond, you can choose beasts with CR up to 1/3 your druid level (rounded down).\n\n| Level | Max CR | Limitations | Example |\n|---|---|---|---|\n| 2 | 1 | No flying or swimming speed | Brown bear |\n| 4 | 1 | No flying speed | Giant octopus |\n| 6 | 2 | No flying speed | Rhinoceros |\n| 8 | 2 | — | Giant vampire bat |\n| 9 | 3 | — | Killer whale |\n| 12 | 4 | — | Elephant |\n| 15 | 5 | — | Giant crocodile |\n| 18 | 6 | — | Mammoth |",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_circle-of-the-many_resilient-transformation",
+      "name": "Resilient Transformation",
+      "description": "When you choose this circle at 2nd level, you can use Wild Shape as a bonus action instead of an action. While in beast form, you can expend a spell slot as a bonus action to heal the beast shape's HP (1d8 per spell slot level).",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_circle-of-the-many_natures-talon",
+      "name": "Nature's Talon",
+      "description": "Beginning at 6th level, when you are in beast shape, your attacks are considered magical for determining a target's immunity or resistance.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_circle-of-the-many_shape-of-the-elements",
+      "name": "Shape of the Elements",
+      "description": "By 10th level, when you use Wild Shape, you may expend an additional use to transform into a CR 5 elemental (air, earth, fire, or water) instead of a beast.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_circle-of-the-many_multitude-of-faces",
+      "name": "Multitude of Faces",
+      "description": "Starting at 14th level, your skinchanging powers are so potent that you can cast *alter self* at will.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

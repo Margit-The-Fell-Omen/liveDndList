@@ -1,0 +1,123 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_storm-domain",
+  "features": [
+    {
+      "key": "sub_open5e_storm-domain_domain-spells",
+      "name": "Storm Domain Spells",
+      "description": "| Cleric Level | Spells |\n|---|---|\n| 1st | fog cloud, thunderwave |\n| 3rd | gust of wind, shatter |\n| 5th | call lightning, sleet storm |\n| 7th | control water, ice storm |\n| 9th | destructive wave, insect plague |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_storm-domain_bonus-proficiency",
+      "name": "Bonus Proficiency",
+      "description": "When you choose this domain at 1st level, you gain proficiency with heavy armor and martial weapons.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "HEAVY"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_storm-domain_tempests-rebuke",
+      "name": "Tempest's Rebuke",
+      "description": "Also at 1st level, when a creature within 5 feet hits you, you can use your reaction to force it to make a DEX save (your spell save DC). Fail: 2d8 damage (lightning or thunder, your choice). Success: half damage. Uses equal to WIS modifier (minimum 1), regained on long rest.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "tempests_rebuke",
+            "displayName": "Tempest's Rebuke",
+            "usesFormula": {
+              "abilityMod": "WIS"
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Tempest's Rebuke",
+            "description": "When hit by a creature within 5 ft: DEX save or 2d8 lightning/thunder damage (half on success).",
+            "resourceKey": "tempests_rebuke"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_storm-domain_channel-divinity-full-fury",
+      "name": "Channel Divinity: Full Fury",
+      "description": "Starting at 2nd level, when you would deal lightning or thunder damage from an attack, you can use Channel Divinity to deal the maximum possible damage instead of rolling.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_storm-domain_storm-blast",
+      "name": "Storm Blast",
+      "description": "Beginning at 6th level, you can choose to push a Large or smaller creature up to 10 feet away from you any time you deal lightning damage to it.",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_storm-domain_divine-strike",
+      "name": "Divine Strike",
+      "description": "At 8th level, once on each of your turns when you hit a creature with a weapon attack, you deal an extra 1d8 thunder damage. At 14th level, the extra damage increases to 2d8.",
+      "gainedAtLevel": 8,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_storm-domain_skys-blessing",
+      "name": "Sky's Blessing",
+      "description": "Starting at 17th level, you gain a flying speed equal to your walking speed whenever you are outdoors.",
+      "gainedAtLevel": 17,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

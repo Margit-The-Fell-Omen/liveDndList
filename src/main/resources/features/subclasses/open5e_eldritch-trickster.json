@@ -1,0 +1,92 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_eldritch-trickster",
+  "features": [
+    {
+      "key": "sub_open5e_eldritch-trickster_spellcasting",
+      "name": "Spellcasting",
+      "description": "Beginning at 3rd level, you can cast spells from the wizard spell list. You learn *mage hand* plus 2 additional cantrips and 3 first-level spells (at least 2 from enchantment or illusion). Intelligence is your spellcasting ability.\n\n**Spell save DC** = 8 + proficiency bonus + INT modifier\n**Spell attack modifier** = proficiency bonus + INT modifier\n\nSee the Eldritch Prankster Spells table for slots and spells known progression up to 4th-level slots at Rogue 19.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "INT",
+            "casterType": "THIRD",
+            "spellList": "wizard",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_eldritch-trickster_sleight-of-mage-hand",
+      "name": "Sleight of Mage Hand",
+      "description": "Your *mage hand* is invisible. You can use it to disarm traps, pick locks with thieves' tools, pick pockets, or plant objects at range. Contest Perception with Sleight of Hand to avoid detection. You can control the hand using Cunning Action's bonus action.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_eldritch-trickster_arcane-ambuscade",
+      "name": "Arcane Ambuscade",
+      "description": "At 9th level, creatures have disadvantage on saving throws against your spells if you are hidden during casting. Only applies to the first saving throw on the turn you cast the spell.",
+      "gainedAtLevel": 9,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_eldritch-trickster_magical-misdirection",
+      "name": "Magical Misdirection",
+      "description": "Starting at 13th level, you can use *mage hand* to distract a creature within 5 feet of the hand. Use a bonus action to gain advantage on attack rolls against that creature until end of turn.",
+      "gainedAtLevel": 13,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_eldritch-trickster_eldritch-grift",
+      "name": "Eldritch Grift",
+      "description": "Starting at 17th level, as a reaction when targeted by or in the area of a spell, you force the caster to make a save (your spell save DC + their spellcasting modifier). On failure: you are unaffected, you can cast the spell for 8 hours using your slots, and the caster can't cast it during that time. Must be 1st level+ and no higher than your max slot level. 1/long rest.",
+      "gainedAtLevel": 17,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "eldritch_grift",
+            "displayName": "Eldritch Grift",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Eldritch Grift",
+            "description": "Steal a spell targeting you. Caster saves or you gain the spell for 8 hours and they lose it.",
+            "resourceKey": "eldritch_grift"
+          }
+        }
+      ]
+    }
+  ]
+}

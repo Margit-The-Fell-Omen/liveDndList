@@ -1,0 +1,115 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_tiefling",
+  "features": [
+    {
+      "key": "race_srd-2024_tiefling_size",
+      "name": "Size",
+      "description": "You are Medium or Small. You choose the size when you select this Species.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {},
+          "choiceKey": "tiefling_size"
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tiefling_size",
+          "name": "Size",
+          "description": "Choose Medium or Small.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "MEDIUM",
+              "SMALL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_tiefling_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_tiefling_darkvision",
+      "name": "Darkvision",
+      "description": "You have Darkvision with a range of 60 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_tiefling_fiendish_legacy",
+      "name": "Fiendish Legacy",
+      "description": "You have a legacy from one of your fiendish ancestors. Choose one of the following options: Abyssal (Chaotic), Chthonic (Death), or Infernal (Law). You gain the associated traits: a damage resistance, a cantrip, and (at higher levels) additional spells. When you finish a Long Rest, you can replace your legacy with a different one.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {},
+          "choiceKey": "tiefling_legacy"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tiefling_legacy",
+          "name": "Fiendish Legacy",
+          "description": "Abyssal: Resistance to poison + Poison Spray cantrip; Chthonic: Resistance to necrotic + Chill Touch cantrip; Infernal: Resistance to fire + Fire Bolt cantrip.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ABYSSAL",
+              "CHTHONIC",
+              "INFERNAL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_tiefling_otherworldly_presence",
+      "name": "Otherworldly Presence",
+      "description": "You know the Thaumaturgy cantrip. When you cast it with this trait, the cantrip uses the same spellcasting ability you use for your Fiendish Legacy trait.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "thaumaturgy",
+            "atWill": true,
+            "castingAbilityOverride": "CHA"
+          }
+        }
+      ]
+    }
+  ]
+}

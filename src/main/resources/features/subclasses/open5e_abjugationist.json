@@ -1,0 +1,74 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "open5e_abjurationist",
+  "features": [
+    {
+      "key": "sub_open5e_abjurationist_expert-abjurer",
+      "name": "Expert Abjurer",
+      "description": "When you choose this subclass at 3rd level, add two Abjuration spells from the Wizard spell list to your spellbook for free. Both spells must be level 2 or lower.\n\nAt every level thereafter when you gain a new level of spell slots, you may add one more Abjuration spell from the Wizard spell list to your spellbook for free.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_abjurationist_arcane-aegis",
+      "name": "Arcane Aegis",
+      "description": "When you cast an Abjuration spell of at least 1st level, you may siphon a portion of the spell's magic to create an Arcane Aegis. The aegis lasts until you finish a Long Rest and takes damage directed at you. The aegis has HP max of 2 × Wizard level + INT modifier. If damage exceeds the aegis's current HP, you take the remainder.\n\nCasting another Abjuration spell of 1st level+ restores aegis HP equal to spell level × 2. You can also use a Bonus Action to expend a spell slot to restore HP equal to 2 × slot level. Once created, you cannot create a new aegis until after a Long Rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_abjurationist_aegis-extension",
+      "name": "Aegis Extension",
+      "description": "You may use your Reaction to have your Arcane Aegis take the damage dealt to a creature up to 30 feet from you that you can see. If the damage exceeds the current HP of the aegis, the creature takes the remainder.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Aegis Extension",
+            "description": "Redirect damage from an ally within 30 ft to your Arcane Aegis."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_abjurationist_anti-magician",
+      "name": "Anti-Magician",
+      "description": "You always have *Dispel Magic* and *Counterspell* prepared. When you use a spell slot to cast one of these spells, if you fail to stop an opposing spell, you do not expend the spell slot.\n\nYou can also cast *Dispel Magic* as a Bonus Action, adding your Proficiency Bonus to the spell's ability check.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_open5e_abjurationist_resistance-to-magic",
+      "name": "Resistance to Magic",
+      "description": "You have Resistance to all damage from spells and you gain Advantage on any saving throw to resist a spell's effects.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

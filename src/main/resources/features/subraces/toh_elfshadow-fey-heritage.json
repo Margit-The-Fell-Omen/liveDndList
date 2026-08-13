@@ -1,0 +1,39 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_elfshadow-fey-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_elfshadow-fey-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_elfshadow-fey-heritage_supernatural_senses",
+      "name": "Supernatural Senses",
+      "description": "You have proficiency in the Perception skill, and you have advantage on Wisdom (Perception) checks to notice or find a creature within 30 feet of you that doesn't have all of its hit points.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

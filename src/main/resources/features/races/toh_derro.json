@@ -1,0 +1,131 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_derro",
+  "features": [
+    {
+      "key": "race_toh_derro_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_derro_size",
+      "name": "Size",
+      "description": "Derro stand between 3 and 4 feet tall with slender limbs and wide shoulders. Your size is Small.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "SMALL"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_derro_speed",
+      "name": "Speed",
+      "description": "Derro are fast for their size. Your base walking speed is 30 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_derro_superior_darkvision",
+      "name": "Superior Darkvision",
+      "description": "Accustomed to life underground, you can see in dim light within 120 feet of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 120
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_derro_eldritch_resilience",
+      "name": "Eldritch Resilience",
+      "description": "You have advantage on Constitution saving throws against spells.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_derro_sunlight_sensitivity",
+      "name": "Sunlight Sensitivity",
+      "description": "You have disadvantage on attack rolls and on Wisdom (Perception) checks that rely on sight when you, the target of your attack, or whatever you are trying to perceive is in direct sunlight.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_derro_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Dwarvish and your choice of Common or Undercommon.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "dwarvish"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_derro_lang",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_derro_lang",
+          "name": "Language",
+          "description": "Choose Common or Undercommon.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "common",
+              "undercommon"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

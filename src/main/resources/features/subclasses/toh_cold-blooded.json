@@ -1,0 +1,96 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_cold-blooded",
+  "features": [
+    {
+      "key": "sub_toh_cold-blooded_ophidian-metabolism",
+      "name": "Ophidian Metabolism",
+      "description": "At 1st level, you can go without food for CON modifier + proficiency bonus + 3 days (min 1) before suffering starvation. You have advantage on saves against poison and disease.",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cold-blooded_patterned-scales",
+      "name": "Patterned Scales",
+      "description": "Also at 1st level, when you cast an illusion spell using a 1st level+ slot, you have advantage on CHA (Deception) and CHA (Persuasion) checks for the spell's duration and 10 minutes after.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cold-blooded_insinuating-serpent",
+      "name": "Insinuating Serpent",
+      "description": "Starting at 6th level, when you cast an enchantment or illusion spell using a 1st level+ slot and the target succeeds on its saving throw, it becomes charmed by you until the start of your next turn. Only one target per spell can be affected. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "insinuating_serpent",
+            "displayName": "Insinuating Serpent",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cold-blooded_spirit-venom",
+      "name": "Spirit Venom",
+      "description": "At 14th level, at the start of your turn if at least one creature within 30 ft is charmed, frightened, paralyzed, restrained, or stunned by your spell or magical effect, use your reaction to force each such creature to take 6d4 psychic damage. Uses equal to proficiency bonus; regain on long rest. Can spend 5 sorcery points at the start of your turn to use again when exhausted.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "spirit_venom",
+            "displayName": "Spirit Venom",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Spirit Venom",
+            "description": "At start of your turn: force all creatures charmed/frightened/paralyzed/restrained/stunned by your magic within 30 ft to take 6d4 psychic damage.",
+            "resourceKey": "spirit_venom"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cold-blooded_mirrored-lamina",
+      "name": "Mirrored Lamina",
+      "description": "Starting at 18th level, when you fail a save against being charmed, frightened, paralyzed, restrained, or stunned by a spell or magical effect, use your reaction to force the caster to make a save vs your spell save DC or suffer the same condition for the same duration. If subsequent saves can end the effect, it ends for both if either succeeds.",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Mirrored Lamina",
+            "description": "When you fail a save vs charmed/frightened/paralyzed/restrained/stunned: force the caster to save or suffer the same condition. Subsequent saves free both."
+          }
+        }
+      ]
+    }
+  ]
+}

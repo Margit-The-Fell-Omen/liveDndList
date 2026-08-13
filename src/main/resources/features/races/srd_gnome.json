@@ -1,0 +1,105 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd_gnome",
+  "features": [
+    {
+      "key": "race_srd_gnome_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_gnome_size",
+      "name": "Size",
+      "description": "Gnomes are between 3 and 4 feet tall and average about 40 pounds. Your size is Small.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "SMALL"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_gnome_speed",
+      "name": "Speed",
+      "description": "Your base walking speed is 25 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 25,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_gnome_darkvision",
+      "name": "Darkvision",
+      "description": "Accustomed to life underground, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd_gnome_cunning",
+      "name": "Gnome Cunning",
+      "description": "You have advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd_gnome_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Gnomish.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "gnomish"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

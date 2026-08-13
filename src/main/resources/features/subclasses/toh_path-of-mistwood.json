@@ -1,0 +1,87 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_path-of-mistwood",
+  "features": [
+    {
+      "key": "sub_toh_path-of-mistwood_bonus-proficiency",
+      "name": "Bonus Proficiency",
+      "description": "At 3rd level, you gain proficiency in Stealth. If already proficient, gain proficiency in another barbarian class skill of your choice.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-mistwood_mistwood-defender",
+      "name": "Mistwood Defender",
+      "description": "Starting at 3rd level, you can use Reckless Attack on ranged weapon attacks with thrown weapons. While not within melee range of a non-incapacitated hostile creature, you can draw and throw a weapon as a bonus action.\n\nWhen making a STR-based ranged attack with a thrown weapon while raging, add your Rage Damage bonus to the damage.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-mistwood_from-the-mist",
+      "name": "From the Mist",
+      "description": "Beginning at 6th level, mist and fog don't hinder your vision. You can cast *misty step* and make one attack with a thrown weapon immediately before or after as part of the same bonus action. You can cast this while raging.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "from_the_mist",
+            "displayName": "From the Mist",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-mistwood_mist-dance",
+      "name": "Mist Dance",
+      "description": "Starting at 10th level, when you use the Attack action while raging, you can replace one of your attacks to make one attack against each creature within 5 feet of you.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mist_dance",
+            "displayName": "Mist Dance",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-mistwood_war-bands-passage",
+      "name": "War Band's Passage",
+      "description": "Starting at 14th level, when you use From the Mist to cast *misty step*, you can bring up to two willing creatures within 5 feet (not over carrying capacity) along with you. Attacks against you and any creatures you bring have disadvantage until the start of your next turn.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

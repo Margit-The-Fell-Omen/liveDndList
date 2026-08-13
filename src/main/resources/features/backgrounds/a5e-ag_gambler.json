@@ -1,0 +1,83 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_gambler",
+  "features": [
+    {
+      "key": "bg_a5e-ag_gambler_skills",
+      "name": "Gambler Skill Proficiencies",
+      "description": "Skill Proficiencies: Deception, Insight",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "DECEPTION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_gambler_tools",
+      "name": "Gambler Tool Proficiencies",
+      "description": "Tool Proficiencies: Two types of gaming sets.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_gambler_gaming_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_gambler_gaming_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_gambler_gaming_1",
+          "name": "First Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        },
+        {
+          "choiceKey": "a5e_gambler_gaming_2",
+          "name": "Second Gaming Set",
+          "description": "Choose another type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set",
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_gambler_feature",
+      "name": "Lady Luck",
+      "description": "You know where to find a game or a fence, and can identify a card sharp. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

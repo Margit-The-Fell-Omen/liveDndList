@@ -1,0 +1,88 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_guildmember",
+  "features": [
+    {
+      "key": "bg_a5e-ag_guildmember_skills",
+      "name": "Guildmember Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_guildmember_tools",
+      "name": "Guildmember Tool Proficiency",
+      "description": "Tool Proficiency: One type of artisan's tools.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_guildmember_tool"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_guildmember_tool",
+          "name": "Artisan's Tools",
+          "description": "Choose one type of artisan's tools.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "artisans_tools"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_guildmember_languages",
+      "name": "Guildmember Language",
+      "description": "One language of your choice.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_guildmember_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_guildmember_lang",
+          "name": "Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_guildmember_feature",
+      "name": "Guild Membership",
+      "description": "Your guild provides support, lodging, and connections. TODO: verify against A5E book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

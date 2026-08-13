@@ -1,0 +1,23 @@
+{
+  "sourceType": "FIGHTING_STYLE",
+  "sourceKey": "fighting_style",
+  "features": [
+    {
+      "key": "fighting_style_dueling",
+      "name": "Fighting Style: Dueling",
+      "description": "When wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon.",
+      "effects": [
+        {
+          "type": "MODIFY_DAMAGE",
+          "payload": {
+            "amount": 2,
+            "filter": {
+              "weaponRange": "MELEE",
+              "requiresOneHand": true
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

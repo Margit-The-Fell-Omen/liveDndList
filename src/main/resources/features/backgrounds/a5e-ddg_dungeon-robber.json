@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ddg_dungeon-robber",
+  "features": [
+    {
+      "key": "bg_a5e-ddg_dungeon-robber_skills",
+      "name": "Dungeon Robber Skill Proficiencies",
+      "description": "Skill Proficiencies: Investigation, Stealth",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INVESTIGATION"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_dungeon-robber_tools",
+      "name": "Dungeon Robber Tool Proficiencies",
+      "description": "Tool Proficiencies: Thieves' Tools, Cartographer's Tools",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "cartographers_tools"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_dungeon-robber_feature",
+      "name": "Delver's Instinct",
+      "description": "You have an uncanny sense for what awaits in dungeons: traps, secret doors, and treasure caches. TODO: verify against A5E DDG book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

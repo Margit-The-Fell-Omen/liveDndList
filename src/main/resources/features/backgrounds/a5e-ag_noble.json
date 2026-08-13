@@ -1,0 +1,88 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_noble",
+  "features": [
+    {
+      "key": "bg_a5e-ag_noble_skills",
+      "name": "Noble Skill Proficiencies",
+      "description": "Skill Proficiencies: History, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "HISTORY"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_noble_tools",
+      "name": "Noble Tool Proficiency",
+      "description": "Tool Proficiency: One type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_noble_gaming"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_noble_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_noble_language",
+      "name": "Noble Language",
+      "description": "One language of your choice.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_noble_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_noble_lang",
+          "name": "Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_noble_feature",
+      "name": "Position of Privilege",
+      "description": "People allow you audiences and defer to your presumed authority. TODO: verify against A5E book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

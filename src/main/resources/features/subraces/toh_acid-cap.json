@@ -1,0 +1,76 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_acid-cap",
+  "features": [
+    {
+      "key": "subrace_toh_acid-cap_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Strength score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_acid-cap_resistance",
+      "name": "Acid Cap Resistance",
+      "description": "You have resistance to acid damage.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_DAMAGE_RESISTANCE",
+          "payload": {
+            "damageType": "ACID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_acid-cap_spores",
+      "name": "Acid Spores",
+      "description": "When you are hit by a melee weapon attack within 5 feet of you, you can use your reaction to emit acidic spores. The attacker takes acid damage equal to half your level (rounded up). You can use this a number of times equal to your Constitution modifier (minimum of once). Regain all uses on a long rest.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "acid_spores",
+            "displayName": "Acid Spores",
+            "usesFormula": {
+              "abilityMod": "CON"
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Acid Spores",
+            "description": "Reaction to melee attacker within 5 ft; deals acid damage equal to half your level.",
+            "resourceKey": "acid_spores"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_acid-cap_athlete",
+      "name": "Clan Athlete",
+      "description": "You have proficiency in the Athletics skill.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          }
+        }
+      ]
+    }
+  ]
+}

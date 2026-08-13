@@ -1,0 +1,65 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ag_guard",
+  "features": [
+    {
+      "key": "bg_a5e-ag_guard_skills",
+      "name": "Guard Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Perception",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_guard_tools",
+      "name": "Guard Tool Proficiency",
+      "description": "Tool Proficiency: One type of gaming set.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "a5e_guard_gaming"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_guard_gaming",
+          "name": "Gaming Set",
+          "description": "Choose one type of gaming set.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "gaming_set"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ag_guard_feature",
+      "name": "Watch's Eye",
+      "description": "Members of the local watch or militia recognize you as one of their own and will provide minor aid. TODO: verify against A5E book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_hungering",
+  "features": [
+    {
+      "key": "sub_toh_hungering_hungry-eyes",
+      "name": "Hungry Eyes",
+      "description": "At 1st level, you can sense when non-undead, non-construct creatures within 30 ft are below half their HP maximum. Your spell attacks ignore half and three-quarters cover when targeting such creatures.",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hungering_thirsty-soul",
+      "name": "Thirsty Soul",
+      "description": "Beginning at 1st level, when you reduce a hostile creature to 0 HP, regain HP equal to your sorcerer level + CHA modifier (min 1). Can't restore more than half your HP maximum this way.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hungering_feast-of-arcana",
+      "name": "Feast of Arcana",
+      "description": "Starting at 6th level, when you reduce one or more hostile creatures to 0 HP with a 1st level+ spell, regain 1 spent sorcery point.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hungering_glutton-for-punishment",
+      "name": "Glutton for Punishment",
+      "description": "Starting at 14th level, use your reaction to intentionally fail a saving throw against a damaging spell cast by a hostile creature. If you do, regain spent sorcery points equal to half your CHA modifier (min 1).",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Glutton for Punishment",
+            "description": "Intentionally fail a save against a hostile creature's damaging spell: regain sorcery points equal to half CHA mod (min 1)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_hungering_greedy-heart",
+      "name": "Greedy Heart",
+      "description": "At 18th level, when you spend sorcery points to create spell slots or use Metamagic, reduce the cost by 1 sorcery point (minimum 1).",
+      "gainedAtLevel": 18,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

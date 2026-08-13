@@ -1,0 +1,94 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "tdcs_lyceum-student",
+  "features": [
+    {
+      "key": "bg_tdcs_lyceum-student_skills",
+      "name": "Lyceum Student Skill Proficiencies",
+      "description": "Skill Proficiencies: Arcana, History",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ARCANA"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "HISTORY"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_lyceum-student_tools",
+      "name": "Lyceum Student Tool Proficiency",
+      "description": "Tool Proficiency: Calligrapher's Supplies",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "calligraphers_supplies"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_lyceum-student_languages",
+      "name": "Lyceum Student Languages",
+      "description": "Two languages of your choice, often scholarly languages.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "tdcs_lyceum_lang_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "tdcs_lyceum_lang_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "tdcs_lyceum_lang_1",
+          "name": "First Language",
+          "description": "Choose a language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "tdcs_lyceum_lang_2",
+          "name": "Second Language",
+          "description": "Choose another language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_tdcs_lyceum-student_feature",
+      "name": "Academic Standing",
+      "description": "You are a student or graduate of a prestigious lyceum. You have access to its libraries, faculty, and network of alumni scattered across the world. TODO: verify against TDCS book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

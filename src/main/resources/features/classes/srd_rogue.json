@@ -1,0 +1,646 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_rogue",
+  "features": [
+    {
+      "key": "cls_srd_rogue_starting",
+      "name": "Rogue Starting Proficiencies",
+      "description": "As a rogue, you gain the following proficiencies:\n\n**Armor:** Light armor\n**Weapons:** Simple weapons, hand crossbows, longswords, rapiers, shortswords\n**Tools:** Thieves' tools\n**Saving Throws:** Dexterity, Intelligence\n**Skills:** Choose four from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, and Stealth",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "hand_crossbow"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "longsword"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "rapier"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortsword"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "DEX"
+          },
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_skill_1",
+          "displayOrder": 10
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_skill_2",
+          "displayOrder": 11
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_skill_3",
+          "displayOrder": 12
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_skill_4",
+          "displayOrder": 13
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERFORMANCE",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ]
+          }
+        },
+        {
+          "choiceKey": "rogue_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the rogue skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERFORMANCE",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "rogue_skill_3",
+          "name": "Third Skill",
+          "description": "Choose a third from the rogue skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERFORMANCE",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "rogue_skill_4",
+          "name": "Fourth Skill",
+          "description": "Choose a fourth from the rogue skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERFORMANCE",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_expertise",
+      "name": "Expertise (Level 1)",
+      "description": "At 1st level, choose two of your skill proficiencies, or one of your skill proficiencies and your proficiency with thieves' tools. Your proficiency bonus is doubled for any ability check you make that uses either of the chosen proficiencies.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_expertise_l1_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_expertise_l1_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_expertise_l1_1",
+          "name": "First Expertise",
+          "description": "Choose one of your skill proficiencies (or thieves' tools) to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "includeThievesTools": true
+          }
+        },
+        {
+          "choiceKey": "rogue_expertise_l1_2",
+          "name": "Second Expertise",
+          "description": "Choose another proficiency to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "includeThievesTools": true,
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_sneak-attack",
+      "name": "Sneak Attack",
+      "description": "Beginning at 1st level, you know how to strike subtly and exploit a foe's distraction. Once per turn, you can deal an extra 1d6 damage to one creature you hit with an attack if you have advantage on the attack roll. The attack must use a finesse or a ranged weapon.\n\nYou don't need advantage if another enemy of the target is within 5 feet of it, that enemy isn't incapacitated, and you don't have disadvantage on the attack roll.\n\nDamage scales with level: 1d6 (L1), 2d6 (L3), 3d6 (L5), 4d6 (L7), 5d6 (L9), 6d6 (L11), 7d6 (L13), 8d6 (L15), 9d6 (L17), 10d6 (L19).",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_thieves-cant",
+      "name": "Thieves' Cant",
+      "description": "During your rogue training you learned thieves' cant, a secret mix of dialect, jargon, and code that allows you to hide messages in seemingly normal conversation. Only another creature that knows thieves' cant understands such messages. It takes four times longer to convey such a message than to speak the same idea plainly.\n\nIn addition, you understand a set of secret signs and symbols used to convey short, simple messages.",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "thieves_cant"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_cunning-action",
+      "name": "Cunning Action",
+      "description": "Starting at 2nd level, your quick thinking and agility allow you to move and act quickly. You can take a bonus action on each of your turns in combat. This action can be used only to take the Dash, Disengage, or Hide action.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Cunning Action",
+            "description": "Take the Dash, Disengage, or Hide action as a bonus action."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_roguish-archetype",
+      "name": "Roguish Archetype",
+      "description": "At 3rd level, you choose an archetype that you emulate in the exercise of your rogue abilities: Thief, Assassin, or Arcane Trickster. Your archetype choice grants you features at 3rd level and then again at 9th, 13th, and 17th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "rogue_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_uncanny-dodge",
+      "name": "Uncanny Dodge",
+      "description": "Starting at 5th level, when an attacker that you can see hits you with an attack, you can use your reaction to halve the attack's damage against you.",
+      "gainedAtLevel": 5,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Uncanny Dodge",
+            "description": "Halve damage from one attack that hits you (attacker must be visible)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_expertise-6",
+      "name": "Expertise (Level 6)",
+      "description": "At 6th level, you can choose two more of your proficiencies (in skills or with thieves' tools) to gain the Expertise benefit.",
+      "gainedAtLevel": 6,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_expertise_l6_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_expertise_l6_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_expertise_l6_1",
+          "name": "First Expertise",
+          "description": "Choose one of your proficiencies (skill or thieves' tools) to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "includeThievesTools": true,
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "rogue_expertise_l6_2",
+          "name": "Second Expertise",
+          "description": "Choose another proficiency to gain expertise in.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "includeThievesTools": true,
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_evasion",
+      "name": "Evasion",
+      "description": "Beginning at 7th level, you can nimbly dodge out of the way of certain area effects. When you are subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail.",
+      "gainedAtLevel": 7,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "rogue_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_ability-score-improvement-10",
+      "name": "Ability Score Improvement (Level 10)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 10,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "rogue_asi_l10"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_asi_l10",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_reliable-talent",
+      "name": "Reliable Talent",
+      "description": "By 11th level, you have refined your chosen skills until they approach perfection. Whenever you make an ability check that lets you add your proficiency bonus, you can treat a d20 roll of 9 or lower as a 10.",
+      "gainedAtLevel": 11,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "rogue_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_blindsense",
+      "name": "Blindsense",
+      "description": "Starting at 14th level, if you are able to hear, you are aware of the location of any hidden or invisible creature within 10 feet of you.",
+      "gainedAtLevel": 14,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_slippery-mind",
+      "name": "Slippery Mind",
+      "description": "By 15th level, you have acquired greater mental strength. You gain proficiency in Wisdom saving throws.",
+      "gainedAtLevel": 15,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "rogue_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_elusive",
+      "name": "Elusive",
+      "description": "Beginning at 18th level, you are so evasive that attackers rarely gain the upper hand against you. No attack roll has advantage against you while you aren't incapacitated.",
+      "gainedAtLevel": 18,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "rogue_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_rogue_stroke-of-luck",
+      "name": "Stroke of Luck",
+      "description": "At 20th level, you have an uncanny knack for succeeding when you need to. If your attack misses a target within range, you can turn the miss into a hit. Alternatively, if you fail an ability check, you can treat the d20 roll as a 20.\n\nOnce you use this feature, you can't use it again until you finish a short or long rest.",
+      "gainedAtLevel": 20,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "stroke_of_luck",
+            "displayName": "Stroke of Luck",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    }
+  ]
+}

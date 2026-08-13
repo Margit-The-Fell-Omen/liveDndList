@@ -1,0 +1,125 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_legionary",
+  "features": [
+    {
+      "key": "sub_toh_legionary_bonus-proficiency",
+      "name": "Bonus Proficiency",
+      "description": "When you choose this archetype at 3rd level, you gain proficiency in Insight, Nature, or Survival (your choice).",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "legionary_bonus_skill",
+          "displayOrder": 0
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "legionary_bonus_skill",
+          "name": "Legionary Bonus Skill",
+          "description": "Choose Insight, Nature, or Survival.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "INSIGHT",
+              "NATURE",
+              "SURVIVAL"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_legionary_coordinated-fighting",
+      "name": "Coordinated Fighting",
+      "description": "Starting at 3rd level, on your first attack each round, you gain a +1 bonus to attack and damage rolls if at least one friendly creature is within 5 feet of you.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_legionary_move-as-one",
+      "name": "Move As One",
+      "description": "At 3rd level, at any point while moving on your turn, you can command up to proficiency bonus willing friendly creatures within 5 feet to use a reaction to move up to their speed alongside you (remaining within 5 ft). This movement doesn't provoke opportunity attacks.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "move_as_one",
+            "displayName": "Move As One",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_legionary_massed-fighting",
+      "name": "Massed Fighting",
+      "description": "Starting at 7th level, on your first attack each round, gain +1 to attack and damage rolls per friendly creature within 5 ft (max bonus equal to proficiency bonus).\n\nWhen you use Action Surge, each friendly creature within 15 ft (except you) gains +2 AC and +2 to DEX saves for 1 minute.",
+      "gainedAtLevel": 7,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_legionary_vigilance",
+      "name": "Vigilance",
+      "description": "At 10th level, when a friendly creature you can see is reduced to 0 HP, you can use your reaction to move up to your speed toward it. This movement doesn't provoke opportunity attacks.",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Vigilance",
+            "description": "When a friendly creature you can see drops to 0 HP, move up to your speed toward it (no opportunity attacks)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_legionary_tactical-positioning",
+      "name": "Tactical Positioning",
+      "description": "At 15th level, moving through a hostile creature's space is not difficult terrain for you, and you can move through a hostile creature's space even if it is only one size larger or smaller than you. You still can't end your move in a hostile creature's space.",
+      "gainedAtLevel": 15,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_legionary_cooperative-strike",
+      "name": "Cooperative Strike",
+      "description": "Starting at 18th level, when you use the Attack action with a weapon while at least one friendly creature is within 5 feet, you can use a bonus action to make one additional attack with that weapon.",
+      "gainedAtLevel": 18,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

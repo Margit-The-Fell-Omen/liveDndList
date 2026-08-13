@@ -1,0 +1,849 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd_ranger",
+  "features": [
+    {
+      "key": "cls_srd_ranger_starting",
+      "name": "Ranger Starting Proficiencies",
+      "description": "As a ranger, you gain the following proficiencies:\n\n**Armor:** Light armor, medium armor, shields\n**Weapons:** Simple weapons, martial weapons\n**Saving Throws:** Strength, Dexterity\n**Skills:** Choose three from Animal Handling, Athletics, Insight, Investigation, Nature, Perception, Stealth, and Survival",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d10"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "STR"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "DEX"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "ranger_skill_1",
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "ranger_skill_2",
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "ranger_skill_3",
+          "displayOrder": 10
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Animal Handling, Athletics, Insight, Investigation, Nature, Perception, Stealth, or Survival.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INSIGHT",
+              "INVESTIGATION",
+              "NATURE",
+              "PERCEPTION",
+              "STEALTH",
+              "SURVIVAL"
+            ]
+          }
+        },
+        {
+          "choiceKey": "ranger_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the ranger skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INSIGHT",
+              "INVESTIGATION",
+              "NATURE",
+              "PERCEPTION",
+              "STEALTH",
+              "SURVIVAL"
+            ],
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "ranger_skill_3",
+          "name": "Third Skill",
+          "description": "Choose a third from the ranger skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INSIGHT",
+              "INVESTIGATION",
+              "NATURE",
+              "PERCEPTION",
+              "STEALTH",
+              "SURVIVAL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_favored-enemy",
+      "name": "Favored Enemy",
+      "description": "Beginning at 1st level, you have significant experience studying, tracking, hunting, and even talking to a certain type of enemy.\n\nChoose a type of favored enemy: aberrations, beasts, celestials, constructs, dragons, elementals, fey, fiends, giants, monstrosities, oozes, plants, or undead. Alternatively, you can select two races of humanoid (such as gnolls and orcs) as favored enemies.\n\nYou have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them.\n\nWhen you gain this feature, you also learn one language of your choice that is spoken by your favored enemies, if they speak one at all.\n\nYou choose one additional favored enemy at 6th and 14th level.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "ranger_favored_enemy_1"
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "ranger_favored_enemy_lang_1"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_favored_enemy_1",
+          "name": "First Favored Enemy",
+          "description": "Choose a favored enemy type.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ABERRATIONS",
+              "BEASTS",
+              "CELESTIALS",
+              "CONSTRUCTS",
+              "DRAGONS",
+              "ELEMENTALS",
+              "FEY",
+              "FIENDS",
+              "GIANTS",
+              "MONSTROSITIES",
+              "OOZES",
+              "PLANTS",
+              "UNDEAD",
+              "TWO_HUMANOIDS"
+            ]
+          }
+        },
+        {
+          "choiceKey": "ranger_favored_enemy_lang_1",
+          "name": "Favored Enemy Language",
+          "description": "Learn one language spoken by your favored enemies.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_natural-explorer",
+      "name": "Natural Explorer",
+      "description": "You are particularly familiar with one type of natural environment and are adept at traveling and surviving in such regions. Choose one type of favored terrain: arctic, coast, desert, forest, grassland, mountain, or swamp.\n\nWhen you make an Intelligence or Wisdom check related to your favored terrain, your proficiency bonus is doubled if you are using a skill that you're proficient in.\n\nWhile traveling for an hour or more in your favored terrain, you gain benefits including: difficult terrain doesn't slow travel, can't get lost non-magically, remain alert while traveling, move stealthily at normal pace when alone, find twice normal food, and learn details of tracked creatures.\n\nYou choose additional favored terrain types at 6th and 10th level.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "ranger_favored_terrain_1"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_favored_terrain_1",
+          "name": "First Favored Terrain",
+          "description": "Choose one: arctic, coast, desert, forest, grassland, mountain, or swamp.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ARCTIC",
+              "COAST",
+              "DESERT",
+              "FOREST",
+              "GRASSLAND",
+              "MOUNTAIN",
+              "SWAMP"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_fighting-style",
+      "name": "Fighting Style",
+      "description": "At 2nd level, you adopt a particular style of fighting as your specialty. Choose one of: Archery, Defense, Dueling, or Two-Weapon Fighting.",
+      "gainedAtLevel": 2,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_FIGHTING_STYLE",
+          "payload": {
+            "choiceKey": "ranger_fighting_style",
+            "options": [
+              "ARCHERY",
+              "DEFENSE",
+              "DUELING",
+              "TWO_WEAPON_FIGHTING"
+            ]
+          },
+          "choiceKey": "ranger_fighting_style"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_fighting_style",
+          "name": "Fighting Style",
+          "description": "Choose one fighting style.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ARCHERY",
+              "DEFENSE",
+              "DUELING",
+              "TWO_WEAPON_FIGHTING"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_spellcasting",
+      "name": "Spellcasting",
+      "description": "By the time you reach 2nd level, you have learned to use the magical essence of nature to cast spells, much as a druid does. Wisdom is your spellcasting ability.\n\n**Spell save DC** = 8 + your proficiency bonus + your Wisdom modifier\n**Spell attack modifier** = your proficiency bonus + your Wisdom modifier\n\nYou know a set number of ranger spells from the Ranger table's Spells Known column. Each learned spell must be of a level for which you have spell slots. You can replace one known spell when you gain a ranger level.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_SPELLCASTING",
+          "payload": {
+            "ability": "WIS",
+            "casterType": "HALF",
+            "spellList": "ranger",
+            "ritualCasting": false,
+            "spellbook": false
+          }
+        },
+        {
+          "type": "GRANT_SPELL_SLOTS",
+          "payload": {
+            "byClassLevel": {
+              "2": {
+                "1": 2
+              },
+              "3": {
+                "1": 3
+              },
+              "4": {
+                "1": 3
+              },
+              "5": {
+                "1": 4,
+                "2": 2
+              },
+              "6": {
+                "1": 4,
+                "2": 2
+              },
+              "7": {
+                "1": 4,
+                "2": 3
+              },
+              "8": {
+                "1": 4,
+                "2": 3
+              },
+              "9": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "10": {
+                "1": 4,
+                "2": 3,
+                "3": 2
+              },
+              "11": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "12": {
+                "1": 4,
+                "2": 3,
+                "3": 3
+              },
+              "13": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "14": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1
+              },
+              "15": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "16": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 2
+              },
+              "17": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "18": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 1
+              },
+              "19": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              },
+              "20": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 3,
+                "5": 2
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_ranger-archetype",
+      "name": "Ranger Archetype",
+      "description": "At 3rd level, you choose an archetype that you strive to emulate: Hunter or Beast Master. Your choice grants you features at 3rd level and again at 7th, 11th, and 15th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_primeval-awareness",
+      "name": "Primeval Awareness",
+      "description": "Beginning at 3rd level, you can use your action and expend one ranger spell slot to focus your awareness on the region around you. For 1 minute per level of the spell slot you expend, you can sense whether the following types of creatures are present within 1 mile of you (or within up to 6 miles if you are in your favored terrain): aberrations, celestials, dragons, elementals, fey, fiends, and undead. This feature doesn't reveal the creatures' location or number.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Primeval Awareness",
+            "description": "Expend one ranger spell slot; for 1 minute per slot level, sense aberrations, celestials, dragons, elementals, fey, fiends, or undead within 1 mile (6 miles in favored terrain)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 4,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "ranger_asi_l4"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_asi_l4",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_extra-attack",
+      "name": "Extra Attack",
+      "description": "Beginning at 5th level, you can attack twice, instead of once, whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_favored-enemy-6",
+      "name": "Favored Enemy (Level 6)",
+      "description": "You choose an additional favored enemy type, as well as an associated language spoken by them.",
+      "gainedAtLevel": 6,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "ranger_favored_enemy_2"
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "ranger_favored_enemy_lang_2"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_favored_enemy_2",
+          "name": "Second Favored Enemy",
+          "description": "Choose another favored enemy type.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ABERRATIONS",
+              "BEASTS",
+              "CELESTIALS",
+              "CONSTRUCTS",
+              "DRAGONS",
+              "ELEMENTALS",
+              "FEY",
+              "FIENDS",
+              "GIANTS",
+              "MONSTROSITIES",
+              "OOZES",
+              "PLANTS",
+              "UNDEAD",
+              "TWO_HUMANOIDS"
+            ]
+          }
+        },
+        {
+          "choiceKey": "ranger_favored_enemy_lang_2",
+          "name": "Favored Enemy Language",
+          "description": "Learn one language spoken by this favored enemy.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_natural-explorer-6",
+      "name": "Natural Explorer (Level 6)",
+      "description": "You choose an additional favored terrain type.",
+      "gainedAtLevel": 6,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "ranger_favored_terrain_2"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_favored_terrain_2",
+          "name": "Second Favored Terrain",
+          "description": "Choose another favored terrain type.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ARCTIC",
+              "COAST",
+              "DESERT",
+              "FOREST",
+              "GRASSLAND",
+              "MOUNTAIN",
+              "SWAMP"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 8,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "ranger_asi_l8"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_asi_l8",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_lands-stride",
+      "name": "Land's Stride",
+      "description": "Starting at 8th level, moving through nonmagical difficult terrain costs you no extra movement. You can also pass through nonmagical plants without being slowed by them and without taking damage from them if they have thorns, spines, or a similar hazard.\n\nIn addition, you have advantage on saving throws against plants that are magically created or manipulated to impede movement, such those created by the entangle spell.",
+      "gainedAtLevel": 8,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_hide-in-plain-sight",
+      "name": "Hide in Plain Sight",
+      "description": "Starting at 10th level, you can spend 1 minute creating camouflage for yourself. You must have access to fresh mud, dirt, plants, soot, and other naturally occurring materials.\n\nOnce camouflaged, you can hide by pressing yourself up against a solid surface at least as tall and wide as you are. You gain a +10 bonus to Dexterity (Stealth) checks as long as you remain there without moving or taking actions.",
+      "gainedAtLevel": 10,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_natural-explorer-10",
+      "name": "Natural Explorer (Level 10)",
+      "description": "You choose an additional favored terrain type.",
+      "gainedAtLevel": 10,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "ranger_favored_terrain_3"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_favored_terrain_3",
+          "name": "Third Favored Terrain",
+          "description": "Choose another favored terrain type.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ARCTIC",
+              "COAST",
+              "DESERT",
+              "FOREST",
+              "GRASSLAND",
+              "MOUNTAIN",
+              "SWAMP"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 12,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "ranger_asi_l12"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_asi_l12",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_favored-enemy-14",
+      "name": "Favored Enemy (Level 14)",
+      "description": "You choose an additional favored enemy type, as well as an associated language.",
+      "gainedAtLevel": 14,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "choiceKey": "ranger_favored_enemy_3"
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "ranger_favored_enemy_lang_3"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_favored_enemy_3",
+          "name": "Third Favored Enemy",
+          "description": "Choose another favored enemy type.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ABERRATIONS",
+              "BEASTS",
+              "CELESTIALS",
+              "CONSTRUCTS",
+              "DRAGONS",
+              "ELEMENTALS",
+              "FEY",
+              "FIENDS",
+              "GIANTS",
+              "MONSTROSITIES",
+              "OOZES",
+              "PLANTS",
+              "UNDEAD",
+              "TWO_HUMANOIDS"
+            ]
+          }
+        },
+        {
+          "choiceKey": "ranger_favored_enemy_lang_3",
+          "name": "Favored Enemy Language",
+          "description": "Learn one language spoken by this favored enemy.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_vanish",
+      "name": "Vanish",
+      "description": "Starting at 14th level, you can use the Hide action as a bonus action on your turn. Also, you can't be tracked by nonmagical means, unless you choose to leave a trail.",
+      "gainedAtLevel": 14,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Vanish (Hide)",
+            "description": "Take the Hide action as a bonus action. You can't be tracked by nonmagical means unless you choose to leave a trail."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 16,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "ranger_asi_l16"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_asi_l16",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_feral-senses",
+      "name": "Feral Senses",
+      "description": "At 18th level, you gain preternatural senses that help you fight creatures you can't see. When you attack a creature you can't see, your inability to see it doesn't impose disadvantage on your attack rolls against it.\n\nYou are also aware of the location of any invisible creature within 30 feet of you, provided that the creature isn't hidden from you and you aren't blinded or deafened.",
+      "gainedAtLevel": 18,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_ability-score-improvement-19",
+      "name": "Ability Score Improvement (Level 19)",
+      "description": "You can increase one ability score of your choice by 2, or you can increase two ability scores of your choice by 1. As normal, you can't increase an ability score above 20 using this feature.",
+      "gainedAtLevel": 19,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "GRANT_ABILITY_SCORE_IMPROVEMENT",
+          "payload": {
+            "choiceKey": "ranger_asi_l19"
+          }
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "ranger_asi_l19",
+          "name": "Ability Score Improvement",
+          "description": "Increase one ability score by 2 or two by 1 (max 20).",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "distributions": [
+              "2",
+              "1_1"
+            ],
+            "cap": 20
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd_ranger_foe-slayer",
+      "name": "Foe Slayer",
+      "description": "At 20th level, you become an unparalleled hunter of your enemies. Once on each of your turns, you can add your Wisdom modifier to the attack roll or the damage roll of an attack you make against one of your favored enemies. You can choose to use this feature before or after the roll, but before any effects of the roll are applied.",
+      "gainedAtLevel": 20,
+      "displayOrder": 21,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

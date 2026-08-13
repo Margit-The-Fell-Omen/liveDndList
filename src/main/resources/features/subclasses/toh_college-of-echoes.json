@@ -1,0 +1,64 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_college-of-echoes",
+  "features": [
+    {
+      "key": "sub_toh_college-of-echoes_echolocation",
+      "name": "Echolocation",
+      "description": "When you join the College of Echoes at 3rd level, as long as you can hear, you have blindsight out to 10 feet. You have disadvantage on saves against effects that would deafen you.\n\nAt 14th level, blindsight extends to 15 feet and you no longer have disadvantage on saves against deafening effects.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "BLINDSIGHT",
+            "range": 10
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-echoes_alter-sound",
+      "name": "Alter Sound",
+      "description": "At 3rd level, you can mimic any sounds or voices you've heard (contested by WIS Insight vs CHA Deception to detect).\n\nAs a reaction, choose one:\n\n**Enhance.** Double volume of a sound within 30 ft. Expend Bardic Inspiration to add die roll to thunder damage a hostile takes.\n\n**Dampen.** Halve volume of a sound within 30 ft. Expend Bardic Inspiration to subtract die roll from thunder damage a friendly creature takes.\n\n**Distort.** Change 1 word or 2 notes within 30 ft. Expend Bardic Inspiration to change more.\n\n**Disrupt.** When a caster within 30 ft casts a spell with verbal components, expend Bardic Inspiration: caster makes concentration check (DC 8 + die roll) or spell fails. Only works on spell levels you can cast.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Alter Sound",
+            "description": "Enhance, Dampen, Distort, or Disrupt sounds within 30 ft. See feature description for full options."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-echoes_resounding-strikes",
+      "name": "Resounding Strikes",
+      "description": "Starting at 6th level, when you hit a creature with a melee weapon attack, you can expend a spell slot to deal extra thunder damage: 1d6 per slot level (max 6d6). Increases by 1d6 if the target is made of inorganic material (stone, crystal, metal).",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_college-of-echoes_reverberating-strikes",
+      "name": "Reverberating Strikes",
+      "description": "At 14th level, a creature with your Bardic Inspiration can roll the die and add it to a weapon damage roll; all damage from that attack becomes thunder. The target must succeed on a STR save vs your spell save DC or be knocked prone.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

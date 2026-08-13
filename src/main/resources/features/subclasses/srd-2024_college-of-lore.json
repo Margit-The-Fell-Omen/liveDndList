@@ -1,0 +1,106 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd-2024_college-of-lore",
+  "features": [
+    {
+      "key": "srd-2024_college-of-lore_bonus-proficiencies",
+      "name": "Bonus Proficiencies",
+      "description": "You gain proficiency with three skills of your choice.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "lore_2024_skill_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "lore_2024_skill_2",
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "lore_2024_skill_3",
+          "displayOrder": 2
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "lore_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {}
+        },
+        {
+          "choiceKey": "lore_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "lore_2024_skill_3",
+          "name": "Third Skill",
+          "description": "Choose a third.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_college-of-lore_cutting-words",
+      "name": "Cutting Words",
+      "description": "When a creature you can see within 60 feet makes a damage roll or succeeds on an ability check or attack roll, you can take a Reaction to expend one use of Bardic Inspiration. Roll the die and subtract the result from the creature's roll, reducing damage or potentially turning success into failure.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Cutting Words",
+            "description": "Expend Bardic Inspiration to subtract the die roll from a creature's damage roll, ability check, or attack roll within 60 ft.",
+            "resourceKey": "bardic_inspiration"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_college-of-lore_magical-discoveries",
+      "name": "Magical Discoveries",
+      "description": "You learn two spells of your choice from the Cleric, Druid, or Wizard spell list (or any combination). A chosen spell must be a cantrip or a spell for which you have spell slots. You always have them prepared. Replaceable on Bard level gain.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_college-of-lore_peerless-skill",
+      "name": "Peerless Skill",
+      "description": "When you make an ability check or attack roll and fail, you can expend one use of Bardic Inspiration. Roll the die and add the result to the d20, potentially turning failure into success. On a failure, the Bardic Inspiration isn't expended.",
+      "gainedAtLevel": 14,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

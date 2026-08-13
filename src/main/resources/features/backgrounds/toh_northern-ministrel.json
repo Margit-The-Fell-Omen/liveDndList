@@ -1,0 +1,88 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_northern-minstrel",
+  "features": [
+    {
+      "key": "bg_toh_northern-minstrel_skills",
+      "name": "Northern Minstrel Skill Proficiencies",
+      "description": "Skill Proficiencies: History, Performance",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "HISTORY"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERFORMANCE"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_northern-minstrel_tools",
+      "name": "Northern Minstrel Tool Proficiency",
+      "description": "Tool Proficiency: One type of musical instrument.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_minstrel_instrument"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_minstrel_instrument",
+          "name": "Musical Instrument",
+          "description": "Choose one type of musical instrument.",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "musical_instrument"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_northern-minstrel_language",
+      "name": "Northern Minstrel Language",
+      "description": "One language of your choice, typically a language of the north.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "toh_minstrel_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_minstrel_lang",
+          "name": "Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_northern-minstrel_feature",
+      "name": "Sagas of the North",
+      "description": "You know the ancient sagas of the northern peoples. You can perform them for hospitality, and elder folk of the northlands will trade tales and shelter for your songs. TODO: verify against TOH book",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

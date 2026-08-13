@@ -1,0 +1,86 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "srd-2024_acolyte",
+  "features": [
+    {
+      "key": "bg_srd-2024_acolyte_ability_scores",
+      "name": "Acolyte Ability Scores",
+      "description": "Increase Intelligence, Wisdom, and Charisma by a total of +3. You can distribute the points as +2/+1 to two abilities, or +1 to all three.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {},
+          "choiceKey": "acolyte_asi",
+          "displayOrder": 0
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "acolyte_asi",
+          "name": "Ability Score Allocation",
+          "description": "Distribute +2/+1 or +1/+1/+1 among Intelligence, Wisdom, Charisma.",
+          "chooseCount": 1,
+          "optionsSource": "ABILITY_LIST",
+          "optionsFilter": {
+            "fromList": ["INT", "WIS", "CHA"],
+            "distributions": ["2_1", "1_1_1"]
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_acolyte_feat",
+      "name": "Acolyte Feat: Magic Initiate (Cleric)",
+      "description": "You gain the Magic Initiate feat, treating the Cleric spell list as your source list.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {
+            "featKey": "srd-2024_magic-initiate"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_acolyte_skills",
+      "name": "Acolyte Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Religion",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": { "skill": "INSIGHT" },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": { "skill": "RELIGION" },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_acolyte_tool",
+      "name": "Acolyte Tool Proficiency",
+      "description": "Tool Proficiency: Calligrapher's Supplies",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": { "toolKey": "calligraphers_supplies" }
+        }
+      ]
+    },
+    {
+      "key": "bg_srd-2024_acolyte_equipment",
+      "name": "Acolyte Starting Equipment",
+      "description": "Choose A or B: (A) Calligrapher's Supplies, Book (prayers), Holy Symbol, Parchment (10 sheets), Robe, and 8 GP; or (B) 50 GP.",
+      "displayOrder": 4,
+      "effects": [
+        { "type": "NARRATIVE_ONLY", "payload": {} }
+      ]
+    }
+  ]
+}

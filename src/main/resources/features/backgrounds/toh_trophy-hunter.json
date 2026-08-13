@@ -1,0 +1,65 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_trophy-hunter",
+  "features": [
+    {
+      "key": "bg_toh_trophy-hunter_skills",
+      "name": "Trophy Hunter Skill Proficiencies",
+      "description": "Skill Proficiencies: Nature, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "NATURE"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_trophy-hunter_tools",
+      "name": "Trophy Hunter Tool Proficiency",
+      "description": "Tool Proficiency: One type of artisan's tools (typically Leatherworker's Tools or Taxidermy Kit).",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "toh_trophyhunter_tool"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "toh_trophyhunter_tool",
+          "name": "Artisan's Tools",
+          "description": "Choose one type of artisan's tools (Leatherworker's, Taxidermy Kit).",
+          "chooseCount": 1,
+          "optionsSource": "TOOL_LIST",
+          "optionsFilter": {
+            "category": "artisans_tools"
+          }
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_trophy-hunter_feature",
+      "name": "Renowned Hunter",
+      "description": "Your trophies proceed your name. Other hunters recognize your work, and buyers of exotic goods seek you out for rare specimens. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

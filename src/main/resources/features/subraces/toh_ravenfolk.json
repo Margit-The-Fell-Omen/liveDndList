@@ -1,0 +1,36 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_ravenfolk",
+  "features": [
+    {
+      "key": "subrace_toh_ravenfolk_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_ravenfolk_sudden_bite_flight",
+      "name": "Sudden Bite and Flight",
+      "description": "If you surprise a creature during the first round of combat, you can make a bite attack as a bonus action. If it hits, you can immediately take the Dodge action as a reaction.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Sudden Bite",
+            "description": "Bite attack on surprised creature; on hit, take Dodge as a reaction."
+          }
+        }
+      ]
+    }
+  ]
+}

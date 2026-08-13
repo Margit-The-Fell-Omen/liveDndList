@@ -1,0 +1,85 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_cantrip-adept",
+  "features": [
+    {
+      "key": "sub_toh_cantrip-adept_cantrip-polymath",
+      "name": "Cantrip Polymath",
+      "description": "At 2nd level, you gain two cantrips of your choice from any spell list. They count as wizard cantrips and don't count against your cantrips known. Any cantrip you can cast from any source (racial trait, feat, etc.) also counts as a wizard cantrip for you.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cantrip-adept_arcane-alacrity",
+      "name": "Arcane Alacrity",
+      "description": "Also at 2nd level, when you cast a wizard cantrip with a casting time of 1 action, you can change it to a bonus action for that casting. Uses equal to proficiency bonus; regain all on long rest. At 10th level, regain all uses on a short or long rest.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "arcane_alacrity",
+            "displayName": "Arcane Alacrity",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cantrip-adept_potent-spellcasting",
+      "name": "Potent Spellcasting",
+      "description": "Starting at 6th level, you can add your Intelligence modifier to one damage roll of any wizard cantrip you cast.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cantrip-adept_adroit-caster",
+      "name": "Adroit Caster",
+      "description": "Starting at 10th level, if you cast a cantrip that doesn't deal damage, or a cantrip with an effect in addition to damage (e.g., *ray of frost*'s speed reduction), that cantrip or its secondary effect has twice the normal duration.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_cantrip-adept_empowered-cantrips",
+      "name": "Empowered Cantrips",
+      "description": "Starting at 14th level, once per turn when you cast a wizard cantrip that deals damage, you can deal maximum damage. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "empowered_cantrips",
+            "displayName": "Empowered Cantrips",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_malkin",
+  "features": [
+    {
+      "key": "subrace_toh_malkin_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_malkin_curiously_clever",
+      "name": "Curiously Clever",
+      "description": "You have proficiency in the Investigation skill.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INVESTIGATION"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_malkin_charmed_curiosity",
+      "name": "Charmed Curiosity",
+      "description": "When you roll a 1 on the d20 for a Dexterity check or saving throw, you can reroll the die and must use the new roll.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

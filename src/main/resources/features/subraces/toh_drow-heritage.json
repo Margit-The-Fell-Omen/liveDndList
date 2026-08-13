@@ -1,0 +1,33 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_drow-heritage",
+  "features": [
+    {
+      "key": "subrace_toh_drow-heritage_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Intelligence score increases by 2.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "INT",
+            "amount": 2
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_drow-heritage_poison_bite",
+      "name": "Poison Bite",
+      "description": "When you hit with your bite attack, you can release venom into your foe. If you do, your bite deals an extra 1d6 poison damage. The damage increases to 3d6 at 11th level. Regain on short or long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

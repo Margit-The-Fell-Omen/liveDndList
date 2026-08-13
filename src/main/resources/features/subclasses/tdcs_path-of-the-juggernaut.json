@@ -1,0 +1,71 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "tdcs_path-of-the-juggernaut",
+  "features": [
+    {
+      "key": "sub_tdcs_path-of-the-juggernaut_thunderous-blows",
+      "name": "Thunderous Blows",
+      "description": "Starting when you choose this path at 3rd level, once per turn while raging, when you damage a creature with a melee attack, you can force the target to make a STR save (DC 8 + proficiency bonus + STR modifier). On a failure, you push the target 5 feet away and may immediately move 5 feet into its previous position.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_path-of-the-juggernaut_stance-of-the-mountain",
+      "name": "Stance of the Mountain",
+      "description": "Upon choosing this path at 3rd level, you cannot be knocked prone while raging unless you become unconscious.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_path-of-the-juggernaut_demolishing-might",
+      "name": "Demolishing Might",
+      "description": "Beginning at 6th level, all your melee attacks gain the siege property (double damage to objects and structures). Your melee attacks against constructs deal an additional 1d8 weapon damage.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_path-of-the-juggernaut_overwhelming-cleave",
+      "name": "Overwhelming Cleave",
+      "description": "Upon reaching 10th level, when you make a weapon attack while raging, you can make another attack as a bonus action with the same weapon against a different creature within 5 feet of the original target and within range of your weapon.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_path-of-the-juggernaut_unstoppable",
+      "name": "Unstoppable",
+      "description": "Starting at 14th level, when you rage, you can become Unstoppable. For the rage's duration: your speed cannot be reduced, and you are immune to the frightened, paralyzed, and stunned conditions. If you already have one of these conditions, entering rage suspends their effects for its duration. When your rage ends, you suffer one level of exhaustion.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

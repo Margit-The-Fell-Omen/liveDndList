@@ -1,0 +1,35 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "srd_hill-dwarf",
+  "features": [
+    {
+      "key": "subrace_srd_hill-dwarf_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Wisdom score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_srd_hill-dwarf_toughness",
+      "name": "Dwarven Toughness",
+      "description": "Your hit point maximum increases by 1, and it increases by 1 every time you gain a level.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_HIT_POINTS_PER_LEVEL",
+          "payload": {
+            "amount": 1
+          }
+        }
+      ]
+    }
+  ]
+}

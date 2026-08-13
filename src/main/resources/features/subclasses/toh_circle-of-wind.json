@@ -1,0 +1,122 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_circle-of-wind",
+  "features": [
+    {
+      "key": "toh_circle-of-wind_bonus-cantrip",
+      "name": "Bonus Cantrip",
+      "description": "At 2nd level, you learn the message cantrip.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "message",
+            "atWill": true,
+            "castingAbilityOverride": "WIS"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-wind_feathered-form",
+      "name": "Feathered Form",
+      "description": "Starting at 2nd level, when you use Wild Shape to assume a beast form, it can have a flying speed (you ignore the 'no flying speed' limitation).",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-wind_circle-spells",
+      "name": "Circle Spells",
+      "description": "Circle spells: blur/gust of wind (L3), fly/lightning bolt (L5), conjure minor elementals/freedom of movement (L7), cloudkill/conjure elemental (air only) (L9). Always prepared.",
+      "gainedAtLevel": 3,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-wind_comforting-breezes",
+      "name": "Comforting Breezes",
+      "description": "Beginning at 6th level, action to summon a breeze in a 30-ft cone. Choose WIS mod targets: end one disease or the blinded, deafened, paralyzed, or poisoned condition on each. 1/long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "comforting_breezes",
+            "displayName": "Comforting Breezes",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-wind_updraft",
+      "name": "Updraft",
+      "description": "Also at 6th level, expend one Wild Shape as bonus action to summon wind. You and chosen creatures within 10 ft end grappled/restrained. Fly up to 30 ft (no OA). Affected creatures can use reaction to fly 30 ft (no OA).",
+      "gainedAtLevel": 6,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-wind_vizier-of-the-winds",
+      "name": "Vizier of the Winds",
+      "description": "Starting at 10th level, cast commune without preparing or expending a slot. 1/long rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "vizier_of_the_winds",
+            "displayName": "Vizier of the Winds",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "toh_circle-of-wind_hunger-of-storms-fury",
+      "name": "Hunger of Storm's Fury",
+      "description": "Beginning at 14th level, when you succeed on a save against lightning damage, take no damage and instead regain HP equal to the lightning damage dealt. 1/long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "hunger_of_storms_fury",
+            "displayName": "Hunger of Storm's Fury",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    }
+  ]
+}

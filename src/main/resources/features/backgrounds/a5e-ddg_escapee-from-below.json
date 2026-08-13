@@ -1,0 +1,63 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "a5e-ddg_escapee-from-below",
+  "features": [
+    {
+      "key": "bg_a5e-ddg_escapee-from-below_skills",
+      "name": "Escapee Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Survival",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "SURVIVAL"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_escapee-from-below_language",
+      "name": "Escapee Language",
+      "description": "One language of your choice, typically spoken in the Underdark.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "a5e_escapee_lang"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "a5e_escapee_lang",
+          "name": "Language",
+          "description": "Choose one language (Undercommon, Deep Speech, Dwarvish, or similar).",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "bg_a5e-ddg_escapee-from-below_feature",
+      "name": "Underdark Escape",
+      "description": "You know hidden routes back to the surface and can guide others through the tangled tunnels of the deep. TODO: verify against A5E DDG book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

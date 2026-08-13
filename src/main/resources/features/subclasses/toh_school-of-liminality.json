@@ -1,0 +1,115 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_school-of-liminality",
+  "features": [
+    {
+      "key": "sub_toh_school-of-liminality_liminal-savant",
+      "name": "Liminal Savant",
+      "description": "Beginning at 2nd level, the gold and time you must spend to copy a liminal spell into your spellbook is halved.",
+      "gainedAtLevel": 2,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_school-of-liminality_mulligan",
+      "name": "Mulligan",
+      "description": "At 2nd level, when a creature within 30 ft misses with an attack, use your reaction to let it reroll. When a creature within 30 ft hits with an attack (before damage), use your reaction to force a reroll using the lower result. Uses equal to proficiency bonus; regain all on long rest.\n\nAt 10th level, you can also use this feature when a creature makes an ability check or saving throw.",
+      "gainedAtLevel": 2,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "mulligan",
+            "displayName": "Mulligan",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Mulligan",
+            "description": "When a creature within 30 ft misses an attack: let it reroll. When it hits before damage: force a reroll and use the lower result.",
+            "resourceKey": "mulligan"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_school-of-liminality_otherworldly-sense",
+      "name": "Otherworldly Sense",
+      "description": "At 6th level, spend 1 minute meditating to sense one creature type (aberrations, celestials, dragons, elementals, fey, fiends, or undead) within 1 mile for 10 minutes. You know their general direction. Use an action to switch type. Uses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "otherworldly_sense",
+            "displayName": "Otherworldly Sense",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_school-of-liminality_liminal-adept",
+      "name": "Liminal Adept",
+      "description": "At 10th level, add *threshold slip* to your spellbook. You can cast it without a slot (bring up to 2 willing creatures of your size or smaller touching you). 2 uses; regain all on short or long rest. At 14th level: 3 uses.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "liminal_adept",
+            "displayName": "Liminal Adept (Threshold Slip)",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_school-of-liminality_forced-transition",
+      "name": "Forced Transition",
+      "description": "At 14th level, as an action, touch a willing creature or make a melee spell attack vs an unwilling one. Choose one effect lasting 1 minute:\n\n**Rapid Advancement.** Each ability score +2 (max 24).\n**Regression.** Each ability score -2 (min 1).\n**True Self.** Target can't change shape (spells, traits); immediately reverts to true form. No effect on illusions.\n\n1/long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "forced_transition",
+            "displayName": "Forced Transition",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Forced Transition",
+            "description": "Touch willing or melee spell attack vs unwilling: Rapid Advancement (+2 all scores, max 24), Regression (-2 all scores, min 1), or True Self (can't shapechange, reverts form). 1 min.",
+            "resourceKey": "forced_transition"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_purified",
+  "features": [
+    {
+      "key": "subrace_toh_purified_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Charisma score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_purified_innate_spellcasting",
+      "name": "Innate Spellcasting",
+      "description": "You know the poison spray cantrip. At 3rd level you can cast suggestion once with this trait (regain on long rest). At 5th level you can cast tongues once (regain on long rest). Intelligence is your spellcasting ability for these spells.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "poison_spray",
+            "atWill": true,
+            "castingAbilityOverride": "INT"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_purified_born_leader",
+      "name": "Born Leader",
+      "description": "You gain proficiency with two of the following skills of your choice: History, Insight, Performance, and Persuasion.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "purified_skill_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "purified_skill_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "purified_skill_1",
+          "name": "First Skill",
+          "description": "Choose History, Insight, Performance, or Persuasion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "PERFORMANCE",
+              "PERSUASION"
+            ]
+          }
+        },
+        {
+          "choiceKey": "purified_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from History, Insight, Performance, or Persuasion.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "HISTORY",
+              "INSIGHT",
+              "PERFORMANCE",
+              "PERSUASION"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    }
+  ]
+}

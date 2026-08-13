@@ -1,0 +1,637 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_rogue",
+  "features": [
+    {
+      "key": "cls_srd-2024_rogue_starting",
+      "name": "Rogue Starting Traits",
+      "description": "**Primary Ability:** Dexterity\n**Hit Point Die:** d8 per Rogue level\n**Saving Throw Proficiencies:** Dexterity and Intelligence\n**Skill Proficiencies:** Choose 4 from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Persuasion, Sleight of Hand, or Stealth\n**Weapon Proficiencies:** Simple weapons and Martial weapons that have the Finesse or Light property\n**Tool Proficiencies:** Thieves' Tools\n**Armor Training:** Light armor\n**Starting Equipment:** Choose A or B: (A) Leather Armor, 2 Daggers, Shortsword, Shortbow, 20 Arrows, Quiver, Thieves' Tools, Burglar's Pack, and 8 GP; or (B) 100 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d8"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {},
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "thieves_tools"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "DEX"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "INT"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_2024_skill_1",
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_2024_skill_2",
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_2024_skill_3",
+          "displayOrder": 9
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "rogue_2024_skill_4",
+          "displayOrder": 10
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Persuasion, Sleight of Hand, or Stealth.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ]
+          }
+        },
+        {
+          "choiceKey": "rogue_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "rogue_2024_skill_3",
+          "name": "Third Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "rogue_2024_skill_4",
+          "name": "Fourth Skill",
+          "description": "Choose another.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ACROBATICS",
+              "ATHLETICS",
+              "DECEPTION",
+              "INSIGHT",
+              "INTIMIDATION",
+              "INVESTIGATION",
+              "PERCEPTION",
+              "PERSUASION",
+              "SLEIGHT_OF_HAND",
+              "STEALTH"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_expertise",
+      "name": "Expertise (Level 1)",
+      "description": "You gain Expertise in two of your skill proficiencies of your choice. Sleight of Hand and Stealth are recommended if you have proficiency in them.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_2024_expertise_l1_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_2024_expertise_l1_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_expertise_l1_1",
+          "name": "First Expertise",
+          "description": "Choose a proficient skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true
+          }
+        },
+        {
+          "choiceKey": "rogue_2024_expertise_l1_2",
+          "name": "Second Expertise",
+          "description": "Choose another proficient skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_sneak-attack",
+      "name": "Sneak Attack",
+      "description": "Once per turn, you can deal extra damage to one creature you hit with an attack roll if you have Advantage on the roll and the attack uses a Finesse or a Ranged weapon. The extra damage's type is the same as the weapon's type.\n\nYou don't need Advantage if an ally is within 5 feet of the target, the ally isn't Incapacitated, and you don't have Disadvantage.\n\nDamage scales: 1d6 (L1) to 10d6 (L19-20).",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_thieves-cant",
+      "name": "Thieves' Cant",
+      "description": "You picked up various languages in the communities where you plied your roguish talents. You know Thieves' Cant and one other language of your choice.",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "thieves_cant"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "rogue_2024_extra_lang",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_extra_lang",
+          "name": "Extra Language",
+          "description": "Choose one additional language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_weapon-mastery",
+      "name": "Weapon Mastery",
+      "description": "Your training with weapons allows you to use the mastery properties of two kinds of weapons of your choice with which you have proficiency. Whenever you finish a Long Rest, you can change the kinds of weapons you chose.",
+      "gainedAtLevel": 1,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_cunning-action",
+      "name": "Cunning Action",
+      "description": "Your quick thinking and agility allow you to move and act quickly. On your turn, you can take one of the following actions as a Bonus Action: Dash, Disengage, or Hide.",
+      "gainedAtLevel": 2,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Cunning Action",
+            "description": "Take the Dash, Disengage, or Hide action as a Bonus Action."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_rogue-subclass",
+      "name": "Rogue Subclass",
+      "description": "You gain a Rogue subclass of your choice. The Thief subclass is detailed after this class's description.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_steady-aim",
+      "name": "Steady Aim",
+      "description": "As a Bonus Action, you give yourself Advantage on your next attack roll on the current turn. You can use this feature only if you haven't moved during this turn, and after you use it, your Speed is 0 until the end of the current turn.",
+      "gainedAtLevel": 3,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Steady Aim",
+            "description": "Gain Advantage on your next attack roll this turn. Must not have moved; Speed becomes 0 until end of turn."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "rogue_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_cunning-strike",
+      "name": "Cunning Strike",
+      "description": "When you deal Sneak Attack damage, you can add one of the following effects by forgoing Sneak Attack dice.\n\n**Poison (1d6 cost):** CON save or Poisoned for 1 min (requires Poisoner's Kit).\n**Trip (1d6 cost):** DEX save or Prone (Large or smaller).\n**Withdraw (1d6 cost):** Move up to half your Speed without provoking OA.\n\nSave DC = 8 + DEX mod + Proficiency Bonus.",
+      "gainedAtLevel": 5,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_uncanny-dodge",
+      "name": "Uncanny Dodge",
+      "description": "When an attacker that you can see hits you with an attack roll, you can take a Reaction to halve the attack's damage against you (round down).",
+      "gainedAtLevel": 5,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Uncanny Dodge",
+            "description": "Halve damage from one attack that hits you (attacker must be visible)."
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_expertise-6",
+      "name": "Expertise (Level 6)",
+      "description": "You gain Expertise in two more of your skill proficiencies of your choice.",
+      "gainedAtLevel": 6,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_2024_expertise_l6_1",
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_EXPERTISE",
+          "payload": {},
+          "choiceKey": "rogue_2024_expertise_l6_2",
+          "displayOrder": 1
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_expertise_l6_1",
+          "name": "First Expertise",
+          "description": "Choose a proficient skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "excludeChosen": true
+          }
+        },
+        {
+          "choiceKey": "rogue_2024_expertise_l6_2",
+          "name": "Second Expertise",
+          "description": "Choose another proficient skill.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "onlyProficient": true,
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_evasion",
+      "name": "Evasion",
+      "description": "When you're subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed and only half damage if you fail. You can't use this if you have the Incapacitated condition.",
+      "gainedAtLevel": 7,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_reliable-talent",
+      "name": "Reliable Talent",
+      "description": "Whenever you make an ability check that uses one of your skill or tool proficiencies, you can treat a d20 roll of 9 or lower as a 10.",
+      "gainedAtLevel": 7,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "rogue_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_improved-cunning-strike",
+      "name": "Improved Cunning Strike",
+      "description": "You can use up to two Cunning Strike effects when you deal Sneak Attack damage, paying the die cost for each effect.",
+      "gainedAtLevel": 11,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "rogue_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_devious-strikes",
+      "name": "Devious Strikes",
+      "description": "You've practiced new ways to use your Sneak Attack deviously. The following effects are now among your Cunning Strike options.\n\n**Daze (2d6 cost):** CON save or limited to one of move/action/bonus action on next turn.\n**Knock Out (6d6 cost):** CON save or Unconscious for 1 min.\n**Obscure (3d6 cost):** DEX save or Blinded until end of next turn.",
+      "gainedAtLevel": 14,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_slippery-mind",
+      "name": "Slippery Mind",
+      "description": "Your cunning mind is exceptionally difficult to control. You gain proficiency in Wisdom and Charisma saving throws.",
+      "gainedAtLevel": 15,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "WIS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CHA"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "rogue_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_elusive",
+      "name": "Elusive",
+      "description": "You're so evasive that attackers rarely gain the upper hand against you. No attack roll can have Advantage against you unless you have the Incapacitated condition.",
+      "gainedAtLevel": 18,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat or another feat of your choice for which you qualify. Boon of the Night Spirit is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 21,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "rogue_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "rogue_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_rogue_stroke-of-luck",
+      "name": "Stroke of Luck",
+      "description": "You have a marvelous knack for succeeding when you need to. If you fail a D20 Test, you can turn the roll into a 20.\n\nOnce you use this feature, you can't use it again until you finish a Short or Long Rest.",
+      "gainedAtLevel": 20,
+      "displayOrder": 22,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "stroke_of_luck",
+            "displayName": "Stroke of Luck",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        }
+      ]
+    }
+  ]
+}

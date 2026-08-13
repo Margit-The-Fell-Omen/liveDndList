@@ -1,0 +1,164 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_alseid",
+  "features": [
+    {
+      "key": "race_toh_alseid_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Dexterity score increases by 2, and your Wisdom score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "DEX",
+            "amount": 2
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 1
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_size",
+      "name": "Size",
+      "description": "Alseid stand over 6 feet tall and weigh around 300 pounds. Your size is Medium.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_speed",
+      "name": "Speed",
+      "description": "Alseid are fast for their size, with a base walking speed of 40 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 40,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_darkvision",
+      "name": "Darkvision",
+      "description": "Accustomed to the limited light beneath the forest canopy, you have superior vision in dark and dim conditions. You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_weapon_training",
+      "name": "Alseid Weapon Training",
+      "description": "You have proficiency with spears and shortbows.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "spear"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "SPECIFIC",
+            "weaponKey": "shortbow"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_light_hooves",
+      "name": "Light Hooves",
+      "description": "You have proficiency in the Stealth skill.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "STEALTH"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_quadruped",
+      "name": "Quadruped",
+      "description": "The mundane details of the structures of humanoids can present considerable obstacles for you. You have to squeeze when moving through trapdoors, manholes, and similar structures. In addition, ladders, stairs, and similar structures are difficult terrain for you.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_woodfriend",
+      "name": "Woodfriend",
+      "description": "When in a forest, you leave no tracks and can automatically discern true north.",
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_toh_alseid_languages",
+      "name": "Languages",
+      "description": "You can speak, read, and write Common and Elvish.",
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "common"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "elvish"
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

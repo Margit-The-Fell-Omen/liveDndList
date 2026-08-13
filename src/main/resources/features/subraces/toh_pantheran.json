@@ -1,0 +1,78 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_pantheran",
+  "features": [
+    {
+      "key": "subrace_toh_pantheran_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Wisdom score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "WIS",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_pantheran_hunters_charge",
+      "name": "Hunter's Charge",
+      "description": "Once per turn, if you move at least 10 feet toward a target and hit it with a melee weapon attack in the same turn, you can use a bonus action to attack that creature with your Cat's Claws. Uses = proficiency bonus per day. Regain on long rest.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "hunters_charge",
+            "displayName": "Hunter's Charge",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Hunter's Charge",
+            "description": "After moving 10 ft toward a target and hitting with a melee attack, use a bonus action to make an additional Cat's Claws attack.",
+            "resourceKey": "hunters_charge"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_pantheran_one_with_the_wilds",
+      "name": "One With the Wilds",
+      "description": "You have proficiency in one of the following skills of your choice: Insight, Medicine, Nature, or Survival.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "pantheran_skill"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "pantheran_skill",
+          "name": "Wilds Skill",
+          "description": "Choose Insight, Medicine, Nature, or Survival.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "INSIGHT",
+              "MEDICINE",
+              "NATURE",
+              "SURVIVAL"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

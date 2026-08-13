@@ -1,0 +1,116 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_ancient-dragons",
+  "features": [
+    {
+      "key": "sub_toh_ancient-dragons_expanded-spell-list",
+      "name": "Expanded Spell List",
+      "description": "The Ancient Dragons add spells to your warlock spell list:\n\n| Spell Level | Spells |\n|---|---|\n| 1st | inflict wounds, magic missile |\n| 2nd | heat metal, scorching ray |\n| 3rd | dispel magic, lightning bolt |\n| 4th | greater invisibility, ice storm |\n| 5th | cloudkill, flame strike |",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_ancient-dragons_dragon-tongue",
+      "name": "Dragon Tongue",
+      "description": "Starting at 1st level, you can speak, read, and write Draconic.",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {
+            "languageKey": "draconic"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_ancient-dragons_wyrmling-blessing",
+      "name": "Wyrmling Blessing",
+      "description": "Also starting at 1st level, when you finish a long rest, choose one blessing (lasts until next rest):\n\n**Aquatic Affinity.** Swim speed = walk speed; breathe underwater; speak with water-breathing beasts.\n**Draconic Hunger.** When below half HP and you reduce a hostile to 0 HP: regain HP equal to 2× prof bonus (up to half your HP max).\n**Draconic Sight.** Darkvision 60 ft (+30 if existing). As an action, create an invisible sensor within 30 ft for 1 min (see/hear through it; blind/deaf to own senses). Move sensor 30 ft as bonus action.\n**Elemental Versatility.** Choose one damage type (acid/cold/fire/lightning/poison); your spells can deal that type instead of their normal type.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_ancient-dragons_draconic-mien",
+      "name": "Draconic Mien",
+      "description": "At 6th level, choose one damage type (acid/cold/fire/lightning/poison) on a long rest: gain resistance to it for the duration.\n\nAs an action, manifest a spectral dragon visage. Choose up to 3 creatures within 30 ft: WIS save vs your spell save DC or be charmed or frightened (your choice) until end of your next turn. 1/short or long rest.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "draconic_mien",
+            "displayName": "Draconic Mien",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "SHORT"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Draconic Mien",
+            "description": "Manifest spectral dragon visage: up to 3 creatures within 30 ft make WIS save or be charmed or frightened until end of your next turn.",
+            "resourceKey": "draconic_mien"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_ancient-dragons_ascended-blessing",
+      "name": "Ascended Blessing",
+      "description": "At 10th level, when you finish a long rest, choose one ascended blessing (includes its wyrmling blessing):\n\n**Aquatic Command.** Wyrmling Aquatic Affinity + cast *control water* and *dominate beast* (water-breathing beasts only) once each per long rest without a spell slot.\n**Crystallized Hunger.** Wyrmling Draconic Hunger + on kill, create an essence gem (*ioun stone of protection*, you only). As bonus action, destroy it to regain one spell slot. One gem at a time. 1/long rest.\n**Draconic Senses.** Wyrmling Draconic Sight + blindsight 15 ft and advantage on Perception.\n**Elemental Expertise.** Wyrmling Elemental Versatility + add CHA mod to one damage roll of spells dealing chosen type. Reaction: when hit within 5 ft, deal prof bonus in chosen type to attacker (prof bonus uses per long rest).",
+      "gainedAtLevel": 10,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_ancient-dragons_draconic-manifestation",
+      "name": "Draconic Manifestation",
+      "description": "At 14th level, as an action, transform into a dragon with CR up to your warlock level ÷ 3 (round down) for 1 minute. Like *polymorph* but no concentration required. Retain INT, WIS, and CHA. Can target any dragon-type creature. 1/long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "draconic_manifestation",
+            "displayName": "Draconic Manifestation",
+            "usesFormula": {
+              "base": 1
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Draconic Manifestation",
+            "description": "Transform into a dragon (CR ≤ warlock level ÷ 3) for 1 min (no concentration). Retain INT/WIS/CHA.",
+            "resourceKey": "draconic_manifestation"
+          }
+        }
+      ]
+    }
+  ]
+}

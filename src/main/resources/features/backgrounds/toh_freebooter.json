@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_freebooter",
+  "features": [
+    {
+      "key": "bg_toh_freebooter_skills",
+      "name": "Freebooter Skill Proficiencies",
+      "description": "Skill Proficiencies: Athletics, Perception",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "ATHLETICS"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_freebooter_tools",
+      "name": "Freebooter Tool Proficiencies",
+      "description": "Tool Proficiencies: Navigator's Tools, Water Vehicles",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "navigators_tools"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "water_vehicles"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_freebooter_feature",
+      "name": "Free of Any Flag",
+      "description": "You've sailed under many flags, or none at all. You can navigate the underworld of port towns, and free-sailing crews recognize you as one of their own. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

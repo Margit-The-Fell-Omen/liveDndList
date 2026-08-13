@@ -1,0 +1,104 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "toh_path-of-thorns",
+  "features": [
+    {
+      "key": "sub_toh_path-of-thorns_blossoming-thorns",
+      "name": "Blossoming Thorns",
+      "description": "Beginning at 3rd level, when you enter your rage, thorns emerge over your body. While raging, your unarmed strikes deal 1d4 + STR piercing damage (instead of normal bludgeoning). When you use the Attack action with an unarmed strike on your turn while raging, you can make one unarmed strike as a bonus action.\n\nDamage increases: 1d6 at 8th level, 1d8 at 14th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-thorns_thorned-grasp",
+      "name": "Thorned Grasp",
+      "description": "Also at 3rd level, when you use the Attack action to grapple a creature while raging, the target takes 1d4 piercing damage on a successful grapple, and 1d4 piercing damage at the start of each of your turns while you continue to grapple and are raging. Increases to 2d4 at 10th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-thorns_natures-blessing",
+      "name": "Nature's Blessing",
+      "description": "At 6th level, your thorns while raging count as magical. When hit by a melee weapon attack by a creature within 5 ft while raging, that creature takes 1d4 piercing damage (2d4 at 10th level).\n\nAlternatively, as a reaction when hit by a melee weapon within 5 ft while raging, you can attempt to disarm the attacker instead of dealing thorn damage: the attacker makes a STR save (DC 8 + CON mod + prof bonus) or drops the weapon at its feet.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Nature's Blessing — Disarm",
+            "description": "When hit by a melee weapon within 5 ft while raging, instead of dealing thorn damage, force attacker to STR save or drop weapon."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-thorns_toxic-infusion",
+      "name": "Toxic Infusion",
+      "description": "Starting at 10th level, when you enter your rage or as a bonus action while raging, you can infuse your thorns with toxins for 1 minute. While infused, the first creature you hit each turn with an unarmed strike must succeed on a CON save (DC 8 + CON mod + prof bonus) or be poisoned until the end of its next turn.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 10,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "toxic_infusion",
+            "displayName": "Toxic Infusion",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Toxic Infusion",
+            "description": "Infuse thorns with toxins for 1 min while raging. First unarmed strike hit each turn: CON save or target poisoned until end of its next turn.",
+            "resourceKey": "toxic_infusion"
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_toh_path-of-thorns_thorn-barrage",
+      "name": "Thorn Barrage",
+      "description": "At 14th level, as an action while raging, shoot thorns from your body. Each creature within 10 feet must make a DEX save (DC 8 + CON mod + prof bonus), taking 4d6 piercing on a failure or half on a success.\n\nUses equal to proficiency bonus; regain all on long rest.",
+      "gainedAtLevel": 14,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "thorn_barrage",
+            "displayName": "Thorn Barrage",
+            "usesFormula": {
+              "base": 2
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_ACTION",
+          "payload": {
+            "name": "Thorn Barrage",
+            "description": "While raging: each creature within 10 ft makes DEX save or takes 4d6 piercing (half on success).",
+            "resourceKey": "thorn_barrage"
+          }
+        }
+      ]
+    }
+  ]
+}

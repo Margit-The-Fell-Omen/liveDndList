@@ -1,0 +1,562 @@
+{
+  "sourceType": "CLASS",
+  "sourceKey": "srd-2024_barbarian",
+  "features": [
+    {
+      "key": "cls_srd-2024_barbarian_starting",
+      "name": "Barbarian Starting Traits",
+      "description": "**Primary Ability:** Strength\n**Hit Point Die:** d12 per Barbarian level\n**Saving Throw Proficiencies:** Strength and Constitution\n**Skill Proficiencies:** Choose 2 from Animal Handling, Athletics, Intimidation, Nature, Perception, or Survival\n**Weapon Proficiencies:** Simple and Martial weapons\n**Armor Training:** Light and Medium armor and Shields\n**Starting Equipment:** Choose A or B: (A) Greataxe, 4 Handaxes, Explorer's Pack, and 15 GP; or (B) 75 GP",
+      "gainedAtLevel": 1,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_HIT_DIE",
+          "payload": {
+            "die": "d12"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "LIGHT"
+          },
+          "displayOrder": 1
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "MEDIUM"
+          },
+          "displayOrder": 2
+        },
+        {
+          "type": "GRANT_ARMOR_PROFICIENCY",
+          "payload": {
+            "category": "SHIELD"
+          },
+          "displayOrder": 3
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "SIMPLE"
+          },
+          "displayOrder": 4
+        },
+        {
+          "type": "GRANT_WEAPON_PROFICIENCY",
+          "payload": {
+            "scope": "CATEGORY",
+            "category": "MARTIAL"
+          },
+          "displayOrder": 5
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "STR"
+          },
+          "displayOrder": 6
+        },
+        {
+          "type": "GRANT_SAVING_THROW_PROFICIENCY",
+          "payload": {
+            "ability": "CON"
+          },
+          "displayOrder": 7
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "barbarian_2024_skill_1",
+          "displayOrder": 8
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "barbarian_2024_skill_2",
+          "displayOrder": 9
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_skill_1",
+          "name": "First Skill",
+          "description": "Choose one from Animal Handling, Athletics, Intimidation, Nature, Perception, or Survival.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INTIMIDATION",
+              "NATURE",
+              "PERCEPTION",
+              "SURVIVAL"
+            ]
+          }
+        },
+        {
+          "choiceKey": "barbarian_2024_skill_2",
+          "name": "Second Skill",
+          "description": "Choose another from the barbarian skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INTIMIDATION",
+              "NATURE",
+              "PERCEPTION",
+              "SURVIVAL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_rage",
+      "name": "Rage",
+      "description": "You can imbue yourself with a primal power called Rage, a force that grants you extraordinary might and resilience. You can enter it as a Bonus Action if you aren't wearing Heavy armor.\n\nUses: 2 (L1-2), 3 (L3-5), 4 (L6-11), 5 (L12-16), 6 (L17+). Regain 1 use on a Short Rest, all uses on a Long Rest.\n\n**Active Rage effects:**\n- Resistance to Bludgeoning, Piercing, Slashing damage\n- Rage Damage bonus (+2 at L1-8, +3 at L9-15, +4 at L16+) on Strength-based attacks\n- Advantage on Strength checks and saving throws\n- Can't cast spells or maintain Concentration\n- Duration: extends each turn if you attack, force save, or bonus-action to extend. Max 10 minutes",
+      "gainedAtLevel": 1,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_RESOURCE",
+          "payload": {
+            "resourceKey": "rage",
+            "displayName": "Rage",
+            "usesFormula": {
+              "perClassLevel": {
+                "1": 2,
+                "3": 3,
+                "6": 4,
+                "12": 5,
+                "17": 6
+              }
+            },
+            "refresh": "LONG"
+          }
+        },
+        {
+          "type": "GRANT_BONUS_ACTION",
+          "payload": {
+            "name": "Enter Rage",
+            "description": "Enter Rage. Grants damage resistance (B/P/S), STR advantage, rage damage bonus. Can't cast spells while raging. Regain 1 use on Short Rest, all on Long Rest.",
+            "resourceKey": "rage"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_unarmored-defense",
+      "name": "Unarmored Defense",
+      "description": "While you aren't wearing any armor, your base Armor Class equals 10 plus your Dexterity and Constitution modifiers. You can use a Shield and still gain this benefit.",
+      "gainedAtLevel": 1,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "MODIFY_ARMOR_CLASS",
+          "payload": {
+            "mode": "FORMULA",
+            "formula": {
+              "base": 10,
+              "add": [
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "DEX"
+                },
+                {
+                  "type": "ABILITY_MOD",
+                  "ability": "CON"
+                }
+              ],
+              "requiresNoArmor": true,
+              "requiresNoShield": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_weapon-mastery",
+      "name": "Weapon Mastery",
+      "description": "Your training with weapons allows you to use the mastery properties of two kinds of Simple or Martial Melee weapons of your choice, such as Greataxes and Handaxes. Whenever you finish a Long Rest, you can practice weapon drills and change one of those weapon choices.\n\nAt higher levels, more weapon masteries: 2 (L1), 3 (L4), 4 (L10), 5 (L16).",
+      "gainedAtLevel": 1,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_danger-sense",
+      "name": "Danger Sense",
+      "description": "You gain an uncanny sense of when things aren't as they should be, giving you an edge when you dodge perils. You have Advantage on Dexterity saving throws unless you have the Incapacitated condition.",
+      "gainedAtLevel": 2,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_reckless-attack",
+      "name": "Reckless Attack",
+      "description": "You can throw aside all concern for defense to attack with increased ferocity. When you make your first attack roll on your turn, you can decide to attack recklessly. Doing so gives you Advantage on attack rolls using Strength until the start of your next turn, but attack rolls against you have Advantage during that time.",
+      "gainedAtLevel": 2,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_barbarian-subclass",
+      "name": "Barbarian Subclass",
+      "description": "You gain a Barbarian subclass of your choice. The Path of the Berserker subclass is detailed after this class's description. A subclass is a specialization that grants you features at certain Barbarian levels. For the rest of your career, you gain each of your subclass's features that are of your Barbarian level or lower.",
+      "gainedAtLevel": 3,
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_primal-knowledge",
+      "name": "Primal Knowledge",
+      "description": "You gain proficiency in another skill of your choice from the skill list available to Barbarians at level 1.\n\nIn addition, while your Rage is active, you can channel primal power when you attempt certain tasks; whenever you make an ability check using one of the following skills, you can make it as a Strength check even if it normally uses a different ability: Acrobatics, Intimidation, Perception, Stealth, or Survival.",
+      "gainedAtLevel": 3,
+      "displayOrder": 7,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {},
+          "choiceKey": "barbarian_2024_primal_knowledge_skill"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_primal_knowledge_skill",
+          "name": "Additional Skill",
+          "description": "Choose another skill from the barbarian skill list.",
+          "chooseCount": 1,
+          "optionsSource": "SKILL_LIST",
+          "optionsFilter": {
+            "fromList": [
+              "ANIMAL_HANDLING",
+              "ATHLETICS",
+              "INTIMIDATION",
+              "NATURE",
+              "PERCEPTION",
+              "SURVIVAL"
+            ],
+            "excludeChosen": true
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_ability-score-improvement-4",
+      "name": "Ability Score Improvement (Level 4)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 4,
+      "displayOrder": 8,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "barbarian_2024_asi_feat_l4"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_asi_feat_l4",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_extra-attack",
+      "name": "Extra Attack",
+      "description": "You can attack twice instead of once whenever you take the Attack action on your turn.",
+      "gainedAtLevel": 5,
+      "displayOrder": 9,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_fast-movement",
+      "name": "Fast Movement",
+      "description": "Your speed increases by 10 feet while you aren't wearing Heavy armor.",
+      "gainedAtLevel": 5,
+      "displayOrder": 10,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 10,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_feral-instinct",
+      "name": "Feral Instinct",
+      "description": "Your instincts are so honed that you have Advantage on Initiative rolls.",
+      "gainedAtLevel": 7,
+      "displayOrder": 11,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_instinctive-pounce",
+      "name": "Instinctive Pounce",
+      "description": "As part of the Bonus Action you take to enter your Rage, you can move up to half your Speed.",
+      "gainedAtLevel": 7,
+      "displayOrder": 12,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_ability-score-improvement-8",
+      "name": "Ability Score Improvement (Level 8)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 8,
+      "displayOrder": 13,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "barbarian_2024_asi_feat_l8"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_asi_feat_l8",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_brutal-strike",
+      "name": "Brutal Strike",
+      "description": "If you use Reckless Attack, you can forgo any Advantage on one Strength-based attack roll of your choice on your turn. If the chosen attack roll hits, the target takes an extra 1d10 damage of the same type dealt by the weapon or Unarmed Strike, and you can cause one Brutal Strike effect of your choice.\n\n**Forceful Blow.** The target is pushed 15 feet straight away from you. You can then move up to half your Speed straight toward the target without provoking Opportunity Attacks.\n\n**Hamstring Blow.** The target's Speed is reduced by 15 feet until the start of your next turn.",
+      "gainedAtLevel": 9,
+      "displayOrder": 14,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_relentless-rage",
+      "name": "Relentless Rage",
+      "description": "Your Rage can keep you fighting despite grievous wounds. If you drop to 0 Hit Points while your Rage is active and don't die outright, you can make a DC 10 Constitution saving throw. If you succeed, your Hit Points instead change to a number equal to twice your Barbarian level.\n\nEach time you use this feature after the first, the DC increases by 5. When you finish a Short or Long Rest, the DC resets to 10.",
+      "gainedAtLevel": 11,
+      "displayOrder": 15,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_ability-score-improvement-12",
+      "name": "Ability Score Improvement (Level 12)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 12,
+      "displayOrder": 16,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "barbarian_2024_asi_feat_l12"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_asi_feat_l12",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_improved-brutal-strike",
+      "name": "Improved Brutal Strike",
+      "description": "You have honed new ways to attack furiously. The following effects are now among your Brutal Strike options.\n\n**Staggering Blow.** The target has Disadvantage on the next saving throw it makes, and it can't make Opportunity Attacks until the start of your next turn.\n\n**Sundering Blow.** Before the start of your next turn, the next attack roll made by another creature against the target gains a +5 bonus to the roll.",
+      "gainedAtLevel": 13,
+      "displayOrder": 17,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_persistent-rage",
+      "name": "Persistent Rage",
+      "description": "When you roll Initiative, you can regain all expended uses of Rage. After you regain uses of Rage in this way, you can't do so again until you finish a Long Rest.\n\nIn addition, your Rage is so fierce that it now lasts for 10 minutes without you needing to do anything to extend it from round to round. Your Rage ends early if you have the Unconscious condition (not just the Incapacitated condition) or don Heavy armor.",
+      "gainedAtLevel": 15,
+      "displayOrder": 18,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_ability-score-improvement-16",
+      "name": "Ability Score Improvement (Level 16)",
+      "description": "You gain the Ability Score Improvement feat or another feat of your choice for which you qualify.",
+      "gainedAtLevel": 16,
+      "displayOrder": 19,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "barbarian_2024_asi_feat_l16"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_asi_feat_l16",
+          "name": "ASI or Feat",
+          "description": "Choose the Ability Score Improvement feat or another feat you qualify for.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "GENERAL"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_improved-brutal-strike-enhanced",
+      "name": "Improved Brutal Strike (Enhanced)",
+      "description": "The extra damage of your Brutal Strike increases to 2d10. In addition, you can use two different Brutal Strike effects whenever you use your Brutal Strike feature.",
+      "gainedAtLevel": 17,
+      "displayOrder": 20,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_indomitable-might",
+      "name": "Indomitable Might",
+      "description": "If your total for a Strength check or Strength saving throw is less than your Strength score, you can use that score in place of the total.",
+      "gainedAtLevel": 18,
+      "displayOrder": 21,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_epic-boon",
+      "name": "Epic Boon",
+      "description": "You gain an Epic Boon feat (see \"Feats\") or another feat of your choice for which you qualify. Boon of Irresistible Offense is recommended.",
+      "gainedAtLevel": 19,
+      "displayOrder": 22,
+      "effects": [
+        {
+          "type": "GRANT_FEAT",
+          "payload": {},
+          "choiceKey": "barbarian_2024_epic_boon"
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "barbarian_2024_epic_boon",
+          "name": "Epic Boon",
+          "description": "Choose an Epic Boon feat.",
+          "chooseCount": 1,
+          "optionsSource": "FEAT_LIST",
+          "optionsFilter": {
+            "type": "EPIC_BOON"
+          }
+        }
+      ]
+    },
+    {
+      "key": "srd-2024_barbarian_primal-champion",
+      "name": "Primal Champion",
+      "description": "You embody primal power. Your Strength and Constitution scores increase by 4, to a maximum of 25.",
+      "gainedAtLevel": 20,
+      "displayOrder": 23,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "STR",
+            "amount": 4,
+            "max": 25
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CON",
+            "amount": 4,
+            "max": 25
+          },
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

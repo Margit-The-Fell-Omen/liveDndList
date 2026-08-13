@@ -1,0 +1,18 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "toh_shade",
+  "features": [
+    {
+      "key": "race_toh_shade_placeholder",
+      "name": "Shade",
+      "description": "Your shade character has a number of traits that arise from being a shade as well as a few drawn from life. TODO: authoritative trait data not yet available in source; verify against Tome of Heroes.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

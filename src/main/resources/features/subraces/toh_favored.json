@@ -1,0 +1,67 @@
+{
+  "sourceType": "SUBRACE",
+  "sourceKey": "toh_favored",
+  "features": [
+    {
+      "key": "subrace_toh_favored_ability_scores",
+      "name": "Ability Score Increase",
+      "description": "Your Charisma score increases by 1.",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "MODIFY_ABILITY_SCORE",
+          "payload": {
+            "ability": "CHA",
+            "amount": 1
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_favored_blessed_help",
+      "name": "Blessed Help",
+      "description": "You know the spare the dying cantrip. At 3rd level, you can cast bless once with this trait and regain use on a long rest. Charisma is your spellcasting ability.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_CANTRIP",
+          "payload": {
+            "spellKey": "spare_the_dying",
+            "atWill": true,
+            "castingAbilityOverride": "CHA"
+          }
+        },
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_favored_clan_leader",
+      "name": "Clan Leader",
+      "description": "You have proficiency in the Persuasion skill.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          }
+        }
+      ]
+    },
+    {
+      "key": "subrace_toh_favored_restful_spores",
+      "name": "Restful Spores",
+      "description": "If you or any friendly creatures within 30 feet of you regain hit points at the end of a short rest by spending Hit Dice, each of those creatures regains additional hit points equal to your proficiency bonus. Once a creature benefits, it can't again until it finishes a long rest.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

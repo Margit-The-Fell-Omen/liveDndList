@@ -1,0 +1,104 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "srd-2024_hunter",
+  "features": [
+    {
+      "key": "sub_srd-2024_hunter_hunters-lore",
+      "name": "Hunter's Lore",
+      "description": "You can call on the forces of nature to reveal certain strengths and weaknesses of your prey. While a creature is marked by your *Hunter's Mark*, you know whether that creature has any Immunities, Resistances, or Vulnerabilities, and if the creature has any, you know what they are.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_hunter_hunters-prey",
+      "name": "Hunter's Prey",
+      "description": "You gain one of the following feature options of your choice. Whenever you finish a Short or Long Rest, you can replace the chosen option with the other one.\n\n**Colossus Slayer.** Your tenacity can wear down even the most resilient foes. When you hit a creature with a weapon, the weapon deals an extra 1d8 damage to the target if it's missing any of its Hit Points. You can deal this extra damage only once per turn.\n\n**Horde Breaker.** Once on each of your turns when you make an attack with a weapon, you can make another attack with the same weapon against a different creature that is within 5 feet of the original target, that is within the weapon's range, and that you haven't attacked this turn.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "hunter_2024_prey",
+          "name": "Hunter's Prey",
+          "description": "Choose Colossus Slayer or Horde Breaker. You can swap on a Short or Long Rest.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "COLOSSUS_SLAYER",
+              "HORDE_BREAKER"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_hunter_defensive-tactics",
+      "name": "Defensive Tactics",
+      "description": "You gain one of the following feature options of your choice. Whenever you finish a Short or Long Rest, you can replace the chosen option with the other one.\n\n**Escape the Horde.** Opportunity Attacks have Disadvantage against you.\n\n**Multiattack Defense.** When a creature hits you with an attack roll, that creature has Disadvantage on all other attack rolls against you this turn.",
+      "gainedAtLevel": 7,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "hunter_2024_defensive",
+          "name": "Defensive Tactics",
+          "description": "Choose Escape the Horde or Multiattack Defense. You can swap on a Short or Long Rest.",
+          "chooseCount": 1,
+          "optionsSource": "INLINE",
+          "optionsFilter": {
+            "options": [
+              "ESCAPE_THE_HORDE",
+              "MULTIATTACK_DEFENSE"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_hunter_superior-hunters-prey",
+      "name": "Superior Hunter's Prey",
+      "description": "Once per turn when you deal damage to a creature marked by your *Hunter's Mark*, you can also deal that spell's extra damage to a different creature that you can see within 30 feet of the first creature.",
+      "gainedAtLevel": 11,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_srd-2024_hunter_superior-hunters-defense",
+      "name": "Superior Hunter's Defense",
+      "description": "When you take damage, you can take a Reaction to give yourself Resistance to that damage and any other damage of the same type until the end of the current turn.",
+      "gainedAtLevel": 15,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Superior Hunter's Defense",
+            "description": "When you take damage, gain Resistance to that damage type until end of the current turn."
+          }
+        }
+      ]
+    }
+  ]
+}

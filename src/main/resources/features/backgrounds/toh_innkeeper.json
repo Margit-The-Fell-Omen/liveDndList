@@ -1,0 +1,62 @@
+{
+  "sourceType": "BACKGROUND",
+  "sourceKey": "toh_innkeeper",
+  "features": [
+    {
+      "key": "bg_toh_innkeeper_skills",
+      "name": "Innkeeper Skill Proficiencies",
+      "description": "Skill Proficiencies: Insight, Persuasion",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "INSIGHT"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERSUASION"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_innkeeper_tools",
+      "name": "Innkeeper Tool Proficiencies",
+      "description": "Tool Proficiencies: Brewer's Supplies, Cook's Utensils",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "brewers_supplies"
+          },
+          "displayOrder": 0
+        },
+        {
+          "type": "GRANT_TOOL_PROFICIENCY",
+          "payload": {
+            "toolKey": "cooks_utensils"
+          },
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "key": "bg_toh_innkeeper_feature",
+      "name": "Rumors and Rooms",
+      "description": "You know where to find lodging in strange towns and how to gather gossip from patrons. You can secure a room at any inn and learn its news. TODO: verify against TOH book",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

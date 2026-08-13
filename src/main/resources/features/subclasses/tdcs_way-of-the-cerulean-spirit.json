@@ -1,0 +1,99 @@
+{
+  "sourceType": "SUBCLASS",
+  "sourceKey": "tdcs_way-of-the-cerulean-spirit",
+  "features": [
+    {
+      "key": "sub_tdcs_way-of-the-cerulean-spirit_mystical-erudition",
+      "name": "Mystical Erudition",
+      "description": "Upon choosing this tradition at 3rd level, you can spend 1 ki point to gain advantage on INT (Arcana), INT (History), or INT (Religion) checks.\n\nYou also learn one language of your choice. You gain additional languages at 11th and 17th level.",
+      "gainedAtLevel": 3,
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "GRANT_LANGUAGE",
+          "payload": {},
+          "choiceKey": "cerulean_spirit_language_1",
+          "displayOrder": 0
+        }
+      ],
+      "choices": [
+        {
+          "choiceKey": "cerulean_spirit_language_1",
+          "name": "Mystical Erudition Language",
+          "description": "Choose one language.",
+          "chooseCount": 1,
+          "optionsSource": "LANGUAGE_LIST",
+          "optionsFilter": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_way-of-the-cerulean-spirit_extract-aspects",
+      "name": "Extract Aspects",
+      "description": "Beginning at 3rd level, when you hit a single creature with two or more attacks in one round, you can spend 1 ki point to force it to make a CON save. On failure, learn one aspect of the creature (your choice): Creature Type, AC, Senses, Highest Save Modifier, Lowest Save Modifier, Damage Vulnerabilities, Damage Resistances, Damage Immunities, or Condition Immunities.\n\nAt 6th level: 2 aspects. At 11th: 3. At 17th: 4.",
+      "gainedAtLevel": 3,
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_way-of-the-cerulean-spirit_extort-truth",
+      "name": "Extort Truth",
+      "description": "At 6th level, if you hit a single creature with two or more attacks in one round, you can spend 2 ki points to force a CHA save. On failure, the creature cannot speak a deliberate lie for 1 minute. You know whether it succeeded or failed. The creature is aware of the effect and may be evasive.",
+      "gainedAtLevel": 6,
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_way-of-the-cerulean-spirit_mind-of-mercury",
+      "name": "Mind of Mercury",
+      "description": "Starting at 6th level, you can take additional reactions each round equal to your INT modifier (minimum 1), at the cost of 1 ki point per reaction beyond the first. Only one reaction per trigger.\n\nAdditionally, you can spend 1 ki point to gain advantage on INT (Investigation) checks.",
+      "gainedAtLevel": 6,
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_way-of-the-cerulean-spirit_preternatural-counter",
+      "name": "Preternatural Counter",
+      "description": "Beginning at 11th level, if a creature misses you with an attack, you can immediately use your reaction to make a melee attack against that creature.",
+      "gainedAtLevel": 11,
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "GRANT_REACTION",
+          "payload": {
+            "name": "Preternatural Counter",
+            "description": "When a creature misses you with an attack, make a melee attack against it."
+          }
+        }
+      ]
+    },
+    {
+      "key": "sub_tdcs_way-of-the-cerulean-spirit_debilitating-barrage",
+      "name": "Debilitating Barrage",
+      "description": "Upon reaching 17th level, when you hit a single creature with three or more attacks in one round, you can spend 3 ki points to impose disadvantage on its attack rolls until the end of your next turn and force a CON save. On failure, the creature gains vulnerability to a damage type of your choice for 1 minute or until it takes damage of that type. Creatures already resistant or immune to the chosen type are unaffected.\n\nChoose from: acid, bludgeoning, cold, fire, force, lightning, necrotic, piercing, poison, psychic, radiant, slashing, thunder.",
+      "gainedAtLevel": 17,
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}
