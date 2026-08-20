@@ -1,0 +1,92 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_dragonborn",
+  "features": [
+    {
+      "key": "race_srd-2024_dragonborn_size",
+      "name": "Size",
+      "description": "You are Medium (about 5–7 feet tall).",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_dragonborn_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_dragonborn_darkvision",
+      "name": "Darkvision",
+      "description": "You can see in dim light within 60 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_dragonborn_draconic_ancestry",
+      "name": "Draconic Ancestry",
+      "description": "Your lineage stems from a dragon progenitor. Choose a type of dragon from the Draconic Ancestry table. This determines your damage resistance and breath weapon.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_dragonborn_breath_weapon",
+      "name": "Breath Weapon",
+      "description": "You can exhale magical energy in a 15-foot cone or a 30-foot line. Each creature in the area must make a Dexterity saving throw.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_dragonborn_damage_resistance",
+      "name": "Damage Resistance",
+      "description": "You have Resistance to the damage type associated with your Draconic Ancestry.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

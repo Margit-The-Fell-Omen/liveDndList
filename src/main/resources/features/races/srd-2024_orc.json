@@ -1,0 +1,80 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_orc",
+  "features": [
+    {
+      "key": "race_srd-2024_orc_size",
+      "name": "Size",
+      "description": "You are Medium (about 6–7 feet tall).",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_darkvision",
+      "name": "Darkvision",
+      "description": "You can see in dim light within 120 feet of you as if it were bright light, and in darkness as if it were dim light.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 120
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_adrenaline_rush",
+      "name": "Adrenaline Rush",
+      "description": "You can take the Dash action as a Bonus Action. When you do so, you gain a number of Temporary Hit Points equal to your level.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_orc_relentless_endurance",
+      "name": "Relentless Endurance",
+      "description": "When you are reduced to 0 Hit Points but not killed outright, you can drop to 1 Hit Point instead. Once you use this trait, you can't do so again until you finish a Long Rest.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}

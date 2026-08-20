@@ -1,0 +1,106 @@
+{
+  "sourceType": "RACE",
+  "sourceKey": "srd-2024_elf",
+  "features": [
+    {
+      "key": "race_srd-2024_elf_size",
+      "name": "Size",
+      "description": "You are Medium (about 5–6 feet tall).",
+      "displayOrder": 0,
+      "effects": [
+        {
+          "type": "SET_CREATURE_SIZE",
+          "payload": {
+            "size": "MEDIUM"
+          }
+        },
+        {
+          "type": "SET_CREATURE_TYPE",
+          "payload": {
+            "type": "HUMANOID"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_elf_speed",
+      "name": "Speed",
+      "description": "Your Speed is 30 feet.",
+      "displayOrder": 1,
+      "effects": [
+        {
+          "type": "MODIFY_SPEED",
+          "payload": {
+            "amount": 30,
+            "speedType": "WALK"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_elf_darkvision",
+      "name": "Darkvision",
+      "description": "You have Darkvision with a range of 60 feet.",
+      "displayOrder": 2,
+      "effects": [
+        {
+          "type": "GRANT_SENSE",
+          "payload": {
+            "senseType": "DARKVISION",
+            "range": 60
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_elf_elven_lineage",
+      "name": "Elven Lineage",
+      "description": "You are part of a specific elven lineage: Drow, High Elf, or Wood Elf. Your choice grants you a specific set of spells.",
+      "displayOrder": 3,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_elf_fey_ancestry",
+      "name": "Fey Ancestry",
+      "description": "You have Advantage on saving throws you make to avoid or end the Charmed condition on yourself.",
+      "displayOrder": 4,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_elf_keen_senses",
+      "name": "Keen Senses",
+      "description": "You have proficiency in the Perception skill.",
+      "displayOrder": 5,
+      "effects": [
+        {
+          "type": "GRANT_SKILL_PROFICIENCY",
+          "payload": {
+            "skill": "PERCEPTION"
+          }
+        }
+      ]
+    },
+    {
+      "key": "race_srd-2024_elf_trance",
+      "name": "Trance",
+      "description": "You don't need to sleep, and magic can't put you to sleep. You can finish a Long Rest in 4 hours if you spend those hours in a trancelike meditation.",
+      "displayOrder": 6,
+      "effects": [
+        {
+          "type": "NARRATIVE_ONLY",
+          "payload": {}
+        }
+      ]
+    }
+  ]
+}
