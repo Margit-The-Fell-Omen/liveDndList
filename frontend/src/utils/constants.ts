@@ -1,28 +1,17 @@
 // src/utils/constants.ts
-
 import type {AbilityType, Character, CharacterAlignment, SkillName} from '@/types';
 
-// ===============================================================
-// LOCAL UI-ONLY TYPES
-// These are not from the backend, they are for configuring the UI.
-// ===============================================================
-
 export interface AbilityInfo {
-  key: keyof Character['abilityScores']; // e.g., 'strength'
-  name: string; // e.g., 'Strength'
-  abbr: string; // e.g., 'STR'
+  key: keyof Character['abilityScores']; // e.g. 'strength'
+  name: string;
+  abbr: string;
 }
 
 export interface SkillInfo {
-  key: SkillName; // e.g., 'ACROBATICS'
-  name: string; // e.g., 'Acrobatics'
-  ability: AbilityType; // e.g., 'DEXTERITY'
+  key: SkillName;
+  name: string;
+  ability: AbilityType;
 }
-
-// ===============================================================
-// ABILITIES & SKILLS CONFIGURATION
-// Used to render UI elements in a consistent order.
-// ===============================================================
 
 export const ABILITIES: readonly AbilityInfo[] = [
   {key: 'strength', name: 'Strength', abbr: 'STR'},
@@ -54,19 +43,6 @@ export const SKILLS: readonly SkillInfo[] = [
   {key: 'SURVIVAL', name: 'Survival', ability: 'WISDOM'},
 ];
 
-
-// ===============================================================
-// REMOVED & DEPRECATED CONSTANTS
-// This data should now be fetched from the backend API.
-// export const CLASSES: string[] = [ ... ];
-// export const RACES: string[] = [ ... ];
-// ===============================================================
-
-
-// ===============================================================
-// OTHER UI CONSTANTS
-// ===============================================================
-
 export const ALIGNMENT_OPTIONS: readonly { value: CharacterAlignment; label: string }[] = [
   {value: 'LAWFUL_GOOD', label: 'Lawful Good'},
   {value: 'NEUTRAL_GOOD', label: 'Neutral Good'},
@@ -81,60 +57,3 @@ export const ALIGNMENT_OPTIONS: readonly { value: CharacterAlignment; label: str
 ];
 
 export const DICE: readonly string[] = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20', 'd100'];
-
-
-// ===============================================================
-// EMPTY CHARACTER TEMPLATE (CORRECTED)
-// This is now correctly structured to match the 'Character' type.
-// ===============================================================
-
-export const EMPTY_CHARACTER: Character = {
-  id: 0,
-  name: 'New Character',
-  raceKey: '',
-  alignment: 'TRUE_NEUTRAL',
-  backgroundKey: '',
-  experiencePoints: 0,
-  portraitUrl: '',
-  classesInfo: [],
-  totalLevel: 1,
-  abilityScores: {
-    strength: 10, strengthModifier: 0,
-    dexterity: 10, dexterityModifier: 0,
-    constitution: 10, constitutionModifier: 0,
-    intelligence: 10, intelligenceModifier: 0,
-    wisdom: 10, wisdomModifier: 0,
-    charisma: 10, charismaModifier: 0,
-  },
-  maxHitPoints: 10,
-  currentHitPoints: 10,
-  temporaryHitPoints: 0,
-  armorClass: 10,
-  initiative: 0,
-  speed: 30,
-  proficiencyBonus: 2,
-  hitDice: '1d8',
-  deathSaveSuccesses: 0,
-  deathSaveFailures: 0,
-  skills: [],
-  savingThrowProficiencies: [],
-  equipment: [],
-  currency: {
-    copper: 0,
-    silver: 0,
-    electrum: 0,
-    gold: 0,
-    platinum: 0,
-  },
-  spells: [],
-  spellcastingAbility: undefined,
-  featuresAndTraits: '',
-  backstory: '',
-  personalityTraits: '',
-  ideals: '',
-  bonds: '',
-  flaws: '',
-  notes: '',
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString()
-};

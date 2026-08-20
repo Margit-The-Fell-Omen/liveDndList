@@ -6,6 +6,8 @@ import type {
   CharacterCreateRequest,
   CharacterSummary,
   CharacterUpdateRequest,
+  CustomFeatureResponse,
+  DndFeat,
   EquipmentData,
   EquipmentResponse,
   LoginCredentials,
@@ -253,30 +255,98 @@ export const referenceDataApi = {
 export const charactersApi = {
   getSummaries: async (params: PageParams = {}): Promise<PageResponse<CharacterSummary>> =>
       fetchWithAuth<PageResponse<CharacterSummary>>(`/characters${buildPageQuery(params)}`),
+
   getAllFull: async (params: PageParams = {}): Promise<PageResponse<Character>> =>
       fetchWithAuth<PageResponse<Character>>(`/characters/mine${buildPageQuery(params)}`),
+
   getById: async (id: number): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${id}`),
+
   create: async (data: CharacterCreateRequest): Promise<Character> =>
       fetchWithAuth<Character>('/characters', {method: 'POST', body: JSON.stringify(data)}),
+
   update: async (id: number, data: CharacterUpdateRequest): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${id}`, {method: 'PUT', body: JSON.stringify(data)}),
+
   delete: async (id: number): Promise<void> =>
       fetchWithAuth<void>(`/characters/${id}`, {method: 'DELETE'}),
+
   addEquipment: async (characterId: number, data: EquipmentData): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${characterId}/equipment`, {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+
   removeEquipment: async (characterId: number, equipmentId: number): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${characterId}/equipment/${equipmentId}`, {
         method: 'DELETE',
       }),
+
   addSpell: async (characterId: number, spellId: number): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${characterId}/spells/${spellId}`, {method: 'POST'}),
+
   removeSpell: async (characterId: number, spellId: number): Promise<Character> =>
       fetchWithAuth<Character>(`/characters/${characterId}/spells/${spellId}`, {method: 'DELETE'}),
+
+  // ── Choices ──────────────────────────────────────────────────
+  submitChoice: async (
+      characterId: number,
+      characterFeatureId: number,
+      choiceKey: string,
+      selectedValues: unknown[]
+  ): Promise<void> =>
+      fetchWithAuth<void>(
+          `/characters/${characterId}/features/${characterFeatureId}/choices/${choiceKey}`,
+          {method: 'PUT', body: JSON.stringify({selectedValues})}
+      ),
+
+  clearChoice: async (
+      characterId: number,
+      characterFeatureId: number,
+      choiceKey: string
+  ): Promise<void> =>
+      fetchWithAuth<void>(
+          `/characters/${characterId}/features/${characterFeatureId}/choices/${choiceKey}`,
+          {method: 'DELETE'}
+      ),
+
+  // ── Custom features ──────────────────────────────────────────
+  createCustomFeature: async (
+      characterId: number,
+      data: { name: string; description?: string }
+  ): Promise<CustomFeatureResponse> =>
+      fetchWithAuth<CustomFeatureResponse>(`/characters/${characterId}/custom-features`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+
+  updateCustomFeature: async (
+      characterId: number,
+      id: number,
+      data: { name: string; description?: string }
+  ): Promise<CustomFeatureResponse> =>
+      fetchWithAuth<CustomFeatureResponse>(`/characters/${characterId}/custom-features/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+      }),
+
+  deleteCustomFeature: async (characterId: number, id: number): Promise<void> =>
+      fetchWithAuth<void>(`/characters/${characterId}/custom-features/${id}`, {
+        method: 'DELETE',
+      }),
+
+  // ── Resources ────────────────────────────────────────────────
+  adjustResource: async (
+      characterId: number,
+      resourceKey: string,
+      delta: number
+  ): Promise<void> =>
+      fetchWithAuth<void>(`/characters/${characterId}/resources/${resourceKey}`, {
+        method: 'PATCH',
+        body: JSON.stringify({delta}),
+      }),
 };
+
 
 export const equipmentApi = {
   update: async (equipmentId: number, data: EquipmentData): Promise<EquipmentResponse> =>

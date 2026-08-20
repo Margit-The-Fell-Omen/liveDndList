@@ -1,5 +1,3 @@
-// types.ts
-
 // ═══════════════════════════════════════════════════════════════
 // UTILITY & PAGINATION TYPES
 // ═══════════════════════════════════════════════════════════════
@@ -15,9 +13,8 @@ export interface PageResponse<T> {
   empty: boolean;
 }
 
-
 // ═══════════════════════════════════════════════════════════════
-// USER & AUTH TYPES (Unchanged as requested)
+// USER & AUTH TYPES
 // ═══════════════════════════════════════════════════════════════
 
 export interface User {
@@ -48,7 +45,7 @@ export interface AuthResponse {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// REFERENCE DATA TYPES (Matches backend Open5e DTOs)
+// REFERENCE DATA TYPES
 // ═══════════════════════════════════════════════════════════════
 
 export interface DocumentInfo {
@@ -108,6 +105,11 @@ export interface Open5eDataForClassTable {
   columnValue: string;
 }
 
+export type FeatureType =
+    | 'CLASS_TABLE_DATA' | 'PROFICIENCY_BONUS' | 'CLASS_LEVEL_FEATURE'
+    | 'PROFICIENCIES' | 'STARTING_EQUIPMENT' | 'CLASS_FEATURE_OPTION_LIST'
+    | 'SPELL_SLOTS' | 'CORE_TRAITS_TABLE';
+
 export interface ClassFeature {
   name: string;
   key: string;
@@ -148,7 +150,7 @@ export interface Background {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// CHARACTER & SUB-COMPONENT TYPES (Matches backend DTOs)
+// PRIMITIVE ENUMS
 // ═══════════════════════════════════════════════════════════════
 
 export type CharacterAlignment =
@@ -156,14 +158,11 @@ export type CharacterAlignment =
     | 'LAWFUL_NEUTRAL' | 'TRUE_NEUTRAL' | 'CHAOTIC_NEUTRAL'
     | 'LAWFUL_EVIL' | 'NEUTRAL_EVIL' | 'CHAOTIC_EVIL' | 'UNALIGNED';
 
-export type FeatureType =
-    | 'CLASS_TABLE_DATA' | 'PROFICIENCY_BONUS' | 'CLASS_LEVEL_FEATURE'
-    | 'PROFICIENCIES' | 'STARTING_EQUIPMENT' | 'CLASS_FEATURE_OPTION_LIST'
-    | 'SPELL_SLOTS' | 'CORE_TRAITS_TABLE'
-
 export type AbilityType =
     | 'STRENGTH' | 'DEXTERITY' | 'CONSTITUTION'
     | 'INTELLIGENCE' | 'WISDOM' | 'CHARISMA';
+
+export type AbilityAbbr = 'STR' | 'DEX' | 'CON' | 'INT' | 'WIS' | 'CHA';
 
 export type SkillName =
     | 'ACROBATICS' | 'ANIMAL_HANDLING' | 'ARCANA' | 'ATHLETICS' | 'DECEPTION'
@@ -171,18 +170,26 @@ export type SkillName =
     | 'NATURE' | 'PERCEPTION' | 'PERFORMANCE' | 'PERSUASION' | 'RELIGION'
     | 'SLEIGHT_OF_HAND' | 'STEALTH' | 'SURVIVAL';
 
+// Used only in SavingThrows (legacy reference in constants.ts)
+export type AbilityName = AbilityType;
+
 export type EquipmentType = 'WEAPON' | 'ARMOR' | 'GEAR' | 'CONSUMABLE' | 'TOOL' | 'OTHER';
+
 export type SpellSchool =
-    'ABJURATION'
-    | 'CONJURATION'
-    | 'DIVINATION'
-    | 'ENCHANTMENT'
-    | 'EVOCATION'
-    | 'ILLUSION'
-    | 'NECROMANCY'
-    | 'TRANSMUTATION';
+    | 'ABJURATION' | 'CONJURATION' | 'DIVINATION' | 'ENCHANTMENT'
+    | 'EVOCATION' | 'ILLUSION' | 'NECROMANCY' | 'TRANSMUTATION';
 
 export type ArmorCategory = 'LIGHT' | 'MEDIUM' | 'HEAVY' | 'SHIELD';
+
+export type ChoiceOptionsSource =
+    | 'INLINE' | 'SKILL_LIST' | 'LANGUAGE_LIST' | 'FEAT_LIST'
+    | 'SPELL_LIST' | 'TOOL_LIST' | 'WEAPON_LIST' | 'ARMOR_LIST' | 'ABILITY_LIST';
+
+export type CreatureSize = 'TINY' | 'SMALL' | 'MEDIUM' | 'LARGE' | 'HUGE' | 'GARGANTUAN';
+
+// ═══════════════════════════════════════════════════════════════
+// ABILITY SCORES
+// ═══════════════════════════════════════════════════════════════
 
 export interface AbilityScores {
   strength: number;
@@ -208,14 +215,104 @@ export interface AbilityScoresResponse {
   charismaModifier: number;
 }
 
-export interface SkillResponse {
-  id: number;
-  skillType: SkillName;
-  abilityType: AbilityType;
-  proficient: boolean;
-  expertise: boolean;
-  totalBonus: number;
+// ═══════════════════════════════════════════════════════════════
+// PIPELINE OUTPUT TYPES (from ComputedCharacterState)
+// ═══════════════════════════════════════════════════════════════
+
+export interface SenseResponse {
+  senseType: string;
+  range: number;
 }
+
+export interface HitDiceEntryResponse {
+  die: string;
+  count: number;
+}
+
+export interface ProficienciesResponse {
+  armor: string[];
+  weapons: string[];
+  tools: string[];
+  languages: string[];
+}
+
+export interface ClassSpellcastingResponse {
+  classKey: string;
+  ability: string;
+  casterType: string;
+  spellSaveDc: number;
+  spellAttackBonus: number;
+  spellSlotsTotal: Record<number, number>;
+  spellSlotsUsed: Record<number, number>;
+  preparedSpellsCount: number | null;
+  spellList: string | null;
+  ritualCasting: boolean;
+}
+
+export interface SpellcastingResponse {
+  classes: ClassSpellcastingResponse[];
+}
+
+export interface ResourceResponse {
+  resourceKey: string;
+  displayName: string;
+  currentUses: number;
+  maxUses: number;
+  refreshOn: string;
+  sourceFeatureId: number | null;
+}
+
+export interface ActionResponse {
+  kind: 'ACTION' | 'BONUS_ACTION' | 'REACTION';
+  name: string;
+  description: string;
+  resourceKey: string | null;
+  uses: number | null;
+  refresh: string | null;
+}
+
+export interface AttackModifierResponse {
+  amount: number;
+  dice: string | null;
+  filter: unknown; // JsonNode — opaque on frontend for now
+}
+
+export interface FeatureChoiceAnswerResponse {
+  choiceKey: string;
+  name: string;
+  selectedValues: unknown; // JsonNode array
+}
+
+export interface CharacterFeatureResponse {
+  id: number;
+  name: string;
+  description: string;
+  source: 'CLASS' | 'SUBCLASS' | 'RACE' | 'SUBRACE' | 'BACKGROUND' | 'FEAT' | 'FIGHTING_STYLE' | 'CUSTOM';
+  sourceLabel: string;
+  sourceContext: unknown; // JsonNode
+  choices: FeatureChoiceAnswerResponse[];
+}
+
+export interface CustomFeatureResponse {
+  id: number;
+  name: string;
+  description: string;
+}
+
+export interface PendingChoiceResponse {
+  characterFeatureId: number;
+  choiceKey: string;
+  name: string;
+  description: string;
+  chooseCount: number;
+  optionsSource: ChoiceOptionsSource;
+  optionsFilter: unknown; // JsonNode
+  currentSelection: unknown | null;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EQUIPMENT & SPELL RESPONSES
+// ═══════════════════════════════════════════════════════════════
 
 export interface EquipmentResponse {
   id: number;
@@ -256,19 +353,23 @@ export interface SpellResponse {
   higherLevels?: string;
 }
 
-export interface CharacterCreateRequest {
-  name: string;
-  raceKey: string;
-  subraceKey?: string;
-  backgroundKey: string;
-  alignment?: CharacterAlignment;
-  classKey: string;
-  abilityScores: AbilityScores;
-  maxHitPoints: number;
-  portraitUrl?: string;
-  spellcastingAbility?: AbilityType;
+export interface SkillResponse {
+  id: number;
+  skillType: SkillName;
+  abilityType: AbilityType;
+  proficient: boolean;
+  expertise: boolean;
+  totalBonus: number;
 }
 
+// ═══════════════════════════════════════════════════════════════
+// CHARACTER TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export interface DndClassLevel {
+  level: number;
+  classKey: string;
+}
 
 export interface CharacterSummary {
   id: number;
@@ -282,6 +383,7 @@ export interface CharacterSummary {
   updatedAt: string;
 }
 
+
 export interface Character {
   id: number;
   name: string;
@@ -292,39 +394,88 @@ export interface Character {
   portraitUrl?: string;
   classesInfo: DndClassLevel[];
   totalLevel: number;
+
   abilityScores: AbilityScoresResponse;
+
   maxHitPoints: number;
   currentHitPoints: number;
   temporaryHitPoints: number;
+
   armorClass: number;
   armorClassBonus: number;
   initiative: number;
-  speed: number;
   proficiencyBonus: number;
-  hitDice: string;
+
+  speeds: Record<string, number>;
+
+  hitDice: Record<string, HitDiceEntryResponse>;
+
+  size: string;
+  creatureType: string;
+
   deathSaveSuccesses: number;
   deathSaveFailures: number;
+
   skills: SkillResponse[];
+
   savingThrowProficiencies: AbilityType[];
+
+  proficiencies: ProficienciesResponse | null;
+
+  senses: SenseResponse[];
+
+  damageResistances: string[];
+  damageImmunities: string[];
+  damageVulnerabilities: string[];
+  conditionImmunities: string[];
+
   equipment: EquipmentResponse[];
   currency: DndCurrencyResponse;
+
   spells: SpellResponse[];
   spellcastingAbility?: AbilityType;
-  featuresAndTraits: string;
+
+  spellcasting: SpellcastingResponse | null;
+
+  resources: ResourceResponse[];
+
+  actions: ActionResponse[];
+
+  attackModifiers: AttackModifierResponse[];
+
+  features: CharacterFeatureResponse[];
+
+  customFeatures: CustomFeatureResponse[];
+
+  pendingChoices: PendingChoiceResponse[];
+
   backstory: string;
   personalityTraits: string;
   ideals: string;
   bonds: string;
   flaws: string;
   notes: string;
+
   createdAt: string;
   updatedAt: string;
 }
 
-export interface DndClassLevel {
-  level: number;
+// ═══════════════════════════════════════════════════════════════
+// REQUEST TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export interface CharacterCreateRequest {
+  name: string;
+  raceKey: string;
+  backgroundKey: string;
+  alignment?: CharacterAlignment;
   classKey: string;
+  abilityScores: AbilityScores;
+  maxHitPoints: number;
+  portraitUrl?: string;
+  spellcastingAbility?: AbilityType;
 }
+
 
 export interface CharacterUpdateRequest {
   name?: string;
@@ -335,31 +486,34 @@ export interface CharacterUpdateRequest {
   maxHitPoints?: number;
   currentHitPoints?: number;
   temporaryHitPoints?: number;
-  armorClass?: number;
   armorClassBonus?: number;
-  speed?: number;
   portraitUrl?: string;
-  spellcastingAbility?: AbilityType;
+  spellcastingAbility?: string;
   backstory?: string;
   personalityTraits?: string;
   ideals?: string;
   bonds?: string;
   flaws?: string;
   notes?: string;
-  featuresAndTraits?: string;
   deathSaveSuccesses?: number;
   deathSaveFailures?: number;
-  savingThrowProficiencies?: AbilityType[];
-  skills?: SkillUpdateRequest[];
-  initiative?: number;
   dndClassLevels?: DndClassLevel[];
   experiencePoints?: number;
+  currency?: DndCurrencyResponse;
 }
 
-export interface SkillUpdateRequest {
-  id: number;
-  proficient?: boolean;
-  expertise?: boolean;
+export interface SubmitChoiceRequest {
+  selectedValues: unknown[];
+}
+
+export interface CustomFeatureRequest {
+  name: string;
+  description?: string;
+}
+
+export interface ResourceUpdateRequest {
+  current?: number;
+  delta?: number;
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -383,17 +537,24 @@ export interface CharacterContextType {
   updateCharacter: (id: number, data: CharacterUpdateRequest) => Promise<Character>;
   deleteCharacter: (id: number) => Promise<void>;
   clearError: () => void;
+  // Equipment
   addEquipment: (data: EquipmentData) => Promise<void>;
   updateEquipment: (itemId: number, data: EquipmentData) => Promise<void>;
   removeEquipment: (itemId: number) => Promise<void>;
   toggleEquipmentEquipped: (itemId: number) => Promise<void>;
+  // Spells
   addSpellToCharacter: (spellId: number) => Promise<void>;
   removeSpellFromCharacter: (spellId: number) => Promise<void>;
-  toggleSavingThrowProficiency: (ability: AbilityType) => Promise<void>;
-  toggleSkillProficiency: (skillId: number, isNowProficient: boolean) => Promise<void>;
-  toggleSkillExpertise: (skillId: number, isNowExpert: boolean) => Promise<void>;
+  // Choices
+  submitChoice: (characterFeatureId: number, choiceKey: string, selectedValues: unknown[]) => Promise<void>;
+  clearChoice: (characterFeatureId: number, choiceKey: string) => Promise<void>;
+  // Custom features
+  createCustomFeature: (name: string, description?: string) => Promise<void>;
+  updateCustomFeature: (id: number, name: string, description?: string) => Promise<void>;
+  deleteCustomFeature: (id: number) => Promise<void>;
+  // Resources
+  adjustResource: (resourceKey: string, delta: number) => Promise<void>;
 }
-
 
 export interface EquipmentData {
   name: string;

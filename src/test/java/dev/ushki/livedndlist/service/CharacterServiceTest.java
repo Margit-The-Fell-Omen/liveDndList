@@ -15,13 +15,18 @@ import static org.mockito.Mockito.when;
 import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
+import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCurrency;
+import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
+import dev.ushki.livedndlist.entity.dndCharacter.Spell;
+import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.enums.Role;
+import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
@@ -249,6 +254,143 @@ class CharacterServiceTest {
       verify(characterRepository, times(2)).findByIdFull(1L);
     }
 
+  }
+
+
+  @Nested
+  @DisplayName("Equipment Operations")
+  class EquipmentOperations {
+
+    @Test
+    @DisplayName("Should add equipment to character")
+    void shouldAddEquipmentToCharacter() {
+      EquipmentRequest request = EquipmentRequest.builder()
+          .name("Longsword")
+          .type(EquipmentType.WEAPON)
+          .build();
+
+      Equipment equipment = Equipment.builder()
+          .name("Longsword")
+          .type(EquipmentType.WEAPON)
+          .build();
+
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(equipmentMapper.toEntity(request)).thenReturn(equipment);
+      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      CharacterResponse result = characterService.addEquipment(1L, request, "testuser");
+
+      assertThat(result).isNotNull();
+      verify(characterRepository).save(testCharacter);
+    }
+
+    @Test
+    @DisplayName("Should remove equipment from character")
+    void shouldRemoveEquipmentFromCharacter() {
+      Equipment equipment = Equipment.builder()
+          .id(1L)
+          .name("Longsword")
+          .build();
+
+      testCharacter.getEquipment().add(equipment);
+
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      CharacterResponse result = characterService.removeEquipment(1L, 1L, "testuser");
+
+      assertThat(result).isNotNull();
+      verify(characterRepository).save(testCharacter);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when equipment not found")
+    void shouldThrowExceptionWhenEquipmentNotFound() {
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+
+      assertThatThrownBy(() -> characterService.removeEquipment(1L, 999L, "testuser"))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("Equipment");
+    }
+  }
+
+  @Nested
+  @DisplayName("Spell Operations")
+  class SpellOperations {
+
+    @Test
+    @DisplayName("Should add spell to character")
+    void shouldAddSpellToCharacter() {
+      Spell spell = Spell.builder()
+          .id(1L)
+          .name("Fireball")
+          .level(3)
+          .school(SpellSchool.EVOCATION)
+          .build();
+
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(spellRepository.findById(1L)).thenReturn(Optional.of(spell));
+      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      CharacterResponse result = characterService.addSpell(1L, 1L, "testuser");
+
+      assertThat(result).isNotNull();
+      verify(characterRepository).save(testCharacter);
+    }
+
+    @Test
+    @DisplayName("Should remove spell from character")
+    void shouldRemoveSpellFromCharacter() {
+      Spell spell = Spell.builder()
+          .id(1L)
+          .name("Fireball")
+          .level(3)
+          .build();
+
+      testCharacter.getSpells().add(spell);
+
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(spellRepository.findById(1L)).thenReturn(Optional.of(spell));
+      when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
+      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+
+      CharacterResponse result = characterService.removeSpell(1L, 1L, "testuser");
+
+      assertThat(result).isNotNull();
+      verify(characterRepository).save(testCharacter);
+    }
+
+    @Test
+    @DisplayName("Should throw exception when spell not found for add")
+    void shouldThrowExceptionWhenSpellNotFoundForAdd() {
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(spellRepository.findById(999L)).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> characterService.addSpell(1L, 999L, "testuser"))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("Spell");
+    }
+
+    @Test
+    @DisplayName("Should throw exception when spell not found for remove")
+    void shouldThrowExceptionWhenSpellNotFoundForRemove() {
+      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
+          Optional.of(testCharacter));
+      when(spellRepository.findById(999L)).thenReturn(Optional.empty());
+
+      assertThatThrownBy(() -> characterService.removeSpell(1L, 999L, "testuser"))
+          .isInstanceOf(ResourceNotFoundException.class)
+          .hasMessageContaining("Spell");
+    }
   }
 
   @Nested

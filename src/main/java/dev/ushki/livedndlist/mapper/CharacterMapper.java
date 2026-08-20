@@ -496,6 +496,10 @@ public class CharacterMapper {
     updateIfPresent(request.getDeathSaveSuccesses(), character::setDeathSaveSuccesses);
     updateIfPresent(request.getExperiencePoints(), character::setExperiencePoints);
 
+    if (request.getCurrency() != null) {
+      character.setCurrency(mapCurrencyResponse(request.getCurrency()));
+    }
+
     if (request.getBackgroundKey() != null) {
       Background background = backgroundRepository.findByKey(request.getBackgroundKey())
           .orElseThrow(() -> new ResourceNotFoundException(
@@ -573,6 +577,20 @@ public class CharacterMapper {
         .electrum(currency.getElectrum())
         .gold(currency.getGold())
         .platinum(currency.getPlatinum())
+        .build();
+  }
+
+  private DndCurrency mapCurrencyResponse(DndCurrencyResponse dto) {
+    if (dto == null) {
+      return null;
+    }
+
+    return DndCurrency.builder()
+        .copper(dto.getCopper())
+        .silver(dto.getSilver())
+        .electrum(dto.getElectrum())
+        .gold(dto.getGold())
+        .platinum(dto.getPlatinum())
         .build();
   }
 

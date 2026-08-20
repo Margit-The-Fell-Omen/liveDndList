@@ -4,11 +4,14 @@ import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.cache.CompositeKey;
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
+import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
+import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
+import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.exceptions.UnauthorizedException;
 import dev.ushki.livedndlist.mapper.CharacterMapper;
@@ -155,11 +158,14 @@ public class CharacterService {
 
     characterFeatureMaterializer.syncFeatures(savedCharacter.getId());
 
-    return characterMapper.toResponse(savedCharacter);
+    ComputedCharacterState state = characterPipelineService.compute(savedCharacter.getId());
+    return characterMapper.toResponse(savedCharacter, state);
   }
 
   public CharacterResponse update(Long id, CharacterUpdateRequest request, String username) {
-    DndCharacter character = findCharacterWithOwnershipCheck(id, username);
+    DndCharacter character = characterRepository.findByIdFull(id)
+        .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
+    verifyOwnership(character, username);
     log.info("Found character: {}", character);
     characterMapper.updateEntity(character, request);
     log.info("Found request: {}", request);
@@ -175,7 +181,8 @@ public class CharacterService {
       characterFeatureMaterializer.syncFeatures(savedCharacter.getId());
     }
 
-    return characterMapper.toResponse(savedCharacter);
+    ComputedCharacterState state = characterPipelineService.compute(savedCharacter.getId());
+    return characterMapper.toResponse(savedCharacter, state);
   }
 
   @Transactional
@@ -190,6 +197,67 @@ public class CharacterService {
     characterRepository.deleteCharacterById(id);
 
     cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+  }
+
+  public CharacterResponse addEquipment(Long characterId, EquipmentRequest request,
+      String username) {
+    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
+
+    Equipment equipment = equipmentMapper.toEntity(request);
+    character.addEquipment(equipment);
+
+    DndCharacter savedCharacter = characterRepository.save(character);
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+
+    return characterMapper.toResponse(savedCharacter);
+  }
+
+  public CharacterResponse removeEquipment(Long characterId, Long equipmentId, String username) {
+    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
+
+    Equipment equipment = character.getEquipment().stream()
+        .filter(e -> e.getId().equals(equipmentId))
+        .findFirst()
+        .orElseThrow(() -> new ResourceNotFoundException("Equipment", "id", equipmentId));
+
+    character.removeEquipment(equipment);
+
+    DndCharacter savedCharacter = characterRepository.save(character);
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+
+    return characterMapper.toResponse(savedCharacter);
+  }
+
+  public CharacterResponse addSpell(Long characterId, Long spellId, String username) {
+    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
+
+    Spell spell = spellRepository.findById(spellId)
+        .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", spellId));
+
+    character.addSpell(spell);
+
+    DndCharacter savedCharacter = characterRepository.save(character);
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+
+    return characterMapper.toResponse(savedCharacter);
+  }
+
+  public CharacterResponse removeSpell(Long characterId, Long spellId, String username) {
+    DndCharacter character = findCharacterWithOwnershipCheck(characterId, username);
+
+    Spell spell = spellRepository.findById(spellId)
+        .orElseThrow(() -> new ResourceNotFoundException("Spell", "id", spellId));
+
+    character.removeSpell(spell);
+
+    DndCharacter savedCharacter = characterRepository.save(character);
+
+    cacheManager.invalidateByPrefix(USER_RESOURCE + username);
+
+    return characterMapper.toResponse(savedCharacter);
   }
 
   public int restoreAllCharactersHitPoints(String username) {
@@ -212,7 +280,8 @@ public class CharacterService {
           .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));
 
       verifyOwnership(character, username);
-      return characterMapper.toResponse(character);
+      ComputedCharacterState state = characterPipelineService.compute(id);
+      return characterMapper.toResponse(character, state);
     });
   }
 

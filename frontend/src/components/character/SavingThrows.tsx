@@ -1,44 +1,56 @@
-// src/components/character/SavingThrows.tsx
-
 import {ABILITIES} from '@/utils/constants';
-import {formatModifier, getAbilityModifier} from '@/utils/helpers';
+
+import {formatModifier} from '@/utils/helpers';
 import {useCharacter} from '@/context/CharacterContext';
-import type {AbilityName} from '@/types';
+import {Card} from '@/components/common/Card';
 import styles from './SavingThrows.module.css';
-import {Card} from "@components/common/Card.tsx";
 
 export function SavingThrows({className}: { className?: string }) {
-  const {currentCharacter, toggleSavingThrowProficiency} = useCharacter();
+  const {currentCharacter} = useCharacter();
 
   if (!currentCharacter) return null;
 
-  const {proficiencyBonus} = currentCharacter;
+  const {proficiencyBonus, savingThrowProficiencies = [], abilityScores} = currentCharacter;
+
+  const grantedSet = new Set(savingThrowProficiencies);
 
   return (
       <Card title="Saving Throws" className={className}>
         <div className={styles.list}>
-          {ABILITIES.map((abilityInfo) => {
-            const score = currentCharacter.abilityScores[abilityInfo.key as keyof typeof currentCharacter.abilityScores];
-            const abilityName = abilityInfo.key.toUpperCase() as AbilityName;
-            const isProficient = (currentCharacter.savingThrowProficiencies || []).includes(abilityName);
-            const baseModifier = getAbilityModifier(score);
+          {ABILITIES.map(abilityInfo => {
+            const scoreKey = abilityInfo.key as keyof typeof abilityScores;
+            const score = abilityScores[scoreKey] ?? 10;
+            const abilityName = abilityInfo.name.toUpperCase() as typeof savingThrowProficiencies[number];
+            const isProficient = grantedSet.has(abilityName);
+            const baseModifier = Math.floor((Number(score) - 10) / 2);
             const totalModifier = baseModifier + (isProficient ? proficiencyBonus : 0);
 
             return (
                 <div key={abilityInfo.key} className={styles.row}>
-                  <button
-                      type="button"
+                  {/* Read-only indicator — pipeline owns save proficiencies */}
+                  <span
                       className={`${styles.checkbox} ${isProficient ? styles.checked : ''}`}
-                      onClick={() => toggleSavingThrowProficiency(abilityName)}
+                      title={isProficient ? 'Proficiency granted by class feature' : 'Not proficient'}
+                      aria-label={`${abilityInfo.name} saving throw ${isProficient ? 'proficient' : 'not proficient'}`}
                   >
-                    {isProficient ? '●' : '○'}
-                  </button>
+                {isProficient ? '●' : '○'}
+              </span>
+
                   <span className={styles.modifier}>{formatModifier(totalModifier)}</span>
                   <span className={styles.name}>{abilityInfo.name}</span>
+
+                  {isProficient && (
+                      <span className={styles.grantedTag} title="Granted by class feature">
+                  ✦
+                </span>
+                  )}
                 </div>
             );
           })}
         </div>
+        <p className={styles.hint}>
+          Saving throw proficiencies are granted by your class and features.
+        </p>
       </Card>
   );
 }

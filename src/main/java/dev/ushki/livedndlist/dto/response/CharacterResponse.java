@@ -1,6 +1,5 @@
 package dev.ushki.livedndlist.dto.response;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.dto.DndClassLevelDto;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
@@ -262,43 +261,6 @@ public class CharacterResponse {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class AttackModifierResponse {
-
-    private Integer amount;
-    private String dice;
-    private JsonNode filter;
-  }
-
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class CharacterFeatureResponse {
-
-    private Long id;
-    private String name;
-    private String description;
-    private String source;
-    private String sourceLabel;
-    private JsonNode sourceContext;
-    private List<FeatureChoiceAnswerResponse> choices;
-  }
-
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class FeatureChoiceAnswerResponse {
-
-    private String choiceKey;
-    private String name;
-    private JsonNode selectedValues;
-  }
-
-  @Data
-  @Builder
-  @NoArgsConstructor
-  @AllArgsConstructor
   public static class CustomFeatureResponse {
 
     private Long id;
@@ -318,7 +280,45 @@ public class CharacterResponse {
     private String description;
     private Integer chooseCount;
     private String optionsSource;
-    private JsonNode optionsFilter;
-    private JsonNode currentSelection;
+    private Object optionsFilter;      // was JsonNode
+    private Object currentSelection;   // was JsonNode
   }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class CharacterFeatureResponse {
+
+    private Long id;
+    private String name;
+    private String description;
+    private String source;
+    private String sourceLabel;
+    private Object sourceContext;       // was JsonNode
+    private List<FeatureChoiceAnswerResponse> choices;
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class FeatureChoiceAnswerResponse {
+
+    private String choiceKey;
+    private String name;
+    private Object selectedValues;     // was JsonNode
+  }
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AttackModifierResponse {
+
+    private Integer amount;
+    private String dice;
+    private Object filter;             // was JsonNode
+  }
+
 }

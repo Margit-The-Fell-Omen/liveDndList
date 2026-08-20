@@ -1,7 +1,7 @@
 package dev.ushki.livedndlist.service.features;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeatureChoice;
@@ -32,8 +32,8 @@ public class FeatureEffectResolver {
 
   private final CharacterFeatureRepository characterFeatureRepository;
   private final FeatureCatalogService featureCatalogService;
-  private final ObjectMapper objectMapper;
 
+  private static final JsonNodeFactory JSON = JsonNodeFactory.instance;
   private static final int MAX_PASSES = 3;
 
   public ResolvedEffects resolve(long characterId) {
@@ -61,9 +61,7 @@ public class FeatureEffectResolver {
       processedFeatureIds.addAll(newFeatureIds);
 
       List<CharacterFeature> syntheticFeatures = newFeatureIds.stream()
-          .map(id -> {
-            return findExistingOrSynthetic(characterFeatures, id);
-          })
+          .map(id -> findExistingOrSynthetic(characterFeatures, id))
           .toList();
 
       resolvePass(syntheticFeatures, allEffects, allPending);
@@ -155,7 +153,7 @@ public class FeatureEffectResolver {
 
     if (selectedValues.isArray()) {
       for (JsonNode value : selectedValues) {
-        ObjectNode expandedPayload = objectMapper.createObjectNode();
+        ObjectNode expandedPayload = JSON.objectNode();
         expandedPayload.setAll((ObjectNode) effect.getPayload().deepCopy());
 
         if (value.isTextual()) {

@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.dto.request;
 
 import dev.ushki.livedndlist.dto.DndClassLevelDto;
+import dev.ushki.livedndlist.dto.response.DndCurrencyResponse;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -66,6 +67,9 @@ public class CharacterUpdateRequest {
 
   @Schema(description = "Personality traits")
   private String personalityTraits;
+
+  @Schema(description = "Currency")
+  private DndCurrencyResponse currency;
 
   @Schema(description = "Ideals")
   private String ideals;

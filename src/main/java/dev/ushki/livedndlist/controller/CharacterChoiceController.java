@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ushki.livedndlist.dto.request.SubmitChoiceRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.security.CharacterOwnershipVerifier;
@@ -25,6 +26,7 @@ public class CharacterChoiceController {
 
   private final CharacterChoiceService choiceService;
   private final CharacterOwnershipVerifier ownershipVerifier;
+  private final ObjectMapper objectMapper;
 
   @PutMapping("/{choiceKey}")
   @Operation(summary = "Submit or update a choice on a character feature")
@@ -35,8 +37,12 @@ public class CharacterChoiceController {
       @Valid @RequestBody SubmitChoiceRequest request
   ) {
     ownershipVerifier.verifyOwnership(characterId);
-    choiceService.submitChoice(characterId, characterFeatureId, choiceKey,
-        request.getSelectedValues());
+    choiceService.submitChoice(
+        characterId,
+        characterFeatureId,
+        choiceKey,
+        objectMapper.valueToTree(request.getSelectedValues())
+    );
     return ApiResponse.success(null);
   }
 

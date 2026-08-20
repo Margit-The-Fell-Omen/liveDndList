@@ -1,17 +1,4 @@
-.skills {
-  background-color: var(--color-bg-secondary);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  border: 1px solid var(--color-border-light);
-}
-
-.title {
-  font-family: var(--font-family-primary);
-  font-size: var(--font-size-xl);
-  margin: 0 0 var(--space-md) 0;
-  color: var(--color-text-primary);
-}
-
+/* Skills.module.css */
 .skillList {
   display: flex;
   flex-direction: column;
@@ -43,23 +30,34 @@
   border: 2px solid var(--color-border);
   background: none;
   color: transparent;
-  cursor: pointer;
-  transition: all var(--transition-fast);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
+  cursor: default;
 }
 
-.checkbox:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.expertiseBox {
+  border-radius: 2px;
+  transform: rotate(45deg);
+  font-size: 8px;
 }
 
 .checkbox.checked {
   background-color: var(--color-accent-primary);
   border-color: var(--color-accent-primary);
+  color: white;
+}
+
+.checkbox.granted {
+  border-color: var(--color-accent-secondary, #7c6f9e);
+  background-color: color-mix(in srgb, var(--color-accent-secondary, #7c6f9e) 15%, transparent);
+}
+
+.checkbox.granted.checked {
+  background-color: var(--color-accent-secondary, #7c6f9e);
+  border-color: var(--color-accent-secondary, #7c6f9e);
   color: white;
 }
 
@@ -72,6 +70,7 @@
 }
 
 .skillInfo {
+  flex: 1;
   display: flex;
   align-items: baseline;
   gap: var(--space-xs);
@@ -86,4 +85,12 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   text-transform: uppercase;
+}
+
+.grantedTag {
+  font-size: 10px;
+  color: var(--color-accent-secondary, #7c6f9e);
+  line-height: 1;
+  flex-shrink: 0;
+  title: 'Granted by feature';
 }

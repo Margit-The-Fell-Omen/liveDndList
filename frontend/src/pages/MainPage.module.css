@@ -1,5 +1,24 @@
 /* src/pages/MainPage.module.css */
 
+.globalAlert {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  background: color-mix(in srgb, #e6a817 12%, var(--color-bg-secondary));
+  border: 1px solid #e6a817;
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.alertIcon {
+  color: #e6a817;
+  font-size: var(--font-size-md);
+  flex-shrink: 0;
+}
+
 .page {
   padding-bottom: var(--space-2xl);
 }

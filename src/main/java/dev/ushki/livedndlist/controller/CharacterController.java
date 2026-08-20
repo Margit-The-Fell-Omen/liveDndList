@@ -2,6 +2,7 @@ package dev.ushki.livedndlist.controller;
 
 import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
 import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
+import dev.ushki.livedndlist.dto.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
@@ -67,6 +68,66 @@ public class CharacterController {
         userDetails.getUsername(), minLevel, maxLevel, pageable);
 
     return ApiResponse.success(page);
+  }
+
+  @PostMapping("/{id}/equipment")
+  @Operation(summary = "Add equipment to character",
+      description = "Add new equipment item to character inventory")
+  public ApiResponse<CharacterResponse> addEquipment(
+      @Parameter(description = "Character ID", example = "1", required = true)
+      @PathVariable Long id,
+      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+          description = "Equipment details",
+          required = true,
+          content = @Content(schema = @Schema(implementation = EquipmentRequest.class))
+      )
+      @Valid @RequestBody EquipmentRequest request,
+      @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response =
+        characterService.addEquipment(id, request, userDetails.getUsername());
+    return ApiResponse.success("Equipment added", response);
+  }
+
+  @DeleteMapping("/{id}/equipment/{equipmentId}")
+  @Operation(summary = "Remove equipment from character",
+      description = "Remove equipment item from character inventory")
+  public ApiResponse<CharacterResponse> removeEquipment(
+      @Parameter(description = "Character ID", example = "1", required = true)
+      @PathVariable Long id,
+      @Parameter(description = "Equipment ID", example = "10", required = true)
+      @PathVariable Long equipmentId,
+      @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response =
+        characterService.removeEquipment(id, equipmentId, userDetails.getUsername());
+    return ApiResponse.success("Equipment removed", response);
+  }
+
+  @PostMapping("/{id}/spells/{spellId}")
+  @Operation(summary = "Add spell to character",
+      description = "Add a spell to character's spell list")
+  public ApiResponse<CharacterResponse> addSpell(
+      @Parameter(description = "Character ID", example = "1", required = true)
+      @PathVariable Long id,
+      @Parameter(description = "Spell ID", example = "15", required = true)
+      @PathVariable Long spellId,
+      @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response =
+        characterService.addSpell(id, spellId, userDetails.getUsername());
+    return ApiResponse.success("Spell added", response);
+  }
+
+  @DeleteMapping("/{id}/spells/{spellId}")
+  @Operation(summary = "Remove spell from character",
+      description = "Remove a spell from character's spell list")
+  public ApiResponse<CharacterResponse> removeSpell(
+      @Parameter(description = "Character ID", example = "1", required = true)
+      @PathVariable Long id,
+      @Parameter(description = "Spell ID", example = "15", required = true)
+      @PathVariable Long spellId,
+      @Parameter(hidden = true) @AuthenticationPrincipal UserDetails userDetails) {
+    CharacterResponse response =
+        characterService.removeSpell(id, spellId, userDetails.getUsername());
+    return ApiResponse.success("Spell removed", response);
   }
 
   @GetMapping("/search")

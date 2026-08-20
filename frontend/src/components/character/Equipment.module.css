@@ -25,6 +25,77 @@
   letter-spacing: 0.03em;
 }
 
+.currencyRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--color-bg-tertiary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.coinGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.coinLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.coinInput::-webkit-outer-spin-button,
+.coinInput::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.coinInput {
+  -moz-appearance: textfield;
+}
+
+.deleteButton {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-md);
+  line-height: 1;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteButton:hover {
+  color: var(--color-error);
+  background: var(--color-bg-hover);
+}
+
+.coinInput {
+  width: 100%;
+  max-width: 60px;
+  text-align: center;
+  padding: var(--space-xs);
+  font-size: var(--font-size-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+.coinInput:focus {
+  border-color: var(--color-accent-primary);
+  outline: none;
+}
+
 .itemStat {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);

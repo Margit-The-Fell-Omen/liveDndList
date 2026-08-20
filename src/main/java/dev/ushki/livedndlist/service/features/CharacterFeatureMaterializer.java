@@ -1,6 +1,6 @@
 package dev.ushki.livedndlist.service.features;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel;
@@ -32,7 +32,8 @@ public class CharacterFeatureMaterializer {
   private final CharacterFeatureRepository characterFeatureRepository;
   private final CharacterSubclassChoiceRepository subclassChoiceRepository;
   private final FeatureCatalogService featureCatalogService;
-  private final ObjectMapper objectMapper;
+
+  private static final JsonNodeFactory JSON = JsonNodeFactory.instance;
 
   @Transactional
   public void syncFeatures(long characterId) {
@@ -116,7 +117,7 @@ public class CharacterFeatureMaterializer {
       String classKey = classLevel.getDndClass().getKey();
       int level = classLevel.getLevel();
 
-      ObjectNode classContext = objectMapper.createObjectNode();
+      ObjectNode classContext = JSON.objectNode();
       classContext.put("classKey", classKey);
 
       for (Feature f : featureCatalogService.findClassFeaturesUpToLevel(classKey, level)) {
@@ -142,7 +143,7 @@ public class CharacterFeatureMaterializer {
       for (CharacterFeat cf : character.getFeats()) {
         String featKey = cf.getFeat().getKey();
         for (Feature f : featureCatalogService.findBySource(FeatureSourceType.FEAT, featKey)) {
-          ObjectNode ctx = objectMapper.createObjectNode();
+          ObjectNode ctx = JSON.objectNode();
           ctx.put("featKey", featKey);
           target.add(new TargetFeature(f, CharacterFeatureSource.FEAT, ctx));
         }
@@ -153,7 +154,7 @@ public class CharacterFeatureMaterializer {
   }
 
   private ObjectNode emptyContext() {
-    return objectMapper.createObjectNode();
+    return JSON.objectNode();
   }
 
   private String reconciliationKey(CharacterFeature cf) {

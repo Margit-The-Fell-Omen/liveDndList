@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.service.features;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeatureChoice;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureChoice;
@@ -9,6 +10,7 @@ import dev.ushki.livedndlist.enums.FeatureEffectType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.repository.CharacterFeatureChoiceRepository;
 import dev.ushki.livedndlist.repository.CharacterFeatureRepository;
+import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -33,6 +35,9 @@ public class CharacterChoiceService {
   private final FeatureCatalogService featureCatalogService;
   private final CharacterFeatService characterFeatService;
   private final CharacterFeatureMaterializer materializer;
+  private final CharacterPipelineService pipelineService;
+  private final ChoiceValidator choiceValidator;
+  private final CacheManager cacheManager;
 
   public void submitChoice(long characterId, long characterFeatureId, String choiceKey,
       JsonNode selectedValues) {
@@ -52,15 +57,8 @@ public class CharacterChoiceService {
         .orElseThrow(() -> new IllegalArgumentException(
             "No choice with key '" + choiceKey + "' on feature " + cf.getFeature().getKey()));
 
-    if (!selectedValues.isArray()) {
-      throw new IllegalArgumentException("selectedValues must be a JSON array");
-    }
-
-    if (selectedValues.size() != choiceDefinition.getChooseCount()) {
-      throw new IllegalArgumentException(
-          "Expected " + choiceDefinition.getChooseCount() + " selections, got "
-              + selectedValues.size());
-    }
+    ComputedCharacterState state = pipelineService.compute(characterId);
+    choiceValidator.validate(choiceDefinition, selectedValues, cf, state);
 
     Optional<CharacterFeatureChoice> existingChoice =
         choiceRepository.findByCharacterFeatureIdAndChoiceKey(characterFeatureId, choiceKey);
@@ -81,6 +79,10 @@ public class CharacterChoiceService {
 
     handleSideEffects(characterId, cf, choiceKey, selectedValues);
 
+    // Invalidate all caches for the character's owner so getById returns fresh pipeline data
+    String ownerUsername = cf.getCharacter().getOwner().getUsername();
+    cacheManager.invalidateByPrefix("User:" + ownerUsername);
+
     log.info("Submitted choice {} for character feature {} on character {}",
         choiceKey, characterFeatureId, characterId);
   }
@@ -97,6 +99,10 @@ public class CharacterChoiceService {
 
     choiceRepository.deleteByCharacterFeatureIdAndChoiceKey(characterFeatureId, choiceKey);
     materializer.syncFeatures(characterId);
+
+    String ownerUsername = cf.getCharacter().getOwner().getUsername();
+    cacheManager.invalidateByPrefix("User:" + ownerUsername);
+
     log.info("Cleared choice {} for character feature {} on character {}",
         choiceKey, characterFeatureId, characterId);
   }

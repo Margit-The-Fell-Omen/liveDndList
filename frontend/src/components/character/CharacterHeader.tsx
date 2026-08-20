@@ -1,3 +1,4 @@
+// src/components/character/CharacterHeader.tsx
 import {type ChangeEvent, useEffect, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Input, Select} from '@/components/common/Input';
@@ -7,6 +8,7 @@ import {useDebouncedCallback} from '@/hooks/useDebounce';
 import {RacePickerModal} from './RacePickerModal';
 import {ClassManagerModal} from './ClassManagerModal';
 import {ClassPickerModal} from './ClassPickerModal';
+import {BackgroundPickerModal} from './BackgroundPickerModal'; // <--- NEW IMPORT
 import {LevelUpModal} from './LevelUpModal';
 import {LevelDownModal} from './LevelDownModal';
 import {SetLevelModal} from './SetLevelModal';
@@ -33,6 +35,7 @@ export function CharacterHeader({className}: { className?: string }) {
 
   const [isRacePickerOpen, setIsRacePickerOpen] = useState(false);
   const [isClassManagerOpen, setIsClassManagerOpen] = useState(false);
+  const [isBackgroundPickerOpen, setIsBackgroundPickerOpen] = useState(false); // <--- NEW STATE
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
   const [isLevelDownOpen, setIsLevelDownOpen] = useState(false);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
@@ -56,9 +59,11 @@ export function CharacterHeader({className}: { className?: string }) {
 
   if (!currentCharacter) return null;
 
-  const backgroundOptions = backgrounds.map(bg => ({value: bg.key, label: bg.name}));
   const raceDisplay =
       getRaceDisplayName(races, currentCharacter.raceKey) || currentCharacter.raceKey || 'N/A';
+
+  // Find the friendly display name for the currently selected background
+  const backgroundDisplay = backgrounds.find(bg => bg.key === currentCharacter.backgroundKey)?.name || currentCharacter.backgroundKey || 'N/A';
 
   const classDisplay = formatClassLevels(classes, currentCharacter.classesInfo);
   const takenClassKeys = currentCharacter.classesInfo.map(entry => entry.classKey);
@@ -75,11 +80,6 @@ export function CharacterHeader({className}: { className?: string }) {
     debouncedUpdate({name: e.target.value});
   };
 
-  const handleBackgroundChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setBackgroundKey(e.target.value);
-    debouncedUpdate({backgroundKey: e.target.value});
-  };
-
   const handleAlignmentChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setAlignment(e.target.value);
     debouncedUpdate({alignment: e.target.value});
@@ -94,6 +94,12 @@ export function CharacterHeader({className}: { className?: string }) {
   const handleRaceConfirm = async (raceKey: string) => {
     await updateCharacter(currentCharacter.id, {raceKey});
     setIsRacePickerOpen(false);
+  };
+
+  const handleBackgroundConfirm = async (bgKey: string) => {
+    await updateCharacter(currentCharacter.id, {backgroundKey: bgKey});
+    setBackgroundKey(bgKey);
+    setIsBackgroundPickerOpen(false);
   };
 
   const persistClassList = async (nextClasses: DndClassLevel[]) => {
@@ -196,13 +202,19 @@ export function CharacterHeader({className}: { className?: string }) {
               </button>
             </div>
 
-            <Select
-                label="Background"
-                name="background"
-                value={backgroundKey}
-                onChange={handleBackgroundChange}
-                options={backgroundOptions}
-            />
+            {/* NEW BACKGROUND BUTTON */}
+            <div className={styles.raceField}>
+              <label className={styles.raceLabel}>Background</label>
+              <button
+                  type="button"
+                  className={styles.raceButton}
+                  onClick={() => setIsBackgroundPickerOpen(true)}
+              >
+                <span className={styles.raceValue}>{backgroundDisplay}</span>
+                <span className={styles.raceEditIcon} aria-hidden="true">✎</span>
+              </button>
+            </div>
+
             <Select
                 label="Alignment"
                 name="alignment"
@@ -237,6 +249,16 @@ export function CharacterHeader({className}: { className?: string }) {
             races={races}
             initialRaceKey={currentCharacter.raceKey}
             onConfirm={handleRaceConfirm}
+            saving={saving}
+        />
+
+        {/* NEW BACKGROUND MODAL */}
+        <BackgroundPickerModal
+            isOpen={isBackgroundPickerOpen}
+            onClose={() => setIsBackgroundPickerOpen(false)}
+            backgrounds={backgrounds}
+            initialBackgroundKey={currentCharacter.backgroundKey}
+            onConfirm={handleBackgroundConfirm}
             saving={saving}
         />
 

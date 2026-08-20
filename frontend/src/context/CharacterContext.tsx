@@ -2,7 +2,6 @@ import {createContext, type ReactNode, useCallback, useContext, useEffect, useSt
 import {charactersApi, equipmentApi, referenceDataApi} from '@/services/api';
 import {useAuth} from './AuthContext';
 import type {
-  AbilityType,
   Background,
   Character,
   CharacterClass,
@@ -50,7 +49,6 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, []);
 
-
   const fetchCharacters = useCallback(async (): Promise<void> => {
     if (!isAuthenticated) return;
     try {
@@ -92,17 +90,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     }
   }, [isAuthenticated, fetchReferenceData, fetchCharacters]);
 
-  const createCharacter = async (data: CharacterCreateRequest): Promise<Character> => {
-    setSaving(true);
-    try {
-      const newChar = await charactersApi.create(data);
-      await fetchCharacters();
-      await selectCharacter(newChar.id);
-      return newChar;
-    } finally {
-      setSaving(false);
-    }
-  };
+  // ── Core character helpers ──────────────────────────────────
 
   const setAndMergeCurrentCharacter = (updatedChar: Partial<Character>) => {
     setCurrentCharacter(prev => {
@@ -115,6 +103,11 @@ export function CharacterProvider({children}: CharacterProviderProps) {
         spells: updatedChar.spells ?? prev.spells,
         savingThrowProficiencies: updatedChar.savingThrowProficiencies ?? prev.savingThrowProficiencies,
         classesInfo: updatedChar.classesInfo ?? prev.classesInfo,
+        features: updatedChar.features ?? prev.features,
+        customFeatures: updatedChar.customFeatures ?? prev.customFeatures,
+        pendingChoices: updatedChar.pendingChoices ?? prev.pendingChoices,
+        resources: updatedChar.resources ?? prev.resources,
+        proficiencies: updatedChar.proficiencies ?? prev.proficiencies,
       };
     });
 
@@ -131,9 +124,29 @@ export function CharacterProvider({children}: CharacterProviderProps) {
                   portraitUrl: updatedChar.portraitUrl ?? summary.portraitUrl,
                   updatedAt: updatedChar.updatedAt ?? summary.updatedAt,
                 }
-                : summary,
-        ),
+                : summary
+        )
     );
+  };
+
+  const refreshCurrentCharacter = async (): Promise<void> => {
+    if (!currentCharacter) return;
+    const fresh = await charactersApi.getById(currentCharacter.id);
+    setAndMergeCurrentCharacter(fresh);
+  };
+
+  // ── CRUD ────────────────────────────────────────────────────
+
+  const createCharacter = async (data: CharacterCreateRequest): Promise<Character> => {
+    setSaving(true);
+    try {
+      const newChar = await charactersApi.create(data);
+      await fetchCharacters();
+      await selectCharacter(newChar.id);
+      return newChar;
+    } finally {
+      setSaving(false);
+    }
   };
 
   const updateCharacter = async (id: number, data: CharacterUpdateRequest): Promise<Character> => {
@@ -152,6 +165,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (currentCharacter?.id === id) setCurrentCharacter(null);
     await fetchCharacters();
   };
+
+  // ── Equipment ───────────────────────────────────────────────
 
   const addEquipment = async (data: EquipmentData): Promise<void> => {
     if (!currentCharacter) throw new Error('No character selected.');
@@ -184,7 +199,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
         if (!prev) return null;
         return {
           ...prev,
-          equipment: prev.equipment.map(item => (item.id === itemId ? updatedItem : item))
+          equipment: prev.equipment.map(item => (item.id === itemId ? updatedItem : item)),
         };
       });
     } finally {
@@ -209,13 +224,14 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     });
   };
 
+  // ── Spells ──────────────────────────────────────────────────
+
   const addSpellToCharacter = async (spellId: number): Promise<void> => {
     if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
       await charactersApi.addSpell(currentCharacter.id, spellId);
-      const fresh = await charactersApi.getById(currentCharacter.id);
-      setAndMergeCurrentCharacter(fresh);
+      await refreshCurrentCharacter();
     } finally {
       setSaving(false);
     }
@@ -226,35 +242,112 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     setSaving(true);
     try {
       await charactersApi.removeSpell(currentCharacter.id, spellId);
-      const fresh = await charactersApi.getById(currentCharacter.id);
-      setAndMergeCurrentCharacter(fresh);
+      await refreshCurrentCharacter();
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleSavingThrowProficiency = async (ability: AbilityType): Promise<void> => {
-    if (!currentCharacter) return;
-    const current = currentCharacter.savingThrowProficiencies ?? [];
-    const updated = current.includes(ability)
-        ? current.filter(p => p !== ability)
-        : [...current, ability];
-    await updateCharacter(currentCharacter.id, {savingThrowProficiencies: updated});
+  // ── Choices ─────────────────────────────────────────────────
+
+  const submitChoice = async (
+      characterFeatureId: number,
+      choiceKey: string,
+      selectedValues: unknown[]
+  ): Promise<void> => {
+    if (!currentCharacter) throw new Error('No character selected.');
+    setSaving(true);
+    try {
+      await charactersApi.submitChoice(
+          currentCharacter.id,
+          characterFeatureId,
+          choiceKey,
+          selectedValues
+      );
+      await refreshCurrentCharacter();
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const toggleSkillProficiency = async (skillId: number, isNowProficient: boolean): Promise<void> => {
-    if (!currentCharacter) return;
-    await updateCharacter(currentCharacter.id, {
-      skills: [{
-        id: skillId,
-        proficient: isNowProficient
-      }]
-    });
+  const clearChoice = async (
+      characterFeatureId: number,
+      choiceKey: string
+  ): Promise<void> => {
+    if (!currentCharacter) throw new Error('No character selected.');
+    setSaving(true);
+    try {
+      await charactersApi.clearChoice(currentCharacter.id, characterFeatureId, choiceKey);
+      await refreshCurrentCharacter();
+    } finally {
+      setSaving(false);
+    }
   };
 
-  const toggleSkillExpertise = async (skillId: number, isNowExpert: boolean): Promise<void> => {
-    if (!currentCharacter) return;
-    await updateCharacter(currentCharacter.id, {skills: [{id: skillId, expertise: isNowExpert}]});
+  // ── Custom features ─────────────────────────────────────────
+
+  const createCustomFeature = async (name: string, description?: string): Promise<void> => {
+    if (!currentCharacter) throw new Error('No character selected.');
+    setSaving(true);
+    try {
+      await charactersApi.createCustomFeature(currentCharacter.id, {name, description});
+      await refreshCurrentCharacter();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const updateCustomFeature = async (
+      id: number,
+      name: string,
+      description?: string
+  ): Promise<void> => {
+    if (!currentCharacter) throw new Error('No character selected.');
+    setSaving(true);
+    try {
+      await charactersApi.updateCustomFeature(currentCharacter.id, id, {name, description});
+      await refreshCurrentCharacter();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const deleteCustomFeature = async (id: number): Promise<void> => {
+    if (!currentCharacter) throw new Error('No character selected.');
+    setSaving(true);
+    try {
+      await charactersApi.deleteCustomFeature(currentCharacter.id, id);
+      await refreshCurrentCharacter();
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ── Resources ────────────────────────────────────────────────
+
+  const adjustResource = async (resourceKey: string, delta: number): Promise<void> => {
+    if (!currentCharacter) throw new Error('No character selected.');
+    setSaving(true);
+    try {
+      await charactersApi.adjustResource(currentCharacter.id, resourceKey, delta);
+      // Optimistic local update — avoid full pipeline refresh for simple spend/restore
+      setCurrentCharacter(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          resources: prev.resources.map(r =>
+              r.resourceKey === resourceKey
+                  ? {
+                    ...r,
+                    currentUses: Math.max(0, Math.min(r.maxUses, r.currentUses + delta)),
+                  }
+                  : r
+          ),
+        };
+      });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const value: CharacterContextType = {
@@ -280,9 +373,12 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     removeEquipment,
     addSpellToCharacter,
     removeSpellFromCharacter,
-    toggleSavingThrowProficiency,
-    toggleSkillProficiency,
-    toggleSkillExpertise,
+    submitChoice,
+    clearChoice,
+    createCustomFeature,
+    updateCustomFeature,
+    deleteCustomFeature,
+    adjustResource,
   };
 
   return <CharacterContext.Provider value={value}>{children}</CharacterContext.Provider>;
