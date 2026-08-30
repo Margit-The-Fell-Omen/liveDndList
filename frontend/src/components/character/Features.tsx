@@ -202,8 +202,8 @@ function FeatureCard({
                           <span className={styles.answeredChoiceLabel}>{answer.name}:</span>
                           <span className={styles.answeredChoiceValue}>
                     {Array.isArray(answer.selectedValues)
-                        ? (answer.selectedValues as string[]).map(formatChoiceValue).join(', ')
-                        : String(answer.selectedValues)}
+                        ? answer.selectedValues.map(formatChoiceValue).join(', ')
+                        : formatChoiceValue(answer.selectedValues)}
                   </span>
                         </div>
                     ))}
@@ -279,12 +279,22 @@ function CustomFeatureCard({
   );
 }
 
-function formatChoiceValue(value: string): string {
-  return value
+function formatChoiceValue(value: unknown): string {
+  // If the backend returned a complex payload object, format it nicely
+  if (typeof value === 'object' && value !== null) {
+    const obj = value as Record<string, unknown>;
+    if (obj.ability && obj.amount) {
+      return `${formatChoiceValue(String(obj.ability))} (+${obj.amount})`;
+    }
+    return JSON.stringify(value); // Fallback for unknown object shapes
+  }
+
+  return String(value)
       .replace(/_/g, ' ')
       .toLowerCase()
       .replace(/\b\w/g, c => c.toUpperCase());
 }
+
 
 // ── Main component ────────────────────────────────────────────
 

@@ -49,9 +49,8 @@ feat sync -> applying of ClassFeatures and raceTraits and etc. -> level up/down 
     - Added entities amd enums -> need to implement services
     - added all services and migration of DndFeat -> Feature table row
     - PHASE 1 shipped
-    - resolver can't espand object-shaped effects (2024 bg asi)
+    - resolver can't espand object-shaped effects (2024 bg asi) CURRENT
     - check leveling down + multiclass readiness
-    - add stats application on creation and ASI application (standart set, random, point-buy)
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird
     - game system choice & validation

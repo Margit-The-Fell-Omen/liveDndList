@@ -1,22 +1,28 @@
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Modal} from '@/components/common/Modal';
 import {Button} from '@/components/common/Button';
-import type {AbilityScores, CharacterAlignment, CharacterCreateRequest} from '@/types';
+import type {
+  AbilityScores,
+  CharacterAlignment,
+  CharacterCreateRequest,
+  Open5eReference
+} from '@/types';
 import {WizardProgress} from './wizard/WizardProgress';
+import {StepGameSystem} from './wizard/StepGameSystem';
 import {StepRace} from './wizard/StepRace';
 import {StepClass} from './wizard/StepClass';
 import {StepBackground} from './wizard/StepBackground';
 import {StepDetails} from './wizard/StepDetails';
 import styles from './CreateCharacterModal.module.css';
-import {EMPTY_RACE_SELECTION, isRaceSelectionComplete, type RaceSelection,} from '@/utils/races';
+import {EMPTY_RACE_SELECTION, isRaceSelectionComplete, type RaceSelection} from '@/utils/races';
 
 interface CreateCharacterModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const STEPS = ['Race', 'Class', 'Background', 'Details'];
+const STEPS = ['System', 'Race', 'Class', 'Background', 'Details'];
 
 const INITIAL_SCORES: AbilityScores = {
   strength: 10,
@@ -38,10 +44,21 @@ function computeHitPoints(
   return (isNaN(dieFaces) ? 8 : dieFaces) + conMod;
 }
 
+// --- Helper to separate 2024 content from legacy/A5E content ---
+function is2024Content(item: {
+  key: string;
+  document?: { gamesystem?: Open5eReference }
+}): boolean {
+  const sysKey = item.document?.gamesystem?.key?.toLowerCase() || '';
+  const itemKey = item.key.toLowerCase();
+  return sysKey.includes('2024') || itemKey.includes('2024');
+}
+
 export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProps) {
   const {createCharacter, races, classes, backgrounds, saving} = useCharacter();
 
   const [step, setStep] = useState(0);
+  const [gameSystemKey, setGameSystemKey] = useState('');
   const [raceSelection, setRaceSelection] = useState<RaceSelection>(EMPTY_RACE_SELECTION);
   const [classKey, setClassKey] = useState('');
   const [backgroundKey, setBackgroundKey] = useState('');
@@ -50,12 +67,44 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   const [abilityScores, setAbilityScores] = useState<AbilityScores>(INITIAL_SCORES);
   const [error, setError] = useState<string | null>(null);
 
+  // --- Filter Logic ---
+
+  const filteredRaces = useMemo(() => {
+    if (!gameSystemKey) return [];
+    return races.filter(r => gameSystemKey === '2024' ? is2024Content(r) : !is2024Content(r));
+  }, [races, gameSystemKey]);
+
+  const filteredClasses = useMemo(() => {
+    if (!gameSystemKey) return [];
+    return classes.filter(c => gameSystemKey === '2024' ? is2024Content(c) : !is2024Content(c));
+  }, [classes, gameSystemKey]);
+
+  const filteredBackgrounds = useMemo(() => {
+    if (!gameSystemKey) return [];
+    return backgrounds.filter(b => gameSystemKey === '2024' ? is2024Content(b) : !is2024Content(b));
+  }, [backgrounds, gameSystemKey]);
+
+  // --- Event Handlers ---
+
+  const handleGameSystemSelect = (key: string) => {
+    if (key !== gameSystemKey) {
+      setGameSystemKey(key);
+      // Reset downstream choices if the system changes
+      setRaceSelection(EMPTY_RACE_SELECTION);
+      setClassKey('');
+      setBackgroundKey('');
+    } else {
+      setGameSystemKey('');
+    }
+  };
+
   const handleScoreChange = (key: keyof AbilityScores, value: string) => {
     setAbilityScores(prev => ({...prev, [key]: parseInt(value, 10) || 0}));
   };
 
   const handleClose = () => {
     setStep(0);
+    setGameSystemKey('');
     setRaceSelection(EMPTY_RACE_SELECTION);
     setClassKey('');
     setBackgroundKey('');
@@ -67,10 +116,14 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
   };
 
   const canAdvance = (): boolean => {
-    if (step === 0) return isRaceSelectionComplete(races, raceSelection);
-    if (step === 1) return !!classKey;
-    if (step === 2) return !!backgroundKey;
-    if (step === 3) return !!name.trim();
+    if (step === 0) return !!gameSystemKey;
+    if (step === 1) return isRaceSelectionComplete(filteredRaces, raceSelection);
+    if (step === 2) return !!classKey;
+    if (step === 3) return !!backgroundKey;
+    if (step === 4) {
+      const hasUnassignedScores = Object.values(abilityScores).some(v => v === 0);
+      return !!name.trim() && !hasUnassignedScores;
+    }
     return false;
   };
 
@@ -95,7 +148,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
       backgroundKey,
       ...(alignment && {alignment}),
       abilityScores,
-      maxHitPoints: computeHitPoints(classes, classKey, abilityScores.constitution),
+      maxHitPoints: computeHitPoints(filteredClasses, classKey, abilityScores.constitution),
     };
 
     try {
@@ -106,7 +159,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
     }
   };
 
-  const hp = computeHitPoints(classes, classKey, abilityScores.constitution);
+  const hp = computeHitPoints(filteredClasses, classKey, abilityScores.constitution);
 
   const footer = (
       <div className={styles.footer}>
@@ -140,23 +193,29 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
 
         <div className={styles.stepBody}>
           {step === 0 && (
+              <StepGameSystem
+                  selectedKey={gameSystemKey}
+                  onSelect={handleGameSystemSelect}
+              />
+          )}
+          {step === 1 && (
               <StepRace
-                  races={races}
+                  races={filteredRaces}
                   selection={raceSelection}
                   onSelect={setRaceSelection}
               />
           )}
-          {step === 1 && (
-              <StepClass classes={classes} selectedKey={classKey} onSelect={setClassKey}/>
-          )}
           {step === 2 && (
+              <StepClass classes={filteredClasses} selectedKey={classKey} onSelect={setClassKey}/>
+          )}
+          {step === 3 && (
               <StepBackground
-                  backgrounds={backgrounds}
+                  backgrounds={filteredBackgrounds}
                   selectedKey={backgroundKey}
                   onSelect={setBackgroundKey}
               />
           )}
-          {step === 3 && (
+          {step === 4 && (
               <StepDetails
                   name={name}
                   onNameChange={setName}

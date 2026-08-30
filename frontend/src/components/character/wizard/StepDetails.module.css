@@ -10,6 +10,138 @@
   gap: var(--space-md);
 }
 
+.sectionTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--space-xs);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.sectionTitle {
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  border-bottom: none; /* Removed from original since it's now in the row wrapper */
+  padding-bottom: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-md);
+}
+
+.modeTabs {
+  display: flex;
+  gap: var(--space-xs);
+  background: var(--color-bg-tertiary);
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.tab:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+
+.tabActive {
+  composes: tab;
+  background: var(--color-bg-primary);
+  color: var(--color-accent-primary);
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.modeControls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 40px;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.pointBuyHeader {
+  font-weight: 600;
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+
+.highlightText {
+  color: var(--color-accent-primary);
+  font-size: var(--font-size-lg);
+}
+
+.errorText {
+  color: var(--color-error);
+  font-size: var(--font-size-lg);
+}
+
+.standardHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.chipAvailable {
+  background: var(--color-accent-primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.chipUsed {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  text-decoration: line-through;
+}
+
+.rollHeader {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.standardSelectWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.selectScore {
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  text-align: center;
+  font-weight: 700;
+}
+
 .sectionTitle {
   font-family: var(--font-family-primary);
   font-size: var(--font-size-lg);

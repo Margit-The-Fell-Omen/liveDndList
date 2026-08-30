@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.service.features;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel;
@@ -45,6 +46,7 @@ public class CharacterPipelineService {
   private final CharacterFeatureRepository characterFeatureRepository;
   private final CharacterCustomFeatureService customFeatureService;
   private final CharacterResourceRepository resourceRepository;
+  private final ObjectMapper objectMapper;
 
   public ComputedCharacterState compute(long characterId) {
     DndCharacter character = characterRepository.findById(characterId)
@@ -100,17 +102,23 @@ public class CharacterPipelineService {
 
     for (ResolvedEffect e : effects) {
       if (e.getType() == FeatureEffectType.MODIFY_ABILITY_SCORE) {
-        String ability = e.getPayload().path("ability").asText();
+        String rawAbility = e.getPayload().path("ability").asText("");
+        String ability = switch (rawAbility.toUpperCase()) {
+          case "STRENGTH", "STR" -> "STR";
+          case "DEXTERITY", "DEX" -> "DEX";
+          case "CONSTITUTION", "CON" -> "CON";
+          case "INTELLIGENCE", "INT" -> "INT";
+          case "WISDOM", "WIS" -> "WIS";
+          case "CHARISMA", "CHA" -> "CHA";
+          default -> rawAbility;
+        };
+
         int amount = e.getPayload().path("amount").asInt(0);
-        int max = e.getPayload().has("max") && !e.getPayload().get("max").isNull()
-            ? e.getPayload().get("max").asInt() : caps.getOrDefault(ability, 20);
-        caps.put(ability, Math.max(caps.getOrDefault(ability, 20), max));
+        if (amount == 0 && e.getPayload().has("value")) {
+          amount = e.getPayload().path("value").asInt(1);
+        }
+
         scores.merge(ability, amount, Integer::sum);
-      }
-      if (e.getType() == FeatureEffectType.SET_ABILITY_SCORE_MINIMUM) {
-        String ability = e.getPayload().path("ability").asText();
-        int value = e.getPayload().path("value").asInt(0);
-        scores.merge(ability, 0, (current, ignored) -> Math.max(current, value));
       }
     }
 
@@ -558,7 +566,9 @@ public class CharacterPipelineService {
         displayChoices.add(ComputedCharacterState.DisplayChoice.builder()
             .choiceKey(cfc.getChoiceKey())
             .name(cfc.getChoiceKey())
-            .selectedValues(cfc.getSelectedValues())
+            .selectedValues(cfc.getSelectedValues() != null
+                ? objectMapper.valueToTree(cfc.getSelectedValues())
+                : null)
             .build());
       }
 

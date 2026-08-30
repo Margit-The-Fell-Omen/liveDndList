@@ -1,3 +1,4 @@
+// src/components/character/FeatureChoiceModal.tsx
 import {useMemo, useState} from 'react';
 import {Modal} from '@/components/common/Modal';
 import {Button} from '@/components/common/Button';
@@ -114,12 +115,12 @@ function resolveOptions(
 
     case 'ABILITY_LIST': {
       const ABILITIES = [
-        {key: 'STRENGTH', name: 'Strength'},
-        {key: 'DEXTERITY', name: 'Dexterity'},
-        {key: 'CONSTITUTION', name: 'Constitution'},
-        {key: 'INTELLIGENCE', name: 'Intelligence'},
-        {key: 'WISDOM', name: 'Wisdom'},
-        {key: 'CHARISMA', name: 'Charisma'},
+        {key: 'STR', name: 'Strength'},
+        {key: 'DEX', name: 'Dexterity'},
+        {key: 'CON', name: 'Constitution'},
+        {key: 'INT', name: 'Intelligence'},
+        {key: 'WIS', name: 'Wisdom'},
+        {key: 'CHA', name: 'Charisma'},
       ];
 
       const fromList = extractValidOptions(choice, ABILITIES);
@@ -132,16 +133,11 @@ function resolveOptions(
       return filtered.map(a => ({value: a.key, label: a.name}));
     }
 
-    case 'LANGUAGE_LIST': {
-      return []; // freeform mode
-    }
-
+    case 'LANGUAGE_LIST':
     case 'TOOL_LIST':
       return []; // freeform mode
 
     case 'FEAT_LIST':
-      return []; // TODO: populate from context.feats
-
     case 'WEAPON_LIST':
     case 'ARMOR_LIST':
     case 'SPELL_LIST':
@@ -151,7 +147,6 @@ function resolveOptions(
       return [];
   }
 }
-
 
 function collectAlreadyChosenValues(
     currentChoice: PendingChoiceResponse,
@@ -179,12 +174,87 @@ function collectAlreadyChosenValues(
   return already;
 }
 
-
 function formatOptionLabel(value: string): string {
   return value
       .replace(/_/g, ' ')
       .toLowerCase()
       .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// ── Specialized 2024 ASI Distribution Picker ──────────────────
+
+function AsiDistributionPicker({
+                                 options,
+                                 distributions,
+                                 selected,
+                                 onChange,
+                               }: {
+  options: OptionItem[];
+  distributions: string[];
+  selected: Record<string, any>[];
+  onChange: (val: Record<string, any>[]) => void;
+}) {
+  const is2_1 = selected.some(s => s.amount === 2);
+  const activeDist = is2_1 ? '2_1' : (selected.length === 3 ? '1_1_1' : distributions[0]);
+  const slots = activeDist === '2_1' ? [2, 1] : [1, 1, 1];
+
+  return (
+      <div style={{display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem'}}>
+        {distributions.length > 1 && (
+            <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+              <label style={{fontSize: 'var(--font-size-sm)', fontWeight: 500}}>Distribution
+                Pattern:</label>
+              <select
+                  className={styles.freeformInput}
+                  value={activeDist}
+                  onChange={e => onChange([])}
+              >
+                {distributions.includes('2_1') &&
+                    <option value="2_1">+2 to one, +1 to another</option>}
+                {distributions.includes('1_1_1') &&
+                    <option value="1_1_1">+1 to three different</option>}
+              </select>
+            </div>
+        )}
+        <div style={{display: 'flex', flexDirection: 'column', gap: '0.5rem'}}>
+          {slots.map((amt, idx) => {
+            const currentVal = selected[idx]?.ability || '';
+            return (
+                <div key={idx} style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+                  <span style={{
+                    fontWeight: 'bold',
+                    width: '40px',
+                    color: 'var(--color-accent-primary)'
+                  }}>+{amt}</span>
+                  <select
+                      className={styles.freeformInput}
+                      style={{flex: 1}}
+                      value={currentVal}
+                      onChange={e => {
+                        const val = e.target.value;
+                        const next = slots.map((a, i) => ({
+                          ability: i === idx ? val : (selected[i]?.ability || ''),
+                          amount: a
+                        }));
+                        onChange(next.filter(n => n.ability !== ''));
+                      }}
+                  >
+                    <option value="">— Select Ability —</option>
+                    {options.map(opt => {
+                      const isUsed = selected.some((s, i) => i !== idx && s.ability === opt.value);
+                      return (
+                          <option key={opt.value} value={opt.value} disabled={isUsed}>
+                            {opt.label}
+                          </option>
+                      );
+                    })}
+                  </select>
+                </div>
+            );
+          })}
+        </div>
+      </div>
+  );
 }
 
 // ── Multi-select picker ───────────────────────────────────────
@@ -246,7 +316,7 @@ function OptionPicker({
   );
 }
 
-// ── Freeform text input (for LANGUAGE_LIST, TOOL_LIST) ────────
+// ── Freeform text input ───────────────────────────────────────
 
 function FreeformPicker({
                           chooseCount,
@@ -317,7 +387,9 @@ export function FeatureChoiceModal({
       choice.optionsSource === 'TOOL_LIST'
   );
 
-  // Determine known values for freeform validation
+  const distributions = filter['distributions'] as string[] | undefined;
+  const isAsiDistribution = choice.optionsSource === 'ABILITY_LIST' && Array.isArray(distributions);
+
   const knownValues = useMemo(() => {
     if (choice.optionsSource === 'LANGUAGE_LIST') {
       return new Set(character.proficiencies?.languages ?? []);
@@ -330,9 +402,18 @@ export function FeatureChoiceModal({
 
   const freeformLabel = choice.optionsSource === 'LANGUAGE_LIST' ? 'language' : 'tool';
 
+  // State for normal strings (Languages, Tools, standard Abilities)
   const [selected, setSelected] = useState<string[]>(() => {
-    if (Array.isArray(choice.currentSelection)) {
+    if (Array.isArray(choice.currentSelection) && typeof choice.currentSelection[0] === 'string') {
       return choice.currentSelection as string[];
+    }
+    return [];
+  });
+
+  // State for complex objects (2024 ASI rules)
+  const [asiSelected, setAsiSelected] = useState<Record<string, any>[]>(() => {
+    if (Array.isArray(choice.currentSelection) && typeof choice.currentSelection[0] === 'object') {
+      return choice.currentSelection as Record<string, any>[];
     }
     return [];
   });
@@ -351,15 +432,29 @@ export function FeatureChoiceModal({
       ? nonBlankSelected.some(v => knownValues.has(v.trim()))
       : false;
 
-  const canSubmit =
-      !saving &&
-      nonBlankSelected.length === choice.chooseCount &&
-      !hasDuplicates &&
-      !hasAlreadyKnown;
+  const canSubmit = useMemo(() => {
+    if (saving) return false;
+
+    // Custom validation logic if resolving an ASI matrix
+    if (isAsiDistribution) {
+      const is2_1 = asiSelected.some(s => s.amount === 2);
+      const expectedCount = is2_1 ? 2 : 3;
+      if (asiSelected.length !== expectedCount) return false;
+      const uniqueAbilities = new Set(asiSelected.map(s => s.ability));
+      return uniqueAbilities.size === expectedCount && !asiSelected.some(s => s.ability === '');
+    }
+
+    // Standard string validation logic
+    return nonBlankSelected.length === choice.chooseCount && !hasDuplicates && !hasAlreadyKnown;
+  }, [saving, isAsiDistribution, asiSelected, nonBlankSelected.length, choice.chooseCount, hasDuplicates, hasAlreadyKnown]);
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    await onSubmit(nonBlankSelected.map(v => v.trim()));
+    if (isAsiDistribution) {
+      await onSubmit(asiSelected); // Submit the array of objects!
+    } else {
+      await onSubmit(nonBlankSelected.map(v => v.trim())); // Submit the array of strings
+    }
   };
 
   const footer = (
@@ -395,15 +490,24 @@ export function FeatureChoiceModal({
               <p className={styles.description}>{choice.description}</p>
           )}
 
-          <p className={styles.instruction}>
-            Choose <strong>{choice.chooseCount}</strong> option
-            {choice.chooseCount > 1 ? 's' : ''}.{' '}
-            <span className={styles.selectionCount}>
-            ({nonBlankSelected.length}/{choice.chooseCount} selected)
-          </span>
-          </p>
+          {!isAsiDistribution && (
+              <p className={styles.instruction}>
+                Choose <strong>{choice.chooseCount}</strong> option
+                {choice.chooseCount > 1 ? 's' : ''}.{' '}
+                <span className={styles.selectionCount}>
+              ({nonBlankSelected.length}/{choice.chooseCount} selected)
+            </span>
+              </p>
+          )}
 
-          {isFreeform ? (
+          {isAsiDistribution ? (
+              <AsiDistributionPicker
+                  options={options}
+                  distributions={distributions!}
+                  selected={asiSelected}
+                  onChange={setAsiSelected}
+              />
+          ) : isFreeform ? (
               <FreeformPicker
                   chooseCount={choice.chooseCount}
                   selected={selected}

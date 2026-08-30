@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.service.features;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
@@ -32,6 +33,7 @@ public class FeatureEffectResolver {
 
   private final CharacterFeatureRepository characterFeatureRepository;
   private final FeatureCatalogService featureCatalogService;
+  private final ObjectMapper objectMapper;
 
   private static final JsonNodeFactory JSON = JsonNodeFactory.instance;
   private static final int MAX_PASSES = 3;
@@ -122,7 +124,9 @@ public class FeatureEffectResolver {
                   .description(choiceDefinition.getDescription())
                   .chooseCount(choiceDefinition.getChooseCount())
                   .optionsSource(choiceDefinition.getOptionsSource())
-                  .optionsFilter(choiceDefinition.getOptionsFilter())
+                  .optionsFilter(choiceDefinition.getOptionsFilter() != null
+                      ? objectMapper.valueToTree(choiceDefinition.getOptionsFilter())
+                      : null)
                   .currentSelection(null)
                   .build());
             }

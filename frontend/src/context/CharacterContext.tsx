@@ -172,8 +172,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
-      const updatedChar = await charactersApi.addEquipment(currentCharacter.id, data);
-      setAndMergeCurrentCharacter(updatedChar);
+      await charactersApi.addEquipment(currentCharacter.id, data);
+      await refreshCurrentCharacter();
     } finally {
       setSaving(false);
     }
@@ -183,8 +183,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
-      const updatedChar = await charactersApi.removeEquipment(currentCharacter.id, itemId);
-      setAndMergeCurrentCharacter(updatedChar);
+      await charactersApi.removeEquipment(currentCharacter.id, itemId);
+      await refreshCurrentCharacter();
     } finally {
       setSaving(false);
     }
@@ -194,14 +194,8 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error('No character selected.');
     setSaving(true);
     try {
-      const updatedItem = await equipmentApi.update(itemId, data);
-      setCurrentCharacter(prev => {
-        if (!prev) return null;
-        return {
-          ...prev,
-          equipment: prev.equipment.map(item => (item.id === itemId ? updatedItem : item)),
-        };
-      });
+      await equipmentApi.update(itemId, data);
+      await refreshCurrentCharacter();
     } finally {
       setSaving(false);
     }
@@ -211,6 +205,7 @@ export function CharacterProvider({children}: CharacterProviderProps) {
     if (!currentCharacter) throw new Error('No character selected.');
     const item = currentCharacter.equipment.find(i => i.id === itemId);
     if (!item) throw new Error('Equipment item not found.');
+
     await updateEquipment(itemId, {
       name: item.name,
       description: item.description,
