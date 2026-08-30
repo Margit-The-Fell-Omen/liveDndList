@@ -39,10 +39,24 @@ public class ChoiceValidator {
       throw new IllegalArgumentException("selectedValues must be a JSON array");
     }
 
-    if (selectedValues.size() != choiceDefinition.getChooseCount()) {
-      throw new IllegalArgumentException(
-          "Expected " + choiceDefinition.getChooseCount() + " selections, got "
-              + selectedValues.size());
+    // Detect if this is a 2024 ASI distribution choice
+    JsonNode filter = choiceDefinition.getOptionsFilter();
+    boolean isAsiDistribution =
+        choiceDefinition.getOptionsSource() == ChoiceOptionsSource.ABILITY_LIST
+            && filter != null && filter.has("distributions");
+
+    // Dynamic size validation
+    if (isAsiDistribution) {
+      if (selectedValues.size() < 2 || selectedValues.size() > 3) {
+        throw new IllegalArgumentException(
+            "Expected 2 or 3 ASI distributions, got " + selectedValues.size());
+      }
+    } else {
+      if (selectedValues.size() != choiceDefinition.getChooseCount()) {
+        throw new IllegalArgumentException(
+            "Expected " + choiceDefinition.getChooseCount() + " selections, got "
+                + selectedValues.size());
+      }
     }
 
     Set<String> validOptions = resolveValidOptions(choiceDefinition, characterFeature, state);
@@ -51,7 +65,12 @@ public class ChoiceValidator {
     List<String> invalid = new ArrayList<>();
 
     for (JsonNode value : selectedValues) {
-      String val = value.isTextual() ? value.asText() : value.toString();
+      String val;
+      if (isAsiDistribution && value.isObject()) {
+        val = value.path("ability").asText();
+      } else {
+        val = value.isTextual() ? value.asText() : value.toString();
+      }
 
       if (val == null || val.isBlank()) {
         throw new IllegalArgumentException("Selection values must not be blank");

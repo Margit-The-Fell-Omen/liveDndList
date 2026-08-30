@@ -280,15 +280,28 @@ function CustomFeatureCard({
 }
 
 function formatChoiceValue(value: unknown): string {
-  // If the backend returned a complex payload object, format it nicely
-  if (typeof value === 'object' && value !== null) {
-    const obj = value as Record<string, unknown>;
-    if (obj.ability && obj.amount) {
-      return `${formatChoiceValue(String(obj.ability))} (+${obj.amount})`;
+  let parsed = value;
+
+  // Safely try to parse if backend leaked a JSON string
+  if (typeof value === 'string' && value.trim().startsWith('{')) {
+    try {
+      parsed = JSON.parse(value);
+    } catch (e) {
     }
-    return JSON.stringify(value); // Fallback for unknown object shapes
   }
 
+  // If it's a structured ASI object {ability: "INT", amount: 2}, format it beautifully
+  if (typeof parsed === 'object' && parsed !== null) {
+    const obj = parsed as Record<string, unknown>;
+    if (obj.ability && obj.amount) {
+      const formattedAbility = String(obj.ability)
+          .toLowerCase()
+          .replace(/\b\w/g, c => c.toUpperCase());
+      return `${formattedAbility} (+${obj.amount})`;
+    }
+  }
+
+  // Normal string fallback
   return String(value)
       .replace(/_/g, ' ')
       .toLowerCase()

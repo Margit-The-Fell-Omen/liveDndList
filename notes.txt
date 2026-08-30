@@ -43,13 +43,14 @@ Plan for live-dnd-list:
 IMPORTANT NOTES:
 - currently speed is not being derived from race
 - currently I cannot add more than 1 class to character
+- backend espands bg-2024 asi wierdly (frontend handles but needs a fix in future)
 
 (current fixes: MASSIVE VALIDATION LEVEL)
 feat sync -> applying of ClassFeatures and raceTraits and etc. -> level up/down bonuses handling
     - Added entities amd enums -> need to implement services
     - added all services and migration of DndFeat -> Feature table row
     - PHASE 1 shipped
-    - resolver can't espand object-shaped effects (2024 bg asi) CURRENT
+    - add missing choice options (specific enums (orders, ansectries, etc.)) CURRENT
     - check leveling down + multiclass readiness
 - rewrite character creation to be multistaged with info about class/race/background provided:
     - Cantrips Known/Ki Points/etc. for some reason can be duplicated with differing values // weird

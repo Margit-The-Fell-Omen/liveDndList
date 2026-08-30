@@ -1,5 +1,4 @@
-// src/components/character/CharacterHeader.tsx
-import {type ChangeEvent, useEffect, useState} from 'react';
+import {type ChangeEvent, useEffect, useMemo, useState} from 'react';
 import {useCharacter} from '@/context/CharacterContext';
 import {Input, Select} from '@/components/common/Input';
 import {Button} from '@/components/common/Button';
@@ -8,15 +7,26 @@ import {useDebouncedCallback} from '@/hooks/useDebounce';
 import {RacePickerModal} from './RacePickerModal';
 import {ClassManagerModal} from './ClassManagerModal';
 import {ClassPickerModal} from './ClassPickerModal';
-import {BackgroundPickerModal} from './BackgroundPickerModal'; // <--- NEW IMPORT
+import {BackgroundPickerModal} from './BackgroundPickerModal';
 import {LevelUpModal} from './LevelUpModal';
 import {LevelDownModal} from './LevelDownModal';
 import {SetLevelModal} from './SetLevelModal';
 import {getRaceDisplayName} from '@/utils/races';
 import {excessLevels, formatClassLevels, pendingLevels, totalLevelOf} from '@/utils/classes';
 import {levelForXp} from '@/utils/experience';
-import type {DndClassLevel} from '@/types';
+import type {DndClassLevel, Open5eReference} from '@/types';
 import styles from './CharacterHeader.module.css';
+
+// --- Helper to determine Game System ---
+function is2024Content(itemKey: string, collection: {
+  key: string;
+  document?: { gamesystem?: Open5eReference }
+}[]): boolean {
+  const item = collection.find(i => i.key === itemKey);
+  if (!item) return itemKey.toLowerCase().includes('2024');
+  const sysKey = item.document?.gamesystem?.key?.toLowerCase() || '';
+  return sysKey.includes('2024') || item.key.toLowerCase().includes('2024');
+}
 
 export function CharacterHeader({className}: { className?: string }) {
   const {
@@ -35,7 +45,7 @@ export function CharacterHeader({className}: { className?: string }) {
 
   const [isRacePickerOpen, setIsRacePickerOpen] = useState(false);
   const [isClassManagerOpen, setIsClassManagerOpen] = useState(false);
-  const [isBackgroundPickerOpen, setIsBackgroundPickerOpen] = useState(false); // <--- NEW STATE
+  const [isBackgroundPickerOpen, setIsBackgroundPickerOpen] = useState(false);
   const [isLevelUpOpen, setIsLevelUpOpen] = useState(false);
   const [isLevelDownOpen, setIsLevelDownOpen] = useState(false);
   const [isAddClassOpen, setIsAddClassOpen] = useState(false);
@@ -57,14 +67,24 @@ export function CharacterHeader({className}: { className?: string }) {
     }
   }, [currentCharacter]);
 
+  // --- Derive System & Filter Choices ---
+  const is2024System = useMemo(() => {
+    if (!currentCharacter) return false;
+    // Derive from Race or Background
+    return is2024Content(currentCharacter.raceKey, races) ||
+        is2024Content(currentCharacter.backgroundKey, backgrounds);
+  }, [currentCharacter, races, backgrounds]);
+
+  const systemLabel = is2024System ? '2024 Rules' : '2014 Rules (A5E)';
+
+  const filteredRaces = useMemo(() => races.filter(r => is2024System ? is2024Content(r.key, races) : !is2024Content(r.key, races)), [races, is2024System]);
+  const filteredClasses = useMemo(() => classes.filter(c => is2024System ? is2024Content(c.key, classes) : !is2024Content(c.key, classes)), [classes, is2024System]);
+  const filteredBackgrounds = useMemo(() => backgrounds.filter(b => is2024System ? is2024Content(b.key, backgrounds) : !is2024Content(b.key, backgrounds)), [backgrounds, is2024System]);
+
   if (!currentCharacter) return null;
 
-  const raceDisplay =
-      getRaceDisplayName(races, currentCharacter.raceKey) || currentCharacter.raceKey || 'N/A';
-
-  // Find the friendly display name for the currently selected background
+  const raceDisplay = getRaceDisplayName(races, currentCharacter.raceKey) || currentCharacter.raceKey || 'N/A';
   const backgroundDisplay = backgrounds.find(bg => bg.key === currentCharacter.backgroundKey)?.name || currentCharacter.backgroundKey || 'N/A';
-
   const classDisplay = formatClassLevels(classes, currentCharacter.classesInfo);
   const takenClassKeys = currentCharacter.classesInfo.map(entry => entry.classKey);
 
@@ -153,13 +173,19 @@ export function CharacterHeader({className}: { className?: string }) {
       <>
         <div className={`${styles.header} ${className ?? ''}`}>
           <div className={styles.mainInfo}>
-            <Input
-                name="name"
-                value={characterName}
-                onChange={handleNameChange}
-                placeholder="Character Name"
-                className={styles.nameInput}
-            />
+            <div style={{display: 'flex', alignItems: 'center', gap: '1rem', width: '100%'}}>
+              <Input
+                  name="name"
+                  value={characterName}
+                  onChange={handleNameChange}
+                  placeholder="Character Name"
+                  className={styles.nameInput}
+              />
+              <span className={styles.systemBadge}
+                    title="Game System cannot be changed after creation.">
+                {systemLabel}
+              </span>
+            </div>
           </div>
 
           <div className={styles.secondaryInfo}>
@@ -202,7 +228,6 @@ export function CharacterHeader({className}: { className?: string }) {
               </button>
             </div>
 
-            {/* NEW BACKGROUND BUTTON */}
             <div className={styles.raceField}>
               <label className={styles.raceLabel}>Background</label>
               <button
@@ -243,20 +268,20 @@ export function CharacterHeader({className}: { className?: string }) {
           </div>
         </div>
 
+        {/* Pass ONLY the filtered lists downstream so users cannot switch game systems! */}
         <RacePickerModal
             isOpen={isRacePickerOpen}
             onClose={() => setIsRacePickerOpen(false)}
-            races={races}
+            races={filteredRaces}
             initialRaceKey={currentCharacter.raceKey}
             onConfirm={handleRaceConfirm}
             saving={saving}
         />
 
-        {/* NEW BACKGROUND MODAL */}
         <BackgroundPickerModal
             isOpen={isBackgroundPickerOpen}
             onClose={() => setIsBackgroundPickerOpen(false)}
-            backgrounds={backgrounds}
+            backgrounds={filteredBackgrounds}
             initialBackgroundKey={currentCharacter.backgroundKey}
             onConfirm={handleBackgroundConfirm}
             saving={saving}
@@ -265,7 +290,7 @@ export function CharacterHeader({className}: { className?: string }) {
         <ClassManagerModal
             isOpen={isClassManagerOpen}
             onClose={() => setIsClassManagerOpen(false)}
-            classes={classes}
+            classes={filteredClasses}
             currentClasses={currentCharacter.classesInfo}
             onSave={persistClassList}
             saving={saving}
@@ -282,7 +307,7 @@ export function CharacterHeader({className}: { className?: string }) {
         <LevelUpModal
             isOpen={isLevelUpOpen}
             onClose={() => setIsLevelUpOpen(false)}
-            classes={classes}
+            classes={filteredClasses}
             currentClasses={currentCharacter.classesInfo}
             pendingLevels={pending}
             onExistingClassLevelUp={handleLevelUpExisting}
@@ -296,7 +321,7 @@ export function CharacterHeader({className}: { className?: string }) {
         <LevelDownModal
             isOpen={isLevelDownOpen}
             onClose={() => setIsLevelDownOpen(false)}
-            classes={classes}
+            classes={filteredClasses}
             currentClasses={currentCharacter.classesInfo}
             excessLevels={excess}
             onLevelDown={handleLevelDown}
@@ -306,7 +331,7 @@ export function CharacterHeader({className}: { className?: string }) {
         <ClassPickerModal
             isOpen={isAddClassOpen}
             onClose={() => setIsAddClassOpen(false)}
-            classes={classes}
+            classes={filteredClasses}
             title="Multiclass: Pick a New Class"
             disabledKeys={takenClassKeys}
             onConfirm={handleAddNewClass}
