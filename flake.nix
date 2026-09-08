@@ -25,7 +25,7 @@
             nodejs_26
 
             # Database
-            postgresql_16
+            postgresql_18
 
             # Optional
             docker-compose

@@ -17,16 +17,18 @@ import org.springframework.web.client.RestClient;
 public class Open5eApiConfig {
 
   private String baseUrl = "https://api.open5e.com/";
+  private Duration connectTimeout = Duration.ofSeconds(100);
+  private Duration readTimeout = Duration.ofSeconds(120);
 
   @Bean
   public RestClient open5eRestClient() {
     HttpClient httpClient = HttpClient.newBuilder()
-        .connectTimeout(Duration.ofSeconds(100))
+        .connectTimeout(connectTimeout)
         .followRedirects(HttpClient.Redirect.NORMAL)
         .build();
 
     JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
-    requestFactory.setReadTimeout(Duration.ofSeconds(30));
+    requestFactory.setReadTimeout(readTimeout);
 
     return RestClient.builder()
         .baseUrl(baseUrl)

@@ -130,11 +130,19 @@ public class Open5eApiClient {
         log.error("Client error ({}): {}", e.getStatusCode(), e.getMessage());
         throw new Open5eApiException("Client error during API request", e);
       } catch (HttpServerErrorException e) {
-        if (e.getStatusCode().value() == 504 || e.getStatusCode().value() == 429) {
+        int status = e.getStatusCode().value();
+        if (status == 504 || status == 429) {
           long retryAfterSeconds = parseRetryAfter(e.getResponseBodyAsString());
           log.warn("Server overloaded ({}), backing off for {}s as requested",
               e.getStatusCode(), retryAfterSeconds);
           sleep(retryAfterSeconds * 1000);
+        }
+        lastException = e;
+        attempt++;
+        log.warn("Transient API error (attempt {}/{}): HTTP {} {}",
+            attempt, rateLimitConfig.getMaxRetries(), status, e.getMessage());
+        if (attempt < rateLimitConfig.getMaxRetries()) {
+          sleep(rateLimitConfig.getRetryDelayMs() * attempt);
         }
       } catch (Exception e) {
         lastException = e;

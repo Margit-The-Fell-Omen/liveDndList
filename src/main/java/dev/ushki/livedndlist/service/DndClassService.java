@@ -166,66 +166,7 @@ public class DndClassService {
       action = SyncAction.CREATED;
     }
 
-    if (dndClass.getSubclassOf() != null) {
-      syncDndClassFeatures(dndClass);
-    } else {
-      syncDndSubclassFeatures(dndClass);
-    }
-
     return action;
-  }
-
-  private void syncDndClassFeatures(DndClass dndClass) {
-    featureUpsertHelper.deleteBySource(FeatureSourceType.CLASS, dndClass.getKey());
-    if (dndClass.getFeatures() == null) {
-      return;
-    }
-
-    int order = 0;
-    for (DndClassFeature feature : dndClass.getFeatures()) {
-      String featureKey = "cls_" + dndClass.getKey() + "_" + slug(feature.getKey(), order);
-      order = deriveOrder(dndClass, order, feature, featureKey);
-    }
-  }
-
-  private void syncDndSubclassFeatures(DndClass dndClass) {
-    featureUpsertHelper.deleteBySource(FeatureSourceType.SUBCLASS, dndClass.getKey());
-    if (dndClass.getFeatures() == null) {
-      return;
-    }
-
-    int order = 0;
-    for (DndClassFeature feature : dndClass.getFeatures()) {
-      String featureKey = "sub_" + dndClass.getKey() + "_" + slug(feature.getKey(), order);
-      order = deriveOrder(dndClass, order, feature, featureKey);
-    }
-  }
-
-  private int deriveOrder(DndClass dndClass, int order, DndClassFeature feature,
-      String featureKey) {
-    Integer minLevel = feature.getGainedAt() != null && !feature.getGainedAt().isEmpty()
-        ? feature.getGainedAt().stream().mapToInt(GainedAt::getLevel).min().orElse(1)
-        : null;
-
-    featureUpsertHelper.upsertNarrativeFeature(
-        featureKey,
-        feature.getName(),
-        feature.getDescription(),
-        FeatureSourceType.CLASS,
-        dndClass.getKey(),
-        minLevel,
-        null,
-        dndClass.getDocument()
-    );
-    order++;
-    return order;
-  }
-
-  private String slug(String name, int fallback) {
-    if (name == null || name.isBlank()) {
-      return "class_feature_" + fallback;
-    }
-    return name.toLowerCase().replaceAll("[^a-z0-9]+", "_").replaceAll("^_|_$", "");
   }
 
   private SyncResultDto buildAlreadyInProgressResult(String taskId) {

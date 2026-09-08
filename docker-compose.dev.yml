@@ -93,7 +93,7 @@ services:
       start_period: 30s
       timeout: 10s
     volumes:
-      - pgdata-dev:/var/lib/postgresql/data
+      - pgdata-dev:/var/lib/postgresql
     networks:
       - app-dev
 

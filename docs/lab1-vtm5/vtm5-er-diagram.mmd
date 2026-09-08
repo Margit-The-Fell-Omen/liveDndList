@@ -1,0 +1,68 @@
+%% ER-diagram (Chen notation) for the "Vampire: The Masquerade 5" module
+%% Entities = rectangles, relationships = diamonds, cardinalities labeled on edges.
+
+flowchart LR
+    %% ── Entity types (strong) ──────────────────────────────
+    PLAYER["Player<br/>player_id (PK)<br/>username<br/>email<br/>password_hash<br/>created_at"]
+    CHRONICLE["Chronicle<br/>chronicle_id (PK)<br/>title<br/>description<br/>setting<br/>start_date<br/>status"]
+    CHARACTER["VampireCharacter<br/>character_id (PK)<br/>name<br/>concept<br/>ambition<br/>desire<br/>generation<br/>humanity<br/>blood_potency"]
+    CLAN["Clan<br/>clan_id (PK)<br/>name<br/>description<br/>curse<br/>compulsion<br/>sourcebook"]
+    DISCIPLINE["Discipline<br/>discipline_id (PK)<br/>name<br/>description<br/>discipline_type<br/>sourcebook"]
+    POWER["Power<br/>power_id (PK)<br/>name<br/>description<br/>level<br/>amalgam<br/>prerequisite"]
+    PREDATOR["PredatorType<br/>predator_type_id (PK)<br/>name<br/>description<br/>granted_specialty<br/>sourcebook"]
+    MASK["MortalMask<br/>mask_id (PK)<br/>mortal_name<br/>occupation<br/>cover_story<br/>description"]
+
+    %% ── Relationship types (diamonds) ──────────────────────
+    R_tell{"storytells"}
+    R_incl{"contains"}
+    R_clan{"belongs to"}
+    R_pred{"practices"}
+    R_pow{"includes"}
+    R_know{"knows"}
+    R_grant{"grants"}
+    R_mask{"wears"}
+
+    %% ── Attribute of the M:N relationship ──────────────────
+    A_dots(("dots<br/>(level 1–5)"))
+
+    %% ── 1:N — Player → Chronicle ───────────────────────────
+    PLAYER ---|1| R_tell
+    R_tell ---|N| CHRONICLE
+
+    %% ── 1:N — Chronicle → VampireCharacter ─────────────────
+    CHRONICLE ---|1| R_incl
+    R_incl ---|N| CHARACTER
+
+    %% ── 1:N — Clan → VampireCharacter ──────────────────────
+    CLAN ---|1| R_clan
+    R_clan ---|N| CHARACTER
+
+    %% ── 1:N — PredatorType → VampireCharacter ──────────────
+    PREDATOR ---|1| R_pred
+    R_pred ---|N| CHARACTER
+
+    %% ── 1:N — Discipline → Power ───────────────────────────
+    DISCIPLINE ---|1| R_pow
+    R_pow ---|N| POWER
+
+    %% ── M:N — VampireCharacter ↔ Discipline (+ attr "dots")
+    CHARACTER ---|M| R_know
+    R_know ---|N| DISCIPLINE
+    R_know --- A_dots
+
+    %% ── M:N — Clan ↔ Discipline ────────────────────────────
+    CLAN ---|M| R_grant
+    R_grant ---|N| DISCIPLINE
+
+    %% ── 1:1 — VampireCharacter ↔ MortalMask ────────────────
+    CHARACTER ---|1| R_mask
+    R_mask ---|1| MASK
+
+    %% ── Styling ────────────────────────────────────────────
+    classDef entity fill:#eaf2fd,stroke:#1b4f9c,stroke-width:2px,color:#0b2545;
+    classDef rel fill:#fff4d6,stroke:#b07d00,stroke-width:2px,color:#4a3800;
+    classDef attr fill:#eefcef,stroke:#2e7d32,stroke-width:2px,color:#1b5e20;
+
+    class PLAYER,CHRONICLE,CHARACTER,CLAN,DISCIPLINE,POWER,PREDATOR,MASK entity;
+    class R_tell,R_incl,R_clan,R_pred,R_pow,R_know,R_grant,R_mask rel;
+    class A_dots attr;
