@@ -1,5 +1,6 @@
 package dev.ushki.livedndlist.dto.response;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.dto.DndClassLevelDto;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
@@ -280,8 +281,8 @@ public class CharacterResponse {
     private String description;
     private Integer chooseCount;
     private String optionsSource;
-    private Object optionsFilter;      // was JsonNode
-    private Object currentSelection;   // was JsonNode
+    private JsonNode optionsFilter;
+    private JsonNode currentSelection;
   }
 
   @Data
@@ -295,7 +296,7 @@ public class CharacterResponse {
     private String description;
     private String source;
     private String sourceLabel;
-    private Object sourceContext;       // was JsonNode
+    private JsonNode sourceContext;
     private List<FeatureChoiceAnswerResponse> choices;
   }
 
@@ -307,7 +308,7 @@ public class CharacterResponse {
 
     private String choiceKey;
     private String name;
-    private Object selectedValues;     // was JsonNode
+    private JsonNode selectedValues;
   }
 
   @Data
@@ -318,7 +319,7 @@ public class CharacterResponse {
 
     private Integer amount;
     private String dice;
-    private Object filter;             // was JsonNode
+    private JsonNode filter;
   }
 
 }

@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.service.features;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -25,6 +26,7 @@ import dev.ushki.livedndlist.enums.CreatureType;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.enums.FeatureEffectType;
 import dev.ushki.livedndlist.enums.FeatureSourceType;
+import dev.ushki.livedndlist.exceptions.BadRequestException;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
 import dev.ushki.livedndlist.repository.CharacterFeatureRepository;
 import dev.ushki.livedndlist.repository.CharacterRepository;
@@ -32,7 +34,9 @@ import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.repository.FeatureRepository;
 import dev.ushki.livedndlist.repository.RaceRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
+import dev.ushki.livedndlist.service.CharacterService;
 import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
+import dev.ushki.livedndlist.dto.response.CharacterResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.HashSet;
@@ -73,6 +77,8 @@ class CharacterPipelineGoldenIntegrationTest extends AbstractIntegrationTest {
   ObjectMapper objectMapper;
   @Autowired
   TransactionTemplate transactionTemplate;
+  @Autowired
+  CharacterService characterService;
 
   @PersistenceContext
   EntityManager em;
@@ -357,6 +363,55 @@ class CharacterPipelineGoldenIntegrationTest extends AbstractIntegrationTest {
     assertThat(after.getSkillProficiencies()).contains("ATHLETICS", "PERCEPTION");
     assertThat(after.getPendingChoices())
         .noneMatch(pc -> pc.getChoiceKey().equals("fighter_skill_pick"));
+  }
+
+  @Test
+  @DisplayName("toResponse maps optionsFilter as proper JSON object for frontend")
+  void pendingChoiceOptionsFilterIsMappedAsJsonNode() {
+    CharacterResponse cr = characterService.getById(characterId,
+        "testuser");
+    assertThat(cr.getPendingChoices()).isNotNull();
+    assertThat(cr.getPendingChoices())
+        .anySatisfy(pc -> {
+          assertThat(pc.getChoiceKey()).isEqualTo("fighter_skill_pick");
+          assertThat(pc.getOptionsFilter()).isNotNull();
+          assertThat(pc.getOptionsFilter().isObject()).isTrue();
+          assertThat(pc.getOptionsFilter().path("fromList").isArray()).isTrue();
+        });
+  }
+
+  @Test
+  @DisplayName("Proficiency choice rejects an already-proficient skill")
+  void proficiencyChoiceRejectsAlreadyProficientSkill() {
+    var pending = pipelineService.compute(characterId).getPendingChoices().stream()
+        .filter(pc -> pc.getChoiceKey().equals("fighter_skill_pick"))
+        .findFirst().orElseThrow();
+
+    ArrayNode selection = objectMapper.createArrayNode();
+    selection.add("INSIGHT");
+    selection.add("ATHLETICS");
+
+    assertThatThrownBy(() -> choiceService.submitChoice(characterId,
+        pending.getCharacterFeatureId(), "fighter_skill_pick", selection))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessageContaining("Invalid selections");
+  }
+
+  @Test
+  @DisplayName("Skill choice rejects a skill outside its fromList constraint")
+  void skillChoiceRejectsSkillOutsideFromList() {
+    var pending = pipelineService.compute(characterId).getPendingChoices().stream()
+        .filter(pc -> pc.getChoiceKey().equals("fighter_skill_pick"))
+        .findFirst().orElseThrow();
+
+    ArrayNode selection = objectMapper.createArrayNode();
+    selection.add("STEALTH");
+    selection.add("DECEPTION");
+
+    assertThatThrownBy(() -> choiceService.submitChoice(characterId,
+        pending.getCharacterFeatureId(), "fighter_skill_pick", selection))
+        .isInstanceOf(BadRequestException.class)
+        .hasMessageContaining("Invalid selections");
   }
 
   // ─────────────────────────────────────────────────────────────

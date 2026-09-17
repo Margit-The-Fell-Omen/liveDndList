@@ -206,26 +206,21 @@ public class CharacterMapper {
 
   private List<SkillResponse> mapSkillsFromState(ComputedCharacterState state,
       Set<Skill> characterSkills) {
-    if (characterSkills == null || !Hibernate.isInitialized(characterSkills)) {
-      return Collections.emptyList();
-    }
-
-    Map<SkillType, Skill> skillMap = characterSkills.stream()
-        .collect(Collectors.toMap(Skill::getSkillType, s -> s));
+    Map<SkillType, Skill> skillMap = (characterSkills != null
+        && Hibernate.isInitialized(characterSkills))
+        ? characterSkills.stream().collect(Collectors.toMap(Skill::getSkillType, s -> s))
+        : Collections.emptyMap();
 
     List<SkillResponse> result = new ArrayList<>();
     for (SkillType skillType : SkillType.values()) {
       Skill entity = skillMap.get(skillType);
-      if (entity == null) {
-        continue;
-      }
 
       boolean isProficient = state.getSkillProficiencies().contains(skillType.name());
       boolean hasExpertise = state.getSkillExpertise().contains(skillType.name());
       int totalBonus = state.getSkillTotals().getOrDefault(skillType.name(), 0);
 
       result.add(SkillResponse.builder()
-          .id(entity.getId())
+          .id(entity != null ? entity.getId() : null)
           .skillType(skillType)
           .abilityType(skillType.getBaseAbility())
           .proficient(isProficient)

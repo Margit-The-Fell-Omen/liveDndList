@@ -29,6 +29,21 @@ function formatOptionLabel(value: string): string {
       .replace(/\b\w/g, c => c.toUpperCase());
 }
 
+function asBool(value: unknown): boolean | undefined {
+  if (value === true || value === 'true') return true;
+  if (value === false || value === 'false') return false;
+  return undefined;
+}
+
+function inferSkillFromList(description: string | undefined): string[] | undefined {
+  if (!description) return undefined;
+  const desc = description.toLowerCase();
+  const found = SKILLS
+      .filter(s => desc.includes(s.name.toLowerCase()))
+      .map(s => s.key);
+  return found.length > 0 ? found : undefined;
+}
+
 function collectAlreadyChosenValues(currentChoice: PendingChoiceResponse, character: Character): Set<string> {
   const already = new Set<string>();
   const feature = character.features?.find(f => f.id === currentChoice.characterFeatureId);
@@ -57,9 +72,11 @@ function resolveOptions(
       return opts.map(o => ({value: o, label: formatOptionLabel(o)}));
     }
     case 'SKILL_LIST': {
-      const fromList = filterObj['fromList'] as string[] | undefined;
-      const onlyProficient = filterObj['onlyProficient'] as boolean | undefined;
-      const excludeChosen = filterObj['excludeChosen'] as boolean | undefined;
+      const fromList = (filterObj['fromList'] as string[] | undefined)
+          ?? inferSkillFromList(choice.description);
+      const onlyProficient = asBool(filterObj['onlyProficient'])
+          ?? (/\bexpertise\b/i.test(`${choice.name ?? ''} ${choice.description ?? ''}`) ? true : undefined);
+      const excludeChosen = asBool(filterObj['excludeChosen']);
 
       const grantedProficiencies = new Set(character.skills.filter(s => s.proficient).map(s => s.skillType));
       const grantedExpertise = new Set(character.skills.filter(s => s.expertise).map(s => s.skillType));
@@ -290,7 +307,6 @@ export function FeatureChoiceModal({
                                      onClose,
                                      saving = false
                                    }: FeatureChoiceModalProps) {
-  console.log('PENDING CHOICE DATA:', choice);
   // 1. Attempt to parse the broken filter from the backend
   const filterObj = useMemo(() => {
     try {
@@ -334,6 +350,7 @@ export function FeatureChoiceModal({
   // States
   const [selected, setSelected] = useState<string[]>([]);
   const [asiSelected, setAsiSelected] = useState<{ ability: string; amount: number }[]>([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Validation
   const canSubmit = useMemo(() => {
@@ -353,10 +370,15 @@ export function FeatureChoiceModal({
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
-    if (isAsi2024) {
-      await onSubmit(asiSelected);
-    } else {
-      await onSubmit(selected.filter(v => v.trim() !== '').map(v => v.trim()));
+    setSubmitError(null);
+    try {
+      if (isAsi2024) {
+        await onSubmit(asiSelected);
+      } else {
+        await onSubmit(selected.filter(v => v.trim() !== '').map(v => v.trim()));
+      }
+    } catch (e) {
+      setSubmitError(e instanceof Error ? e.message : 'Failed to submit choice.');
     }
   };
 
@@ -381,6 +403,8 @@ export function FeatureChoiceModal({
       <Modal isOpen={isOpen} onClose={onClose} title={choice.name} size="medium" footer={footer}>
         <div className={styles.body}>
           {choice.description && <p className={styles.description}>{choice.description}</p>}
+
+          {submitError && <p className={styles.errorText}>{submitError}</p>}
 
           {isAsi2024 ? (
               <AsiDistributionPicker

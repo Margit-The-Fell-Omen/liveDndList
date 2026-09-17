@@ -9,6 +9,7 @@ import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.ChoiceOptionsSource;
 import dev.ushki.livedndlist.enums.DndFeatType;
 import dev.ushki.livedndlist.enums.SkillType;
+import dev.ushki.livedndlist.exceptions.BadRequestException;
 import dev.ushki.livedndlist.repository.DndFeatRepository;
 import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class ChoiceValidator {
       ComputedCharacterState state
   ) {
     if (!selectedValues.isArray()) {
-      throw new IllegalArgumentException("selectedValues must be a JSON array");
+      throw new BadRequestException("selectedValues must be a JSON array");
     }
 
     // Detect if this is a 2024 ASI distribution choice
@@ -48,12 +49,12 @@ public class ChoiceValidator {
     // Dynamic size validation
     if (isAsiDistribution) {
       if (selectedValues.size() < 2 || selectedValues.size() > 3) {
-        throw new IllegalArgumentException(
+        throw new BadRequestException(
             "Expected 2 or 3 ASI distributions, got " + selectedValues.size());
       }
     } else {
       if (selectedValues.size() != choiceDefinition.getChooseCount()) {
-        throw new IllegalArgumentException(
+        throw new BadRequestException(
             "Expected " + choiceDefinition.getChooseCount() + " selections, got "
                 + selectedValues.size());
       }
@@ -73,11 +74,11 @@ public class ChoiceValidator {
       }
 
       if (val == null || val.isBlank()) {
-        throw new IllegalArgumentException("Selection values must not be blank");
+        throw new BadRequestException("Selection values must not be blank");
       }
 
       if (!seen.add(val)) {
-        throw new IllegalArgumentException("Duplicate selection: " + val);
+        throw new BadRequestException("Duplicate selection: " + val);
       }
 
       if (!validOptions.isEmpty() && !validOptions.contains(val)) {
@@ -86,7 +87,7 @@ public class ChoiceValidator {
     }
 
     if (!invalid.isEmpty()) {
-      throw new IllegalArgumentException(
+      throw new BadRequestException(
           "Invalid selections for choice '" + choiceDefinition.getChoiceKey() + "': " + invalid
               + ". Valid options: " + validOptions);
     }
@@ -139,8 +140,13 @@ public class ChoiceValidator {
 
     getRetainedStrings(filter, options);
 
-    if (filter.path("onlyProficient").asBoolean(false) && state != null) {
-      options.retainAll(state.getSkillProficiencies());
+    if (state != null) {
+      if (filter.path("onlyProficient").asBoolean(false)) {
+        options.retainAll(state.getSkillProficiencies());
+        options.removeAll(state.getSkillExpertise());
+      } else {
+        options.removeAll(state.getSkillProficiencies());
+      }
     }
 
     return options;
