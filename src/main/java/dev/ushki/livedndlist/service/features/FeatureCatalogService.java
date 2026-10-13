@@ -30,87 +30,94 @@ public class FeatureCatalogService {
   private final FeatureRepository featureRepository;
   private final CacheManager cacheManager;
 
-  public List<Feature> findBySource(FeatureSourceType type, String key) {
+  public List<FeatureRef> findBySource(FeatureSourceType type, String key) {
     if (type == null || key == null || key.isBlank()) {
       return List.of();
     }
     CompositeKey cacheKey = new CompositeKey("bySource", type, key);
     return cacheManager.get(CACHE_NAMESPACE, cacheKey,
-        () -> featureRepository.findBySourceTypeAndSourceKey(type, key));
+        () -> featureRepository.findBySourceTypeAndSourceKey(type, key).stream()
+            .map(FeatureCatalogService::toRef)
+            .toList());
   }
 
-  public List<Feature> findClassFeaturesUpToLevel(String classKey, int level) {
+  public List<FeatureRef> findClassFeaturesUpToLevel(String classKey, int level) {
     if (classKey == null || classKey.isBlank() || level < 1) {
       return List.of();
     }
     CompositeKey cacheKey = new CompositeKey("classUpToLevel", classKey, level);
     return cacheManager.get(CACHE_NAMESPACE, cacheKey,
-        () -> featureRepository.findBySourceUpToLevel(FeatureSourceType.CLASS, classKey, level));
+        () -> featureRepository.findBySourceUpToLevel(FeatureSourceType.CLASS, classKey, level)
+            .stream()
+            .map(FeatureCatalogService::toRef)
+            .toList());
   }
 
-  public List<Feature> findSubclassFeaturesUpToLevel(String subclassKey, int level) {
+  public List<FeatureRef> findSubclassFeaturesUpToLevel(String subclassKey, int level) {
     if (subclassKey == null || subclassKey.isBlank() || level < 1) {
       return List.of();
     }
     CompositeKey cacheKey = new CompositeKey("subclassUpToLevel", subclassKey, level);
     return cacheManager.get(CACHE_NAMESPACE, cacheKey,
-        () -> featureRepository.findBySourceUpToLevel(FeatureSourceType.SUBCLASS, subclassKey,
-            level));
+        () -> featureRepository.findBySourceUpToLevel(FeatureSourceType.SUBCLASS, subclassKey, level)
+            .stream()
+            .map(FeatureCatalogService::toRef)
+            .toList());
   }
 
-  public Optional<Feature> findByKey(String featureKey) {
+  public Optional<FeatureRef> findByKey(String featureKey) {
     if (featureKey == null || featureKey.isBlank()) {
       return Optional.empty();
     }
     CompositeKey cacheKey = new CompositeKey("byKey", featureKey);
-    Feature cached = cacheManager.get(CACHE_NAMESPACE, cacheKey,
-        () -> featureRepository.findByKey(featureKey).orElse(null));
+    FeatureRef cached = cacheManager.get(CACHE_NAMESPACE, cacheKey,
+        () -> featureRepository.findByKey(featureKey).map(FeatureCatalogService::toRef).orElse(null));
     return Optional.ofNullable(cached);
   }
 
-  public Feature getByKey(String featureKey) {
+  public FeatureRef getByKey(String featureKey) {
     return findByKey(featureKey)
         .orElseThrow(() -> new ResourceNotFoundException("Feature", "key", featureKey));
   }
 
-  public List<FeatureEffect> loadEffects(long featureId) {
+  public List<FeatureEffectRef> loadEffects(long featureId) {
     CompositeKey cacheKey = new CompositeKey("effects", featureId);
     return cacheManager.get(CACHE_NAMESPACE, cacheKey, () -> {
       Feature feature = featureRepository.findById(featureId)
           .orElseThrow(() -> new ResourceNotFoundException("Feature", "id", featureId));
       List<FeatureEffect> effects = feature.getEffects();
       effects.size();
-      return List.copyOf(effects);
+      return effects.stream().map(FeatureCatalogService::toRef).toList();
     });
   }
 
-  public List<FeatureChoice> loadChoices(long featureId) {
+  public List<FeatureChoiceRef> loadChoices(long featureId) {
     CompositeKey cacheKey = new CompositeKey("choices", featureId);
     return cacheManager.get(CACHE_NAMESPACE, cacheKey, () -> {
       Feature feature = featureRepository.findById(featureId)
           .orElseThrow(() -> new ResourceNotFoundException("Feature", "id", featureId));
       List<FeatureChoice> choices = feature.getChoices();
       choices.size();
-      return List.copyOf(choices);
+      return choices.stream().map(FeatureCatalogService::toRef).toList();
     });
   }
 
-  public Map<Long, List<FeatureEffect>> batchLoadEffects(Collection<Long> featureIds) {
+  public Map<Long, List<FeatureEffectRef>> batchLoadEffects(Collection<Long> featureIds) {
     if (featureIds == null || featureIds.isEmpty()) {
       return Collections.emptyMap();
     }
-    Map<Long, List<FeatureEffect>> result = new HashMap<>(featureIds.size());
+    Map<Long, List<FeatureEffectRef>> result = new HashMap<>(featureIds.size());
     for (Long id : featureIds) {
       result.put(id, loadEffects(id));
     }
     return result;
   }
 
-  public Map<Long, List<FeatureChoice>> batchLoadChoices(Collection<Long> featureIds) {
+  public Map<Long, List<FeatureChoiceRef>> batchLoadChoices(Collection<Long> featureIds) {
     if (featureIds == null || featureIds.isEmpty()) {
       return Collections.emptyMap();
     }
-    Map<Long, List<FeatureChoice>> result = new HashMap<>(featureIds.size());
+    Map<Long, List<FeatureChoiceRef>> result = new HashMap<>(featureIds.size());
     for (Long id : featureIds) {
       result.put(id, loadChoices(id));
     }
@@ -119,5 +126,38 @@ public class FeatureCatalogService {
 
   public void invalidateCache() {
     cacheManager.invalidate(CACHE_NAMESPACE);
+  }
+
+  private static FeatureRef toRef(Feature f) {
+    return FeatureRef.builder()
+        .id(f.getId())
+        .key(f.getKey())
+        .name(f.getName())
+        .description(f.getDescription())
+        .sourceType(f.getSourceType())
+        .sourceKey(f.getSourceKey())
+        .gainedAtLevel(f.getGainedAtLevel())
+        .prerequisite(f.getPrerequisite())
+        .displayOrder(f.getDisplayOrder())
+        .build();
+  }
+
+  private static FeatureEffectRef toRef(FeatureEffect e) {
+    return FeatureEffectRef.builder()
+        .effectType(e.getEffectType())
+        .payload(e.getPayload())
+        .choiceKey(e.getChoiceKey())
+        .build();
+  }
+
+  private static FeatureChoiceRef toRef(FeatureChoice c) {
+    return FeatureChoiceRef.builder()
+        .choiceKey(c.getChoiceKey())
+        .name(c.getName())
+        .description(c.getDescription())
+        .chooseCount(c.getChooseCount())
+        .optionsSource(c.getOptionsSource())
+        .optionsFilter(c.getOptionsFilter())
+        .build();
   }
 }

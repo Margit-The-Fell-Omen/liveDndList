@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureChoice;
 import dev.ushki.livedndlist.enums.ChoiceOptionsSource;
 import dev.ushki.livedndlist.exceptions.BadRequestException;
 import dev.ushki.livedndlist.repository.DndFeatRepository;
@@ -28,8 +27,8 @@ class ChoiceValidatorTest {
     validator = new ChoiceValidator(mock(DndFeatRepository.class));
   }
 
-  private FeatureChoice skillChoice(String choiceKey, ObjectNode filter) {
-    return FeatureChoice.builder()
+  private FeatureChoiceRef skillChoice(String choiceKey, ObjectNode filter) {
+    return FeatureChoiceRef.builder()
         .choiceKey(choiceKey)
         .chooseCount(1)
         .optionsSource(ChoiceOptionsSource.SKILL_LIST)
@@ -40,7 +39,7 @@ class ChoiceValidatorTest {
   @Test
   @DisplayName("Proficiency choice rejects already-proficient skills")
   void proficiencyExcludesAlreadyProficient() {
-    FeatureChoice choice = skillChoice("prof", mapper.createObjectNode());
+    FeatureChoiceRef choice = skillChoice("prof", mapper.createObjectNode());
     CharacterFeature cf = CharacterFeature.builder().build();
     ComputedCharacterState state = ComputedCharacterState.builder().build();
     state.setSkillProficiencies(Set.of("INSIGHT"));
@@ -58,7 +57,7 @@ class ChoiceValidatorTest {
   void expertiseOnlyAllowsProficientWithoutExpertise() {
     ObjectNode filter = mapper.createObjectNode();
     filter.put("onlyProficient", true);
-    FeatureChoice choice = skillChoice("exp", filter);
+    FeatureChoiceRef choice = skillChoice("exp", filter);
     CharacterFeature cf = CharacterFeature.builder().build();
     ComputedCharacterState state = ComputedCharacterState.builder().build();
     state.setSkillProficiencies(Set.of("INSIGHT", "STEALTH"));
@@ -80,7 +79,7 @@ class ChoiceValidatorTest {
   void skillChoiceRejectsSkillOutsideFromList() {
     ObjectNode filter = mapper.createObjectNode();
     filter.putArray("fromList").add("ACROBATICS").add("STEALTH");
-    FeatureChoice choice = skillChoice("pick", filter);
+    FeatureChoiceRef choice = skillChoice("pick", filter);
     CharacterFeature cf = CharacterFeature.builder().build();
     ComputedCharacterState state = ComputedCharacterState.builder().build();
     state.setSkillProficiencies(Set.of());

@@ -31,4 +31,8 @@ public class CompositeKey {
   public String toString() {
     return Arrays.deepToString(keys);
   }
+
+  String toKeyString() {
+    return Arrays.deepToString(keys);
+  }
 }

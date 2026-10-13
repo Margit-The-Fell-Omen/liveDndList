@@ -20,7 +20,9 @@ RUN apk add --no-cache curl
 
 COPY --from=builder /app/target/*.jar livedndlist.jar
 
-RUN addgroup -S livedndlist && adduser -S livedndlist -G livedndlist
+RUN addgroup -S livedndlist && adduser -S livedndlist -G livedndlist \
+    && mkdir -p /app/logs \
+    && chown -R livedndlist:livedndlist /app/logs
 USER livedndlist
 
 EXPOSE 8080

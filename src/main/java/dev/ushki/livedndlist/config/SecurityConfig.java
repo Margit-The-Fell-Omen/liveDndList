@@ -78,6 +78,7 @@ public class SecurityConfig {
 
                 // --- Monitoring ---
                 "/actuator/prometheus",
+                "/actuator/health", "/actuator/health/**",
 
                 // --- All Swagger/OpenAPI related paths ---
                 "/swagger-ui.html",

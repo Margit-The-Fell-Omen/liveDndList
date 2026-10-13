@@ -7,9 +7,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeatureChoice;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.Feature;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureChoice;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureEffect;
+import dev.ushki.livedndlist.enums.CharacterFeatureSource;
+import dev.ushki.livedndlist.enums.FeatureEffectType;
 import dev.ushki.livedndlist.repository.CharacterFeatureRepository;
+import dev.ushki.livedndlist.repository.FeatureRepository;
 import dev.ushki.livedndlist.service.features.pipeline.PendingChoice;
 import dev.ushki.livedndlist.service.features.pipeline.ResolvedEffect;
 import dev.ushki.livedndlist.service.features.pipeline.ResolvedEffects;
@@ -33,6 +34,7 @@ public class FeatureEffectResolver {
 
   private final CharacterFeatureRepository characterFeatureRepository;
   private final FeatureCatalogService featureCatalogService;
+  private final FeatureRepository featureRepository;
   private final ObjectMapper objectMapper;
 
   private static final JsonNodeFactory JSON = JsonNodeFactory.instance;
@@ -84,9 +86,9 @@ public class FeatureEffectResolver {
         .map(cf -> cf.getFeature().getId())
         .collect(Collectors.toSet());
 
-    Map<Long, List<FeatureEffect>> effectsByFeature = featureCatalogService.batchLoadEffects(
+    Map<Long, List<FeatureEffectRef>> effectsByFeature = featureCatalogService.batchLoadEffects(
         featureIds);
-    Map<Long, List<FeatureChoice>> choicesByFeature = featureCatalogService.batchLoadChoices(
+    Map<Long, List<FeatureChoiceRef>> choicesByFeature = featureCatalogService.batchLoadChoices(
         featureIds);
 
     for (CharacterFeature cf : characterFeatures) {
@@ -94,27 +96,26 @@ public class FeatureEffectResolver {
         continue;
       }
 
-      Feature feature = cf.getFeature();
-      Long featureId = feature.getId();
+      Long featureId = cf.getFeature().getId();
 
       Map<String, CharacterFeatureChoice> answeredChoices = new HashMap<>();
       for (CharacterFeatureChoice cfc : cf.getChoices()) {
         answeredChoices.put(cfc.getChoiceKey(), cfc);
       }
 
-      List<FeatureEffect> featureEffects = effectsByFeature.getOrDefault(featureId, List.of());
-      List<FeatureChoice> featureChoices = choicesByFeature.getOrDefault(featureId, List.of());
+      List<FeatureEffectRef> featureEffects = effectsByFeature.getOrDefault(featureId, List.of());
+      List<FeatureChoiceRef> featureChoices = choicesByFeature.getOrDefault(featureId, List.of());
 
-      Map<String, FeatureChoice> choiceMap = new HashMap<>();
-      for (FeatureChoice fc : featureChoices) {
+      Map<String, FeatureChoiceRef> choiceMap = new HashMap<>();
+      for (FeatureChoiceRef fc : featureChoices) {
         choiceMap.put(fc.getChoiceKey(), fc);
       }
 
-      for (FeatureEffect effect : featureEffects) {
+      for (FeatureEffectRef effect : featureEffects) {
         if (effect.getChoiceKey() != null && !effect.getChoiceKey().isBlank()) {
           CharacterFeatureChoice answer = answeredChoices.get(effect.getChoiceKey());
           if (answer == null) {
-            FeatureChoice choiceDefinition = choiceMap.get(effect.getChoiceKey());
+            FeatureChoiceRef choiceDefinition = choiceMap.get(effect.getChoiceKey());
             if (choiceDefinition != null && !alreadyPending(pending, cf.getId(),
                 effect.getChoiceKey())) {
               pending.add(PendingChoice.builder()
@@ -149,7 +150,7 @@ public class FeatureEffectResolver {
 
   private void expandChoiceEffects(
       CharacterFeature cf,
-      FeatureEffect effect,
+      FeatureEffectRef effect,
       CharacterFeatureChoice answer,
       List<ResolvedEffect> effects) {
 
@@ -181,7 +182,7 @@ public class FeatureEffectResolver {
     }
   }
 
-  private String guessPayloadField(dev.ushki.livedndlist.enums.FeatureEffectType type) {
+  private String guessPayloadField(FeatureEffectType type) {
     return switch (type) {
       case GRANT_SKILL_PROFICIENCY, GRANT_SKILL_EXPERTISE -> "skill";
       case GRANT_SAVING_THROW_PROFICIENCY -> "ability";
@@ -195,13 +196,13 @@ public class FeatureEffectResolver {
 
   private List<Long> extractGrantedFeatureIds(List<ResolvedEffect> effects) {
     return effects.stream()
-        .filter(e -> e.getType() == dev.ushki.livedndlist.enums.FeatureEffectType.GRANT_FEAT
-            || e.getType() == dev.ushki.livedndlist.enums.FeatureEffectType.GRANT_FIGHTING_STYLE)
+        .filter(e -> e.getType() == FeatureEffectType.GRANT_FEAT
+            || e.getType() == FeatureEffectType.GRANT_FIGHTING_STYLE)
         .map(e -> {
           String featKey = e.getPayload().path("featKey").asText(null);
           if (featKey != null) {
             return featureCatalogService.findByKey(featKey)
-                .map(Feature::getId)
+                .map(FeatureRef::getId)
                 .orElse(null);
           }
           return null;
@@ -216,14 +217,11 @@ public class FeatureEffectResolver {
         .filter(cf -> cf.getFeature().getId().equals(featureId))
         .findFirst()
         .orElseGet(() -> {
-          Feature feature = featureCatalogService.getByKey(
-              featureCatalogService.findByKey(String.valueOf(featureId))
-                  .map(Feature::getKey)
-                  .orElse(""));
+          Feature feature = featureRepository.getReferenceById(featureId);
           return CharacterFeature.builder()
               .id(0L)
               .feature(feature)
-              .source(dev.ushki.livedndlist.enums.CharacterFeatureSource.FEAT)
+              .source(CharacterFeatureSource.FEAT)
               .active(true)
               .build();
         });

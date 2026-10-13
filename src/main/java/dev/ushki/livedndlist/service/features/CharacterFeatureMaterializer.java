@@ -7,12 +7,12 @@ import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeat;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterSubclassChoice;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.Feature;
 import dev.ushki.livedndlist.enums.CharacterFeatureSource;
 import dev.ushki.livedndlist.enums.FeatureSourceType;
 import dev.ushki.livedndlist.repository.CharacterFeatureRepository;
 import dev.ushki.livedndlist.repository.CharacterRepository;
 import dev.ushki.livedndlist.repository.CharacterSubclassChoiceRepository;
+import dev.ushki.livedndlist.repository.FeatureRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +32,7 @@ public class CharacterFeatureMaterializer {
   private final CharacterFeatureRepository characterFeatureRepository;
   private final CharacterSubclassChoiceRepository subclassChoiceRepository;
   private final FeatureCatalogService featureCatalogService;
+  private final FeatureRepository featureRepository;
 
   private static final JsonNodeFactory JSON = JsonNodeFactory.instance;
 
@@ -74,7 +75,7 @@ public class CharacterFeatureMaterializer {
       } else {
         CharacterFeature newCf = CharacterFeature.builder()
             .character(character)
-            .feature(tf.feature)
+            .feature(featureRepository.getReferenceById(tf.ref().getId()))
             .source(tf.source)
             .sourceContext(tf.sourceContext)
             .active(true)
@@ -93,7 +94,7 @@ public class CharacterFeatureMaterializer {
 
     String raceKey = character.getRace() != null ? character.getRace().getKey() : null;
     if (raceKey != null) {
-      for (Feature f : featureCatalogService.findBySource(FeatureSourceType.RACE, raceKey)) {
+      for (FeatureRef f : featureCatalogService.findBySource(FeatureSourceType.RACE, raceKey)) {
         target.add(new TargetFeature(f, CharacterFeatureSource.RACE, emptyContext()));
       }
     }
@@ -101,7 +102,7 @@ public class CharacterFeatureMaterializer {
     String backgroundKey =
         character.getBackground() != null ? character.getBackground().getKey() : null;
     if (backgroundKey != null) {
-      for (Feature f : featureCatalogService.findBySource(FeatureSourceType.BACKGROUND,
+      for (FeatureRef f : featureCatalogService.findBySource(FeatureSourceType.BACKGROUND,
           backgroundKey)) {
         target.add(new TargetFeature(f, CharacterFeatureSource.BACKGROUND, emptyContext()));
       }
@@ -120,7 +121,7 @@ public class CharacterFeatureMaterializer {
       ObjectNode classContext = JSON.objectNode();
       classContext.put("classKey", classKey);
 
-      for (Feature f : featureCatalogService.findClassFeaturesUpToLevel(classKey, level)) {
+      for (FeatureRef f : featureCatalogService.findClassFeaturesUpToLevel(classKey, level)) {
         ObjectNode ctx = classContext.deepCopy();
         ctx.put("classLevel", f.getGainedAtLevel());
         target.add(new TargetFeature(f, CharacterFeatureSource.CLASS, ctx));
@@ -131,7 +132,8 @@ public class CharacterFeatureMaterializer {
         ObjectNode subContext = classContext.deepCopy();
         subContext.put("subclassKey", subclassKey);
 
-        for (Feature f : featureCatalogService.findSubclassFeaturesUpToLevel(subclassKey, level)) {
+        for (FeatureRef f : featureCatalogService.findSubclassFeaturesUpToLevel(subclassKey,
+            level)) {
           ObjectNode ctx = subContext.deepCopy();
           ctx.put("classLevel", f.getGainedAtLevel());
           target.add(new TargetFeature(f, CharacterFeatureSource.SUBCLASS, ctx));
@@ -142,7 +144,7 @@ public class CharacterFeatureMaterializer {
     if (character.getFeats() != null) {
       for (CharacterFeat cf : character.getFeats()) {
         String featKey = cf.getFeat().getKey();
-        for (Feature f : featureCatalogService.findBySource(FeatureSourceType.FEAT, featKey)) {
+        for (FeatureRef f : featureCatalogService.findBySource(FeatureSourceType.FEAT, featKey)) {
           ObjectNode ctx = JSON.objectNode();
           ctx.put("featKey", featKey);
           target.add(new TargetFeature(f, CharacterFeatureSource.FEAT, ctx));
@@ -165,14 +167,14 @@ public class CharacterFeatureMaterializer {
         + featKey;
   }
 
-  private record TargetFeature(Feature feature, CharacterFeatureSource source,
+  private record TargetFeature(FeatureRef ref, CharacterFeatureSource source,
                                ObjectNode sourceContext) {
 
     String reconciliationKey() {
       String classKey = sourceContext.path("classKey").asText("");
       String subclassKey = sourceContext.path("subclassKey").asText("");
       String featKey = sourceContext.path("featKey").asText("");
-      return feature.getId() + "|" + source + "|" + classKey + "|" + subclassKey + "|" + featKey;
+      return ref.getId() + "|" + source + "|" + classKey + "|" + subclassKey + "|" + featKey;
     }
   }
 }

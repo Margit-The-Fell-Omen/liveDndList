@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.entity.dndCharacter.DndFeat;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeatureChoice;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureChoice;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.ChoiceOptionsSource;
 import dev.ushki.livedndlist.enums.DndFeatType;
@@ -31,7 +30,7 @@ public class ChoiceValidator {
   private final DndFeatRepository featRepository;
 
   public void validate(
-      FeatureChoice choiceDefinition,
+      FeatureChoiceRef choiceDefinition,
       JsonNode selectedValues,
       CharacterFeature characterFeature,
       ComputedCharacterState state
@@ -94,7 +93,7 @@ public class ChoiceValidator {
   }
 
   private Set<String> resolveValidOptions(
-      FeatureChoice choiceDefinition,
+      FeatureChoiceRef choiceDefinition,
       CharacterFeature characterFeature,
       ComputedCharacterState state
   ) {

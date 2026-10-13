@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeatureChoice;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureChoice;
-import dev.ushki.livedndlist.entity.dndCharacter.feature.FeatureEffect;
 import dev.ushki.livedndlist.enums.FeatureEffectType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.repository.CharacterFeatureChoiceRepository;
@@ -50,8 +48,9 @@ public class CharacterChoiceService {
           "CharacterFeature does not belong to character " + characterId);
     }
 
-    List<FeatureChoice> featureChoices = featureCatalogService.loadChoices(cf.getFeature().getId());
-    FeatureChoice choiceDefinition = featureChoices.stream()
+    List<FeatureChoiceRef> featureChoices =
+        featureCatalogService.loadChoices(cf.getFeature().getId());
+    FeatureChoiceRef choiceDefinition = featureChoices.stream()
         .filter(fc -> fc.getChoiceKey().equals(choiceKey))
         .findFirst()
         .orElseThrow(() -> new IllegalArgumentException(
@@ -109,11 +108,11 @@ public class CharacterChoiceService {
 
   private void handleSideEffects(long characterId, CharacterFeature cf, String choiceKey,
       JsonNode selectedValues) {
-    List<FeatureEffect> effects = featureCatalogService.loadEffects(cf.getFeature().getId());
+    List<FeatureEffectRef> effects = featureCatalogService.loadEffects(cf.getFeature().getId());
 
     boolean needsRematerialization = false;
 
-    for (FeatureEffect effect : effects) {
+    for (FeatureEffectRef effect : effects) {
       if (choiceKey.equals(effect.getChoiceKey()) && FEATURE_GRANTING_TYPES.contains(
           effect.getEffectType())) {
         if (effect.getEffectType() == FeatureEffectType.GRANT_FEAT) {

@@ -53,7 +53,7 @@ services:
       start_period: 60s
 
     volumes:
-      - ./logs/dev/backend:/app/logs
+      - backend-logs-dev:/app/logs
 
     logging:
       driver: local
@@ -99,6 +99,7 @@ services:
 
 volumes:
   pgdata-dev: { }
+  backend-logs-dev: { }
 
 networks:
   app-dev: { }
