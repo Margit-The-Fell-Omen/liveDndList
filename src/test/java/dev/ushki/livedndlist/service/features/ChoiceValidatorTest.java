@@ -11,6 +11,7 @@ import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.enums.ChoiceOptionsSource;
 import dev.ushki.livedndlist.exceptions.BadRequestException;
 import dev.ushki.livedndlist.repository.DndFeatRepository;
+import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,8 @@ class ChoiceValidatorTest {
 
   @BeforeEach
   void setUp() {
-    validator = new ChoiceValidator(mock(DndFeatRepository.class));
+    validator = new ChoiceValidator(mock(DndFeatRepository.class), mock(SpellRepository.class),
+        mock(FeatureCatalogService.class));
   }
 
   private FeatureChoiceRef skillChoice(String choiceKey, ObjectNode filter) {

@@ -2,14 +2,17 @@ package dev.ushki.livedndlist.service.features;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.entity.dndCharacter.DndFeat;
+import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterFeatureChoice;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.ChoiceOptionsSource;
 import dev.ushki.livedndlist.enums.DndFeatType;
 import dev.ushki.livedndlist.enums.SkillType;
+import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.exceptions.BadRequestException;
 import dev.ushki.livedndlist.repository.DndFeatRepository;
+import dev.ushki.livedndlist.repository.SpellRepository;
 import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +31,8 @@ import org.springframework.stereotype.Component;
 public class ChoiceValidator {
 
   private final DndFeatRepository featRepository;
+  private final SpellRepository spellRepository;
+  private final FeatureCatalogService featureCatalogService;
 
   public void validate(
       FeatureChoiceRef choiceDefinition,
@@ -110,6 +115,8 @@ public class ChoiceValidator {
       case ABILITY_LIST -> resolveAbilityListOptions(filter);
       case FEAT_LIST -> resolveFeatListOptions(filter);
       case SPELL_LIST -> resolveSpellListOptions(filter);
+      case ORDER -> resolveOrderOptions(filter);
+      case ANCESTRY -> resolveAncestryOptions(filter);
     };
 
     if (filter.path("excludeChosen").asBoolean(false)) {
@@ -221,7 +228,52 @@ public class ChoiceValidator {
   }
 
   private Set<String> resolveSpellListOptions(JsonNode filter) {
-    return new HashSet<>();
+    Integer minLevel = filter.has("minLevel") ? filter.get("minLevel").asInt() : null;
+    Integer maxLevel = filter.has("maxLevel") ? filter.get("maxLevel").asInt() : null;
+
+    SpellSchool school = null;
+    String schoolStr = filter.path("school").asText(null);
+    if (schoolStr != null) {
+      try {
+        school = SpellSchool.valueOf(schoolStr.toUpperCase());
+      } catch (IllegalArgumentException e) {
+        log.warn("Unknown spell school filter: {}", schoolStr);
+      }
+    }
+
+    final Set<String> fromList;
+    if (filter.has("fromList") && filter.get("fromList").isArray()) {
+      Set<String> list = new HashSet<>();
+      for (JsonNode item : filter.get("fromList")) {
+        list.add(item.asText().toLowerCase());
+      }
+      fromList = list;
+    } else {
+      fromList = null;
+    }
+
+    final SpellSchool schoolFilter = school;
+    return spellRepository.findAll().stream()
+        .filter(s -> minLevel == null || s.getLevel() >= minLevel)
+        .filter(s -> maxLevel == null || s.getLevel() <= maxLevel)
+        .filter(s -> schoolFilter == null || schoolFilter == s.getSchool())
+        .filter(s -> fromList == null || fromList.contains(slugify(s.getName())))
+        .map(Spell::getName)
+        .collect(Collectors.toSet());
+  }
+
+  private String slugify(String value) {
+    return value.toLowerCase().replaceAll("[^a-z0-9]+", "_");
+  }
+
+  private Set<String> resolveOrderOptions(JsonNode filter) {
+    Set<String> options = new HashSet<>(featureCatalogService.findSubclassKeys());
+    return getStrings(filter, options);
+  }
+
+  private Set<String> resolveAncestryOptions(JsonNode filter) {
+    Set<String> options = new HashSet<>(featureCatalogService.findAncestryKeys());
+    return getStrings(filter, options);
   }
 
   private Set<String> collectAlreadyChosenValues(

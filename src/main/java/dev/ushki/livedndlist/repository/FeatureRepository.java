@@ -38,4 +38,10 @@ public interface FeatureRepository extends JpaRepository<Feature, Long> {
   @EntityGraph(attributePaths = {"choices"})
   @Query("SELECT f FROM Feature f WHERE f.id IN :ids")
   List<Feature> findAllByIdWithChoices(@Param("ids") Collection<Long> ids);
+
+  @Query("SELECT DISTINCT f.sourceKey FROM Feature f WHERE f.sourceType = :sourceType")
+  List<String> findDistinctSourceKeys(@Param("sourceType") FeatureSourceType sourceType);
+
+  @Query("SELECT DISTINCT f.sourceKey FROM Feature f WHERE f.sourceType IN :types")
+  List<String> findDistinctSourceKeysIn(@Param("types") Collection<FeatureSourceType> types);
 }

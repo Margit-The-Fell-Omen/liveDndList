@@ -18,6 +18,7 @@ interface ClassManagerModalProps {
 
 type PendingAction =
     | { type: 'change'; classKey: string }
+    | { type: 'add' }
     | { type: 'transferFor'; classKey: string; level: number }
     | null;
 
@@ -34,6 +35,14 @@ export function ClassManagerModal({
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
 
   const takenKeys = currentClasses.map(entry => entry.classKey);
+
+  const handleAddClass = async (newClassKey: string) => {
+    if (!pending || pending.type !== 'add') return;
+    const next = [...currentClasses, {classKey: newClassKey, level: 1}];
+    await onSave(next);
+    setPending(null);
+    setExpandedKey(null);
+  };
 
   const handleChangeClass = async (newClassKey: string) => {
     if (!pending || pending.type !== 'change') return;
@@ -188,6 +197,17 @@ export function ClassManagerModal({
                 );
               })}
             </div>
+
+            <div className={styles.addClassRow}>
+              <Button
+                  variant="secondary"
+                  size="small"
+                  onClick={() => setPending({type: 'add'})}
+                  disabled={saving}
+              >
+                Add Class
+              </Button>
+            </div>
           </div>
         </Modal>
 
@@ -200,6 +220,19 @@ export function ClassManagerModal({
                 disabledKeys={takenKeys}
                 initialClassKey={pending.classKey}
                 onConfirm={handleChangeClass}
+                saving={saving}
+            />
+        )}
+
+        {pending?.type === 'add' && (
+            <ClassPickerModal
+                isOpen
+                onClose={() => setPending(null)}
+                classes={classes}
+                title="Add Class"
+                disabledKeys={takenKeys}
+                initialClassKey=""
+                onConfirm={handleAddClass}
                 saving={saving}
             />
         )}

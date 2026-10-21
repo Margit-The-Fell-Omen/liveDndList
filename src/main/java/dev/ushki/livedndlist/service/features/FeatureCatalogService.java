@@ -80,6 +80,19 @@ public class FeatureCatalogService {
         .orElseThrow(() -> new ResourceNotFoundException("Feature", "key", featureKey));
   }
 
+  public List<String> findSubclassKeys() {
+    CompositeKey cacheKey = new CompositeKey("subclassKeys");
+    return cacheManager.get(CACHE_NAMESPACE, cacheKey,
+        () -> featureRepository.findDistinctSourceKeys(FeatureSourceType.SUBCLASS));
+  }
+
+  public List<String> findAncestryKeys() {
+    CompositeKey cacheKey = new CompositeKey("ancestryKeys");
+    return cacheManager.get(CACHE_NAMESPACE, cacheKey,
+        () -> featureRepository.findDistinctSourceKeysIn(
+            List.of(FeatureSourceType.RACE, FeatureSourceType.SUBRACE)));
+  }
+
   public List<FeatureEffectRef> loadEffects(long featureId) {
     CompositeKey cacheKey = new CompositeKey("effects", featureId);
     return cacheManager.get(CACHE_NAMESPACE, cacheKey, () -> {

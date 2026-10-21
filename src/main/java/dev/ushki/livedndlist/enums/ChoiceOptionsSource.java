@@ -9,5 +9,7 @@ public enum ChoiceOptionsSource {
   TOOL_LIST,
   WEAPON_LIST,
   ARMOR_LIST,
-  ABILITY_LIST
+  ABILITY_LIST,
+  ORDER,
+  ANCESTRY
 }

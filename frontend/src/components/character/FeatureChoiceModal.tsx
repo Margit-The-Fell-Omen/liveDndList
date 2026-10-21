@@ -1,8 +1,10 @@
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Modal} from '@/components/common/Modal';
 import {Button} from '@/components/common/Button';
-import type {Character, PendingChoiceResponse} from '@/types';
+import type {Character, CharacterClass, DndFeat, PendingChoiceResponse, Race, SpellResponse} from '@/types';
 import {SKILLS} from '@/utils/constants';
+import {useCharacter} from '@/context/CharacterContext';
+import {spellsApi} from '@/services/api';
 import styles from './FeatureChoiceModal.module.css';
 
 interface FeatureChoiceModalProps {
@@ -60,10 +62,16 @@ function collectAlreadyChosenValues(currentChoice: PendingChoiceResponse, charac
   return already;
 }
 
+const ARMOR_CATEGORIES = ['LIGHT', 'MEDIUM', 'HEAVY', 'SHIELD'];
+
 function resolveOptions(
     choice: PendingChoiceResponse,
     character: Character,
     filterObj: any,
+    feats: DndFeat[],
+    spellOptions: SpellResponse[],
+    classes: CharacterClass[],
+    races: Race[],
     forcedFromList?: string[]
 ): OptionItem[] {
   switch (choice.optionsSource) {
@@ -126,6 +134,35 @@ function resolveOptions(
     case 'LANGUAGE_LIST':
     case 'TOOL_LIST':
       return [];
+    case 'FEAT_LIST': {
+      const type = (filterObj['type'] as string | undefined) ?? null;
+      return feats
+          .filter(f => type ? f.type === type : true)
+          .map(f => ({value: f.key, label: f.name}));
+    }
+    case 'WEAPON_LIST':
+      return ((filterObj['fromList'] as string[] | undefined) ?? [])
+          .map(w => ({value: w, label: formatOptionLabel(w)}));
+    case 'ARMOR_LIST': {
+      const fromList = (filterObj['fromList'] as string[] | undefined)
+          ?? (forcedFromList ?? ARMOR_CATEGORIES);
+      return fromList.map(c => ({value: c, label: formatOptionLabel(c)}));
+    }
+    case 'SPELL_LIST':
+      return spellOptions.map(s => ({value: s.name, label: s.name}));
+    case 'ORDER': {
+      const classKey = filterObj['classKey'] as string | undefined;
+      return classes
+          .filter(c => classKey ? c.key === classKey : true)
+          .flatMap(c => c.subclasses ?? [])
+          .map(sc => ({value: sc.key, label: sc.name}));
+    }
+    case 'ANCESTRY': {
+      const fromList = filterObj['fromList'] as string[] | undefined;
+      return races
+          .filter(r => fromList ? fromList.includes(r.key) : true)
+          .map(r => ({value: r.key, label: r.name}));
+    }
     default:
       return [];
   }
@@ -307,6 +344,9 @@ export function FeatureChoiceModal({
                                      onClose,
                                      saving = false
                                    }: FeatureChoiceModalProps) {
+  const {feats, classes, races} = useCharacter();
+  const [spellOptions, setSpellOptions] = useState<SpellResponse[]>([]);
+
   // 1. Attempt to parse the broken filter from the backend
   const filterObj = useMemo(() => {
     try {
@@ -315,6 +355,26 @@ export function FeatureChoiceModal({
       return {};
     }
   }, [choice.optionsFilter]);
+
+  // Load spell options asynchronously for SPELL_LIST choices
+  useEffect(() => {
+    if (choice.optionsSource !== 'SPELL_LIST') {
+      setSpellOptions([]);
+      return;
+    }
+    let cancelled = false;
+    spellsApi.list({
+      size: 500,
+      ...(filterObj['minLevel'] !== undefined ? {minLevel: filterObj['minLevel']} : {}),
+      ...(filterObj['maxLevel'] !== undefined ? {maxLevel: filterObj['maxLevel']} : {}),
+      ...(filterObj['school'] ? {school: filterObj['school']} : {}),
+    }).then(page => {
+      if (!cancelled) setSpellOptions(page.content ?? []);
+    }).catch(() => {
+      if (!cancelled) setSpellOptions([]);
+    });
+    return () => { cancelled = true; };
+  }, [choice.optionsSource, choice.optionsFilter]);
 
   // 2. BULLETPROOF FALLBACK: Read the description text if the backend destroyed the JSON
   const hasAsiText = choice.description?.includes('+2/+1') || choice.name?.includes('Ability Score Allocation');
@@ -338,7 +398,7 @@ export function FeatureChoiceModal({
     if (inferred.length > 0) activeFromList = inferred;
   }
 
-  const options = useMemo(() => resolveOptions(choice, character, filterObj, activeFromList), [choice, character, filterObj, activeFromList]);
+  const options = useMemo(() => resolveOptions(choice, character, filterObj, feats, spellOptions, classes, races, activeFromList), [choice, character, filterObj, feats, spellOptions, classes, races, activeFromList]);
 
   const isFreeform = options.length === 0 && (choice.optionsSource === 'LANGUAGE_LIST' || choice.optionsSource === 'TOOL_LIST');
   const knownValues = useMemo(() => {

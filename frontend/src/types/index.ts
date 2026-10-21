@@ -183,7 +183,8 @@ export type ArmorCategory = 'LIGHT' | 'MEDIUM' | 'HEAVY' | 'SHIELD';
 
 export type ChoiceOptionsSource =
     | 'INLINE' | 'SKILL_LIST' | 'LANGUAGE_LIST' | 'FEAT_LIST'
-    | 'SPELL_LIST' | 'TOOL_LIST' | 'WEAPON_LIST' | 'ARMOR_LIST' | 'ABILITY_LIST';
+    | 'SPELL_LIST' | 'TOOL_LIST' | 'WEAPON_LIST' | 'ARMOR_LIST' | 'ABILITY_LIST'
+    | 'ORDER' | 'ANCESTRY';
 
 export type CreatureSize = 'TINY' | 'SMALL' | 'MEDIUM' | 'LARGE' | 'HUGE' | 'GARGANTUAN';
 

@@ -22,6 +22,7 @@ import dev.ushki.livedndlist.service.features.pipeline.ResolvedEffects;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,17 +152,24 @@ public class CharacterPipelineService {
   private void computeSpeed(DndCharacter character, List<ResolvedEffect> effects,
       ComputedCharacterState state) {
     int baseWalk = character.getBaseWalkingSpeedOverride() != null
-        ? character.getBaseWalkingSpeedOverride() : 30;
+        ? character.getBaseWalkingSpeedOverride()
+        : (character.getSpeed() != null ? character.getSpeed() : 30);
 
     int walkBonus = 0;
+    int walkOverride = -1;
     Map<String, Integer> otherSpeeds = new HashMap<>();
 
     for (ResolvedEffect e : effects) {
       if (e.getType() == FeatureEffectType.MODIFY_SPEED) {
         String speedType = e.getPayload().path("speedType").asText("WALK");
         int amount = e.getPayload().path("amount").asInt(0);
+        boolean absolute = isAbsoluteSpeed(e);
         if ("WALK".equals(speedType)) {
-          walkBonus += amount;
+          if (absolute) {
+            walkOverride = amount;
+          } else {
+            walkBonus += amount;
+          }
         } else {
           otherSpeeds.merge(speedType, amount, Integer::sum);
         }
@@ -171,7 +179,7 @@ public class CharacterPipelineService {
         boolean matchWalking = e.getPayload().path("matchWalking").asBoolean(false);
         int value = e.getPayload().path("value").asInt(0);
         if (matchWalking) {
-          otherSpeeds.put(speedType, baseWalk + walkBonus);
+          otherSpeeds.put(speedType, (walkOverride >= 0 ? walkOverride : baseWalk) + walkBonus);
         } else {
           otherSpeeds.merge(speedType, value, Math::max);
         }
@@ -179,9 +187,18 @@ public class CharacterPipelineService {
     }
 
     Map<String, Integer> speeds = new HashMap<>();
-    speeds.put("WALK", baseWalk + walkBonus);
+    speeds.put("WALK", (walkOverride >= 0 ? walkOverride : baseWalk) + walkBonus);
     speeds.putAll(otherSpeeds);
     state.setSpeeds(speeds);
+  }
+
+  private boolean isAbsoluteSpeed(ResolvedEffect e) {
+    String mode = e.getPayload().path("mode").asText(null);
+    if (mode != null) {
+      return "SET".equalsIgnoreCase(mode) || "OVERRIDE".equalsIgnoreCase(mode);
+    }
+    return e.getSource() == dev.ushki.livedndlist.enums.CharacterFeatureSource.RACE
+        || e.getSource() == dev.ushki.livedndlist.enums.CharacterFeatureSource.SUBRACE;
   }
 
   private void computeSenses(List<ResolvedEffect> effects, ComputedCharacterState state) {
@@ -445,7 +462,7 @@ public class CharacterPipelineService {
 
   private void computeResources(DndCharacter character, List<ResolvedEffect> effects,
       ComputedCharacterState state) {
-    List<ComputedCharacterState.ResourceEntry> entries = new ArrayList<>();
+    Map<String, ComputedCharacterState.ResourceEntry> byKey = new LinkedHashMap<>();
     List<CharacterResource> existingResources = resourceRepository.findByCharacterId(
         character.getId());
     Map<String, CharacterResource> existingMap = new HashMap<>();
@@ -456,6 +473,9 @@ public class CharacterPipelineService {
     for (ResolvedEffect e : effects) {
       if (e.getType() == FeatureEffectType.GRANT_RESOURCE) {
         String resourceKey = e.getPayload().path("resourceKey").asText();
+        if (resourceKey.isBlank()) {
+          continue;
+        }
         String displayName = e.getPayload().path("displayName").asText(resourceKey);
         String refresh = e.getPayload().path("refresh").asText("LONG");
 
@@ -464,18 +484,25 @@ public class CharacterPipelineService {
         CharacterResource existing = existingMap.get(resourceKey);
         int currentUses = existing != null ? Math.min(existing.getCurrentUses(), maxUses) : maxUses;
 
-        entries.add(ComputedCharacterState.ResourceEntry.builder()
+        ComputedCharacterState.ResourceEntry entry = ComputedCharacterState.ResourceEntry.builder()
             .resourceKey(resourceKey)
             .displayName(displayName)
             .currentUses(currentUses)
             .maxUses(maxUses)
             .refreshOn(refresh)
             .sourceFeatureId(e.getSourceFeatureId())
-            .build());
+            .build();
+
+        // Dereduplicate: a single resourceKey must produce exactly one entry. If the same
+        // resource is granted by multiple sources (e.g. redundant class/subclass grants),
+        // keep the entry with the higher maxUses.
+        byKey.merge(resourceKey, entry,
+            (existingEntry, newEntry) ->
+                newEntry.getMaxUses() >= existingEntry.getMaxUses() ? newEntry : existingEntry);
       }
     }
 
-    state.setResources(entries);
+    state.setResources(new ArrayList<>(byKey.values()));
   }
 
   private int computeResourceMax(JsonNode usesFormula, DndCharacter character,
