@@ -1,0 +1,23 @@
+{
+  "name": "Protean",
+  "description": "Transformation of the body into bestial or abstract forms.",
+  "type": "PHYSICAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Eyes of the Beast",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Feral Weapons",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Earth Meld",
+      "level": 3,
+      "prerequisite": null
+    }
+  ]
+}

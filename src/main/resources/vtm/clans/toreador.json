@@ -1,0 +1,12 @@
+{
+  "name": "Toreador",
+  "description": "Artists and sensualists who chase beauty and inspiration.",
+  "curse": "Toreador become entranced by overwhelming beauty.",
+  "compulsion": "Obsession: the character fixates on a beautiful thing.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": [
+    "Auspex",
+    "Celerity",
+    "Presence"
+  ]
+}

@@ -6,7 +6,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eClassTableDataDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eGainedAtDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eSavingThrowDto;
-import dev.ushki.livedndlist.dto.response.DndClassResponse;
+import dev.ushki.livedndlist.dto.dnd.response.DndClassResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassFeature;
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClassTableData;

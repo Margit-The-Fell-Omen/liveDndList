@@ -4,7 +4,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eDocumentDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eRaceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eReferenceDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eTraitDto;
-import dev.ushki.livedndlist.dto.response.DndRaceResponse;
+import dev.ushki.livedndlist.dto.dnd.response.DndRaceResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.document.Document;
 import dev.ushki.livedndlist.entity.dndCharacter.document.GameSystem;
 import dev.ushki.livedndlist.entity.dndCharacter.document.Publisher;

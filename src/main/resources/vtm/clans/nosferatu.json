@@ -1,0 +1,12 @@
+{
+  "name": "Nosferatu",
+  "description": "Hideous keepers of the world's secrets and underground networks.",
+  "curse": "Nosferatu are deformed and cannot appear in public without a disguise.",
+  "compulsion": "Secrecy: the character must keep or steal a secret.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": [
+    "Obfuscate",
+    "Potence",
+    "Animalism"
+  ]
+}

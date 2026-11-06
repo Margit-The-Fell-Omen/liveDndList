@@ -1,0 +1,23 @@
+{
+  "name": "Potence",
+  "description": "Supernatural physical might.",
+  "type": "PHYSICAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Lethal Body",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Prowess",
+      "level": 2,
+      "prerequisite": null
+    },
+    {
+      "name": "Dragon's Wrath",
+      "level": 4,
+      "prerequisite": "Prowess"
+    }
+  ]
+}

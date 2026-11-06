@@ -1,0 +1,23 @@
+{
+  "name": "Animalism",
+  "description": "Mastery over beasts and the beast within.",
+  "type": "SOCIAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Feral Whispers",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Animal Succulence",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Subsume the Spirit",
+      "level": 3,
+      "prerequisite": "Animal Succulence"
+    }
+  ]
+}

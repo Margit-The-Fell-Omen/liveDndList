@@ -1,0 +1,23 @@
+{
+  "name": "Presence",
+  "description": "Supernatural magnetism and emotional influence.",
+  "type": "SOCIAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Dread Gaze",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Awe",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Entrancement",
+      "level": 3,
+      "prerequisite": null
+    }
+  ]
+}

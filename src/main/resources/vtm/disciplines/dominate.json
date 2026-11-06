@@ -1,0 +1,28 @@
+{
+  "name": "Dominate",
+  "description": "Mental control and command over others.",
+  "type": "MENTAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Cloud Memory",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Compel",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Mesmerize",
+      "level": 2,
+      "prerequisite": null
+    },
+    {
+      "name": "Mass Manipulation",
+      "level": 4,
+      "prerequisite": "Mesmerize"
+    }
+  ]
+}

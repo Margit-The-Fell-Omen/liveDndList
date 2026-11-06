@@ -36,7 +36,7 @@ import dev.ushki.livedndlist.repository.RaceRepository;
 import dev.ushki.livedndlist.repository.UserRepository;
 import dev.ushki.livedndlist.service.CharacterService;
 import dev.ushki.livedndlist.service.features.pipeline.ComputedCharacterState;
-import dev.ushki.livedndlist.dto.response.CharacterResponse;
+import dev.ushki.livedndlist.dto.dnd.response.CharacterResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.HashSet;

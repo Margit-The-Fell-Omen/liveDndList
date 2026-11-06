@@ -1,0 +1,12 @@
+{
+  "name": "Malkavian",
+  "description": "Seers of the madness of the world, cursed with fractured minds.",
+  "curse": "Malkavians suffer from delusions and a unique worldview.",
+  "compulsion": "Delusion: the character believes a falsehood.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": [
+    "Auspex",
+    "Obfuscate",
+    "Dominate"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Celerity",
+  "description": "Supernatural speed and reflexes.",
+  "type": "PHYSICAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Cat's Grace",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Rapid Reflexes",
+      "level": 2,
+      "prerequisite": null
+    },
+    {
+      "name": "Blink",
+      "level": 4,
+      "prerequisite": "Rapid Reflexes"
+    }
+  ]
+}

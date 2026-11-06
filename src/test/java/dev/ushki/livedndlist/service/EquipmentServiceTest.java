@@ -11,8 +11,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dev.ushki.livedndlist.cache.CacheManager;
-import dev.ushki.livedndlist.dto.request.EquipmentRequest;
-import dev.ushki.livedndlist.dto.response.EquipmentResponse;
+import dev.ushki.livedndlist.dto.dnd.request.EquipmentRequest;
+import dev.ushki.livedndlist.dto.dnd.response.EquipmentResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCurrency;

@@ -7,7 +7,7 @@ import dev.ushki.livedndlist.dto.open5e.Open5eFeatDto;
 import dev.ushki.livedndlist.dto.open5e.response.Open5ePaginatedResponse;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.dto.response.DndFeatResponse;
+import dev.ushki.livedndlist.dto.dnd.response.DndFeatResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.DndFeat;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.Feature;
 import dev.ushki.livedndlist.enums.AnnotationSource;

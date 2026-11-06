@@ -1,0 +1,12 @@
+{
+  "name": "Tremere",
+  "description": "Warlocks and blood sorcerers who hoard magical knowledge.",
+  "curse": "Tremere are bound to a clan-wide blood dependence.",
+  "compulsion": "Perfection: the character must plan meticulously.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": [
+    "Blood Sorcery",
+    "Dominate",
+    "Auspex"
+  ]
+}

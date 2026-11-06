@@ -1,0 +1,23 @@
+{
+  "name": "Blood Sorcery",
+  "description": "The unnatural art of blood magic.",
+  "type": "MENTAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Corrosive Vitae",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "A Taste for Blood",
+      "level": 2,
+      "prerequisite": null
+    },
+    {
+      "name": "Blood of Potency",
+      "level": 3,
+      "prerequisite": null
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 package dev.ushki.livedndlist.controller;
 
 import dev.ushki.livedndlist.dto.response.ApiResponse;
-import dev.ushki.livedndlist.dto.response.DndFeatResponse;
+import dev.ushki.livedndlist.dto.dnd.response.DndFeatResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.enums.DndFeatType;
 import dev.ushki.livedndlist.mapper.FeatMapper;

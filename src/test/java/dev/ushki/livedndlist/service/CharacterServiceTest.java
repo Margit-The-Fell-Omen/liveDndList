@@ -13,11 +13,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import dev.ushki.livedndlist.cache.CacheManager;
-import dev.ushki.livedndlist.dto.request.CharacterCreateRequest;
-import dev.ushki.livedndlist.dto.request.CharacterUpdateRequest;
-import dev.ushki.livedndlist.dto.request.EquipmentRequest;
-import dev.ushki.livedndlist.dto.response.CharacterResponse;
-import dev.ushki.livedndlist.dto.response.CharacterSummaryResponse;
+import dev.ushki.livedndlist.dto.dnd.request.CharacterCreateRequest;
+import dev.ushki.livedndlist.dto.dnd.request.CharacterUpdateRequest;
+import dev.ushki.livedndlist.dto.dnd.request.EquipmentRequest;
+import dev.ushki.livedndlist.dto.dnd.response.CharacterResponse;
+import dev.ushki.livedndlist.dto.dnd.response.CharacterSummaryResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
 import dev.ushki.livedndlist.entity.User;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;

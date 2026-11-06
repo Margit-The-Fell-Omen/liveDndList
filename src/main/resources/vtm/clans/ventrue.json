@@ -1,0 +1,12 @@
+{
+  "name": "Ventrue",
+  "description": "Blue-blooded lords of the Kindred, masters of leadership.",
+  "curse": "Ventrue are repelled by a specific kind of victim's blood.",
+  "compulsion": "Conviction: the character must firmly follow a personal creed.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": [
+    "Fortitude",
+    "Dominate",
+    "Presence"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Obfuscate",
+  "description": "The power to hide, deceive and vanish from perception.",
+  "type": "MENTAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Cloak of Shadows",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Silence of Death",
+      "level": 2,
+      "prerequisite": null
+    },
+    {
+      "name": "Ghost in the Machine",
+      "level": 3,
+      "prerequisite": null
+    }
+  ]
+}

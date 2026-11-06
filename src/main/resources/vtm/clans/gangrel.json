@@ -1,0 +1,8 @@
+{
+  "name": "Gangrel",
+  "description": "Lone predators close to the animal world.",
+  "curse": "Gangrel grow more beastlike, gaining animal features when frenzied.",
+  "compulsion": "Feral: the character must act on raw instinct.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": ["Animalism", "Fortitude", "Protean"]
+}

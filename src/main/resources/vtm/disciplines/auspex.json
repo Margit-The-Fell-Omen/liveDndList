@@ -1,0 +1,28 @@
+{
+  "name": "Auspex",
+  "description": "Heightened senses and supernatural perception.",
+  "type": "MENTAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Heightened Senses",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Sense the Beast",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Scry the Soul",
+      "level": 2,
+      "prerequisite": null
+    },
+    {
+      "name": "Omen Sensitivity",
+      "level": 4,
+      "prerequisite": "Scry the Soul"
+    }
+  ]
+}

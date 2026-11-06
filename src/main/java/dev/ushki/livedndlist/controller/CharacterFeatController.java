@@ -1,6 +1,6 @@
 package dev.ushki.livedndlist.controller;
 
-import dev.ushki.livedndlist.dto.request.AddFeatRequest;
+import dev.ushki.livedndlist.dto.dnd.request.AddFeatRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.security.CharacterOwnershipVerifier;
 import dev.ushki.livedndlist.service.features.CharacterFeatService;

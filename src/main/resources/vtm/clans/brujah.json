@@ -1,0 +1,8 @@
+{
+  "name": "Brujah",
+  "description": "Rebellious warrior scholars who prize passion and freedom.",
+  "curse": "Brujah are always prone to anger; frenzy is all but inevitable.",
+  "compulsion": "Rebellion: the character must act out against authority.",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "disciplines": ["Potence", "Celerity", "Presence"]
+}

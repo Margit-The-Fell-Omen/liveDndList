@@ -1,0 +1,23 @@
+{
+  "name": "Fortitude",
+  "description": "Supernatural resilience and endurance.",
+  "type": "PHYSICAL",
+  "sourcebook": "Vampire: The Masquerade 5th Edition",
+  "powers": [
+    {
+      "name": "Unyielding Heart",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Toughness",
+      "level": 1,
+      "prerequisite": null
+    },
+    {
+      "name": "Unswayable Mind",
+      "level": 3,
+      "prerequisite": null
+    }
+  ]
+}

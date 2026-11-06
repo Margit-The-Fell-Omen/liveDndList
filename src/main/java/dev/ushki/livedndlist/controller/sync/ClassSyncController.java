@@ -3,7 +3,7 @@ package dev.ushki.livedndlist.controller.sync;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
-import dev.ushki.livedndlist.dto.response.DndClassResponse;
+import dev.ushki.livedndlist.dto.dnd.response.DndClassResponse;
 import dev.ushki.livedndlist.repository.DndClassRepository;
 import dev.ushki.livedndlist.service.DndClassService;
 import io.swagger.v3.oas.annotations.Operation;

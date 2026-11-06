@@ -1,8 +1,8 @@
 package dev.ushki.livedndlist.controller;
 
-import dev.ushki.livedndlist.dto.request.EquipmentRequest;
+import dev.ushki.livedndlist.dto.dnd.request.EquipmentRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
-import dev.ushki.livedndlist.dto.response.EquipmentResponse;
+import dev.ushki.livedndlist.dto.dnd.response.EquipmentResponse;
 import dev.ushki.livedndlist.enums.EquipmentType;
 import dev.ushki.livedndlist.service.EquipmentService;
 import io.swagger.v3.oas.annotations.Operation;

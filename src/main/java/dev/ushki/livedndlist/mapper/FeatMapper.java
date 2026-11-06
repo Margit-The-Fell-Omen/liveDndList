@@ -2,7 +2,7 @@ package dev.ushki.livedndlist.mapper;
 
 import dev.ushki.livedndlist.dto.open5e.Open5eFeatDto;
 import dev.ushki.livedndlist.dto.open5e.Open5eFeatDto.FeatBenefit;
-import dev.ushki.livedndlist.dto.response.DndFeatResponse;
+import dev.ushki.livedndlist.dto.dnd.response.DndFeatResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.DndFeat;
 import dev.ushki.livedndlist.enums.DndFeatType;
 import java.util.List;

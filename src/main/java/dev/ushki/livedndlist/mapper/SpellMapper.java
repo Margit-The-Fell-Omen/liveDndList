@@ -1,8 +1,8 @@
 package dev.ushki.livedndlist.mapper;
 
 import dev.ushki.livedndlist.dto.open5e.Open5eSpellDto;
-import dev.ushki.livedndlist.dto.request.SpellRequest;
-import dev.ushki.livedndlist.dto.response.SpellResponse;
+import dev.ushki.livedndlist.dto.dnd.request.SpellRequest;
+import dev.ushki.livedndlist.dto.dnd.response.SpellResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.Spell;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import java.util.ArrayList;

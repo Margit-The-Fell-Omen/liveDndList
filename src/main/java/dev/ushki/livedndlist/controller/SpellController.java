@@ -2,10 +2,10 @@ package dev.ushki.livedndlist.controller;
 
 import dev.ushki.livedndlist.dto.open5e.sync.SyncResultDto;
 import dev.ushki.livedndlist.dto.open5e.sync.SyncStatusDto;
-import dev.ushki.livedndlist.dto.request.SpellRequest;
+import dev.ushki.livedndlist.dto.dnd.request.SpellRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.dto.response.PageResponse;
-import dev.ushki.livedndlist.dto.response.SpellResponse;
+import dev.ushki.livedndlist.dto.dnd.response.SpellResponse;
 import dev.ushki.livedndlist.enums.SpellSchool;
 import dev.ushki.livedndlist.service.SpellService;
 import io.swagger.v3.oas.annotations.Operation;

@@ -1,6 +1,6 @@
 package dev.ushki.livedndlist.controller;
 
-import dev.ushki.livedndlist.dto.request.ResourceUpdateRequest;
+import dev.ushki.livedndlist.dto.dnd.request.ResourceUpdateRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterResource;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;

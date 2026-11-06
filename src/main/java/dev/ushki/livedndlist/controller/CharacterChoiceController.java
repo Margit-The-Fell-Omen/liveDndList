@@ -1,7 +1,7 @@
 package dev.ushki.livedndlist.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.ushki.livedndlist.dto.request.SubmitChoiceRequest;
+import dev.ushki.livedndlist.dto.dnd.request.SubmitChoiceRequest;
 import dev.ushki.livedndlist.dto.response.ApiResponse;
 import dev.ushki.livedndlist.security.CharacterOwnershipVerifier;
 import dev.ushki.livedndlist.service.features.CharacterChoiceService;

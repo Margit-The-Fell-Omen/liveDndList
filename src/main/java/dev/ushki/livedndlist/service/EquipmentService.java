@@ -2,8 +2,8 @@ package dev.ushki.livedndlist.service;
 
 import dev.ushki.livedndlist.cache.CacheManager;
 import dev.ushki.livedndlist.cache.CompositeKey;
-import dev.ushki.livedndlist.dto.request.EquipmentRequest;
-import dev.ushki.livedndlist.dto.response.EquipmentResponse;
+import dev.ushki.livedndlist.dto.dnd.request.EquipmentRequest;
+import dev.ushki.livedndlist.dto.dnd.response.EquipmentResponse;
 import dev.ushki.livedndlist.entity.dndCharacter.DndCharacter;
 import dev.ushki.livedndlist.entity.dndCharacter.Equipment;
 import dev.ushki.livedndlist.enums.ArmorCategory;
