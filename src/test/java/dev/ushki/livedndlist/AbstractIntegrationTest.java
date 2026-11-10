@@ -1,30 +1,40 @@
 package dev.ushki.livedndlist;
 
+import java.time.Duration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Testcontainers
 public abstract class AbstractIntegrationTest {
 
-  @Container
-  static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:18-alpine")
-      .withDatabaseName("livedndlist_test")
-      .withUsername("test")
-      .withPassword("test")
-      .withReuse(true);
+  private static final PostgreSQLContainer<?> POSTGRES = startPostgres();
 
-  @Container
-  static final GenericContainer<?> REDIS = new GenericContainer<>("redis:8-alpine")
-      .withExposedPorts(6379)
-      .withReuse(true);
+  private static final GenericContainer<?> REDIS = startRedis();
+
+  private static PostgreSQLContainer<?> startPostgres() {
+    PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:18-alpine")
+        .withDatabaseName("livedndlist_test")
+        .withUsername("test")
+        .withPassword("test")
+        .withStartupTimeout(Duration.ofMinutes(2));
+    container.start();
+    return container;
+  }
+
+  private static GenericContainer<?> startRedis() {
+    GenericContainer<?> container = new GenericContainer<>("redis:8-alpine")
+        .withExposedPorts(6379)
+        .withStartupTimeout(Duration.ofMinutes(2))
+        .waitingFor(Wait.forListeningPort());
+    container.start();
+    return container;
+  }
 
   @DynamicPropertySource
   static void registerProps(DynamicPropertyRegistry registry) {
