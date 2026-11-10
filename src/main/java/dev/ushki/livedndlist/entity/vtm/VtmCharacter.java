@@ -74,10 +74,10 @@ public class VtmCharacter {
   @Column(name = "blood_potency")
   private Integer bloodPotency;
 
-  @Column(name = "created_at")
+  @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
-  @Column(name = "updated_at")
+  @Column(name = "updated_at", nullable = false)
   private LocalDateTime updatedAt;
 
   @PrePersist
