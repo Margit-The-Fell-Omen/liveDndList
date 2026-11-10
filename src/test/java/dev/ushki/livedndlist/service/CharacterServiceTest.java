@@ -207,7 +207,6 @@ class CharacterServiceTest {
     void shouldInvalidateCacheOnCreate() {
       when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
       when(characterMapper.toResponse(eq(testCharacter), any())).thenReturn(testCharacterResponse);
-      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
 
       characterService.getById(1L, "testuser");
 
@@ -226,19 +225,16 @@ class CharacterServiceTest {
     void shouldInvalidateCacheOnUpdate() {
       when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
       when(characterMapper.toResponse(eq(testCharacter), any())).thenReturn(testCharacterResponse);
-      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
 
       characterService.getById(1L, "testuser");
 
       CharacterUpdateRequest request = CharacterUpdateRequest.builder().name("Updated").build();
-      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
-          Optional.of(testCharacter));
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
 
       characterService.update(1L, request, "testuser");
       characterService.getById(1L, "testuser");
 
-      verify(characterRepository, times(2)).findByIdFull(1L);
+      verify(characterRepository, times(3)).findByIdFull(1L);
     }
 
     @Test
@@ -619,7 +615,7 @@ class CharacterServiceTest {
     void shouldGetCharacterSummary() {
       when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
           Optional.of(testCharacter));
-      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+      when(characterMapper.toResponse(eq(testCharacter), any())).thenReturn(testCharacterResponse);
 
       CharacterResponse result = characterService.getCharacterSummary(1L, "testuser");
 
@@ -674,7 +670,7 @@ class CharacterServiceTest {
       when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
       when(characterMapper.toEntity(request)).thenReturn(newCharacter);
       when(characterRepository.save(any(DndCharacter.class))).thenReturn(newCharacter);
-      when(characterMapper.toResponse(newCharacter)).thenReturn(testCharacterResponse);
+      when(characterMapper.toResponse(eq(newCharacter), any())).thenReturn(testCharacterResponse);
 
       CharacterResponse result = characterService.create(request, "testuser");
 
@@ -690,10 +686,9 @@ class CharacterServiceTest {
           .maxHitPoints(50)
           .build();
 
-      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
-          Optional.of(testCharacter));
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
       when(characterRepository.save(testCharacter)).thenReturn(testCharacter);
-      when(characterMapper.toResponse(testCharacter)).thenReturn(testCharacterResponse);
+      when(characterMapper.toResponse(eq(testCharacter), any())).thenReturn(testCharacterResponse);
 
       CharacterResponse result = characterService.update(1L, request, "testuser");
 
@@ -722,8 +717,7 @@ class CharacterServiceTest {
           .name("Hacked Name")
           .build();
 
-      when(characterRepository.findByIdWithOwnerAndClasses(1L)).thenReturn(
-          Optional.of(testCharacter));
+      when(characterRepository.findByIdFull(1L)).thenReturn(Optional.of(testCharacter));
 
       assertThatThrownBy(() -> characterService.update(1L, request, "otheruser"))
           .isInstanceOf(UnauthorizedException.class);
