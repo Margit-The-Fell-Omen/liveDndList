@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import dev.ushki.livedndlist.dto.dnd.DndClassLevelDto;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
+import dev.ushki.livedndlist.enums.CharacterType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +27,9 @@ public class CharacterResponse {
 
   @Schema(description = "Character name", example = "Aragorn")
   private String name;
+
+  @Schema(description = "Character ruleset", example = "DND14")
+  private CharacterType characterType;
 
   @Schema(description = "Character race key", example = "srd_human")
   private String raceKey;

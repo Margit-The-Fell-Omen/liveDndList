@@ -1,6 +1,7 @@
 package dev.ushki.livedndlist.dto.dnd.request;
 
 import dev.ushki.livedndlist.enums.CharacterAlignment;
+import dev.ushki.livedndlist.enums.CharacterType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -49,6 +50,13 @@ public class CharacterCreateRequest {
   @NotNull(message = "Class key is required")
   @Schema(description = "Key of the character class", example = "srd-2024_champion")
   private String classKey;
+
+  @Schema(
+      description = "Character ruleset chosen during creation; derived from content when omitted",
+      example = "DND14",
+      allowableValues = {"DND14", "DND24", "VTM5"}
+  )
+  private CharacterType characterType;
 
   @Valid
   @Schema(description = "Base ability scores for the character")

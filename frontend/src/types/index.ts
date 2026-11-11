@@ -158,6 +158,8 @@ export type CharacterAlignment =
     | 'LAWFUL_NEUTRAL' | 'TRUE_NEUTRAL' | 'CHAOTIC_NEUTRAL'
     | 'LAWFUL_EVIL' | 'NEUTRAL_EVIL' | 'CHAOTIC_EVIL' | 'UNALIGNED';
 
+export type CharacterType = 'DND14' | 'DND24' | 'VTM5';
+
 export type AbilityType =
     | 'STRENGTH' | 'DEXTERITY' | 'CONSTITUTION'
     | 'INTELLIGENCE' | 'WISDOM' | 'CHARISMA';
@@ -388,6 +390,7 @@ export interface CharacterSummary {
 export interface Character {
   id: number;
   name: string;
+  characterType: CharacterType;
   raceKey: string;
   alignment: CharacterAlignment;
   backgroundKey: string;
@@ -470,6 +473,7 @@ export interface CharacterCreateRequest {
   raceKey: string;
   backgroundKey: string;
   alignment?: CharacterAlignment;
+  characterType?: CharacterType;
   classKey: string;
   abilityScores: AbilityScores;
   maxHitPoints: number;

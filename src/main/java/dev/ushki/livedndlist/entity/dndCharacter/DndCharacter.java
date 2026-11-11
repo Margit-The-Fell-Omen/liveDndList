@@ -11,6 +11,7 @@ import dev.ushki.livedndlist.entity.dndCharacter.feature.CharacterSubclassChoice
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
 import dev.ushki.livedndlist.enums.CharacterAlignment;
+import dev.ushki.livedndlist.enums.CharacterType;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -89,6 +90,12 @@ public class DndCharacter {
 
   @Column(nullable = false)
   private String name;
+
+  @Builder.Default
+  @Enumerated(EnumType.STRING)
+  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column(name = "character_type", nullable = false, columnDefinition = "character_type")
+  private CharacterType characterType = CharacterType.DND14;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "race_id", nullable = false)

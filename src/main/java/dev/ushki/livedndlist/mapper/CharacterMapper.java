@@ -30,6 +30,7 @@ import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndCharacterClassLevel
 import dev.ushki.livedndlist.entity.dndCharacter.dndClass.DndClass;
 import dev.ushki.livedndlist.entity.dndCharacter.race.Race;
 import dev.ushki.livedndlist.enums.AbilityType;
+import dev.ushki.livedndlist.enums.CharacterType;
 import dev.ushki.livedndlist.enums.SkillType;
 import dev.ushki.livedndlist.exceptions.ResourceNotFoundException;
 import dev.ushki.livedndlist.repository.BackgroundRepository;
@@ -145,6 +146,7 @@ public class CharacterMapper {
     return CharacterResponse.builder()
         .id(character.getId())
         .name(character.getName())
+        .characterType(character.getCharacterType())
         .raceKey(character.getRace() != null ? character.getRace().getKey() : null)
         .alignment(character.getAlignment())
         .backgroundKey(
@@ -446,6 +448,7 @@ public class CharacterMapper {
         .race(race)
         .background(background)
         .alignment(request.getAlignment())
+        .characterType(resolveCharacterType(request))
         .portraitUrl(request.getPortraitUrl())
         .build();
 
@@ -471,6 +474,19 @@ public class CharacterMapper {
     initializeSkills(character);
 
     return character;
+  }
+
+  private CharacterType resolveCharacterType(CharacterCreateRequest request) {
+    if (request.getCharacterType() != null) {
+      return request.getCharacterType();
+    }
+    String classKey = request.getClassKey() != null ? request.getClassKey() : "";
+    String backgroundKey = request.getBackgroundKey() != null ? request.getBackgroundKey() : "";
+    if (classKey.contains("VTM5") || backgroundKey.contains("VTM5")) {
+      return CharacterType.VTM5;
+    }
+    return classKey.contains("2024") || backgroundKey.contains("2024")
+        ? CharacterType.DND24 : CharacterType.DND14;
   }
 
   public void updateEntity(DndCharacter character, CharacterUpdateRequest request) {

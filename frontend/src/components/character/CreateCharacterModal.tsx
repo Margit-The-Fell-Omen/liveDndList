@@ -146,6 +146,7 @@ export function CreateCharacterModal({isOpen, onClose}: CreateCharacterModalProp
       raceKey: raceSelection.raceKey,
       classKey,
       backgroundKey,
+      characterType: gameSystemKey === '2024' ? 'DND24' : 'DND14',
       ...(alignment && {alignment}),
       abilityScores,
       maxHitPoints: computeHitPoints(filteredClasses, classKey, abilityScores.constitution),
