@@ -290,6 +290,10 @@ public class CharacterService {
         .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
   }
 
+  public DndCharacter requireOwnedCharacter(Long id, String username) {
+    return findCharacterWithOwnershipCheck(id, username);
+  }
+
   private DndCharacter findCharacterWithOwnershipCheck(Long id, String username) {
     DndCharacter character = characterRepository.findByIdWithOwnerAndClasses(id)
         .orElseThrow(() -> new ResourceNotFoundException(CHARACTER_RESOURCE, "id", id));

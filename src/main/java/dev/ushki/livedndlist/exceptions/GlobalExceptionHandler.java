@@ -42,6 +42,12 @@ public class GlobalExceptionHandler {
     return ApiResponse.error(ex.getMessage());
   }
 
+  @ExceptionHandler(GoneException.class)
+  @ResponseStatus(HttpStatus.GONE)
+  public ApiResponse<Void> handleGone(GoneException ex) {
+    return ApiResponse.error(ex.getMessage());
+  }
+
   @ExceptionHandler(BusinessRuleException.class)
   public ResponseEntity<ApiResponse<Void>> handleBusinessRule(BusinessRuleException ex) {
     return ResponseEntity

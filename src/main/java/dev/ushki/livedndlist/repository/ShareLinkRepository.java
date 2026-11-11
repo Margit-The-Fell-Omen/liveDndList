@@ -13,7 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface ShareLinkRepository extends JpaRepository<ShareLink, String> {
 
+  Optional<ShareLink> findByTokenHash(String tokenHash);
+
   Optional<ShareLink> findByTokenHashAndRevokedFalse(String tokenHash);
+
+  Optional<ShareLink> findByCharacterTypeAndCharacterIdAndRevokedFalse(
+      CharacterType characterType, Long characterId);
 
   boolean existsByCharacterTypeAndCharacterIdAndRevokedFalse(
       CharacterType characterType, Long characterId);
