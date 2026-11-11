@@ -6,6 +6,8 @@ import type {
   CharacterCreateRequest,
   CharacterSummary,
   CharacterUpdateRequest,
+  PublicCharacterResponse,
+  ShareLinkResponse,
   CustomFeatureResponse,
   DndFeat,
   EquipmentData,
@@ -154,6 +156,17 @@ async function parseResponse<T>(response: Response): Promise<T> {
   }
 
   return jsonResponse as T;
+}
+
+async function fetchPublic<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+  });
+  return parseResponse<T>(response);
 }
 
 interface PageParams {
@@ -345,6 +358,26 @@ export const charactersApi = {
         method: 'PATCH',
         body: JSON.stringify({delta}),
       }),
+
+  // ── Share links ──────────────────────────────────────────────
+  getShareLink: async (id: number): Promise<ShareLinkResponse> =>
+      fetchWithAuth<ShareLinkResponse>(`/characters/${id}/share-link`, {method: 'POST'}),
+
+  regenerateShareLink: async (id: number): Promise<ShareLinkResponse> =>
+      fetchWithAuth<ShareLinkResponse>(`/characters/${id}/share-link/regenerate`, {
+        method: 'POST',
+      }),
+
+  importCharacter: async (url: string): Promise<PublicCharacterResponse> =>
+      fetchWithAuth<PublicCharacterResponse>('/characters/import', {
+        method: 'POST',
+        body: JSON.stringify({url}),
+      }),
+};
+
+export const publicApi = {
+  resolveShare: async (token: string): Promise<PublicCharacterResponse> =>
+      fetchPublic<PublicCharacterResponse>(`/public/share/${encodeURIComponent(token)}`),
 };
 
 

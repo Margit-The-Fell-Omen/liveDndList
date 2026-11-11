@@ -588,3 +588,21 @@ export interface SpellData {
   description: string;
   higherLevels?: string;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// CHARACTER SHARE / IMPORT TYPES
+// ═══════════════════════════════════════════════════════════════
+
+export interface ShareLinkResponse {
+  url: string;
+}
+
+export interface ImportCharacterRequest {
+  url: string;
+}
+
+export interface PublicCharacterResponse {
+  characterType: CharacterType;
+  dndCharacter?: Character;
+  vtmCharacter?: Record<string, unknown>;
+}
