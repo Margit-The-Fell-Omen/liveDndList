@@ -85,7 +85,10 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**", // The default path for the API specification JSON
                 "/swagger-resources/**", // Another common path for swagger resources
-                "/api-docs/**" // A common custom path, included for safety
+                "/api-docs/**", // A common custom path, included for safety
+
+                // --- Public character share resolution ---
+                "/api/v1/public/**"
             ).permitAll()
 
             // After permitting the public paths, require authentication for all other /api/v1/ endpoints.
